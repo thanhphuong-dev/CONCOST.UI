@@ -3606,7 +3606,7 @@ const DOCS_AUTO = {
         "default": "4",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>BlobCount</code> (int)."
+        "desc": "Số quầng sáng (1–8)."
       },
       {
         "name": "Speed",
@@ -3622,7 +3622,7 @@ const DOCS_AUTO = {
         "default": "0.40",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>BlobOpacity</code> (double)."
+        "desc": "Độ đậm tối đa của mỗi quầng sáng (0–1)."
       },
       {
         "name": "IsAnimated",
@@ -3686,7 +3686,7 @@ const DOCS_AUTO = {
         "default": "1.6",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>BeamThickness</code> (double)."
+        "desc": "Độ dày vệt sáng (px)."
       },
       {
         "name": "BeamLength",
@@ -3694,7 +3694,7 @@ const DOCS_AUTO = {
         "default": "0.35",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>BeamLength</code> (double)."
+        "desc": "Tỉ lệ chu vi được chiếu sáng (0–1)."
       },
       {
         "name": "RevolutionSeconds",
@@ -3702,7 +3702,7 @@ const DOCS_AUTO = {
         "default": "4.0",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>RevolutionSeconds</code> (double)."
+        "desc": "Thời gian vệt sáng đi hết một vòng (giây)."
       },
       {
         "name": "IsAnimated",
@@ -3726,7 +3726,7 @@ const DOCS_AUTO = {
         "default": "Thickness(16)",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Padding</code> (Thickness)."
+        "desc": "Khoảng đệm bên trong viền."
       }
     ],
     "events": [],
@@ -3750,7 +3750,7 @@ const DOCS_AUTO = {
         "default": "90",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>ParticleCount</code> (int)."
+        "desc": "Số hạt pháo giấy cho mỗi lần bắn."
       },
       {
         "name": "Duration",
@@ -3766,7 +3766,7 @@ const DOCS_AUTO = {
         "default": "1100.0",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Gravity</code> (double)."
+        "desc": "Gia tốc trọng trường tác động lên hạt (px/s²)."
       },
       {
         "name": "Spread",
@@ -3774,7 +3774,7 @@ const DOCS_AUTO = {
         "default": "620.0",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Spread</code> (double)."
+        "desc": "Độ tản ban đầu của hạt (px/s)."
       },
       {
         "name": "Origin",
@@ -3782,7 +3782,7 @@ const DOCS_AUTO = {
         "default": "Point(double.NaN, double.NaN)",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Origin</code> (Point)."
+        "desc": "Điểm bắn; để trống (NaN) sẽ bắn từ giữa-đáy."
       },
       {
         "name": "Palette",
@@ -3790,7 +3790,7 @@ const DOCS_AUTO = {
         "default": "null",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Palette</code> (IEnumerable<Color>)."
+        "desc": "Bảng màu dùng cho hạt."
       }
     ],
     "events": [],
@@ -4073,11 +4073,11 @@ const DOCS_EN_PROPS = {
   "BarBrush": "Bar colour of the bar chart.",
   "BaseBrush": "Background brush for empty cells/blocks (default state).",
   "BeamBrush": "Brush used for <b>beam</b>.",
-  "BeamLength": "Sets <code>BeamLength</code> (double).",
-  "BeamThickness": "Sets <code>BeamThickness</code> (double).",
+  "BeamLength": "Lit fraction of the perimeter (0–1).",
+  "BeamThickness": "Thickness of the light beam in pixels.",
   "BindingPath": "Property path used to bind the cell.",
-  "BlobCount": "Sets <code>BlobCount</code> (int).",
-  "BlobOpacity": "Sets <code>BlobOpacity</code> (double).",
+  "BlobCount": "Number of aurora blobs (1–8).",
+  "BlobOpacity": "Maximum opacity of each blob (0–1).",
   "BorderGradient": "Border brush revealed on hover — use a <code>LinearGradientBrush</code> for a multi-colour edge.",
   "Brush": "Brush used by the effect (attached).",
   "BubbleAtBoundary": "Sets <code>BubbleAtBoundary</code> (bool).",
@@ -4149,7 +4149,7 @@ const DOCS_EN_PROPS = {
   "FormatString": "Numeric .NET format string (e.g. <code>N2</code>, <code>0.###</code>).",
   "FormulaText": "Formula of the selected cell.",
   "Gap": "Spacing between two repetitions of the content, in pixels.",
-  "Gravity": "Sets <code>Gravity</code> (double).",
+  "Gravity": "Gravity applied to the particles (px/s²).",
   "GridLevels": "Number of radar grid rings.",
   "GridLineBrush": "Grid line colour.",
   "GridSize": "Grid cell size in pixels.",
@@ -4265,17 +4265,17 @@ const DOCS_EN_PROPS = {
   "OnContent": "Content shown in the on state.",
   "Operator": "Comparison operator of the formatting rule.",
   "Orientation": "Layout direction (<code>Horizontal</code> / <code>Vertical</code>).",
-  "Origin": "Sets <code>Origin</code> (Point).",
+  "Origin": "Burst origin; leave empty (NaN) to burst from the centre-bottom.",
   "OriginOffset": "Ruler origin offset relative to the canvas.",
   "OverflowTextFormat": "Format string of the overflow chip (default <code>+{0}</code>).",
   "Overlap": "How far two avatars overlap, in pixels.",
-  "Padding": "Sets <code>Padding</code> (Thickness).",
+  "Padding": "Inner padding inside the border.",
   "PageIndex": "Current page index (1-based).",
   "PageSize": "Items per page.",
-  "Palette": "Sets <code>Palette</code> (IEnumerable<Color>).",
+  "Palette": "Colour palette used for the particles.",
   "PanOffsetX": "Horizontal pan offset of the viewport.",
   "PanOffsetY": "Vertical pan offset of the viewport.",
-  "ParticleCount": "Sets <code>ParticleCount</code> (int).",
+  "ParticleCount": "Number of confetti particles per burst.",
   "Password": "Current password value.",
   "PasswordChar": "Character used to mask the password.",
   "PasswordLength": "Sets <code>PasswordLength</code> (int).",
@@ -4286,7 +4286,7 @@ const DOCS_EN_PROPS = {
   "RadarBrush": "Area colour of the radar chart.",
   "Radius": "Magnified area radius.",
   "Required": "Sets <code>Required</code> (bool).",
-  "RevolutionSeconds": "Sets <code>RevolutionSeconds</code> (double).",
+  "RevolutionSeconds": "Seconds for the beam to complete one lap.",
   "RingBrush": "Ring colour between avatars.",
   "RippleBrush": "Ripple colour.",
   "RowHeaderWidth": "Width of the row header column.",
@@ -4357,7 +4357,7 @@ const DOCS_EN_PROPS = {
   "SpotlightBrush": "Colour of the cursor-following spotlight (defaults to the theme accent).",
   "SpotlightOpacity": "Maximum spotlight opacity (0–1).",
   "SpotlightSize": "Diameter of the spotlight area in pixels.",
-  "Spread": "Sets <code>Spread</code> (double).",
+  "Spread": "Initial particle spread (px/s).",
   "StackedHeaderRows": "Header level definitions.",
   "StackedRowHeight": "Height of each header level.",
   "StartDate": "First day of the series (the first element maps to this date).",
