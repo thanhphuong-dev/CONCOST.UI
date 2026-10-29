@@ -11,6 +11,8 @@
 
 CONCOST.UI cung cấp các control WPF có thể tái sử dụng, tài nguyên giao diện, biểu tượng và thành phần chuyên dụng cho quy trình kỹ thuật. Thư viện phục vụ cả ứng dụng WPF độc lập lẫn giao diện WPF chạy bên trong các phần mềm như Revit và AutoCAD.
 
+**Tài liệu:** [thanhphuong-dev.github.io/CONCOST.UI](https://thanhphuong-dev.github.io/CONCOST.UI/) — 79 trang, song ngữ Việt / Anh, có tìm kiếm.
+
 ## Điểm nổi bật
 
 - **Ba target framework:** .NET Framework 4.8, .NET 8 và .NET 10. Chọn bản build phù hợp với ứng dụng chủ.
@@ -159,14 +161,22 @@ dotnet test tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Relea
 
 ```text
 .
-├── .github/                         # Quy trình CI và mẫu đóng góp
-├── docs/                            # Hướng dẫn, tài liệu control và lưu trữ roadmap
+├── .github/                          # Quy trình CI và mẫu đóng góp
+├── docs/                             # Wiki tài liệu — nguồn của GitHub Pages
+│   ├── index.html · app.js · style.css   # Khung site, renderer, design system
+│   ├── data/                         # Nội dung trang (VI) + bảng API sinh tự động
+│   │   └── en/                       # Lớp tiếng Anh cho cả 79 trang
+│   ├── tools/                        # build-props.py · check-xaml.py
+│   ├── GettingStarted.md
+│   ├── MigrationGuide.md
+│   └── roadmap/                      # Roadmap hiện hành (v3) + kế hoạch lưu trữ
 ├── samples/
-│   └── CONCOST.UI.Showcase/         # Thư viện trình diễn control tương tác
+│   └── CONCOST.UI.Showcase/          # Thư viện trình diễn control tương tác
 ├── src/
-│   └── CONCOST.UI/                  # Thư viện WPF đa target
+│   └── CONCOST.UI/                   # Thư viện WPF đa target
 ├── tests/
-│   └── CONCOST.UI.Tests/            # Project kiểm thử tự động
+│   └── CONCOST.UI.Tests/             # Project kiểm thử tự động
+├── CHANGELOG.md
 ├── CONCOST.UI.sln
 ├── Directory.Build.props
 ├── README.md

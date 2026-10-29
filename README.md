@@ -11,6 +11,8 @@
 
 CONCOST.UI provides reusable controls, theme resources, icons, and engineering-focused components in the **`CONCOST.UI`** library. It is designed for standalone WPF applications and WPF views hosted by products such as Revit and AutoCAD.
 
+**Documentation:** [thanhphuong-dev.github.io/CONCOST.UI](https://thanhphuong-dev.github.io/CONCOST.UI/) — 79 pages, bilingual VI / EN, searchable.
+
 ## Highlights
 
 - **Three target frameworks:** .NET Framework 4.8, .NET 8, and .NET 10. Select the build that matches the host application.
@@ -159,14 +161,22 @@ dotnet test tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Relea
 
 ```text
 .
-├── .github/                         # CI workflow and contribution templates
-├── docs/                            # Guides, component documentation, and roadmap archive
+├── .github/                          # CI workflow and contribution templates
+├── docs/                             # Documentation wiki — the GitHub Pages source
+│   ├── index.html · app.js · style.css   # Site shell, renderer, design system
+│   ├── data/                         # Page content (VI) + generated API tables
+│   │   └── en/                       # English overlay for all 79 pages
+│   ├── tools/                        # build-props.py · check-xaml.py
+│   ├── GettingStarted.md
+│   ├── MigrationGuide.md
+│   └── roadmap/                      # Active roadmap (v3) + archived plans
 ├── samples/
-│   └── CONCOST.UI.Showcase/         # Interactive control gallery
+│   └── CONCOST.UI.Showcase/          # Interactive control gallery
 ├── src/
-│   └── CONCOST.UI/                  # Multi-target WPF library
+│   └── CONCOST.UI/                   # Multi-target WPF library
 ├── tests/
-│   └── CONCOST.UI.Tests/            # Automated test project
+│   └── CONCOST.UI.Tests/             # Automated test project
+├── CHANGELOG.md
 ├── CONCOST.UI.sln
 ├── Directory.Build.props
 ├── README.md
