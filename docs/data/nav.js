@@ -7,6 +7,7 @@ const DOCS_NAV = [
             { id: "class-library", name: "Plugin DLL (Revit/AutoCAD)", nameEn: "Plugin DLL (Revit/AutoCAD)", icon: "fa-puzzle-piece" },
             { id: "theming", name: "Theme & Design Tokens", icon: "fa-palette" },
             { id: "attached-props", name: "Attached Properties", icon: "fa-wand-magic-sparkles" },
+            { id: "examples", name: "Ví dụ sử dụng", nameEn: "Usage examples", icon: "fa-code", badge: "Mới", badgeEn: "New" },
             { id: "faq", name: "FAQ & Troubleshooting", icon: "fa-circle-question" },
             { id: "migration", name: "Chuyển từ WinForms/WPF", nameEn: "Migrating from WinForms/WPF", icon: "fa-code-branch" }
         ]

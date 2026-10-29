@@ -240,7 +240,7 @@
     function metaChips(page) {
         const chips = [];
         if (page.className) chips.push(`<span class="chip"><i class="fa-solid fa-cube"></i><b>${esc(page.className)}</b></span>`);
-        if (page.namespace) chips.push(`<span class="chip"><i class="fa-solid fa-code"></i>${esc(page.namespace)}</span>`);
+        if (page.namespace && page.className) chips.push(`<span class="chip"><i class="fa-solid fa-code"></i>${esc(page.namespace)}</span>`);
         if (page.props && page.props.length) chips.push(`<span class="chip"><i class="fa-solid fa-sliders"></i>${page.props.length} ${t("chipProps")}</span>`);
         if (page.variants && page.variants.length) chips.push(`<span class="chip"><i class="fa-solid fa-layer-group"></i>${page.variants.length} ${t("chipVariants")}</span>`);
         return chips.length ? `<div class="meta-row">${chips.join("")}</div>` : "";
@@ -344,7 +344,10 @@
         const items = [];
         if (page.props && page.props.length) items.push({ id: "sec-props", label: t("propsTitle", { n: page.props.length }).split(" — ")[0] });
         if (page.variants && page.variants.length) items.push({ id: "sec-variants", label: t("variantsTitle") });
-        (page.sections || []).forEach((s, i) => items.push({ id: `sec-${i}`, label: s.title }));
+        (page.sections || []).forEach((s, i) => items.push({
+            id: `sec-${i}`,
+            label: String(s.title).replace(/^\s*\d+\s*[.)]\s*/, "")
+        }));
 
         if (!items.length) { el.toc.innerHTML = ""; return; }
 
@@ -666,4 +669,5 @@
     /* ---------- Boot ---------- */
     applyTheme(document.documentElement.getAttribute("data-theme") || "light");
     applyLanguage(LANG, { keepScroll: true });
+
 })();

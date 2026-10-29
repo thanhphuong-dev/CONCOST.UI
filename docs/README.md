@@ -4,9 +4,9 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 **Live site:** <https://thanhphuong-dev.github.io/CONCOST.UI/> — published from this folder (`main` → `/docs`) through GitHub Pages. Add `?lang=en` or `?lang=vi` to force a language.
 
-Features: command palette search (`Ctrl K` or `/`), per-page table of contents, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation and deep links (`index.html#splitbutton`).
+Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation and deep links (`index.html#splitbutton`).
 
-**79 pages · 457 documented properties · 56 controls mapped to source · 2 languages (VI / EN).**
+**80 pages · 457 documented properties · 56 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -21,7 +21,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 
 ## Page map
 
-### Bắt đầu
+### Getting started
 
 | Page | Nội dung |
 | --- | --- |
@@ -29,6 +29,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Plugin DLL (Revit/AutoCAD)](index.html#class-library) | Hướng dẫn chuyên sâu kiến trúc phát triển giao diện WPF khi đóng gói dưới dạng Class Library (.DLL) hoặc Plugins cho các phần mềm CAD/BIM chuyên nghiệ |
 | [Theme & Design Tokens](index.html#theming) | Toàn bộ bảng màu và phong cách giao diện của CONCOST.UI được quản lý thông qua DynamicResource, cho phép ứng dụng chuyển đổi mượt mà giữa Dark và Ligh |
 | [Attached Properties](index.html#attached-props) | Hệ thống thuộc tính đính kèm phong phú của CONCOST.UI cho phép bạn 'thổi hồn' công nghệ hiện đại vào bất kỳ control WPF nguyên bản nào (Button, TextBo |
+| [Ví dụ sử dụng](index.html#examples) | Bốn tình huống thực tế ghép nhiều control lại với nhau: form nhập thông số dầm, màn hình bảng khối lượng, panel cấu hình trong plugin Revit và dashboa |
 | [FAQ & Troubleshooting](index.html#faq) | Các sự cố thường gặp khi tích hợp CONCOST.UI vào ứng dụng WPF hoặc plugin CAD/BIM, kèm nguyên nhân gốc và cách xử lý. |
 | [Chuyển từ WinForms/WPF](index.html#migration) | Bảng ánh xạ từ WinForms / WPF mặc định sang CONCOST.UI, kèm quy trình chuyển đổi 4 bước và chính sách deprecation. |
 
@@ -45,7 +46,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Engineering Boxes](index.html#engineeringboxes) | Bộ 6 hộp nhập đại lượng kỹ thuật chuyên sâu kế thừa từ UnitBox: LengthBox (mm, m), AreaBox (m²), VolumeBox (m³), ForceBox (kN), MomentBox (kN.m), Pres |
 | [CompassIndicator](index.html#compassindicator) | La bàn đồ họa chỉ hướng gió và hướng Bắc địa chính (True North / Project North) của dự án công trình, tự động quay kim chỉ hướng theo góc Angle (0 đến |
 
-### Dữ liệu & Dashboard
+### Data & Dashboard
 
 | Page | Nội dung |
 | --- | --- |
@@ -55,7 +56,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [CardCarousel](index.html#cardcarousel) | Bộ điều khiển vòng xoay thẻ 3D Coverflow mượt mà, hỗ trợ tạo phối cảnh chiều sâu không gian (Depth Perspective), gán Z-Index phân tầng, nút điều hướng |
 | [PropertyGrid](index.html#propertygrid) | Bảng duyệt và chỉnh sửa thông số đối tượng CAD / BIM chuyên dụng, tự động gom nhóm Category, hỗ trợ editor nội dòng (TextBox, CheckBox, ComboBox, Colo |
 
-### Nhập liệu & Form
+### Input & Form
 
 | Page | Nội dung |
 | --- | --- |
@@ -75,7 +76,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Tag / Chip](index.html#tag) | Nhãn trạng thái và phân loại cấu kiện với nút xóa hành động [X], vector icons và các bảng màu trạng thái Semantic. |
 | [ToggleSwitch](index.html#toggleswitch) | Công tắc gạt bật/tắt thiết lập với chuyển động hoạt ảnh mượt mà. |
 
-### Điều hướng
+### Navigation
 
 | Page | Nội dung |
 | --- | --- |
@@ -88,7 +89,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Transfer](index.html#transfer) | Bộ chuyển dữ liệu 2 khung đối xứng (Shuttle List) hỗ trợ lọc tìm kiếm tức thì, chọn tất cả và di chuyển hàng loạt cấu kiện qua lại. |
 | [TabControl](index.html#tabcontrol) | Bộ chuyển tab điều hướng nội dung với viền chỉ báo vị trí mượt mà (Underline indicator). |
 
-### Phản hồi & Trạng thái
+### Feedback & Status
 
 | Page | Nội dung |
 | --- | --- |
@@ -113,7 +114,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [AdaptivePanel](index.html#adaptivepanel) | ContentControl tự chọn layout theo bề rộng khả dụng qua danh sách Breakpoint — dùng để chuyển 3 cấp Compact / Normal / Wide mà không cần code-behind. |
 | [CONCOSTWindow](index.html#concostwindow) | Cửa sổ WPF với chrome tuỳ biến (title bar, nút min/max/close trong template) — kéo cửa sổ, double-click để maximize đều xử lý sẵn. |
 
-### Hiệu ứng & Trang trí
+### Effects & Decoration
 
 | Page | Nội dung |
 | --- | --- |
@@ -124,7 +125,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Magnifier](index.html#magnifier) | Tròng kính lúp phóng to tọa độ điểm ảnh độ nét cao (lấy cảm hứng từ HandyControl & WPFDevelopers). Khi rê chuột vào khu vực bản vẽ CAD hoặc mặt cắt dầ |
 | [Icons Gallery](index.html#icons) | Kho hơn 120+ vector icons độ phân giải vô cực được tối ưu hóa cho ngành kỹ thuật, xây dựng, CAD và BIM. |
 
-### Controls cơ bản
+### Basic Controls
 
 | Page | Nội dung |
 | --- | --- |
@@ -143,11 +144,11 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Menu & ContextMenu](index.html#menu) | Menu ngang và ContextMenu được restyle với 4 biến thể, hỗ trợ submenu nhiều cấp và icon. |
 | [Typography](index.html#textblock) | Thang typography của design system: H1–H4, Body, Caption, Code và các màu ngữ nghĩa — dùng thay vì set FontSize thủ công. |
 
-### Thời gian
+### Time
 
 | Page | Nội dung |
 | --- | --- |
-| [Clock](index.html#clock) | Đồng hồ tương tác tròn phong cách Material Design chọn Giờ/Phút/Giây kết hợp Lịch chọn ngày tháng. |
+| [Clock](index.html#clock) | Đồng hồ tròn phong cách Material để chọn Giờ / Phút / Giây. Cần chọn cả ngày thì dùng CalendarWithClock — trang riêng trong nhóm Thời gian. |
 | [CalendarWithClock](index.html#calendarwithclock) | Lịch chọn ngày kết hợp đồng hồ chọn giờ/phút/giây — dùng cho mốc nghiệm thu, thời điểm quan trắc, lịch thi công. |
 
 ## How this documentation is maintained
@@ -156,32 +157,33 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | --- | --- |
 | `data/legacy.js` | Original control pages (prose + XAML). |
 | `data/guides.js` | FAQ and migration guides. |
+| `data/examples.js` | Cookbook page with complete, combined examples. |
 | `data/custom.js` | Newer control pages and C# overrides. |
 | `data/basic.js` | Styling-only basic controls + attached property tables. |
 | `data/enrich.js` | Remaining property tables and C# snippets. |
-| `data/auto.generated.js` | **Generated** property tables and C# samples. Do not edit. |
-| `data/nav.js` | Sidebar order, icons, badges. |
+| `data/auto.generated.js` | **Generated** property tables, C# samples and English property descriptions. Do not edit. |
+| `data/nav.js` | Sidebar order, icons, badges (VI + EN labels). |
 | `data.js` | Merges every dataset into `DOCS_DATA`. |
 | `data/en/ui.js` | UI chrome strings (VI + EN), badge labels and the `DOCS_EN` container. |
-| `data/en/guides.js` … `data/en/misc.js` | English overlay per page: title, description, section text, callouts and tables. |
+| `data/en/*.js` | English overlay per page: title, description, section text, callouts and tables. |
 | `app.js` / `style.css` / `index.html` | Application shell, design system and language switch. |
 
 ### Regenerate the generated parts
 
 ```bash
-python docs/tools/build-props.py     # property tables + C# samples from src/CONCOST.UI/**/*.cs
+python docs/tools/build-props.py     # property tables + C# samples + EN property text from src/CONCOST.UI/**/*.cs
 python docs/tools/check-xaml.py      # validate every XAML snippet against the real API
+node   docs/tools/build-index.js     # rebuild this page map
 ```
 
-Run both commands after adding or renaming a `DependencyProperty`; the checker must report **0 issues** before committing.
+Run all three after adding or renaming a `DependencyProperty`; the checker must report **0 issues** before committing.
 
 ### Adding a page
 
 1. Add the page object to the matching `data/*.js` file (`title`, `badge`, `desc`, `sections[]` with `xaml`/`csharp`).
-1b. Add the English strings to the matching `data/en/*.js` file (same `sections` index order).
-2. Register it in `data/nav.js` — the order there drives the sidebar and prev/next links.
-3. Run `build-props.py` if the page documents a control that is new to `PAGE_CLASS`.
-4. Run `check-xaml.py`.
+2. Add the English strings to the matching `data/en/*.js` file (same `sections` index order).
+3. Register it in `data/nav.js` — the order there drives the sidebar and prev/next links.
+4. Run `build-props.py` if the page documents a control that is new to `PAGE_CLASS`, then `check-xaml.py` and `build-index.js`.
 
 ## Related documents
 

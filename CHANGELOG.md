@@ -11,6 +11,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - New reference pages: `SplitButton`, `Expander`, `Badge`, `Skeleton`, `Ripple`, `OtpInput`, `PasswordInput`, loading indicators (`LoadingIndicator`, `CycleLoading`, `RingLoading`, `RollLoading`, `WaitLoading`, `LoadingCircle`, `LoadingLine`), `LoadingOverlay`, `AdaptivePanel`, `NavigationView`, `CONCOSTWindow`, `DataPager`, `CalendarWithClock`.
 - New basic-control pages: `CheckBox`, `RadioButton`, `Slider`, `ScrollViewer`, `ListBox`, `ListView`, `GroupBox`, `Menu`/`ContextMenu`, typography (`TextBlock` styles).
 - Guide pages: FAQ & troubleshooting, WinForms/WPF migration playbook.
+- Cookbook page (`examples`) with four complete, combined scenarios in XAML + C#: beam parameter form, quantity take-off screen, Revit plugin settings panel, KPI dashboard with skeleton loading.
+- `docs/tools/build-index.js` regenerates the `docs/README.md` page map from the live data.
 - `docs/tools/build-props.py` generates the property tables and C# samples directly from the C# source (`DependencyProperty` registrations).
 - `docs/tools/check-xaml.py` validates every XAML snippet in the documentation against the real control API.
 - `CHANGELOG.md`.

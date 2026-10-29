@@ -12,7 +12,7 @@
     const merged = merge(
         merge(
             merge(
-                merge(DOCS_LEGACY || {}, DOCS_GUIDES || {}),
+                merge(merge(DOCS_LEGACY || {}, DOCS_GUIDES || {}), DOCS_EXAMPLES || {}),
                 DOCS_CUSTOM || {}
             ),
             DOCS_BASIC || {}
