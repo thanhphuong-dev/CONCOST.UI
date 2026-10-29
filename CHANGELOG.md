@@ -7,6 +7,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 _Nothing yet._
 
+## [3.4.0] - 2026-10-29
+
+### Added
+- `SheenSweep` — diagonal light sweep with an idle gap, for CTAs and highlight cards.
+- `PulseRing` — expanding, fading rings that mark a live or in-progress state.
+- `WaveDivider` — two drifting sine layers as a section divider or header base.
+- `GradientText` — headline text filled with an animated gradient.
+- Showcase demos with code panels for all four, and bilingual docs (93 pages / 564 properties).
+
 ## [3.3.0] - 2026-10-29
 
 ### Added
@@ -87,7 +96,8 @@ _Nothing yet._
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.3.0...HEAD
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.4.0...HEAD
+[3.4.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.4.0
 [3.3.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.3.0
 [3.2.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.2.0
 [3.1.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.1.0

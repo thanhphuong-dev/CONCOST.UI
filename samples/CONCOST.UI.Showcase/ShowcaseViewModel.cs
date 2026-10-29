@@ -387,6 +387,10 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("AuroraBackground", "Custom Controls", IconKind.LightMode, "Animated aurora backdrop for splash screens and hero panels.", CreateAuroraBackgroundDemo));
         AllItems.Add(new ShowcaseItem("BorderBeam", "Custom Controls", IconKind.LightMode, "A comet of light running around the border of any content.", CreateBorderBeamDemo));
         AllItems.Add(new ShowcaseItem("ConfettiBurst", "Custom Controls", IconKind.Star, "Short confetti celebration for approve / saved moments.", CreateConfettiBurstDemo));
+        AllItems.Add(new ShowcaseItem("SheenSweep", "Custom Controls", IconKind.LightMode, "Diagonal light sweep across a surface, the sheen from modern product pages.", CreateSheenSweepDemo));
+        AllItems.Add(new ShowcaseItem("PulseRing", "Custom Controls", IconKind.Success, "Expanding fading rings that mark a live or in-progress state.", CreatePulseRingDemo));
+        AllItems.Add(new ShowcaseItem("WaveDivider", "Custom Controls", IconKind.ChartArea, "Two drifting sine waves used as a section divider or header base.", CreateWaveDividerDemo));
+        AllItems.Add(new ShowcaseItem("GradientText", "Custom Controls", IconKind.Star, "Headline text filled with an animated gradient.", CreateGradientTextDemo));
         AllItems.Add(new ShowcaseItem("StackedHeaderDataGrid", "Custom Controls", IconKind.Layers, "Enterprise multi-level stacked column header DataGrid with footer aggregates, context menu, Excel clipboard copy, and rich cell type support.", CreateStackedHeaderDataGridDemo));
     }
 

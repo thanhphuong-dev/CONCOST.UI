@@ -343,5 +343,134 @@ Celebration.Palette = new[] { Colors.Orange, Colors.SeaGreen };`,
             }
         ],
         related: ["growl", "dialog", "spotlightcard"]
+    },
+
+    sheensweep: {
+        title: "SheenSweep — vệt sáng quét bề mặt",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Một dải sáng chéo chạy qua bề mặt theo chu kỳ, có khoảng nghỉ giữa hai lần quét — hiệu ứng “sheen” quen thuộc trên nút CTA và thẻ sản phẩm. Đặt trong cùng <code>Grid</code> với nội dung, phía trên cùng.",
+        keywords: ["sheen", "shine", "gloss", "quét sáng", "cta"],
+        sections: [
+            {
+                title: "Quét sáng qua nút",
+                desc: "<code>Speed</code> là số lần quét mỗi giây, <code>PauseSeconds</code> là thời gian nghỉ giữa hai lần. <code>BandWidth</code> tính theo tỉ lệ chiều rộng, <code>Angle</code> là độ nghiêng của dải sáng.",
+                xaml: `<Grid Width="320" Height="52">
+    <Border CornerRadius="10" Background="#101828" />
+    <TextBlock Text="Xuất báo cáo" Foreground="White"
+               HorizontalAlignment="Center" VerticalAlignment="Center" />
+    <ui:SheenSweep Speed="0.35" PauseSeconds="0.8" PeakOpacity="0.45" />
+</Grid>`,
+                csharp: `var sheen = new SheenSweep
+{
+    Speed = 0.35,          // số lần quét mỗi giây
+    PauseSeconds = 0.8,    // nghỉ giữa hai lần quét
+    BandWidth = 0.22,      // bề rộng dải sáng theo % chiều rộng
+    Angle = 24,
+    PeakOpacity = 0.45
+};
+
+// Tạm dừng khi cần
+sheen.IsActive = false;`,
+                callout: {
+                    type: "warn",
+                    body: "Chỉ nên dùng cho 1–2 CTA chính. Nếu gắn cho mọi item trong danh sách, mắt sẽ bị “nhiễu” và tốn frame vô ích."
+                }
+            }
+        ],
+        related: ["button", "spotlightcard", "borderbeam"]
+    },
+
+    pulsering: {
+        title: "PulseRing — vòng lan toả báo hiệu live",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Các vòng tròn lan ra rồi mờ dần quanh một điểm, dùng cho trạng thái đang chạy, đang đồng bộ hoặc đánh dấu vị trí trên bản vẽ.",
+        keywords: ["pulse", "ring", "live", "radar", "lan toả"],
+        sections: [
+            {
+                title: "Chấm live cạnh nhãn trạng thái",
+                desc: "<code>RingCount</code> là số vòng cùng lúc, <code>Duration</code> là thời gian một vòng đi từ tâm ra biên, <code>MaxRadius</code> giới hạn bán kính. Đặt <code>CenterDot=\"False\"</code> nếu chỉ muốn các vòng.",
+                xaml: `<ui:PulseRing MaxRadius="46" Width="110" Height="110"
+              RingCount="3" Duration="2.2" DotRadius="6" />`,
+                csharp: `var pulse = new PulseRing
+{
+    MaxRadius = 46,
+    RingCount = 3,
+    Duration = 2.2,        // giây cho một vòng lan
+    RingThickness = 2,
+    RingBrush = Brushes.SeaGreen
+};
+
+// Tắt khi mất kết nối
+pulse.IsActive = false;`,
+                callout: {
+                    type: "tip",
+                    body: "Mỗi vòng là một <code>DrawEllipse</code>, rất nhẹ — nhưng trên lưới dày (hàng trăm điểm) hãy giảm <code>RingCount</code> xuống 1–2."
+                }
+            }
+        ],
+        related: ["badge", "loadings", "heatmapcalendar"]
+    },
+
+    wavedivider: {
+        title: "WaveDivider — dải sóng phân cách",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Hai lớp sóng sin trôi với tốc độ khác nhau, dùng làm đường phân cách section hoặc chân của khối header. Vẽ bằng <code>StreamGeometry</code> nên không cần ảnh.",
+        keywords: ["wave", "divider", "sóng", "section", "header"],
+        sections: [
+            {
+                title: "Sóng ở chân khối header",
+                desc: "<code>Amplitude</code> là biên độ (px), <code>Wavelength</code> là độ dài bước sóng, <code>Speed</code> là tốc độ trôi (px/s). Đặt <code>ShowBackWave=\"False\"</code> nếu chỉ cần một lớp.",
+                xaml: `<Grid Height="120" ClipToBounds="True">
+    <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
+    <ui:WaveDivider Height="70" VerticalAlignment="Bottom"
+                    Amplitude="10" Speed="18"
+                    FillBrush="{DynamicResource CONCOST.Brush.Primary}" />
+</Grid>`,
+                csharp: `var wave = new WaveDivider
+{
+    Height = 70,
+    Amplitude = 10,
+    Wavelength = 180,
+    Speed = 18,            // px / giây
+    ShowBackWave = true
+};
+
+// Tĩnh, không chạy
+wave.IsAnimated = false;`
+            }
+        ],
+        related: ["divider", "aurorabackground", "card"]
+    },
+
+    gradienttext: {
+        title: "GradientText — chữ gradient chuyển động",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Chữ được tô bằng gradient chạy liên tục — dùng cho hero headline, badge phiên bản hoặc số liệu nhấn mạnh. Vẽ trực tiếp bằng <code>FormattedText</code> với brush biến đổi theo thời gian.",
+        keywords: ["gradient text", "headline", "chữ gradient", "hero"],
+        sections: [
+            {
+                title: "Headline gradient",
+                desc: "<code>StartColor</code>/<code>EndColor</code> là hai đầu gradient, <code>Speed</code> là số chu kỳ mỗi giây, <code>Angle</code> là hướng gradient. Đặt <code>IsAnimated=\"False\"</code> để chữ đứng yên.",
+                xaml: `<ui:GradientText Text="CONCOST UI" FontSize="34"
+                 StartColor="#FF7900" EndColor="#0284C7" Speed="0.35" />`,
+                csharp: `var headline = new GradientText
+{
+    Text = "CONCOST UI",
+    FontSize = 34,
+    StartColor = Color.FromRgb(0xFF, 0x79, 0x00),
+    EndColor = Color.FromRgb(0x02, 0x84, 0xC7),
+    Speed = 0.35
+};
+
+// Chữ tĩnh
+headline.IsAnimated = false;`,
+                callout: {
+                    type: "tip",
+                    body: "Chọn hai màu gần nhau về sắc độ (cam → đỏ, xanh → tím). Hai màu đối lập (cam → xanh dương) sẽ cho đoạn giữa bị xám, làm chữ khó đọc."
+                }
+            }
+        ],
+        related: ["textblock", "aurorabackground", "spotlightcard"]
     }
+
 };

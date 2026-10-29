@@ -243,5 +243,104 @@ Celebration.Palette = new[] { Colors.Orange, Colors.SeaGreen };`,
                 }
             }
         ]
+    },
+
+    sheensweep: {
+        title: "SheenSweep — light sweep across a surface",
+        desc: "A diagonal band of light that runs across a surface on a loop, with an idle gap between sweeps — the “sheen” used on CTAs and product cards. Place it in the same <code>Grid</code> as the content, on top.",
+        sections: [
+            {
+                title: "Sweeping a button",
+                desc: "<code>Speed</code> is sweeps per second and <code>PauseSeconds</code> the idle gap between them. <code>BandWidth</code> is a fraction of the width and <code>Angle</code> tilts the band.",
+                csharp: `var sheen = new SheenSweep
+{
+    Speed = 0.35,          // sweeps per second
+    PauseSeconds = 0.8,    // idle gap between sweeps
+    BandWidth = 0.22,      // band width as a share of the control width
+    Angle = 24,
+    PeakOpacity = 0.45
+};
+
+// Pause when needed
+sheen.IsActive = false;`,
+                callout: {
+                    type: "warn",
+                    body: "Use it on one or two primary CTAs only. On every row of a list it becomes visual noise and burns frames for nothing."
+                }
+            }
+        ]
+    },
+
+    pulsering: {
+        title: "PulseRing — live-state rings",
+        desc: "Rings expand and fade around a point — for running/syncing states or marking a location on a drawing.",
+        sections: [
+            {
+                title: "Live dot next to a status label",
+                desc: "<code>RingCount</code> is how many rings are alive at once, <code>Duration</code> is the time one ring takes to reach the edge and <code>MaxRadius</code> caps it. Set <code>CenterDot=&quot;False&quot;</code> for rings only.",
+                csharp: `var pulse = new PulseRing
+{
+    MaxRadius = 46,
+    RingCount = 3,
+    Duration = 2.2,        // seconds per ring
+    RingThickness = 2,
+    RingBrush = Brushes.SeaGreen
+};
+
+// Stop when the connection drops
+pulse.IsActive = false;`,
+                callout: {
+                    body: "Each ring is a single <code>DrawEllipse</code>, so it is cheap — but on a dense grid (hundreds of points) drop <code>RingCount</code> to 1–2."
+                }
+            }
+        ]
+    },
+
+    wavedivider: {
+        title: "WaveDivider — animated wave divider",
+        desc: "Two sine layers drifting at different speeds, used as a section divider or as the base of a header block. Built from a <code>StreamGeometry</code>, so no images are needed.",
+        sections: [
+            {
+                title: "Wave at the base of a header",
+                desc: "<code>Amplitude</code> is in pixels, <code>Wavelength</code> controls the period and <code>Speed</code> is the drift in px/s. Set <code>ShowBackWave=&quot;False&quot;</code> for a single layer.",
+                csharp: `var wave = new WaveDivider
+{
+    Height = 70,
+    Amplitude = 10,
+    Wavelength = 180,
+    Speed = 18,            // px per second
+    ShowBackWave = true
+};
+
+// Static
+wave.IsAnimated = false;`
+            }
+        ]
+    },
+
+    gradienttext: {
+        title: "GradientText — animated gradient headline",
+        desc: "Text filled with a gradient that keeps moving — for hero headlines, version badges or a highlighted metric. Drawn directly with <code>FormattedText</code> and a brush transformed over time.",
+        sections: [
+            {
+                title: "Gradient headline",
+                desc: "<code>StartColor</code>/<code>EndColor</code> are the two ends, <code>Speed</code> is cycles per second and <code>Angle</code> the gradient direction. Set <code>IsAnimated=&quot;False&quot;</code> to keep it still.",
+                csharp: `var headline = new GradientText
+{
+    Text = "CONCOST UI",
+    FontSize = 34,
+    StartColor = Color.FromRgb(0xFF, 0x79, 0x00),
+    EndColor = Color.FromRgb(0x02, 0x84, 0xC7),
+    Speed = 0.35
+};
+
+// Static text
+headline.IsAnimated = false;`,
+                callout: {
+                    body: "Pick two colours close in hue (orange → red, blue → violet). Opposite hues (orange → blue) go grey in the middle and hurt readability."
+                }
+            }
+        ]
     }
+
 });
