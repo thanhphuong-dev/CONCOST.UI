@@ -182,6 +182,7 @@ The full reference is an interactive static wiki with 79 pages, search (`Ctrl K`
 - [Getting Started](docs/GettingStarted.md) — integration, theming, plugin hosting, build
 - [Migration Guide](docs/MigrationGuide.md) — WinForms/WPF mapping and deprecation policy
 - [Interactive component documentation](docs/index.html) — bilingual VI / EN, `?lang=en` to open in English
+- **Online wiki:** <https://thanhphuong-dev.github.io/CONCOST.UI/>
 - [Changelog](CHANGELOG.md)
 - [Control Showcase](samples/CONCOST.UI.Showcase/)
 - [Contributing](CONTRIBUTING.md)

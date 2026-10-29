@@ -2,6 +2,8 @@
 
 The documentation is a self-contained static site: open [`index.html`](index.html) in any browser (no build step, no server required).
 
+**Live site:** <https://thanhphuong-dev.github.io/CONCOST.UI/> — published from this folder (`main` → `/docs`) through GitHub Pages. Add `?lang=en` or `?lang=vi` to force a language.
+
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation and deep links (`index.html#splitbutton`).
 
 **79 pages · 457 documented properties · 56 controls mapped to source · 2 languages (VI / EN).**

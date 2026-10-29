@@ -182,6 +182,7 @@ Toàn bộ tài liệu tham chiếu là một wiki tĩnh tương tác gồm 79 t
 - [Hướng dẫn bắt đầu](docs/GettingStarted.md) — tích hợp, theme, plugin host, build
 - [Hướng dẫn chuyển đổi phiên bản](docs/MigrationGuide.md)
 - [Tài liệu control tương tác](docs/index.html) — song ngữ Việt / Anh, thêm `?lang=en` để mở bằng tiếng Anh
+- **Wiki online:** <https://thanhphuong-dev.github.io/CONCOST.UI/>
 - [Lịch sử phiên bản](CHANGELOG.md)
 - [Control Showcase](samples/CONCOST.UI.Showcase/)
 - [Hướng dẫn đóng góp](CONTRIBUTING.md)
