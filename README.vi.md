@@ -7,6 +7,7 @@
 ![Frameworks](https://img.shields.io/badge/frameworks-.NET%20Framework%204.8%20%7C%20.NET%208%20%7C%20.NET%2010-512BD4)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20WPF-0078D4)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
+[![Wiki](https://img.shields.io/badge/wiki-online-ff7900)](https://thanhphuong-dev.github.io/CONCOST.UI/)
 
 CONCOST.UI cung cấp các control WPF có thể tái sử dụng, tài nguyên giao diện, biểu tượng và thành phần chuyên dụng cho quy trình kỹ thuật. Thư viện phục vụ cả ứng dụng WPF độc lập lẫn giao diện WPF chạy bên trong các phần mềm như Revit và AutoCAD.
 
