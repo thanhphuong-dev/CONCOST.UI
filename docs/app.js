@@ -1,6 +1,6 @@
 /* ==========================================================================
-   CONCOST.UI Documentation Wiki — application shell
-   Renders pages from DOCS_DATA / DOCS_AUTO / DOCS_NAV (see docs/data/*)
+   CONCOST.UI Documentation Wiki — application shell (bilingual VI / EN)
+   Data: docs/data/*.js · English overlay: docs/data/en/*.js
    ========================================================================== */
 (function () {
     "use strict";
@@ -8,6 +8,24 @@
     const PAGES = window.DOCS_DATA || {};
     const AUTO = window.DOCS_AUTO || {};
     const NAV = window.DOCS_NAV || [];
+    const EN = window.DOCS_EN || { pages: {} };
+    const EN_PROPS = window.DOCS_EN_PROPS || {};
+    const UI = window.DOCS_UI || { vi: {}, en: {} };
+
+    let LANG = (function () {
+        try {
+            const qp = new URLSearchParams(location.search).get("lang");
+            if (qp === "en" || qp === "vi") return qp;
+            return localStorage.getItem("concost.lang") === "en" ? "en" : "vi";
+        } catch (e) { return "vi"; }
+    })();
+
+    function t(key, vars) {
+        const table = UI[LANG] || UI.vi || {};
+        let s = table[key] || (UI.vi && UI.vi[key]) || key;
+        if (vars) Object.keys(vars).forEach(k => { s = s.split("{" + k + "}").join(vars[k]); });
+        return s;
+    }
 
     const $ = (sel, root) => (root || document).querySelector(sel);
     const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
@@ -29,7 +47,6 @@
     const esc = (s) => String(s == null ? "" : s)
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
-
     const escAttr = (s) => esc(s).replace(/'/g, "&#39;");
 
     let toastTimer;
@@ -40,12 +57,62 @@
         toastTimer = setTimeout(() => el.toast.classList.remove("show"), 2200);
     }
 
+    /* ---------- Localisation of a page ---------- */
+    function localize(id, page) {
+        if (LANG !== "en") return page;
+        const en = EN.pages[id];
+        if (!en) return page;
+
+        const out = Object.assign({}, page);
+        if (en.title) out.title = en.title;
+        if (en.desc) out.desc = en.desc;
+        const badgeMap = window.DOCS_BADGE_EN || {};
+        if (en.badge) out.badge = en.badge;
+        else if (page.badge && badgeMap[page.badge]) out.badge = badgeMap[page.badge];
+
+        if (en.quick && page.quick) {
+            out.quick = page.quick.map((q, i) => Object.assign({}, q, en.quick[i] || {}));
+        }
+        if (en.heroStats && page.heroStats) {
+            out.heroStats = page.heroStats.map((s, i) => Object.assign({}, s, en.heroStats[i] || {}));
+        }
+        if (en.variants && page.variants) {
+            out.variants = page.variants.map((v, i) => Object.assign({}, v, en.variants[i] || {}));
+        }
+        if (en.sections && page.sections) {
+            out.sections = page.sections.map((s, i) => {
+                const es = en.sections[i];
+                if (!es) return s;
+                const merged = Object.assign({}, s);
+                if (es.title) merged.title = es.title;
+                if (es.desc) merged.desc = es.desc;
+                if (es.callout) merged.callout = Object.assign({}, s.callout || {}, es.callout);
+                if (es.table && s.table) {
+                    merged.table = Array.isArray(es.table)
+                        ? s.table.map((row, j) => Object.assign({}, row, (es.table[j] || {})))
+                        : s.table.map(row => (es.table[row.token] ? Object.assign({}, row, { desc: es.table[row.token] }) : row));
+                }
+                return merged;
+            });
+        }
+        return out;
+    }
+
     /* ---------- Effective page model ---------- */
     function resolve(id) {
-        const page = PAGES[id];
-        if (!page) return null;
+        const base = PAGES[id];
+        if (!base) return null;
+        const page = localize(id, base);
         const auto = AUTO[id] || {};
-        const props = (page.props && page.props.length) ? page.props : (auto.props || []);
+        let props = (page.props && page.props.length) ? page.props : (auto.props || []);
+        if (LANG === "en") {
+            props = props.map(p => {
+                const raw = String(p.name);
+                const leaf = raw.split(".").pop();
+                const en = EN_PROPS[raw] || EN_PROPS[leaf] || EN_PROPS[leaf.split(/[\s/]+/)[0]];
+                return en ? Object.assign({}, p, { desc: en }) : p;
+            });
+        }
         const sections = (page.sections || []).map((s, i) => {
             if (i === 0 && !s.csharp) {
                 const cs = page.csharp || auto.csharp;
@@ -64,33 +131,42 @@
 
     const ORDER = [];
     const GROUP_OF = {};
+    const GROUP_EN = {};
     const ICON_OF = {};
     const NAME_OF = {};
+    const NAME_EN = {};
     NAV.forEach(group => {
         (group.items || []).forEach(item => {
             ORDER.push(item.id);
             GROUP_OF[item.id] = group.title;
+            GROUP_EN[item.id] = group.titleEn || group.title;
             ICON_OF[item.id] = item.icon || "fa-cube";
             NAME_OF[item.id] = item.name || (PAGES[item.id] && PAGES[item.id].title) || item.id;
+            NAME_EN[item.id] = item.nameEn || NAME_OF[item.id];
         });
     });
+
+    const navLabel = (id) => (LANG === "en" ? NAME_EN[id] : NAME_OF[id]);
+    const groupLabel = (group) => (LANG === "en" ? (group.titleEn || group.title) : group.title);
 
     /* ---------- Sidebar ---------- */
     function renderSidebar() {
         let html = "";
         NAV.forEach(group => {
-            html += `<div class="nav-category-title">${esc(group.title)}</div><ul class="nav-menu">`;
+            html += `<div class="nav-category-title">${esc(groupLabel(group))}</div><ul class="nav-menu">`;
             (group.items || []).forEach(item => {
-                const badge = item.badge ? `<span class="nav-badge">${esc(item.badge)}</span>` : "";
-                html += `<li class="nav-item" data-target="${escAttr(item.id)}" title="${escAttr(item.name)}">
+                const badgeText = LANG === "en" ? (item.badgeEn || item.badge) : item.badge;
+                const badge = badgeText ? `<span class="nav-badge">${esc(badgeText)}</span>` : "";
+                const label = LANG === "en" ? (item.nameEn || item.name) : item.name;
+                html += `<li class="nav-item" data-target="${escAttr(item.id)}" title="${escAttr(label)}">
                     <i class="fa-solid ${escAttr(item.icon || "fa-cube")}"></i>
-                    <span class="nav-label">${esc(item.name)}</span>${badge}
+                    <span class="nav-label">${esc(label)}</span>${badge}
                 </li>`;
             });
             html += `</ul>`;
         });
         el.nav.innerHTML = html;
-        $("#footCount").textContent = `${ORDER.length} trang tài liệu`;
+        $("#footCount").textContent = t("pagesCount", { n: ORDER.length });
     }
 
     /* ---------- Blocks ---------- */
@@ -111,7 +187,7 @@
         }).join("");
         const scrollable = props.length > 10 ? " scrollable" : "";
         return `<div class="table-wrap${scrollable}"><table class="props-table">
-            <thead><tr><th>Thuộc tính</th><th>Kiểu</th><th>Mặc định</th><th>Mô tả</th></tr></thead>
+            <thead><tr><th>${t("propHeader")}</th><th>${t("typeHeader")}</th><th>${t("defaultHeader")}</th><th>${t("descHeader")}</th></tr></thead>
             <tbody>${rows}</tbody></table></div>`;
     }
 
@@ -126,9 +202,9 @@
 
     function tokenTable(table) {
         if (!table || !table.length) return "";
-        const rows = table.map(t => `<tr><td><code>${esc(t.token)}</code></td><td>${t.desc || ""}</td></tr>`).join("");
+        const rows = table.map(row => `<tr><td><code>${esc(row.token)}</code></td><td>${row.desc || ""}</td></tr>`).join("");
         return `<div class="table-wrap"><table class="props-table">
-            <thead><tr><th>Token / API</th><th>Mục đích &amp; vị trí áp dụng</th></tr></thead>
+            <thead><tr><th>${t("tokenHeader")}</th><th>${t("tokenDescHeader")}</th></tr></thead>
             <tbody>${rows}</tbody></table></div>`;
     }
 
@@ -155,7 +231,7 @@
         return `<div class="code-inspector">
             <div class="code-header">
                 <div class="code-tabs">${tabs.join("")}</div>
-                <button class="btn-copy" data-copy><i class="fa-regular fa-copy"></i> Sao chép</button>
+                <button class="btn-copy" data-copy><i class="fa-regular fa-copy"></i> ${t("copy")}</button>
             </div>
             ${xamlPane}${csPane}
         </div>`;
@@ -165,8 +241,8 @@
         const chips = [];
         if (page.className) chips.push(`<span class="chip"><i class="fa-solid fa-cube"></i><b>${esc(page.className)}</b></span>`);
         if (page.namespace) chips.push(`<span class="chip"><i class="fa-solid fa-code"></i>${esc(page.namespace)}</span>`);
-        if (page.props && page.props.length) chips.push(`<span class="chip"><i class="fa-solid fa-sliders"></i>${page.props.length} properties</span>`);
-        if (page.variants && page.variants.length) chips.push(`<span class="chip"><i class="fa-solid fa-layer-group"></i>${page.variants.length} style variants</span>`);
+        if (page.props && page.props.length) chips.push(`<span class="chip"><i class="fa-solid fa-sliders"></i>${page.props.length} ${t("chipProps")}</span>`);
+        if (page.variants && page.variants.length) chips.push(`<span class="chip"><i class="fa-solid fa-layer-group"></i>${page.variants.length} ${t("chipVariants")}</span>`);
         return chips.length ? `<div class="meta-row">${chips.join("")}</div>` : "";
     }
 
@@ -174,8 +250,8 @@
     function render(id, opts) {
         const page = resolve(id);
         if (!page) {
-            el.main.innerHTML = `<div class="doc-header"><h1 class="doc-title">Không tìm thấy trang</h1>
-                <p class="doc-desc">Trang <code>${esc(id)}</code> chưa có trong bộ tài liệu.</p></div>`;
+            el.main.innerHTML = `<div class="doc-header"><h1 class="doc-title">${t("notFoundTitle")}</h1>
+                <p class="doc-desc">${t("notFoundDesc", { id: esc(id) })}</p></div>`;
             el.toc.innerHTML = "";
             return;
         }
@@ -213,16 +289,16 @@
 
         if (page.props && page.props.length) {
             html += `<div class="doc-card" id="sec-props">
-                <div class="doc-card-title"><span class="num"><i class="fa-solid fa-sliders" style="font-size:9px"></i></span> API tham chiếu — ${page.props.length} thuộc tính</div>
-                <p class="doc-card-desc">Các <code>DependencyProperty</code> dưới đây được trích trực tiếp từ source của <code>${esc(page.className || id)}</code>.</p>
+                <div class="doc-card-title"><span class="num"><i class="fa-solid fa-sliders" style="font-size:9px"></i></span> ${t("propsTitle", { n: page.props.length })}</div>
+                <p class="doc-card-desc">${t("propsDesc", { cls: esc(page.className || id) })}</p>
                 ${propsTable(page.props)}
             </div>`;
         }
 
         if (page.variants && page.variants.length) {
             html += `<div class="doc-card" id="sec-variants">
-                <div class="doc-card-title"><span class="num"><i class="fa-solid fa-layer-group" style="font-size:9px"></i></span> Style variants có sẵn</div>
-                <p class="doc-card-desc">Áp dụng qua <code>Style="{DynamicResource &lt;key&gt;}"</code> — toàn bộ key dưới đây có trong <code>Themes/Generic.xaml</code>.</p>
+                <div class="doc-card-title"><span class="num"><i class="fa-solid fa-layer-group" style="font-size:9px"></i></span> ${t("variantsTitle")}</div>
+                <p class="doc-card-desc">${t("variantsDesc")}</p>
                 ${variantsBlock(page.variants)}
             </div>`;
         }
@@ -239,17 +315,17 @@
 
         if (page.related && page.related.length) {
             const links = page.related.filter(r => PAGES[r]).map(r =>
-                `<a data-target="${escAttr(r)}"><i class="fa-solid fa-arrow-right"></i> ${esc(NAME_OF[r] || r)}</a>`).join("");
-            if (links) html += `<div class="doc-card"><div class="doc-card-title" style="font-size:13px">Xem thêm</div><div class="related">${links}</div></div>`;
+                `<a data-target="${escAttr(r)}"><i class="fa-solid fa-arrow-right"></i> ${esc(navLabel(r))}</a>`).join("");
+            if (links) html += `<div class="doc-card"><div class="doc-card-title" style="font-size:13px">${t("relatedTitle")}</div><div class="related">${links}</div></div>`;
         }
 
         html += `<div class="doc-pager">
             ${prevId ? `<div class="pager-link prev" data-target="${escAttr(prevId)}">
-                <span class="pl"><i class="fa-solid fa-arrow-left"></i> Trước</span>
-                <span class="pt">${esc(NAME_OF[prevId])}</span></div>` : `<div class="pager-link empty"></div>`}
+                <span class="pl"><i class="fa-solid fa-arrow-left"></i> ${t("prev")}</span>
+                <span class="pt">${esc(navLabel(prevId))}</span></div>` : `<div class="pager-link empty"></div>`}
             ${nextId ? `<div class="pager-link next" data-target="${escAttr(nextId)}">
-                <span class="pl">Tiếp <i class="fa-solid fa-arrow-right"></i></span>
-                <span class="pt">${esc(NAME_OF[nextId])}</span></div>` : `<div class="pager-link empty"></div>`}
+                <span class="pl">${t("next")} <i class="fa-solid fa-arrow-right"></i></span>
+                <span class="pt">${esc(navLabel(nextId))}</span></div>` : `<div class="pager-link empty"></div>`}
         </div>`;
 
         el.main.innerHTML = html;
@@ -266,17 +342,17 @@
     /* ---------- TOC ---------- */
     function renderToc(page) {
         const items = [];
-        if (page.props && page.props.length) items.push({ id: "sec-props", label: "API tham chiếu" });
-        if (page.variants && page.variants.length) items.push({ id: "sec-variants", label: "Style variants" });
+        if (page.props && page.props.length) items.push({ id: "sec-props", label: t("propsTitle", { n: page.props.length }).split(" — ")[0] });
+        if (page.variants && page.variants.length) items.push({ id: "sec-variants", label: t("variantsTitle") });
         (page.sections || []).forEach((s, i) => items.push({ id: `sec-${i}`, label: s.title }));
 
         if (!items.length) { el.toc.innerHTML = ""; return; }
 
-        el.toc.innerHTML = `<div class="toc-title">Trong trang này</div>` +
+        el.toc.innerHTML = `<div class="toc-title">${t("tocTitle")}</div>` +
             items.map(it => `<a data-scroll="${escAttr(it.id)}">${esc(it.label)}</a>`).join("") +
             `<div class="toc-stats">
-                <div>Trang <b>${ORDER.indexOf(page.id) + 1}</b>/${ORDER.length}</div>
-                <div>Nhóm <b>${esc(GROUP_OF[page.id] || "—")}</b></div>
+                <div>${t("tocPage")} <b>${ORDER.indexOf(page.id) + 1}</b>/${ORDER.length}</div>
+                <div>${t("tocGroup")} <b>${esc((LANG === "en" ? GROUP_EN[page.id] : GROUP_OF[page.id]) || "—")}</b></div>
             </div>`;
 
         setupScrollSpy();
@@ -307,20 +383,27 @@
     }
 
     /* ---------- Command palette ---------- */
-    const searchIndex = ORDER.map(id => {
-        const p = PAGES[id] || {};
-        const auto = AUTO[id] || {};
-        const props = (p.props || auto.props || []).map(x => x.name).join(" ");
-        return {
-            id: id,
-            name: NAME_OF[id],
-            group: GROUP_OF[id] || "",
-            icon: ICON_OF[id] || "fa-cube",
-            desc: String(p.desc || "").replace(/<[^>]+>/g, ""),
-            haystack: [NAME_OF[id], id, GROUP_OF[id], String(p.desc || "").replace(/<[^>]+>/g, ""), props, (p.keywords || []).join(" ")]
-                .join(" ").toLowerCase()
-        };
-    });
+    let searchIndex = [];
+
+    function buildSearchIndex() {
+        searchIndex = ORDER.map(id => {
+            const p = PAGES[id] || {};
+            const auto = AUTO[id] || {};
+            const props = (p.props || auto.props || []).map(x => x.name).join(" ");
+            const en = EN.pages[id] || {};
+            const name = navLabel(id);
+            const desc = String((LANG === "en" && en.desc) || p.desc || "").replace(/<[^>]+>/g, "");
+            return {
+                id: id,
+                name: name,
+                group: GROUP_OF[id] || "",
+                icon: ICON_OF[id] || "fa-cube",
+                desc: desc,
+                haystack: [name, NAME_OF[id], NAME_EN[id], id, GROUP_OF[id], desc, props, (p.keywords || []).join(" ")]
+                    .join(" ").toLowerCase()
+            };
+        });
+    }
 
     let cmdkResults = [];
     let cmdkIndex = 0;
@@ -345,10 +428,10 @@
             .map(item => {
                 if (!terms.length) return { item: item, score: 0 };
                 let score = 0;
-                for (const t of terms) {
-                    if (item.haystack.indexOf(t) === -1) return null;
-                    if (item.name.toLowerCase().startsWith(t)) score += 60;
-                    else if (item.name.toLowerCase().indexOf(t) !== -1) score += 30;
+                for (const term of terms) {
+                    if (item.haystack.indexOf(term) === -1) return null;
+                    if (item.name.toLowerCase().startsWith(term)) score += 60;
+                    else if (item.name.toLowerCase().indexOf(term) !== -1) score += 30;
                     else score += 8;
                 }
                 return { item: item, score: score };
@@ -364,15 +447,15 @@
 
     function paintResults(terms) {
         if (!cmdkResults.length) {
-            el.results.innerHTML = `<div class="cmdk-empty"><i class="fa-solid fa-magnifying-glass"></i><br>Không tìm thấy kết quả phù hợp</div>`;
-            el.count.textContent = "0 kết quả";
+            el.results.innerHTML = `<div class="cmdk-empty"><i class="fa-solid fa-magnifying-glass"></i><br>${t("cmdkEmpty")}</div>`;
+            el.count.textContent = t("cmdkCount", { n: 0 });
             return;
         }
         el.results.innerHTML = cmdkResults.map((r, i) => {
             let name = esc(r.name);
-            (terms || []).forEach(t => {
-                if (!t) return;
-                const re = new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "ig");
+            (terms || []).forEach(term => {
+                if (!term) return;
+                const re = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "ig");
                 name = name.replace(re, "<mark>$1</mark>");
             });
             return `<div class="cmdk-item ${i === cmdkIndex ? "sel" : ""}" data-idx="${i}">
@@ -384,7 +467,7 @@
                 <div class="ci-group">${esc(r.group)}</div>
             </div>`;
         }).join("");
-        el.count.textContent = `${cmdkResults.length} kết quả`;
+        el.count.textContent = t("cmdkCount", { n: cmdkResults.length });
         const sel = $(".cmdk-item.sel", el.results);
         if (sel) sel.scrollIntoView({ block: "nearest" });
     }
@@ -407,6 +490,33 @@
     function currentId() {
         const id = decodeURIComponent(location.hash.slice(1));
         return PAGES[id] ? id : (ORDER[0] || "intro");
+    }
+
+    /* ---------- Language switch ---------- */
+    function applyLanguage(lang, opts) {
+        LANG = lang === "en" ? "en" : "vi";
+        try { localStorage.setItem("concost.lang", LANG); } catch (e) { }
+        document.documentElement.setAttribute("lang", LANG);
+
+        const trigger = $("#searchTrigger span");
+        if (trigger) trigger.textContent = t("searchPlaceholder");
+        el.input.placeholder = t("cmdkPlaceholder");
+        themeBtn.title = t("themeToggle");
+        const langBtn = $("#langToggle");
+        if (langBtn) {
+            langBtn.textContent = LANG === "en" ? "VI" : "EN";
+            langBtn.title = t("langToggle");
+        }
+        if (el.toastText) el.toastText.textContent = t("toastCopied");
+        const foot = $$(".cmdk-foot span");
+        if (foot.length >= 2) {
+            foot[0].innerHTML = `<kbd>↑</kbd> <kbd>↓</kbd> ${t("cmdkNav")}`;
+            foot[1].innerHTML = `<kbd>↵</kbd> ${t("cmdkOpen")}`;
+        }
+
+        buildSearchIndex();
+        renderSidebar();
+        render(currentId(), { keepScroll: !opts || opts.keepScroll !== false });
     }
 
     /* ---------- Global events ---------- */
@@ -435,7 +545,7 @@
         const tab = e.target.closest(".code-tab");
         if (tab) {
             const inspector = tab.closest(".code-inspector");
-            $$(".code-tab", inspector).forEach(t => t.classList.remove("active"));
+            $$(".code-tab", inspector).forEach(x => x.classList.remove("active"));
             tab.classList.add("active");
             $$("pre", inspector).forEach(p => { p.style.display = "none"; });
             const pane = document.getElementById(tab.dataset.pane);
@@ -450,11 +560,11 @@
             if (active) {
                 navigator.clipboard.writeText(active.innerText).then(() => {
                     copyBtn.classList.add("copied");
-                    copyBtn.innerHTML = `<i class="fa-solid fa-check"></i> Đã chép`;
-                    toast("Đã sao chép vào clipboard");
+                    copyBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${t("copied")}`;
+                    toast(t("toastCopied"));
                     setTimeout(() => {
                         copyBtn.classList.remove("copied");
-                        copyBtn.innerHTML = `<i class="fa-regular fa-copy"></i> Sao chép`;
+                        copyBtn.innerHTML = `<i class="fa-regular fa-copy"></i> ${t("copy")}`;
                     }, 1800);
                 });
             }
@@ -466,6 +576,7 @@
 
     $("#searchTrigger").addEventListener("click", openPalette);
     $("#menuToggle").addEventListener("click", () => el.sidebar.classList.toggle("open"));
+    $("#langToggle").addEventListener("click", () => applyLanguage(LANG === "en" ? "vi" : "en", { keepScroll: false }));
     el.input.addEventListener("input", (e) => runSearch(e.target.value));
 
     el.input.addEventListener("keydown", (e) => {
@@ -525,8 +636,6 @@
     window.addEventListener("popstate", () => render(currentId(), { keepScroll: true }));
 
     /* ---------- Boot ---------- */
-    renderSidebar();
     applyTheme(document.documentElement.getAttribute("data-theme") || "light");
-    render(currentId(), { keepScroll: true });
-
+    applyLanguage(LANG, { keepScroll: true });
 })();

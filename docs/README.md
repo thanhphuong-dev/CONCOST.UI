@@ -4,7 +4,18 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation and deep links (`index.html#splitbutton`).
 
-**79 pages · 457 documented properties · 56 controls mapped to source.**
+**79 pages · 457 documented properties · 56 controls mapped to source · 2 languages (VI / EN).**
+
+### Languages
+
+The wiki ships in Vietnamese and English. The **VI / EN** button in the top bar switches instantly (persisted in `localStorage`), and the language can be forced through the URL:
+
+```text
+docs/index.html?lang=en#splitbutton
+docs/index.html?lang=vi#splitbutton
+```
+
+Vietnamese is the base language (`data/*.js`); English lives in the overlay files under `data/en/`. A page renders in English when its overlay entry exists, otherwise it falls back to Vietnamese, so a half-translated page never breaks the build.
 
 ## Page map
 
@@ -149,7 +160,9 @@ Features: command palette search (`Ctrl K` or `/`), per-page table of contents, 
 | `data/auto.generated.js` | **Generated** property tables and C# samples. Do not edit. |
 | `data/nav.js` | Sidebar order, icons, badges. |
 | `data.js` | Merges every dataset into `DOCS_DATA`. |
-| `app.js` / `style.css` / `index.html` | Application shell and design system. |
+| `data/en/ui.js` | UI chrome strings (VI + EN), badge labels and the `DOCS_EN` container. |
+| `data/en/guides.js` … `data/en/misc.js` | English overlay per page: title, description, section text, callouts and tables. |
+| `app.js` / `style.css` / `index.html` | Application shell, design system and language switch. |
 
 ### Regenerate the generated parts
 
@@ -163,6 +176,7 @@ Run both commands after adding or renaming a `DependencyProperty`; the checker m
 ### Adding a page
 
 1. Add the page object to the matching `data/*.js` file (`title`, `badge`, `desc`, `sections[]` with `xaml`/`csharp`).
+1b. Add the English strings to the matching `data/en/*.js` file (same `sections` index order).
 2. Register it in `data/nav.js` — the order there drives the sidebar and prev/next links.
 3. Run `build-props.py` if the page documents a control that is new to `PAGE_CLASS`.
 4. Run `check-xaml.py`.

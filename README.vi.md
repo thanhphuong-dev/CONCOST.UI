@@ -181,7 +181,7 @@ Toàn bộ tài liệu tham chiếu là một wiki tĩnh tương tác gồm 79 t
 - [Mục lục tài liệu](docs/README.md) — bản đồ trang và quy trình cập nhật
 - [Hướng dẫn bắt đầu](docs/GettingStarted.md) — tích hợp, theme, plugin host, build
 - [Hướng dẫn chuyển đổi phiên bản](docs/MigrationGuide.md)
-- [Tài liệu control tương tác](docs/index.html)
+- [Tài liệu control tương tác](docs/index.html) — song ngữ Việt / Anh, thêm `?lang=en` để mở bằng tiếng Anh
 - [Lịch sử phiên bản](CHANGELOG.md)
 - [Control Showcase](samples/CONCOST.UI.Showcase/)
 - [Hướng dẫn đóng góp](CONTRIBUTING.md)
