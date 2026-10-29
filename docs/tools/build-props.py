@@ -443,6 +443,8 @@ D = {
     "ShowOverflow": "Hiện chip +N khi số item vượt <code>MaxVisible</code>.",
     "OverflowTextFormat": "Định dạng chuỗi chip tràn (mặc định <code>+{0}</code>).",
     "Items": "Danh sách item: chuỗi (tự lấy chữ cái đầu) hoặc <code>ImageSource</code>.",
+    "Size": "Kích thước cạnh của phần tử (px) — với AvatarStack là đường kính avatar.",
+    "FontSize": "Cỡ chữ hiển thị bên trong control.",
     "TitleBarBackground": "Màu nền thanh tiêu đề của cửa sổ.",
     "Progress2": "",
 }
@@ -759,6 +761,8 @@ EN_D = {
     "ShowOverflow": "Shows the +N chip when the item count exceeds <code>MaxVisible</code>.",
     "OverflowTextFormat": "Format string of the overflow chip (default <code>+{0}</code>).",
     "Items": "Item list: strings (initials are derived) or <code>ImageSource</code>.",
+    "Size": "Edge size of the element in pixels — the avatar diameter for AvatarStack.",
+    "FontSize": "Font size used inside the control.",
     "TitleBarBackground": "Title bar background of the window.",
 }
 

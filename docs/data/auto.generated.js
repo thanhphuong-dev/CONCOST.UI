@@ -3358,12 +3358,12 @@ const DOCS_AUTO = {
         "default": "32.0",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Size</code> (double)."
+        "desc": "Kích thước cạnh của phần tử (px) — với AvatarStack là đường kính avatar."
       },
       {
         "name": "Overlap",
         "type": "double",
-        "default": "10.0",
+        "default": "9.0",
         "readonly": false,
         "attached": false,
         "desc": "Mức chồng lên nhau giữa hai avatar (px)."
@@ -3398,7 +3398,7 @@ const DOCS_AUTO = {
         "default": "11.5",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>FontSize</code> (double)."
+        "desc": "Cỡ chữ hiển thị bên trong control."
       },
       {
         "name": "ShowOverflow",
@@ -3756,7 +3756,7 @@ const DOCS_EN_PROPS = {
   "ExtraContent": "Additional custom content area.",
   "Fill": "Sets <code>Fill</code> (Brush).",
   "Filter": "Win32 file filter (e.g. <code>*.dwg;*.dxf</code>).",
-  "FontSize": "Sets <code>FontSize</code> (double).",
+  "FontSize": "Font size used inside the control.",
   "Footer": "Footer content.",
   "FooterRowHeight": "Height of the footer row.",
   "FooterTemplate": "Template for the footer.",
@@ -3940,7 +3940,7 @@ const DOCS_EN_PROPS = {
   "ShowText": "Shows the percentage/value on the bar.",
   "ShowToggleButton": "Shows the collapse/expand button.",
   "ShowToolbar": "Shows the spreadsheet toolbar.",
-  "Size": "Sets <code>Size</code> (double).",
+  "Size": "Edge size of the element in pixels — the avatar diameter for AvatarStack.",
   "SkeletonShape": "Placeholder shape: <code>Rectangle</code>, <code>Circle</code>, <code>TextLine</code>, <code>Card</code>.",
   "SmallChange": "Small step used by the arrow keys.",
   "Smooth": "Draws Bezier curves instead of straight segments.",

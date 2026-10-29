@@ -30,7 +30,7 @@ public class AvatarStack : FrameworkElement
 
     public static readonly DependencyProperty OverlapProperty =
         DependencyProperty.Register(nameof(Overlap), typeof(double), typeof(AvatarStack),
-            new FrameworkPropertyMetadata(10.0, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender));
+            new FrameworkPropertyMetadata(9.0, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender));
 
     public static readonly DependencyProperty BackgroundProperty =
         DependencyProperty.Register(nameof(Background), typeof(Brush), typeof(AvatarStack),
