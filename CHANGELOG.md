@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- Offline build: fonts (latin/latin-ext/vietnamese subsets), Font Awesome and Prism are vendored under `docs/vendor/`, so the wiki renders with no CDN and no network.
+- `docs/tools/fetch-fonts.py` re-downloads the localised font subsets; `docs/tools/build-index.js` now also emits the page → source file map.
+- "Edit this page" link in the reading rail, pointing at the exact data file that owns the page.
+- `docs/data/en/code.js`: 290-entry Vietnamese → English dictionary applied to code snippets, so EN pages no longer show Vietnamese comments or sample strings (289 code lines covered, 0 left).
 - Bilingual documentation: VI / EN switch in the top bar (`?lang=en` / `?lang=vi` deep links), 79 English page overlays, 302 generated English property descriptions, and localised navigation, badges, table of contents and command palette.
 - Documentation wiki rebuilt as a static site (`docs/`) with 79 pages, command palette search (`Ctrl K`), per-page table of contents, XAML/C# code inspector, light/dark themes and five accent colours.
 - New reference pages: `SplitButton`, `Expander`, `Badge`, `Skeleton`, `Ripple`, `OtpInput`, `PasswordInput`, loading indicators (`LoadingIndicator`, `CycleLoading`, `RingLoading`, `RollLoading`, `WaitLoading`, `LoadingCircle`, `LoadingLine`), `LoadingOverlay`, `AdaptivePanel`, `NavigationView`, `CONCOSTWindow`, `DataPager`, `CalendarWithClock`.

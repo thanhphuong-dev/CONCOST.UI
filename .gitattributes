@@ -8,3 +8,6 @@
 *.exe binary
 *.pdb binary
 *.zip binary
+*.woff2 binary
+*.woff binary
+*.ttf binary

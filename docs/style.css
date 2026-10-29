@@ -887,6 +887,22 @@ table.props-table {
 }
 .toc-top i { font-size: 9px; }
 
+.toc-edit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color .15s, background .15s;
+}
+.toc-edit:hover { color: var(--accent-ink); background: var(--accent-soft); }
+.toc-edit i { font-size: 9.5px; }
+
 /* ---------- Command palette ---------- */
 .cmdk-overlay {
     position: fixed;

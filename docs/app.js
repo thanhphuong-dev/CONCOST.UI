@@ -11,6 +11,9 @@
     const EN = window.DOCS_EN || { pages: {} };
     const EN_PROPS = window.DOCS_EN_PROPS || {};
     const UI = window.DOCS_UI || { vi: {}, en: {} };
+    const CODE_EN = (window.DOCS_CODE_EN || []).slice().sort((a, b) => b[0].length - a[0].length);
+    const SOURCES = window.DOCS_SOURCES || {};
+    const REPO_EDIT = "https://github.com/thanhphuong-dev/CONCOST.UI/edit/main/docs/";
 
     let LANG = (function () {
         try {
@@ -219,6 +222,16 @@
         </div>`;
     }
 
+    function translateCode(text) {
+        if (!text || LANG !== "en" || !CODE_EN.length) return text;
+        let out = text;
+        for (let i = 0; i < CODE_EN.length; i++) {
+            const pair = CODE_EN[i];
+            if (out.indexOf(pair[0]) !== -1) out = out.split(pair[0]).join(pair[1]);
+        }
+        return out;
+    }
+
     function codeInspector(sec, idx) {
         if (!sec.xaml && !sec.csharp) return "";
         const tabs = [];
@@ -226,9 +239,9 @@
         if (sec.csharp) tabs.push(`<button class="code-tab ${sec.xaml ? "" : "active"}" data-pane="csharp-${idx}"><i class="fa-solid fa-file-code"></i> C# Code-Behind</button>`);
 
         const xamlPane = sec.xaml
-            ? `<pre id="xaml-${idx}" class="language-markup"><code>${esc(sec.xaml)}</code></pre>` : "";
+            ? `<pre id="xaml-${idx}" class="language-markup"><code>${esc(translateCode(sec.xaml))}</code></pre>` : "";
         const csPane = sec.csharp
-            ? `<pre id="csharp-${idx}" class="language-csharp"${sec.xaml ? ' style="display:none"' : ""}><code>${esc(sec.csharp)}</code></pre>` : "";
+            ? `<pre id="csharp-${idx}" class="language-csharp"${sec.xaml ? ' style="display:none"' : ""}><code>${esc(translateCode(sec.csharp))}</code></pre>` : "";
 
         return `<div class="code-inspector">
             <div class="code-header">
@@ -369,7 +382,9 @@
                 <div>${t("tocPage")} <b>${ORDER.indexOf(page.id) + 1}</b>/${ORDER.length}</div>
                 <div>${t("tocGroup")} <b>${esc((LANG === "en" ? GROUP_EN[page.id] : GROUP_OF[page.id]) || "—")}</b></div>
             </div>
-            <button class="toc-top" data-top><i class="fa-solid fa-arrow-up"></i> ${t("backToTop")}</button>`;
+            <button class="toc-top" data-top><i class="fa-solid fa-arrow-up"></i> ${t("backToTop")}</button>
+            ${SOURCES[page.id] ? `<a class="toc-edit" href="${REPO_EDIT}${SOURCES[page.id]}" target="_blank" rel="noopener">
+                <i class="fa-regular fa-pen-to-square"></i> ${t("editPage")}</a>` : ""}`;
 
         setupScrollSpy();
         updateTocProgress();

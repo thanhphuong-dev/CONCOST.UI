@@ -11,11 +11,10 @@
     <meta property="og:url" content="https://thanhphuong-dev.github.io/CONCOST.UI/">
     <meta name="twitter:card" content="summary">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7900'/%3E%3Cpath d='M9 22V10h3.4v9.3H23V22z' fill='%23fff'/%3E%3C/svg%3E">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <!-- All assets are vendored so the wiki works offline -->
+    <link rel="stylesheet" href="vendor/fonts.css">
+    <link rel="stylesheet" href="vendor/fa/all.min.css">
+    <link rel="stylesheet" href="vendor/prism/prism-tomorrow.min.css">
     <link rel="stylesheet" href="style.css">
     <script>
         // Restore theme + accent before first paint to avoid a flash of the wrong palette.
@@ -124,9 +123,9 @@
         <i class="fa-solid fa-circle-check"></i> <span id="toastText">Đã sao chép mã nguồn</span>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="vendor/prism/prism.min.js"></script>
+    <script src="vendor/prism/prism-csharp.min.js"></script>
+    <script src="vendor/prism/prism-markup.min.js"></script>
 
     <script src="data/legacy.js"></script>
     <script src="data/guides.js"></script>
@@ -135,11 +134,13 @@
     <script src="data/basic.js"></script>
     <script src="data/enrich.js"></script>
     <script src="data/auto.generated.js"></script>
+    <script src="data/sources.generated.js"></script>
     <script src="data/nav.js"></script>
     <script src="data.js"></script>
 
     <!-- English overlay (VI is the base language in docs/data/*.js) -->
     <script src="data/en/ui.js"></script>
+    <script src="data/en/code.js"></script>
     <script src="data/en/guides.js"></script>
     <script src="data/en/examples.js"></script>
     <script src="data/en/engineering.js"></script>

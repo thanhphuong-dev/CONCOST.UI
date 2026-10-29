@@ -4,7 +4,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 **Live site:** <https://thanhphuong-dev.github.io/CONCOST.UI/> — published from this folder (`main` → `/docs`) through GitHub Pages. Add `?lang=en` or `?lang=vi` to force a language.
 
-Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation and deep links (`index.html#splitbutton`).
+Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
 **80 pages · 457 documented properties · 56 controls mapped to source · 2 languages (VI / EN).**
 
@@ -166,6 +166,9 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | `data.js` | Merges every dataset into `DOCS_DATA`. |
 | `data/en/ui.js` | UI chrome strings (VI + EN), badge labels and the `DOCS_EN` container. |
 | `data/en/*.js` | English overlay per page: title, description, section text, callouts and tables. |
+| `data/en/code.js` | Vietnamese → English dictionary applied to code snippets in EN mode. |
+| `data/sources.generated.js` | **Generated** page → source file map (powers the “edit this page” link). |
+| `vendor/` | Self-hosted fonts, Font Awesome and Prism — no CDN, works offline. |
 | `app.js` / `style.css` / `index.html` | Application shell, design system and language switch. |
 
 ### Regenerate the generated parts
@@ -173,7 +176,8 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 ```bash
 python docs/tools/build-props.py     # property tables + C# samples + EN property text from src/CONCOST.UI/**/*.cs
 python docs/tools/check-xaml.py      # validate every XAML snippet against the real API
-node   docs/tools/build-index.js     # rebuild this page map
+node   docs/tools/build-index.js     # rebuild this page map + the source map
+python docs/tools/fetch-fonts.py     # re-download the localised font subsets
 ```
 
 Run all three after adding or renaming a `DependencyProperty`; the checker must report **0 issues** before committing.
