@@ -341,6 +341,116 @@ headline.IsAnimated = false;`,
                 }
             }
         ]
+    },
+
+    cursorglow: {
+        title: "CursorGlow — light that trails the pointer",
+        desc: "A soft glow that follows the pointer with a slight lag, for dark hero sections or welcome panels. It never blocks input (<code>IsHitTestVisible=false</code>), so buttons underneath still work.",
+        sections: [
+            {
+                title: "Layer it over a dark surface",
+                desc: "<code>GlowSize</code> is the diameter and <code>FollowSpeed</code> controls the lag (0 = instant, 0.2 = smooth). When the pointer leaves, the glow fades out instead of popping.",
+                csharp: `var glow = new CursorGlow
+{
+    GlowSize = 240,
+    GlowOpacity = 0.42,
+    FollowSpeed = 0.18
+};
+
+// Pause when the window is inactive
+glow.IsAnimated = false;`,
+                callout: {
+                    body: "It only reads on dark surfaces or photos. On light backgrounds use <code>SpotlightCard</code> instead."
+                }
+            }
+        ]
+    },
+
+    gridpattern: {
+        title: "GridPattern — dot / line / cross backdrop",
+        desc: "Three tiled backdrops drawn with a <code>DrawingBrush</code>: dots, lines or cross marks — for blueprint, drawing-paper and dashboard surfaces. Because it is a tile brush the cost is a single fill regardless of how many cells are visible.",
+        sections: [
+            {
+                title: "Three pattern kinds",
+                desc: "<code>Pattern</code> accepts <code>Dots</code>, <code>Lines</code> and <code>Cross</code>. <code>CellSize</code> is the grid step and <code>PatternOpacity</code> keeps it in the background. <code>OffsetX/OffsetY</code> phase the tile for parallax.",
+                csharp: `var pattern = new GridPattern
+{
+    Pattern = GridPatternType.Cross,
+    CellSize = 18,
+    StrokeThickness = 1,
+    PatternOpacity = 0.55
+};
+
+// Parallax from the scroll position
+pattern.OffsetX = scrollOffset * 0.15;
+pattern.OffsetY = scrollOffset * 0.08;`,
+                callout: {
+                    body: "Without an explicit <code>Stroke</code> the grid uses <code>CONCOST.Brush.Border</code>, so it follows the light/dark theme."
+                }
+            }
+        ]
+    },
+
+    shakeelement: {
+        title: "ShakeElement — invalid-input feedback",
+        desc: "Attached behaviour that shakes an element horizontally on validation failure — 360 ms, decaying amplitude. Works on any <code>FrameworkElement</code> and preserves an existing <code>RenderTransform</code>.",
+        sections: [
+            {
+                title: "Trigger it from code",
+                desc: "Call <code>ShakeElement.Shake(element)</code>, or set the attached <code>ShakeElement.IsShaking=&quot;True&quot;</code> in XAML. It is skipped automatically when the user disabled system animations.",
+                csharp: `if (!IsValid(value))
+{
+    ShakeElement.Shake(LengthField);
+    Growl.Toast("Beam length must be > 0", GrowlType.Warning);
+}`,
+                callout: {
+                    type: "warn",
+                    body: "Do not shake the whole form. Shake the field that failed so the user knows where to look."
+                }
+            }
+        ]
+    },
+
+    brutaltheme: {
+        title: "ThemePreset.Brutal — neo-brutalism",
+        desc: "The seventh <code>ThemeManager</code> preset: cream surfaces <code>#FFFDF5</code>, ink borders <code>#111111</code> and an electric accent <code>#FFE14D</code> — neo-brutalist spirit that still reads in a business app.",
+        sections: [
+            {
+                title: "Apply and restore",
+                desc: "The preset overrides seven surface/border/text brushes. The first time it runs it <b>snapshots</b> the previous values, so switching back to <code>Default</code> restores them without a restart.",
+                csharp: `ThemeManager.Current.Preset = ThemePreset.Brutal;
+
+// Back to the default palette — restored from the snapshot
+ThemeManager.Current.Preset = ThemePreset.Default;`,
+                callout: {
+                    type: "warn",
+                    title: "A colour preset, not a style set",
+                    body: "It does not change border thickness or corner radius. For true brutalism (2–3px borders, square corners, hard shadows) add a dedicated style variant in <code>Generic.xaml</code>."
+                }
+            }
+        ]
+    },
+
+    reducedmotion: {
+        title: "Reduced motion — follow the system setting",
+        desc: "Every effect reads <code>MotionSettings.AnimationsEnabled</code>, which defaults to the Windows “Show animations” setting (<code>SystemParameters.ClientAreaAnimation</code>). When a user disables animations, effects paint a static frame instead of freezing mid-animation — WCAG 2.2.2.",
+        sections: [
+            {
+                title: "Nothing to configure",
+                desc: "It is on by default. An app can mute everything with <code>MotionSettings.ForceDisabled</code>, which is handy when you expose a “reduce motion” toggle in settings.",
+                csharp: `// Mute every effect in the app
+MotionSettings.ForceDisabled = true;
+
+// Read the current state for a settings screen
+bool motion = MotionSettings.AnimationsEnabled;
+
+// React to changes (OS setting or in-app toggle)
+MotionSettings.Changed += (s, e) => UpdateMotionLabel();`,
+                callout: {
+                    body: "When motion is off, <code>AnimatedEffectBase</code> calls <code>OnMotionStopped()</code> so the effect can pick a sensible static frame (CursorGlow parks the glow in the middle) instead of a random one."
+                }
+            }
+        ]
     }
 
 });

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
+using CONCOST.UI.Core;
 
 namespace CONCOST.UI.Controls;
 
@@ -174,7 +175,7 @@ public class AuroraBackground : FrameworkElement
 
     private void OnFrame(object? sender, EventArgs e)
     {
-        if (!IsAnimated || ActualWidth <= 0) { _last = TimeSpan.Zero; return; }
+        if (!MotionSettings.AnimationsEnabled || !IsAnimated || ActualWidth <= 0) { _last = TimeSpan.Zero; return; }
 
         TimeSpan now = TimeSpan.FromTicks(DateTime.UtcNow.Ticks);
         if (_last == TimeSpan.Zero) { _last = now; return; }

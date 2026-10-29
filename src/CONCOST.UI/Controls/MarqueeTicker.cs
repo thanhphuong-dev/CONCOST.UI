@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
+using CONCOST.UI.Core;
 
 namespace CONCOST.UI.Controls;
 

@@ -7,6 +7,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 _Nothing yet._
 
+## [3.5.0] - 2026-10-29
+
+### Added
+- `MotionSettings` + `AnimatedEffectBase` — every effect now follows the Windows "Show animations" setting (`SystemParameters.ClientAreaAnimation`), can be muted app-wide with `MotionSettings.ForceDisabled`, and settles on a static frame instead of freezing when motion is off (WCAG 2.2.2).
+- `CursorGlow` — soft light trailing the pointer, with eased follow and fade-out.
+- `GridPattern` — tiled dot / line / cross backdrop drawn as a single `DrawingBrush` fill, with phase offsets for parallax.
+- `ShakeElement` — attached shake feedback for invalid input (360 ms, decaying amplitude, preserves existing `RenderTransform`).
+- `ThemePreset.Brutal` — neo-brutalist palette (cream surfaces, ink borders, electric accent) with automatic snapshot/restore when switching back.
+
+### Changed
+- The eight effects that predate the base class (`AuroraBackground`, `BorderBeam`, `ConfettiBurst`, `MarqueeTicker`, `SheenSweep`, `PulseRing`, `WaveDivider`, `GradientText`) now check `MotionSettings` before running their frame loop.
+
 ## [3.4.0] - 2026-10-29
 
 ### Added
@@ -96,7 +108,8 @@ _Nothing yet._
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.4.0...HEAD
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.5.0...HEAD
+[3.5.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.5.0
 [3.4.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.4.0
 [3.3.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.3.0
 [3.2.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.2.0

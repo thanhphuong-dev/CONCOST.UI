@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**93 pages · 564 documented properties · 69 controls mapped to source · 2 languages (VI / EN).**
+**98 pages · 579 documented properties · 72 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -28,6 +28,8 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Giới thiệu & Cài đặt](index.html#intro) | CONCOST.UI là bộ thư viện giao diện WPF tối ưu cho phần mềm kết cấu, BIM, CAD và ứng dụng desktop kỹ thuật. Thư viện đi kèm hệ thống design tokens tự  |
 | [Plugin DLL (Revit/AutoCAD)](index.html#class-library) | Hướng dẫn chuyên sâu kiến trúc phát triển giao diện WPF khi đóng gói dưới dạng Class Library (.DLL) hoặc Plugins cho các phần mềm CAD/BIM chuyên nghiệ |
 | [Theme & Design Tokens](index.html#theming) | Toàn bộ bảng màu và phong cách giao diện của CONCOST.UI được quản lý thông qua DynamicResource, cho phép ứng dụng chuyển đổi mượt mà giữa Dark và Ligh |
+| [Preset Brutal](index.html#brutaltheme) | Preset thứ bảy của ThemeManager: nền kem #FFFDF5, viền mực #111111, accent vàng điện #FFE14D — tinh thần neo-brutalism nhưng vẫn đọc được trong app ng |
+| [Reduced motion](index.html#reducedmotion) | Mọi hiệu ứng của thư viện đọc MotionSettings.AnimationsEnabled, mặc định lấy từ Windows “Show animations” (SystemParameters.ClientAreaAnimation). Ngườ |
 | [Attached Properties](index.html#attached-props) | Hệ thống thuộc tính đính kèm phong phú của CONCOST.UI cho phép bạn 'thổi hồn' công nghệ hiện đại vào bất kỳ control WPF nguyên bản nào (Button, TextBo |
 | [Ví dụ sử dụng](index.html#examples) | Bốn tình huống thực tế ghép nhiều control lại với nhau: form nhập thông số dầm, màn hình bảng khối lượng, panel cấu hình trong plugin Revit và dashboa |
 | [FAQ & Troubleshooting](index.html#faq) | Các sự cố thường gặp khi tích hợp CONCOST.UI vào ứng dụng WPF hoặc plugin CAD/BIM, kèm nguyên nhân gốc và cách xử lý. |
@@ -132,6 +134,9 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [PulseRing](index.html#pulsering) | Các vòng tròn lan ra rồi mờ dần quanh một điểm, dùng cho trạng thái đang chạy, đang đồng bộ hoặc đánh dấu vị trí trên bản vẽ. |
 | [WaveDivider](index.html#wavedivider) | Hai lớp sóng sin trôi với tốc độ khác nhau, dùng làm đường phân cách section hoặc chân của khối header. Vẽ bằng StreamGeometry nên không cần ảnh. |
 | [GradientText](index.html#gradienttext) | Chữ được tô bằng gradient chạy liên tục — dùng cho hero headline, badge phiên bản hoặc số liệu nhấn mạnh. Vẽ trực tiếp bằng FormattedText với brush bi |
+| [CursorGlow](index.html#cursorglow) | Quầng sáng mềm trượt theo con trỏ với độ trễ nhẹ, dùng cho hero tối hoặc panel chào mừng. Không chặn chuột (IsHitTestVisible=false) nên đặt trên cùng  |
+| [GridPattern](index.html#gridpattern) | Ba kiểu nền lưới vẽ bằng DrawingBrush tile: chấm, đường kẻ, hoặc dấu chữ thập — phù hợp nền bản vẽ, blueprint, dashboard kỹ thuật. Vì là tile brush nê |
+| [ShakeElement](index.html#shakeelement) | Attached behaviour rung ngang một phần tử khi validate lỗi — phản hồi quen thuộc, 360ms, biên độ giảm dần. Dùng được trên mọi FrameworkElement và giữ  |
 | [SnowCanvas](index.html#snowcanvas) | Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt (lấy cảm hứng từ WPFDevelopers), hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi,  |
 | [Sprite](index.html#sprite) | Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button) lấy cảm hứng từ HandyControl. Sprite luôn nổi phía trên toàn bộ giao di |
 | [CompareSlider](index.html#compareslider) | Thanh trượt chia đôi màn hình trực quan cho phép so sánh sự thay đổi giữa 2 hình ảnh bản vẽ thiết kế (Rev 01 vs Rev 02), phối cảnh 3D Render trước/sau |

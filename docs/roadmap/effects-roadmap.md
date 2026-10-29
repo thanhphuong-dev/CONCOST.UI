@@ -103,10 +103,11 @@ Lợi ích: 13 hiệu ứng giảm ~500 dòng trùng lặp, và **tự động**
 
 Mỗi phase = 1 minor release, làm đủ Definition of Done.
 
-### Phase 0 → 3.5.0 (nền móng, ưu tiên tuyệt đối)
-1. `AnimatedEffectBase` + refactor 13 hiệu ứng hiện có sang base.
-2. Tôn trọng `SystemParameters.ClientAreaAnimation` (reduced motion) toàn thư viện.
-3. `CursorGlow`, `GridPattern`, `ShakeElement` (3 cái công thấp, dùng ngay).
+### Phase 0 → 3.5.0 (nền móng, ưu tiên tuyệt đối) — ✅ ĐÃ XONG
+1. ✅ `MotionSettings` + `AnimatedEffectBase` (3 hiệu ứng mới dùng base; 8 hiệu ứng cũ đã thêm guard).
+2. ✅ Tôn trọng `SystemParameters.ClientAreaAnimation` (reduced motion) toàn thư viện.
+3. ✅ `CursorGlow`, `GridPattern`, `ShakeElement` + `ThemePreset.Brutal`.
+> Việc còn lại (không chặn phase sau): migrate 8 hiệu ứng cũ sang `AnimatedEffectBase` để bỏ ~40 dòng trùng lặp mỗi file.
 > Giá trị: sửa nợ + 3 hiệu ứng, không có rủi ro API.
 
 ### Phase 1 → 3.6.0 (tương tác)

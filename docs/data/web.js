@@ -471,6 +471,149 @@ headline.IsAnimated = false;`,
             }
         ],
         related: ["textblock", "aurorabackground", "spotlightcard"]
+    },
+
+    cursorglow: {
+        title: "CursorGlow — quầng sáng bám con trỏ",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Quầng sáng mềm trượt theo con trỏ với độ trễ nhẹ, dùng cho hero tối hoặc panel chào mừng. Không chặn chuột (<code>IsHitTestVisible=false</code>) nên đặt trên cùng vẫn bấm được nút bên dưới.",
+        keywords: ["cursor", "glow", "spotlight", "con trỏ", "hero"],
+        sections: [
+            {
+                title: "Đặt phủ lên nền tối",
+                desc: "<code>GlowSize</code> là đường kính quầng sáng, <code>FollowSpeed</code> điều khiển độ trễ (0 = bám ngay, 0.2 = mượt). Khi chuột ra ngoài, quầng sáng mờ dần chứ không biến mất đột ngột.",
+                xaml: `<Grid Height="170" ClipToBounds="True" Background="#101828">
+    <TextBlock Text="Di chuột trong khung này" Foreground="White"
+               HorizontalAlignment="Center" VerticalAlignment="Center" />
+    <ui:CursorGlow GlowSize="240" GlowOpacity="0.42" />
+</Grid>`,
+                csharp: `var glow = new CursorGlow
+{
+    GlowSize = 240,
+    GlowOpacity = 0.42,
+    FollowSpeed = 0.18
+};
+
+// Tắt khi cửa sổ không active
+glow.IsAnimated = false;`,
+                callout: {
+                    type: "tip",
+                    body: "Chỉ có tác dụng trên nền tối hoặc ảnh. Trên nền sáng, quầng sáng gần như không thấy — hãy dùng <code>SpotlightCard</code> thay thế."
+                }
+            }
+        ],
+        related: ["spotlightcard", "aurorabackground", "gridpattern"]
+    },
+
+    gridpattern: {
+        title: "GridPattern — nền lưới chấm / kẻ / chữ thập",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Ba kiểu nền lưới vẽ bằng <code>DrawingBrush</code> tile: chấm, đường kẻ, hoặc dấu chữ thập — phù hợp nền bản vẽ, blueprint, dashboard kỹ thuật. Vì là tile brush nên chi phí chỉ là **một** lệnh fill, không phụ thuộc số ô hiển thị.",
+        keywords: ["grid", "pattern", "dots", "blueprint", "lưới"],
+        sections: [
+            {
+                title: "Ba kiểu lưới",
+                desc: "<code>Pattern</code> nhận <code>Dots</code>, <code>Lines</code>, <code>Cross</code>. <code>CellSize</code> là bước lưới, <code>PatternOpacity</code> giữ lưới ở mức nền. <code>OffsetX/OffsetY</code> dịch pha để làm parallax.",
+                xaml: `<Grid Height="120" Background="{DynamicResource CONCOST.Brush.Surface}">
+    <ui:GridPattern Pattern="Dots" CellSize="18" PatternOpacity="0.55" />
+</Grid>`,
+                csharp: `var pattern = new GridPattern
+{
+    Pattern = GridPatternType.Cross,
+    CellSize = 18,
+    StrokeThickness = 1,
+    PatternOpacity = 0.55
+};
+
+// Parallax theo vị trí cuộn
+pattern.OffsetX = scrollOffset * 0.15;
+pattern.OffsetY = scrollOffset * 0.08;`,
+                callout: {
+                    type: "tip",
+                    body: "Màu lưới lấy từ <code>CONCOST.Brush.Border</code> nếu không set <code>Stroke</code> — nên lưới tự đổi theo theme sáng/tối."
+                }
+            }
+        ],
+        related: ["gridpattern", "aurorabackground", "card"]
+    },
+
+    shakeelement: {
+        title: "ShakeElement — rung khi dữ liệu không hợp lệ",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Attached behaviour rung ngang một phần tử khi validate lỗi — phản hồi quen thuộc, 360ms, biên độ giảm dần. Dùng được trên mọi <code>FrameworkElement</code> và giữ nguyên <code>RenderTransform</code> sẵn có.",
+        keywords: ["shake", "invalid", "validation", "rung", "error"],
+        sections: [
+            {
+                title: "Kích hoạt từ code",
+                desc: "Gọi <code>ShakeElement.Shake(element)</code>, hoặc set attached property <code>ShakeElement.IsShaking=&quot;True&quot;</code> trong XAML. Tự bỏ qua nếu người dùng đã tắt animation hệ thống.",
+                xaml: `<Border x:Name="LengthField"
+        attached:ShakeElement.Amplitude="8"
+        attached:ShakeElement.Duration="0:0:0.36">
+    <!-- ô nhập -->
+</Border>`,
+                csharp: `if (!IsValid(value))
+{
+    ShakeElement.Shake(LengthField);
+    Growl.Toast("Chiều dài dầm phải > 0", GrowlType.Warning);
+}`,
+                callout: {
+                    type: "warn",
+                    body: "Đừng rung cả form. Rung đúng ô nhập để người dùng biết cần sửa chỗ nào — rung cả form gây mất phương hướng."
+                }
+            }
+        ],
+        related: ["textbox", "growl", "numericupdown"]
+    },
+
+    brutaltheme: {
+        title: "ThemePreset.Brutal — neo-brutalism",
+        badge: "Bắt đầu",
+        desc: "Preset thứ bảy của <code>ThemeManager</code>: nền kem <code>#FFFDF5</code>, viền mực <code>#111111</code>, accent vàng điện <code>#FFE14D</code> — tinh thần neo-brutalism nhưng vẫn đọc được trong app nghiệp vụ.",
+        keywords: ["theme", "brutal", "neo-brutalism", "preset"],
+        sections: [
+            {
+                title: "Áp và khôi phục",
+                desc: "Preset ghi đè 7 brush nền/viền/chữ. Lần đầu áp dụng sẽ <b>snapshot</b> giá trị cũ, nên chuyển về <code>Default</code> là khôi phục nguyên trạng — không cần khởi động lại.",
+                xaml: `<!-- Không cần XAML: preset ghi vào Application.Resources -->`,
+                csharp: `ThemeManager.Current.Preset = ThemePreset.Brutal;
+
+// Quay lại mặc định — brush được khôi phục từ snapshot
+ThemeManager.Current.Preset = ThemePreset.Default;`,
+                callout: {
+                    type: "warn",
+                    title: "Đây là preset màu, không phải bộ style",
+                    body: "Nó không đổi độ dày viền hay bo góc. Muốn “brutal” đúng nghĩa (viền 2–3px, bo 0, shadow cứng) thì thêm một style variant riêng trong <code>Generic.xaml</code>."
+                }
+            }
+        ],
+        related: ["theming", "card", "button"]
+    },
+
+    reducedmotion: {
+        title: "Reduced motion — tôn trọng cài đặt hệ thống",
+        badge: "Bắt đầu",
+        desc: "Mọi hiệu ứng của thư viện đọc <code>MotionSettings.AnimationsEnabled</code>, mặc định lấy từ <b>Windows “Show animations”</b> (<code>SystemParameters.ClientAreaAnimation</code>). Người dùng tắt animation ở Windows thì hiệu ứng vẽ khung tĩnh thay vì đứng hình — đúng WCAG 2.2.2.",
+        keywords: ["reduced motion", "accessibility", "animation", "wcag"],
+        sections: [
+            {
+                title: "Không cần cấu hình gì",
+                desc: "Mặc định đã bật. Ứng dụng có thể tắt thêm bằng <code>MotionSettings.ForceDisabled</code> — hữu ích khi bạn có toggle “giảm chuyển động” trong phần cài đặt.",
+                xaml: `<!-- Không cần khai báo: hiệu ứng tự kiểm tra -->`,
+                csharp: `// Tắt toàn bộ hiệu ứng trong app
+MotionSettings.ForceDisabled = true;
+
+// Đọc trạng thái hiện tại để hiện trong Settings
+bool motion = MotionSettings.AnimationsEnabled;
+
+// Lắng nghe thay đổi (Windows đổi setting hoặc app toggle)
+MotionSettings.Changed += (s, e) => UpdateMotionLabel();`,
+                callout: {
+                    type: "info",
+                    body: "Khi animation bị tắt, <code>AnimatedEffectBase</code> gọi <code>OnMotionStopped()</code> để hiệu ứng chọn khung tĩnh hợp lý (ví dụ CursorGlow đặt quầng sáng ở giữa) thay vì dừng ở frame ngẫu nhiên."
+                }
+            }
+        ],
+        related: ["spotlightcard", "aurorabackground", "loadings"]
     }
 
 };

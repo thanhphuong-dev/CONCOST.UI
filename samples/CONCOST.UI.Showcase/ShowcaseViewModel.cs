@@ -391,6 +391,11 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("PulseRing", "Custom Controls", IconKind.Success, "Expanding fading rings that mark a live or in-progress state.", CreatePulseRingDemo));
         AllItems.Add(new ShowcaseItem("WaveDivider", "Custom Controls", IconKind.ChartArea, "Two drifting sine waves used as a section divider or header base.", CreateWaveDividerDemo));
         AllItems.Add(new ShowcaseItem("GradientText", "Custom Controls", IconKind.Star, "Headline text filled with an animated gradient.", CreateGradientTextDemo));
+        AllItems.Add(new ShowcaseItem("CursorGlow", "Custom Controls", IconKind.LightMode, "Soft light that trails the pointer across a dark surface.", CreateCursorGlowDemo));
+        AllItems.Add(new ShowcaseItem("GridPattern", "Custom Controls", IconKind.GridSquare, "Tiled dot / line / cross pattern for engineering backdrops.", CreateGridPatternDemo));
+        AllItems.Add(new ShowcaseItem("ShakeElement", "Custom Controls", IconKind.Warning, "Attached shake feedback for invalid input.", CreateShakeDemo));
+        AllItems.Add(new ShowcaseItem("ThemePreset.Brutal", "Custom Controls", IconKind.LayerColor, "Neo-brutalist preset: cream surfaces, ink borders, electric accent.", CreateBrutalThemeDemo));
+        AllItems.Add(new ShowcaseItem("Reduced motion", "Custom Controls", IconKind.Settings, "Every effect follows the Windows animation setting via MotionSettings.", CreateReducedMotionDemo));
         AllItems.Add(new ShowcaseItem("StackedHeaderDataGrid", "Custom Controls", IconKind.Layers, "Enterprise multi-level stacked column header DataGrid with footer aggregates, context menu, Excel clipboard copy, and rich cell type support.", CreateStackedHeaderDataGridDemo));
     }
 

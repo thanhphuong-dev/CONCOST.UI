@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Runtime.CompilerServices;
@@ -23,7 +24,8 @@ public enum ThemePreset
     Sunset,
     Slate,
     Midnight,
-    HighContrast
+    HighContrast,
+    Brutal
 }
 
 public enum SurfaceStyle
@@ -110,6 +112,60 @@ public class ThemeManager : ObservableObject
         }
 
         AccentColor = color;
+        ApplyBrutalOverrides(preset == ThemePreset.Brutal);
+    }
+
+    private static readonly (string Key, string Hex)[] BrutalBrushes =
+    {
+        ("CONCOST.Brush.Background", "#FFFDF5"),
+        ("CONCOST.Brush.Surface", "#FFFDF5"),
+        ("CONCOST.Brush.SurfaceSecondary", "#F3F0E6"),
+        ("CONCOST.Brush.Border", "#111111"),
+        ("CONCOST.Brush.BorderSecondary", "#111111"),
+        ("CONCOST.Brush.TextPrimary", "#111111"),
+        ("CONCOST.Brush.TextSecondary", "#3D3D3D")
+    };
+
+    private static readonly Dictionary<string, object?> BrutalSnapshot = new();
+    private static bool _brutalApplied;
+
+    /// <summary>
+    /// Neo-brutalist preset: flat cream surfaces with ink-black outlines. The theme brushes
+    /// are snapshotted the first time so switching back to another preset restores them.
+    /// </summary>
+    private static void ApplyBrutalOverrides(bool enabled)
+    {
+        var app = Application.Current;
+        if (app == null) return;
+
+        if (enabled)
+        {
+            if (!_brutalApplied)
+            {
+                BrutalSnapshot.Clear();
+                foreach (var (key, _) in BrutalBrushes)
+                    BrutalSnapshot[key] = app.Resources.Contains(key) ? app.Resources[key] : null;
+                _brutalApplied = true;
+            }
+
+            foreach (var (key, hex) in BrutalBrushes)
+                app.Resources[key] = ColorHelper.CreateBrush(ColorHelper.FromHex(hex));
+
+            return;
+        }
+
+        if (!_brutalApplied) return;
+
+        foreach (var (key, _) in BrutalBrushes)
+        {
+            if (BrutalSnapshot.TryGetValue(key, out object? original) && original != null)
+                app.Resources[key] = original;
+            else
+                app.Resources.Remove(key);
+        }
+
+        BrutalSnapshot.Clear();
+        _brutalApplied = false;
     }
 
     public void ApplySurfaceStyle(SurfaceStyle style)
@@ -263,6 +319,7 @@ public class ThemeManager : ObservableObject
         ThemePreset.Slate => (ColorHelper.FromHex("#475569"), false),
         ThemePreset.Midnight => (ColorHelper.FromHex("#8B5CF6"), true),
         ThemePreset.HighContrast => (ColorHelper.FromHex("#FFFF00"), true),
+        ThemePreset.Brutal => (ColorHelper.FromHex("#FFE14D"), false),
         _ => (ColorHelper.FromHex("#FF7900"), false)
     };
 
