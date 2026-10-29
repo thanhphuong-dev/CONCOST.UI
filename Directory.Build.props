@@ -3,6 +3,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
+    <Version>3.1.0</Version>
+    <PackageVersion>3.1.0</PackageVersion>
+    <AssemblyVersion>3.1.0.0</AssemblyVersion>
+    <FileVersion>3.1.0.0</FileVersion>
+    <RepositoryUrl>https://github.com/thanhphuong-dev/CONCOST.UI</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://thanhphuong-dev.github.io/CONCOST.UI/</PackageProjectUrl>
+    <Description>A multi-target WPF component library for engineering, CAD, BIM and desktop applications (.NET Framework 4.8, .NET 8, .NET 10).</Description>
+    <PackageTags>wpf;controls;ui;engineering;cad;bim;theme;design-system</PackageTags>
     <Authors>CONCOST Ecosystem</Authors>
     <Company>CONCOST</Company>
     <Product>CONCOST WPF UI Library</Product>

@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [3.1.0] - 2026-10-29
+
 ### Added
 - Four controls ported from modern web UI patterns:
   - `SpotlightCard` — cursor-following radial spotlight plus a gradient border revealed on hover (`CONCOST.SpotlightCard.Base` / `.Glass`).
@@ -16,8 +20,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - `docs/tools/fetch-fonts.py` re-downloads the localised font subsets; `docs/tools/build-index.js` now also emits the page → source file map.
 - "Edit this page" link in the reading rail, pointing at the exact data file that owns the page.
 - `docs/data/en/code.js`: 290-entry Vietnamese → English dictionary applied to code snippets, so EN pages no longer show Vietnamese comments or sample strings (289 code lines covered, 0 left).
-- Bilingual documentation: VI / EN switch in the top bar (`?lang=en` / `?lang=vi` deep links), 79 English page overlays, 302 generated English property descriptions, and localised navigation, badges, table of contents and command palette.
-- Documentation wiki rebuilt as a static site (`docs/`) with 79 pages, command palette search (`Ctrl K`), per-page table of contents, XAML/C# code inspector, light/dark themes and five accent colours.
+- Bilingual documentation: VI / EN switch in the top bar (`?lang=en` / `?lang=vi` deep links), 84 English page overlays, 324 generated English property descriptions, and localised navigation, badges, table of contents and command palette.
+- Documentation wiki rebuilt as a static site (`docs/`) with 84 pages, command palette search (`Ctrl K`), per-page table of contents, XAML/C# code inspector, light/dark themes and five accent colours.
 - New reference pages: `SplitButton`, `Expander`, `Badge`, `Skeleton`, `Ripple`, `OtpInput`, `PasswordInput`, loading indicators (`LoadingIndicator`, `CycleLoading`, `RingLoading`, `RollLoading`, `WaitLoading`, `LoadingCircle`, `LoadingLine`), `LoadingOverlay`, `AdaptivePanel`, `NavigationView`, `CONCOSTWindow`, `DataPager`, `CalendarWithClock`.
 - New basic-control pages: `CheckBox`, `RadioButton`, `Slider`, `ScrollViewer`, `ListBox`, `ListView`, `GroupBox`, `Menu`/`ContextMenu`, typography (`TextBlock` styles).
 - Guide pages: FAQ & troubleshooting, WinForms/WPF migration playbook.
@@ -62,5 +66,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.1.0
 [3.0.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.0.0
