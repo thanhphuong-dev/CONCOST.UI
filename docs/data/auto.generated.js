@@ -1236,7 +1236,7 @@ const DOCS_AUTO = {
         "default": "null",
         "readonly": false,
         "attached": false,
-        "desc": "Màu nền của khối skeleton."
+        "desc": "Brush nền cho ô/khối không có dữ liệu (mặc định)."
       },
       {
         "name": "HighlightBrush",
@@ -3438,7 +3438,7 @@ const DOCS_AUTO = {
         "default": "DateTime.Today.AddDays(-181)",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>StartDate</code> (DateTime)."
+        "desc": "Ngày bắt đầu của chuỗi dữ liệu (phần tử đầu tiên ứng với ngày này)."
       },
       {
         "name": "CellSize",
@@ -3446,7 +3446,7 @@ const DOCS_AUTO = {
         "default": "12.0",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>CellSize</code> (double)."
+        "desc": "Cạnh của mỗi ô vuông (px)."
       },
       {
         "name": "CellGap",
@@ -3454,7 +3454,7 @@ const DOCS_AUTO = {
         "default": "3.0",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>CellGap</code> (double)."
+        "desc": "Khoảng cách giữa hai ô (px)."
       },
       {
         "name": "CornerRadius",
@@ -3470,7 +3470,7 @@ const DOCS_AUTO = {
         "default": "null",
         "readonly": false,
         "attached": false,
-        "desc": "Màu nền của khối skeleton."
+        "desc": "Brush nền cho ô/khối không có dữ liệu (mặc định)."
       },
       {
         "name": "Level1Brush",
@@ -3478,7 +3478,7 @@ const DOCS_AUTO = {
         "default": "null",
         "readonly": false,
         "attached": false,
-        "desc": "Brush/màu cho <b>level1</b>."
+        "desc": "Màu mức 1 — cường độ thấp nhất (trên 0)."
       },
       {
         "name": "Level2Brush",
@@ -3486,7 +3486,7 @@ const DOCS_AUTO = {
         "default": "null",
         "readonly": false,
         "attached": false,
-        "desc": "Brush/màu cho <b>level2</b>."
+        "desc": "Màu mức 2."
       },
       {
         "name": "Level3Brush",
@@ -3494,7 +3494,7 @@ const DOCS_AUTO = {
         "default": "null",
         "readonly": false,
         "attached": false,
-        "desc": "Brush/màu cho <b>level3</b>."
+        "desc": "Màu mức 3."
       },
       {
         "name": "Level4Brush",
@@ -3502,7 +3502,7 @@ const DOCS_AUTO = {
         "default": "null",
         "readonly": false,
         "attached": false,
-        "desc": "Brush/màu cho <b>level4</b>."
+        "desc": "Màu mức 4 — cường độ cao nhất."
       },
       {
         "name": "ShowMonthLabels",
@@ -3510,7 +3510,7 @@ const DOCS_AUTO = {
         "default": "true",
         "readonly": false,
         "attached": false,
-        "desc": "Hiển thị thành phần <b>month labels</b>."
+        "desc": "Hiện nhãn tháng phía trên lưới."
       },
       {
         "name": "MonthLabelBrush",
@@ -3518,7 +3518,7 @@ const DOCS_AUTO = {
         "default": "null",
         "readonly": false,
         "attached": false,
-        "desc": "Brush/màu cho <b>month label</b>."
+        "desc": "Màu chữ của nhãn tháng."
       },
       {
         "name": "MonthLabelFontSize",
@@ -3526,7 +3526,7 @@ const DOCS_AUTO = {
         "default": "9.5",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>MonthLabelFontSize</code> (double)."
+        "desc": "Cỡ chữ nhãn tháng."
       }
     ],
     "events": [],
@@ -3550,7 +3550,7 @@ const DOCS_AUTO = {
         "default": "48.0",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Speed</code> (double)."
+        "desc": "Tốc độ chạy (pixel/giây)."
       },
       {
         "name": "Gap",
@@ -3558,7 +3558,7 @@ const DOCS_AUTO = {
         "default": "64.0",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Gap</code> (double)."
+        "desc": "Khoảng cách giữa hai lần lặp nội dung (px)."
       },
       {
         "name": "FontSize",
@@ -3582,7 +3582,7 @@ const DOCS_AUTO = {
         "default": "\" • \"",
         "readonly": false,
         "attached": false,
-        "desc": "Thiết lập <code>Separator</code> (string)."
+        "desc": "Chuỗi chèn giữa các lần lặp nội dung."
       },
       {
         "name": "IsRunning",
@@ -3590,7 +3590,7 @@ const DOCS_AUTO = {
         "default": "true",
         "readonly": false,
         "attached": false,
-        "desc": "Bật/tắt trạng thái <b>running</b>."
+        "desc": "Đang chạy animation."
       }
     ],
     "events": [],
@@ -3870,7 +3870,7 @@ const DOCS_EN_PROPS = {
   "Badge": "Count/notification badge attached to the item.",
   "BadgeMargin": "Offset of the badge from the control corner.",
   "BarBrush": "Bar colour of the bar chart.",
-  "BaseBrush": "Background brush of the skeleton block.",
+  "BaseBrush": "Background brush for empty cells/blocks (default state).",
   "BindingPath": "Property path used to bind the cell.",
   "BorderGradient": "Border brush revealed on hover — use a <code>LinearGradientBrush</code> for a multi-colour edge.",
   "Brush": "Brush used by the effect (attached).",
@@ -3880,9 +3880,9 @@ const DOCS_EN_PROPS = {
   "CanUserResize": "Allows the user to resize this column.",
   "CanUserSort": "Allows the user to sort by this column.",
   "Categories": "Property groups of the property grid.",
-  "CellGap": "Sets <code>CellGap</code> (double).",
+  "CellGap": "Spacing between cells in pixels.",
   "CellHorizontalContentAlignment": "Sets <code>CellHorizontalContentAlignment</code> (HorizontalAlignment).",
-  "CellSize": "Sets <code>CellSize</code> (double).",
+  "CellSize": "Side length of each cell in pixels.",
   "CellType": "Cell renderer: <code>Text</code>, <code>Numeric</code>, <code>Progress</code>, <code>Badge</code>, <code>Rating</code>, <code>Date</code>, <code>Hyperlink</code>, <code>CheckBox</code>.",
   "Center": "Centre of the magnified area.",
   "CenterText": "Text rendered in the middle of the pie chart.",
@@ -3942,7 +3942,7 @@ const DOCS_EN_PROPS = {
   "Format": "Sets <code>Format</code> (string).",
   "FormatString": "Numeric .NET format string (e.g. <code>N2</code>, <code>0.###</code>).",
   "FormulaText": "Formula of the selected cell.",
-  "Gap": "Sets <code>Gap</code> (double).",
+  "Gap": "Spacing between two repetitions of the content, in pixels.",
   "GridLevels": "Number of radar grid rings.",
   "GridLineBrush": "Grid line colour.",
   "GridSize": "Grid cell size in pixels.",
@@ -3994,7 +3994,7 @@ const DOCS_EN_PROPS = {
   "IsPassword": "Masks the content with password characters.",
   "IsReadOnly": "Read-only mode — content can be selected and copied but not edited.",
   "IsRippleEnabled": "Enables the ripple effect.",
-  "IsRunning": "Toggles the <b>running</b> state.",
+  "IsRunning": "Whether the animation is running.",
   "IsSelected": "Whether the item/control is selected.",
   "IsSpotlightEnabled": "Enables the spotlight effect (turn it off on long lists to keep FPS).",
   "IsUpdating": "Toggles the <b>updating</b> state.",
@@ -4011,10 +4011,10 @@ const DOCS_EN_PROPS = {
   "Kind": "Sets <code>Kind</code> (IconKind).",
   "LastDotBrush": "Brush of the last-point marker.",
   "Length": "Number of cells/characters to enter.",
-  "Level1Brush": "Brush used for <b>level1</b>.",
-  "Level2Brush": "Brush used for <b>level2</b>.",
-  "Level3Brush": "Brush used for <b>level3</b>.",
-  "Level4Brush": "Brush used for <b>level4</b>.",
+  "Level1Brush": "Level 1 colour — lowest intensity (above zero).",
+  "Level2Brush": "Level 2 colour.",
+  "Level3Brush": "Level 3 colour.",
+  "Level4Brush": "Level 4 colour — highest intensity.",
   "LineBrush": "Line colour of the line chart.",
   "LineStyle": "Line style: <code>Solid</code>, <code>Dashed</code>, <code>Dotted</code>.",
   "ListHeight": "Height of each list.",
@@ -4047,8 +4047,8 @@ const DOCS_EN_PROPS = {
   "MinWidth": "Minimum width.",
   "MinZoom": "Minimum zoom level.",
   "Mode": "Operating mode (meaning depends on the control).",
-  "MonthLabelBrush": "Brush used for <b>month label</b>.",
-  "MonthLabelFontSize": "Sets <code>MonthLabelFontSize</code> (double).",
+  "MonthLabelBrush": "Brush of the month labels.",
+  "MonthLabelFontSize": "Font size of the month labels.",
   "MultiColor": "Gives each bar its own colour.",
   "Name": "Identifier.",
   "OffContent": "Content shown in the off state.",
@@ -4097,7 +4097,7 @@ const DOCS_EN_PROPS = {
   "SelectionBorderBrush": "Selection border brush.",
   "SelectionBrush": "Selection background brush.",
   "SelectionRange": "Selected cell range in the spreadsheet.",
-  "Separator": "Sets <code>Separator</code> (string).",
+  "Separator": "String inserted between repetitions.",
   "SeparatorIcon": "Icon between breadcrumb items.",
   "Sheets": "Sheets of the workbook.",
   "ShowAlpha": "Allows picking the alpha channel.",
@@ -4115,7 +4115,7 @@ const DOCS_EN_PROPS = {
   "ShowHoverBorder": "Shows the border on hover (turn off to keep only the spotlight).",
   "ShowLastDot": "Marks the newest data point with a dot.",
   "ShowLegend": "Shows the chart legend.",
-  "ShowMonthLabels": "Shows the <b>month labels</b> part.",
+  "ShowMonthLabels": "Shows month labels above the grid.",
   "ShowOverflow": "Shows the +N chip when the item count exceeds <code>MaxVisible</code>.",
   "ShowPassword": "Reveals or hides the typed password.",
   "ShowRowDivider": "Shows the <b>row divider</b> part.",
@@ -4138,13 +4138,13 @@ const DOCS_EN_PROPS = {
   "SourceContent": "Original content (left side) of the comparison slider.",
   "SourceTitle": "Title of the source list.",
   "Spacing": "Spacing between items.",
-  "Speed": "Sets <code>Speed</code> (double).",
+  "Speed": "Scroll speed in pixels per second.",
   "SpotlightBrush": "Colour of the cursor-following spotlight (defaults to the theme accent).",
   "SpotlightOpacity": "Maximum spotlight opacity (0–1).",
   "SpotlightSize": "Diameter of the spotlight area in pixels.",
   "StackedHeaderRows": "Header level definitions.",
   "StackedRowHeight": "Height of each header level.",
-  "StartDate": "Sets <code>StartDate</code> (DateTime).",
+  "StartDate": "First day of the series (the first element maps to this date).",
   "StartValue": "Start of the range.",
   "Status": "Business status rendered on the control.",
   "StaysOpen": "Keeps the dropdown open when clicking outside.",
