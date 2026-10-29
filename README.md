@@ -1,73 +1,44 @@
 # CONCOST.UI
 
-**A multi-target WPF control library for .NET Framework 4.8, .NET 8, and .NET 10, built for desktop, Revit, and AutoCAD plugin workflows.**
+**A multi-target WPF component library for engineering, CAD, BIM, and desktop applications.**
 
-![Targets](https://img.shields.io/badge/targets-.NET%20Framework%204.8%20%7C%20.NET%208%20%7C%20.NET%2010-512BD4)
+[English](README.md) · [Tiếng Việt](README.vi.md)
+
+![Frameworks](https://img.shields.io/badge/frameworks-.NET%20Framework%204.8%20%7C%20.NET%208%20%7C%20.NET%2010-512BD4)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20WPF-0078D4)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
 
-CONCOST.UI brings custom WPF controls, theme resources, design tokens, and engineering-oriented components together in one library, with a matching `CONCOST.UI.dll` build for each supported target framework.
+CONCOST.UI provides reusable controls, theme resources, icons, and engineering-focused components in the **`CONCOST.UI`** library. It is designed for standalone WPF applications and WPF views hosted by products such as Revit and AutoCAD.
 
-> **Platform:** Windows desktop applications and WPF plugins. The library targets .NET Framework 4.8, .NET 8, and .NET 10. WPF is Windows-only; the host must provide the matching runtime and WPF framework.
+## Highlights
 
-## Features
+- **Three target frameworks:** .NET Framework 4.8, .NET 8, and .NET 10. Select the build that matches the host application.
+- **A broad WPF control set:** data grids, spreadsheet, navigation, input, dashboards, charts, engineering tools, and visual effects.
+- **Consistent styling:** light and dark themes, accent colors, theme presets, and shared design tokens.
+- **Host-aware theming:** apply resources to a plugin view without requiring a separate WPF `Application` or taking over the host application's global resources.
+- **Interactive examples:** use the Showcase application to explore controls, change themes, and inspect usage examples.
 
-- A single `CONCOST.UI` assembly containing the controls, icons, theme resources, and shared helpers.
-- Light and dark theme resources with configurable accent colors and presets.
-- Reusable WPF controls for numeric and unit input, navigation, data entry, dashboards, and engineering workflows.
-- Vector-based icons and attached properties for extending standard WPF controls.
-- XAML examples in the Demo and Showcase applications.
+## Framework compatibility
 
-## Repository layout
+| Library build | Intended host |
+| --- | --- |
+| `net48` | WPF applications and plugins targeting .NET Framework 4.8 |
+| `net8.0-windows` | WPF applications and plugins targeting .NET 8 |
+| `net10.0-windows` | WPF applications and plugins targeting .NET 10 |
 
-```text
-.
-├── .github/                         # GitHub Actions and issue templates
-├── .agents/                         # Repository-specific development guidance
-├── docs/                            # Documentation site and archived planning documents
-│   └── roadmap/
-├── samples/
-│   └── CONCOST.UI.Showcase/         # Control gallery and detailed examples
-├── src/
-│   └── CONCOST.UI/                  # The single library project and assembly
-├── tests/
-│   └── CONCOST.UI.Tests/            # xUnit test project
-├── CONCOST.UI.sln                  # Visual Studio solution
-├── Directory.Build.props            # Shared .NET build settings
-└── README.md
+Revit and AutoCAD runtime requirements vary by release. Check the requirements for the exact host version, then reference the matching `CONCOST.UI.dll`. A project reference selects a compatible target automatically when one is available.
+
+## Quick start
+
+### Add a project reference
+
+```xml
+<ItemGroup>
+  <ProjectReference Include="path/to/CONCOST.UI/src/CONCOST.UI/CONCOST.UI.csproj" />
+</ItemGroup>
 ```
 
-The current solution builds one library project. The `CONCOST.UI.Core` and `CONCOST.UI.Themes` namespaces organize code inside that assembly; they are not separate DLL dependencies.
-
-## Requirements
-
-- Windows 10 or later
-- .NET 8 SDK and .NET 10 SDK
-- .NET Framework 4.8 reference assemblies (restored automatically for builds)
-- Visual Studio 2022 with the **.NET desktop development** workload (optional, for IDE development)
-
-## Build and run
-
-Run these commands from the repository root in PowerShell or a terminal:
-
-```powershell
-dotnet restore CONCOST.UI.sln
-dotnet build CONCOST.UI.sln --configuration Release
-```
-
-Run the Showcase application:
-
-```powershell
-dotnet run --project samples/CONCOST.UI.Showcase/CONCOST.UI.Showcase.csproj
-```
-
-Run the test suite:
-
-```powershell
-dotnet test tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Release
-```
-
-The library builds one assembly per target framework:
+Or reference the prebuilt assembly for the host's target framework:
 
 ```text
 src/CONCOST.UI/bin/Release/net48/CONCOST.UI.dll
@@ -75,29 +46,11 @@ src/CONCOST.UI/bin/Release/net8.0-windows/CONCOST.UI.dll
 src/CONCOST.UI/bin/Release/net10.0-windows/CONCOST.UI.dll
 ```
 
-Choose the assembly that matches the host application's target framework. Revit and AutoCAD versions can use different .NET runtimes, so check the API/runtime requirements for the exact host version before adding the reference. The `net48` build uses `System.Text.Json`; when distributing that target outside NuGet, include its runtime dependencies from the build output as well.
+The library targets Windows because WPF is Windows-only. The host application must provide its matching .NET runtime and WPF framework. The `net48` build uses `System.Text.Json` and its runtime dependencies; when distributing that target, use the NuGet package or include the dependencies from the build output.
 
-## Add CONCOST.UI to a WPF application
+### Merge the theme dictionaries
 
-### Option 1: Add a project reference
-
-For development alongside this repository, add a project reference to the library:
-
-```xml
-<ItemGroup>
-  <ProjectReference Include="path/to/CONCOST.UI/CONCOST.UI.csproj" />
-</ItemGroup>
-```
-
-Alternatively, in Visual Studio, right-click the WPF application project, select **Add > Project Reference**, and choose `CONCOST.UI`.
-
-### Option 2: Reference the built assembly
-
-Build the library, then add the matching `CONCOST.UI.dll` reference from the host application. The host must target a compatible Windows framework with WPF enabled. A `net8.0-windows` host should use the `net8.0-windows` assembly; a .NET Framework 4.8 plugin should use `net48`; a `net10.0-windows` host should use `net10.0-windows`. The host application still needs its matching runtime.
-
-## Load the themes
-
-Merge the library's theme resources and control styles into the WPF application's resources. The sample applications use this setup in `App.xaml`:
+For a standalone WPF application, add the library dictionaries to `App.xaml`:
 
 ```xml
 <Application.Resources>
@@ -110,7 +63,7 @@ Merge the library's theme resources and control styles into the WPF application'
 </Application.Resources>
 ```
 
-## Use controls in XAML
+### Use a control
 
 ```xml
 <Window
@@ -134,7 +87,7 @@ Merge the library's theme resources and control styles into the WPF application'
 </Window>
 ```
 
-## Change the theme in C#
+### Change the theme at runtime
 
 ```csharp
 using System.Windows.Media;
@@ -145,11 +98,11 @@ ThemeManager.Current.Preset = ThemePreset.Ocean;
 ThemeManager.Current.AccentColor = Color.FromRgb(2, 132, 199);
 ```
 
-`ThemeManager.Current` also exposes presets such as `Default`, `Forest`, `Sunset`, `Slate`, `Midnight`, and `HighContrast`.
+Available presets include `Default`, `Forest`, `Sunset`, `Slate`, `Midnight`, and `HighContrast`.
 
-### Use CONCOST.UI from a Revit or AutoCAD WPF plugin
+## Use in a Revit or AutoCAD plugin
 
-A plugin class library does not need to define its own `App.xaml` or create an `Application`. Apply the resources to the plugin window or `UserControl` root instead. This keeps theme changes scoped to the plugin view instead of changing resources owned by Revit, AutoCAD, or another host:
+A plugin class library does not need its own `App.xaml` or `Application` instance. Apply the theme to the plugin's root `UserControl` or window so its resources remain scoped to that view:
 
 ```csharp
 using System.Windows.Media;
@@ -160,7 +113,6 @@ public partial class SettingsPanel : UserControl
     public SettingsPanel()
     {
         InitializeComponent();
-
         ThemeManager.Current.ApplyTheme(this, AppTheme.Light);
         ThemeManager.Current.ApplyAccentColor(this, Color.FromRgb(2, 132, 199));
     }
@@ -172,19 +124,68 @@ public partial class SettingsPanel : UserControl
 }
 ```
 
-`ApplyTheme(rootElement, theme)` loads the design tokens, selected light/dark palette, and control styles into the supplied root. The same call can be repeated at runtime to switch the plugin view's theme. `ApplyAccentColor(rootElement, color)` and `ApplySurfaceStyle(rootElement, style)` also work without relying on `Application.Current`. Ensure the plugin target framework is supported by the specific Revit or AutoCAD version being hosted.
+The same view-level API supports runtime theme changes and works without `Application.Current`. See the [Getting Started guide](docs/GettingStarted.md) for more integration details.
 
-## Documentation and examples
+## Build, run, and verify
 
+### Requirements
+
+- Windows 10 or later
+- .NET 8 SDK and .NET 10 SDK
+- Visual Studio 2022 with the **.NET desktop development** workload (optional)
+- .NET Framework 4.8 reference assemblies are restored automatically for the `net48` build
+
+### Build the solution
+
+```powershell
+dotnet restore CONCOST.UI.sln
+dotnet build CONCOST.UI.sln --configuration Release
+```
+
+### Run the Showcase
+
+```powershell
+dotnet run --project samples/CONCOST.UI.Showcase/CONCOST.UI.Showcase.csproj
+```
+
+### Run tests
+
+```powershell
+dotnet test tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Release
+```
+
+## Repository structure
+
+```text
+.
+├── .github/                         # CI workflow and contribution templates
+├── docs/                            # Guides, component documentation, and roadmap archive
+├── samples/
+│   └── CONCOST.UI.Showcase/         # Interactive control gallery
+├── src/
+│   └── CONCOST.UI/                  # Multi-target WPF library
+├── tests/
+│   └── CONCOST.UI.Tests/            # Automated test project
+├── CONCOST.UI.sln
+├── Directory.Build.props
+├── README.md
+└── README.vi.md
+```
+
+The solution contains one library project. Namespaces such as `CONCOST.UI.Core` and `CONCOST.UI.Themes` organize code within the assembly; they are not separate DLL dependencies.
+
+## Documentation
+
+- [Getting Started](docs/GettingStarted.md)
+- [Migration Guide](docs/MigrationGuide.md)
 - [Interactive component documentation](docs/index.html)
 - [Control Showcase](samples/CONCOST.UI.Showcase/)
-- [Planning documents](docs/roadmap/)
-- [Contribution guide](CONTRIBUTING.md)
+- [Contributing](CONTRIBUTING.md)
 
 ## Contributing
 
-Bug reports, feature requests, and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a change. New controls should include appropriate theme resources, a Showcase example, and tests where practical.
+Bug reports, feature requests, and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before contributing. New controls should include appropriate theme resources, a Showcase example, and tests where practical.
 
 ## License
 
-CONCOST.UI is licensed under the [MIT License](LICENSE).
+CONCOST.UI is distributed under the [MIT License](LICENSE).
