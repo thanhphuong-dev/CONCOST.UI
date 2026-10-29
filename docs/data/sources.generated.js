@@ -61,6 +61,8 @@ const DOCS_SOURCES = {
   "odometernumber": "data/web.js",
   "sparkline": "data/web.js",
   "avatarstack": "data/web.js",
+  "heatmapcalendar": "data/web.js",
+  "marqueeticker": "data/web.js",
   "badge": "data/custom.js",
   "expander": "data/custom.js",
   "splitbutton": "data/custom.js",

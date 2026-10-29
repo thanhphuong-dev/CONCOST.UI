@@ -173,5 +173,74 @@ stack.OverflowTextFormat = "còn {0}";`
             }
         ],
         related: ["badge", "tag", "statisticcard"]
+    },
+
+    heatmapcalendar: {
+        title: "HeatmapCalendar — mật độ theo ngày",
+        badge: "Dữ liệu & Dashboard",
+        desc: "Lưới ô vuông kiểu GitHub contribution: mỗi ô là một ngày, màu đậm nhạt theo số lượng. Dùng cho nhật ký đổ bê tông, số lượt nghiệm thu, mật độ quan trắc — nhìn một cái là thấy chỗ nào dày, chỗ nào trống.",
+        keywords: ["heatmap", "calendar", "contribution", "activity", "mật độ"],
+        sections: [
+            {
+                title: "Mỗi phần tử là một ngày",
+                desc: "<code>Values</code> là dãy số nguyên, phần tử đầu ứng với <code>StartDate</code>. Màu chia 4 mức theo tỉ lệ so với giá trị lớn nhất; ô 0 dùng <code>BaseBrush</code>. Cột là tuần, hàng là thứ (bắt đầu thứ Hai).",
+                xaml: `<ui:HeatmapCalendar Values="{Binding PourCounts}"
+                    StartDate="{Binding StartDate}"
+                    CellSize="13" CellGap="3"
+                    ShowMonthLabels="True" />`,
+                csharp: `// Gom nhật ký đổ bê tông theo ngày
+var counts = pours
+    .GroupBy(p => p.Date.Date)
+    .OrderBy(g => g.Key)
+    .Select(g => g.Count())
+    .ToList();
+
+var heatmap = new HeatmapCalendar
+{
+    Values = counts,
+    StartDate = DateTime.Today.AddDays(-counts.Count + 1),
+    CellSize = 13,
+    CellGap = 3
+};
+
+// Đổi thang màu theo bộ màu thương hiệu
+heatmap.Level1Brush = new SolidColorBrush(Color.FromArgb(90, 0xFF, 0x79, 0x00));
+heatmap.Level4Brush = new SolidColorBrush(Color.FromRgb(0xFF, 0x79, 0x00));`
+            }
+        ],
+        related: ["sparkline", "statisticcard", "timeline"]
+    },
+
+    marqueeticker: {
+        title: "MarqueeTicker — dòng thông báo chạy ngang",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Dải chữ chạy liên tục cho thanh trạng thái, bảng tin công trường hoặc ticker chứng khoán. Render trực tiếp và chạy bằng <code>CompositionTarget.Rendering</code> nên mượt, không tạo Storyboard cho từng item.",
+        keywords: ["marquee", "ticker", "scroll text", "chạy chữ", "status"],
+        sections: [
+            {
+                title: "Ticker cho thanh trạng thái",
+                desc: "<code>Speed</code> tính bằng pixel/giây. <code>Separator</code> chèn giữa các lần lặp. Đặt <code>IsRunning=&quot;False&quot;</code> để tạm dừng mà không mất vị trí.",
+                xaml: `<Border CornerRadius="8" Padding="12,0" BorderThickness="1"
+        Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
+        BorderBrush="{DynamicResource CONCOST.Brush.Border}">
+    <ui:MarqueeTicker Text="{Binding SiteNotice}" Speed="55" Height="30" />
+</Border>`,
+                csharp: `var ticker = new MarqueeTicker
+{
+    Text = "Công trường A — đổ bê tông sàn tầng 12 · 3 mũi thi công đang hoạt động",
+    Speed = 55,        // px / giây
+    Separator = "  •  ",
+    FontSize = 13
+};
+
+// Tạm dừng / chạy tiếp
+ticker.IsRunning = false;`,
+                callout: {
+                    type: "tip",
+                    body: "Nếu ticker nằm trong danh sách cuộn dài, đặt <code>IsRunning=&quot;False&quot;</code> khi item không hiển thị để tránh vẽ thừa mỗi frame."
+                }
+            }
+        ],
+        related: ["growl", "spotlightcard", "timeline"]
     }
 };

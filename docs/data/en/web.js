@@ -117,5 +117,58 @@ stack.Overlap = 14;
 stack.OverflowTextFormat = "{0} more";`
             }
         ]
+    },
+
+    heatmapcalendar: {
+        title: "HeatmapCalendar — daily intensity grid",
+        desc: "GitHub-style contribution grid: one square per day, shaded by intensity. Use it for concrete pour logs, inspection counts or monitoring density — gaps and hot spots become obvious at a glance.",
+        sections: [
+            {
+                title: "One element per day",
+                desc: "<code>Values</code> is a sequence of integers; the first element maps to <code>StartDate</code>. Colours use four levels relative to the maximum, while zero days use <code>BaseBrush</code>. Columns are weeks, rows are weekdays (Monday first).",
+                csharp: `// Group the pour log by day
+var counts = pours
+    .GroupBy(p => p.Date.Date)
+    .OrderBy(g => g.Key)
+    .Select(g => g.Count())
+    .ToList();
+
+var heatmap = new HeatmapCalendar
+{
+    Values = counts,
+    StartDate = DateTime.Today.AddDays(-counts.Count + 1),
+    CellSize = 13,
+    CellGap = 3
+};
+
+// Recolour the scale to the brand palette
+heatmap.Level1Brush = new SolidColorBrush(Color.FromArgb(90, 0xFF, 0x79, 0x00));
+heatmap.Level4Brush = new SolidColorBrush(Color.FromRgb(0xFF, 0x79, 0x00));`
+            }
+        ]
+    },
+
+    marqueeticker: {
+        title: "MarqueeTicker — scrolling notice strip",
+        desc: "A continuously scrolling text strip for status bars, site notice boards and tickers. It renders directly and is driven by <code>CompositionTarget.Rendering</code>, so it stays smooth without a Storyboard per item.",
+        sections: [
+            {
+                title: "Status bar ticker",
+                desc: "<code>Speed</code> is in pixels per second. <code>Separator</code> is inserted between repetitions. Set <code>IsRunning=&quot;False&quot;</code> to pause without losing the position.",
+                csharp: `var ticker = new MarqueeTicker
+{
+    Text = "Site A — pouring slab level 12 · 3 crews active",
+    Speed = 55,        // pixels per second
+    Separator = "  •  ",
+    FontSize = 13
+};
+
+// Pause / resume
+ticker.IsRunning = false;`,
+                callout: {
+                    body: "If the ticker lives inside a long scrolling list, set <code>IsRunning=&quot;False&quot;</code> while the item is off-screen to avoid painting every frame."
+                }
+            }
+        ]
     }
 });

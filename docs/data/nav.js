@@ -35,6 +35,7 @@ const DOCS_NAV = [
             { id: "odometernumber", name: "OdometerNumber", icon: "fa-arrow-trend-up", badge: "Mới", badgeEn: "New" },
             { id: "sparkline", name: "Sparkline", icon: "fa-chart-simple", badge: "Mới", badgeEn: "New" },
             { id: "avatarstack", name: "AvatarStack", icon: "fa-user-group", badge: "Mới", badgeEn: "New" },
+            { id: "heatmapcalendar", name: "HeatmapCalendar", icon: "fa-calendar-days", badge: "Mới", badgeEn: "New" },
             { id: "propertygrid", name: "PropertyGrid", icon: "fa-sliders" }
         ]
     },
@@ -101,6 +102,7 @@ const DOCS_NAV = [
         items: [
             { id: "ripple", name: "Ripple", icon: "fa-water", badge: "Mới", badgeEn: "New" },
             { id: "spotlightcard", name: "SpotlightCard", icon: "fa-wand-sparkles", badge: "Mới", badgeEn: "New" },
+            { id: "marqueeticker", name: "MarqueeTicker", icon: "fa-arrows-left-right-to-line", badge: "Mới", badgeEn: "New" },
             { id: "snowcanvas", name: "SnowCanvas", icon: "fa-snowflake" },
             { id: "sprite", name: "Sprite", icon: "fa-circle-dot" },
             { id: "compareslider", name: "CompareSlider", icon: "fa-arrows-left-right" },

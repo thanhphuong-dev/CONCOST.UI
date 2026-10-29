@@ -953,6 +953,8 @@ PAGE_CLASS = {
     "odometernumber": ["OdometerNumber"],
     "sparkline": ["Sparkline"],
     "avatarstack": ["AvatarStack"],
+    "heatmapcalendar": ["HeatmapCalendar"],
+    "marqueeticker": ["MarqueeTicker"],
     # effects
     "snowcanvas": ["SnowCanvas"],
     "sprite": ["Sprite"],

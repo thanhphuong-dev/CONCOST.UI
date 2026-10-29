@@ -7,6 +7,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 _Nothing yet._
 
+## [3.2.0] - 2026-10-29
+
+### Added
+- `HeatmapCalendar` — GitHub-style daily intensity grid with four colour levels, month labels and configurable cell size/gap, for pour logs, inspections and monitoring density.
+- `MarqueeTicker` — continuously scrolling status strip driven by `CompositionTarget.Rendering`, with speed, separator and pause support.
+- Showcase demos for both, plus **View XAML / View C#** panels on every web-inspired demo (the four 3.1.0 demos previously shipped without code).
+
+### Fixed
+- Showcase: the new-control demos were missing the code panels that every other demo has, so users could not see the XAML or C# behind them.
+
 ## [3.1.0] - 2026-10-29
 
 ### Added
@@ -66,6 +76,7 @@ _Nothing yet._
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.2.0
 [3.1.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.1.0
 [3.0.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.0.0
