@@ -13,6 +13,19 @@ Reference the single `CONCOST.UI` project from your WPF application:
 </ItemGroup>
 ```
 
+Merge both dictionaries — `ThemeResources.xaml` carries the tokens and the default theme, `Generic.xaml` carries every control style:
+
+```xml
+<Application.Resources>
+    <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="pack://application:,,,/CONCOST.UI;component/Themes/ThemeResources.xaml" />
+            <ResourceDictionary Source="pack://application:,,,/CONCOST.UI;component/Themes/Generic.xaml" />
+        </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+</Application.Resources>
+```
+
 Configure the theme directly without a dependency injection package:
 
 ```csharp
@@ -29,7 +42,7 @@ ThemeManager.Current.Preset = ThemePreset.Default;
 | `TextBox` (numeric input) | `<ui:NumericUpDown Suffix=" mm" />` | Automatic min/max limits, keyboard and mouse increments, and number formatting |
 | `TextBox` (engineering units) | `<ui:UnitBox Unit="kN.m" />` or `<eng:MomentBox />` | Engineering unit labels and consistent formatting |
 | Rebar input | `<eng:RebarInput Text="4D20" />` | Parses rebar notation and calculates steel area $A_s$ instantly |
-| `DataGridView` | `<DataGrid Style="{StaticResource CONCOST.DataGrid.Default}" />` | Zebra rows with automatic light/dark theme colors |
+| `DataGridView` | `<DataGrid Style="{StaticResource CONCOST.DataGrid.Base}" />` | Zebra rows with automatic light/dark theme colors |
 | Drawing canvas | `<canvas:ZoomableCanvas />` | Unlimited zoom and pan with a scalable CAD grid |
 
 ---

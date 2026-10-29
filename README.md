@@ -176,11 +176,17 @@ The solution contains one library project. Namespaces such as `CONCOST.UI.Core` 
 
 ## Documentation
 
-- [Getting Started](docs/GettingStarted.md)
-- [Migration Guide](docs/MigrationGuide.md)
+The full reference is an interactive static wiki with 79 pages, search (`Ctrl K`), XAML/C# code inspector and light/dark themes — open [`docs/index.html`](docs/index.html).
+
+- [Documentation index](docs/README.md) — page map and maintenance workflow
+- [Getting Started](docs/GettingStarted.md) — integration, theming, plugin hosting, build
+- [Migration Guide](docs/MigrationGuide.md) — WinForms/WPF mapping and deprecation policy
 - [Interactive component documentation](docs/index.html)
+- [Changelog](CHANGELOG.md)
 - [Control Showcase](samples/CONCOST.UI.Showcase/)
 - [Contributing](CONTRIBUTING.md)
+
+Property tables and C# samples are generated from the source: run `python docs/tools/build-props.py` after adding or renaming a `DependencyProperty`, and `python docs/tools/check-xaml.py` to verify that every snippet still matches the real API.
 
 ## Contributing
 

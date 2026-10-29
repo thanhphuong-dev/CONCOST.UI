@@ -176,11 +176,17 @@ Solution có một project thư viện. Các namespace như `CONCOST.UI.Core` v�
 
 ## Tài liệu
 
-- [Hướng dẫn bắt đầu](docs/GettingStarted.md)
+Toàn bộ tài liệu tham chiếu là một wiki tĩnh tương tác gồm 79 trang, có tìm kiếm (`Ctrl K`), code inspector XAML/C# và theme sáng/tối — mở [`docs/index.html`](docs/index.html).
+
+- [Mục lục tài liệu](docs/README.md) — bản đồ trang và quy trình cập nhật
+- [Hướng dẫn bắt đầu](docs/GettingStarted.md) — tích hợp, theme, plugin host, build
 - [Hướng dẫn chuyển đổi phiên bản](docs/MigrationGuide.md)
 - [Tài liệu control tương tác](docs/index.html)
+- [Lịch sử phiên bản](CHANGELOG.md)
 - [Control Showcase](samples/CONCOST.UI.Showcase/)
 - [Hướng dẫn đóng góp](CONTRIBUTING.md)
+
+Bảng thuộc tính và snippet C# được sinh trực tiếp từ source: chạy `python docs/tools/build-props.py` sau khi thêm/đổi tên `DependencyProperty`, và `python docs/tools/check-xaml.py` để kiểm tra mọi snippet còn khớp API thật.
 
 ## Đóng góp
 

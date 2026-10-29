@@ -3,103 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONCOST.UI - Tài Liệu Hướng Dẫn & Thư Viện WPF UI Components</title>
+    <title>CONCOST.UI — Tài liệu kỹ thuật &amp; Design System</title>
+    <meta name="description" content="Tài liệu đầy đủ cho thư viện WPF CONCOST.UI: hướng dẫn cài đặt, theme tokens, API tham chiếu và code inspector cho hơn 80 controls kỹ thuật CAD/BIM.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <!-- Prism.js for Syntax Highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script>
+        // Restore theme + accent before first paint to avoid a flash of the wrong palette.
+        (function () {
+            try {
+                var qp = new URLSearchParams(location.search);
+                var t = qp.get("theme") || localStorage.getItem("concost.theme");
+                if (t) document.documentElement.setAttribute("data-theme", t);
+                var a = localStorage.getItem("concost.accent");
+                if (a) {
+                    document.documentElement.style.setProperty("--accent", a);
+                    document.documentElement.style.setProperty("--accent-soft", a + "1a");
+                    document.documentElement.style.setProperty("--accent-line", a + "47");
+                }
+            } catch (e) { }
+        })();
+    </script>
 </head>
 <body>
-    <!-- Top Navigation Bar -->
     <header class="topbar">
+        <button class="action-btn menu-toggle" id="menuToggle" aria-label="Mở menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
         <div class="brand">
-            <div class="logo-box">
-                <i class="fa-solid fa-ruler-combined"></i>
-            </div>
-            <div class="brand-text">
-                <div class="brand-title">CONCOST<span>.UI</span> <span class="badge-ver">v3.0.0 Pro</span></div>
-                <div class="brand-sub">Tài Liệu Hướng Dẫn Kỹ Thuật & Design System</div>
+            <div class="logo-box"><i class="fa-solid fa-ruler-combined"></i></div>
+            <div>
+                <div class="brand-title">CONCOST<span>.UI</span> <span class="badge-ver" id="verBadge">v3.0</span></div>
+                <div class="brand-sub">Engineering WPF Design System</div>
             </div>
         </div>
 
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="searchInput" placeholder="Tìm kiếm nhanh control (vd: CardCarousel, Timeline, Dialog, Button...)..." autocomplete="off">
-            <kbd>Ctrl + K</kbd>
-        </div>
+        <button class="search-trigger" id="searchTrigger">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Tìm control, token, hướng dẫn…</span>
+            <kbd>Ctrl K</kbd>
+        </button>
 
         <div class="header-actions">
-            <!-- Theme Palette Switcher -->
-            <div class="palette-picker" title="Chọn Theme Accent Color">
-                <span class="palette-dot active" style="--c:#FF7900" data-color="#FF7900"></span>
-                <span class="palette-dot" style="--c:#0284C7" data-color="#0284C7"></span>
-                <span class="palette-dot" style="--c:#16A34A" data-color="#16A34A"></span>
-                <span class="palette-dot" style="--c:#8B5CF6" data-color="#8B5CF6"></span>
-                <span class="palette-dot" style="--c:#DC2626" data-color="#DC2626"></span>
+            <div class="palette-picker" title="Accent color">
+                <span class="palette-dot active" style="--c:#ff7900" data-color="#ff7900"></span>
+                <span class="palette-dot" style="--c:#0284c7" data-color="#0284c7"></span>
+                <span class="palette-dot" style="--c:#16a34a" data-color="#16a34a"></span>
+                <span class="palette-dot" style="--c:#8b5cf6" data-color="#8b5cf6"></span>
+                <span class="palette-dot" style="--c:#dc2626" data-color="#dc2626"></span>
             </div>
-
-            <button id="themeToggleBtn" class="action-btn" title="Chuyển chế độ Sáng / Tối">
+            <button id="themeToggleBtn" class="action-btn" title="Sáng / Tối">
                 <i class="fa-solid fa-moon"></i>
             </button>
-            <a href="https://github.com/VIETQSPHUONGIT" target="_blank" class="action-btn" title="GitHub Repository">
+            <a href="https://github.com/thanhphuong-dev/CONCOST.UI" target="_blank" rel="noopener" class="action-btn" title="GitHub">
                 <i class="fa-brands fa-github"></i>
             </a>
         </div>
     </header>
 
     <div class="app-layout">
-        <!-- Sidebar Navigation -->
         <aside class="sidebar" id="sidebar">
-            <div class="nav-category-title">BẮT ĐẦU</div>
-            <ul class="nav-menu">
-                <li class="nav-item active" data-target="intro">
-                    <i class="fa-solid fa-book-open"></i> Giới thiệu & Cài đặt
-                </li>
-                <li class="nav-item" data-target="class-library">
-                    <i class="fa-solid fa-puzzle-piece"></i> Dùng Trong Class Library / Plugin DLL
-                </li>
-                <li class="nav-item" data-target="theming">
-                    <i class="fa-solid fa-palette"></i> Hệ Thống Theme & Token
-                </li>
-                <li class="nav-item" data-target="attached-props">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Attached Properties
-                </li>
-            </ul>
-
-            <div class="nav-category-title">ENGINEERING & CAD CONTROLS (FLAGSHIP)</div>
-            <ul class="nav-menu" id="engineeringControlsMenu">
-                <!-- Injected via JS -->
-            </ul>
-
-            <div class="nav-category-title">CUSTOM CONTROLS CAO CẤP</div>
-            <ul class="nav-menu" id="customControlsMenu">
-                <!-- Injected via JS -->
-            </ul>
-
-            <div class="nav-category-title">BASIC & ENHANCED CONTROLS</div>
-            <ul class="nav-menu" id="basicControlsMenu">
-                <!-- Injected via JS -->
-            </ul>
+            <nav id="sidebarNav"><!-- injected --></nav>
+            <div class="sidebar-foot">
+                <b>CONCOST.UI</b><br>
+                Multi-target WPF · net48 / net8 / net10<br>
+                <span id="footCount"></span>
+            </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="main-content" id="mainContent">
-            <!-- Dynamic Content loaded here -->
-        </main>
+        <div class="content-shell">
+            <main class="main-content" id="mainContent"><!-- injected --></main>
+            <aside class="toc" id="toc"><!-- injected --></aside>
+        </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toastNotification" class="toast-popup">
-        <i class="fa-solid fa-circle-check"></i> Đã sao chép mã nguồn vào Clipboard!
+    <!-- Command palette -->
+    <div class="cmdk-overlay" id="cmdkOverlay">
+        <div class="cmdk" role="dialog" aria-modal="true">
+            <div class="cmdk-input-row">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="cmdkInput" placeholder="Tìm control, thuộc tính, style key…" autocomplete="off" spellcheck="false">
+                <kbd>ESC</kbd>
+            </div>
+            <div class="cmdk-results" id="cmdkResults"></div>
+            <div class="cmdk-foot">
+                <span><kbd>↑</kbd> <kbd>↓</kbd> di chuyển</span>
+                <span><kbd>↵</kbd> mở</span>
+                <span id="cmdkCount"></span>
+            </div>
+        </div>
     </div>
 
-    <!-- Scripts -->
+    <div class="toast-popup" id="toastNotification">
+        <i class="fa-solid fa-circle-check"></i> <span id="toastText">Đã sao chép mã nguồn</span>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+
+    <script src="data/legacy.js"></script>
+    <script src="data/guides.js"></script>
+    <script src="data/custom.js"></script>
+    <script src="data/basic.js"></script>
+    <script src="data/enrich.js"></script>
+    <script src="data/auto.generated.js"></script>
+    <script src="data/nav.js"></script>
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
