@@ -723,6 +723,119 @@ bar.ShowTrack = false;`,
             }
         ],
         related: ["scrollviewer", "divider", "loadings"]
+    },
+
+    scrollreveal: {
+        title: "ScrollReveal — hiện dần khi vào khung nhìn",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Attached behaviour: phần tử bắt đầu ở trạng thái mờ + lệch xuống, và khi cuộn tới ngưỡng thì fade + trượt lên. Tự tìm <code>ScrollViewer</code> cha, hiện **một lần** rồi ngắt listener.",
+        keywords: ["scroll reveal", "fade in", "slide", "viewport", "cuộn"],
+        sections: [
+            {
+                title: "Bật cho từng khối, delay tăng dần",
+                desc: "<code>Offset</code> là quãng trượt (px), <code>Delay</code> tạo hiệu ứng stagger, <code>Threshold</code> là tỉ lệ chiều cao khung nhìn để kích hoạt (0.92 = gần đáy).",
+                xaml: `<ScrollViewer Height="200">
+    <StackPanel>
+        <Border attached:ScrollReveal.IsEnabled="True"
+                attached:ScrollReveal.Offset="24"
+                attached:ScrollReveal.Delay="0:0:0.12">
+            <!-- nội dung -->
+        </Border>
+    </StackPanel>
+</ScrollViewer>`,
+                csharp: `ScrollReveal.SetIsEnabled(card, true);
+ScrollReveal.SetOffset(card, 24);
+ScrollReveal.SetDelay(card, new Duration(TimeSpan.FromMilliseconds(120)));`,
+                callout: {
+                    type: "warn",
+                    body: "Đừng bật cho hàng trăm item trong danh sách ảo hoá — mỗi lần cuộn nó phải dò cây visual. Chỉ dùng cho vài khối nội dung tĩnh."
+                }
+            }
+        ],
+        related: ["scrollprogressbar", "parallaxpanel", "card"]
+    },
+
+    parallaxpanel: {
+        title: "ParallaxPanel — lớp nền trôi chậm hơn",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Lớp nội dung tự dịch theo vị trí cuộn với hệ số <code>Speed</code> — đặt phía sau nội dung chính để tạo cảm giác chiều sâu. Không chặn chuột.",
+        keywords: ["parallax", "depth", "lớp nền", "chiều sâu"],
+        sections: [
+            {
+                title: "Nền trôi chậm, nội dung cuộn bình thường",
+                desc: "<code>Speed &lt; 1</code> để trôi chậm hơn, <code>&gt; 1</code> để trôi nhanh hơn. <code>MaxOffset</code> chặn trôi quá xa. Đặt <code>Axis=&quot;Horizontal&quot;</code> nếu cuộn ngang.",
+                xaml: `<Grid Height="320">
+    <ui:ParallaxPanel Speed="0.45" Height="120" VerticalAlignment="Top">
+        <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
+    </ui:ParallaxPanel>
+    <Border Height="90" Background="{DynamicResource CONCOST.Brush.Primary}" />
+</Grid>`,
+                csharp: `var layer = new ParallaxPanel
+{
+    Speed = 0.45,
+    MaxOffset = 120
+};
+
+// Hoặc gán tường minh nếu panel nằm ngoài ScrollViewer
+layer.Target = PageScroll;`
+            }
+        ],
+        related: ["scrollreveal", "aurorabackground", "gridpattern"]
+    },
+
+    typewritertext: {
+        title: "TypewriterText — gõ từng ký tự",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Chữ hiện dần như đang gõ, có caret nhấp nháy. Tốc độ tính theo ký tự/giây; tắt animation hệ thống thì hiện full text ngay.",
+        keywords: ["typewriter", "typing", "caret", "gõ chữ"],
+        sections: [
+            {
+                title: "Gõ một câu mô tả",
+                desc: "<code>CharsPerSecond</code> là tốc độ, <code>StartDelay</code> là thời gian chờ trước khi gõ, <code>IsLooping</code> để gõ lại sau <code>RestartDelay</code> giây.",
+                xaml: `<ui:TypewriterText Text="Bóc tách khối lượng tự động từ mô hình BIM."
+                   CharsPerSecond="26" ShowCaret="True" />`,
+                csharp: `var typer = new TypewriterText
+{
+    Text = "Bóc tách khối lượng...",
+    CharsPerSecond = 26,
+    StartDelay = 0.25,
+    ShowCaret = true,
+    IsLooping = false
+};`,
+                callout: {
+                    type: "tip",
+                    body: "Giữ tốc độ 20–30 ký tự/giây. Nhanh hơn thì người dùng không kịp đọc, chậm hơn thì sốt ruột."
+                }
+            }
+        ],
+        related: ["textreveal", "gradienttext", "textblock"]
+    },
+
+    textreveal: {
+        title: "TextReveal — từng từ hiện dần",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Headline hiện theo từng từ: mỗi từ fade + trượt lên, lệch nhau <code>WordDelay</code> giây. Dùng cho tiêu đề lớn, không dùng cho đoạn văn dài.",
+        keywords: ["text reveal", "stagger", "headline", "từng từ"],
+        sections: [
+            {
+                title: "Tiêu đề hiện dần",
+                desc: "<code>WordDelay</code> là giãn cách giữa các từ, <code>WordDuration</code> là thời gian mỗi từ, <code>OffsetY</code> là quãng trượt.",
+                xaml: `<ui:TextReveal Text="Kết cấu chính xác, thi công an toàn"
+                FontSize="26" WordDelay="0.08" />`,
+                csharp: `var reveal = new TextReveal
+{
+    Text = "Kết cấu chính xác, thi công an toàn",
+    WordDelay = 0.08,
+    WordDuration = 0.45,
+    OffsetY = 14
+};`,
+                callout: {
+                    type: "warn",
+                    body: "Mỗi từ là một lần <code>FormattedText</code>. Với đoạn văn dài (hơn ~15 từ) hãy dùng <code>TextBlock</code> thường để tránh tốn CPU mỗi frame."
+                }
+            }
+        ],
+        related: ["typewritertext", "textblock", "scrollreveal"]
     }
 
 };

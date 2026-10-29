@@ -8893,4 +8893,23 @@
 
   <Style TargetType="{x:Type controls:TiltCard}" BasedOn="{StaticResource CONCOST.TiltCard.Base}" />
 
+  <!-- ============================ ParallaxPanel ============================ -->
+  <Style x:Key="CONCOST.ParallaxPanel.Base" TargetType="{x:Type controls:ParallaxPanel}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:ParallaxPanel}">
+          <Border Background="{TemplateBinding Background}">
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type controls:ParallaxPanel}" BasedOn="{StaticResource CONCOST.ParallaxPanel.Base}" />
+
 </ResourceDictionary>

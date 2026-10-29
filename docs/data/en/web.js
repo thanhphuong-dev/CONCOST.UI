@@ -530,6 +530,87 @@ bar.ShowTrack = false;`,
                 }
             }
         ]
+    },
+
+    scrollreveal: {
+        title: "ScrollReveal — fade in on scroll",
+        desc: "Attached behaviour: the element starts faded and pushed down, then fades and slides up once it scrolls into view. It finds the parent <code>ScrollViewer</code>, reveals **once**, and stops listening.",
+        sections: [
+            {
+                title: "Enable per block, stagger the delay",
+                desc: "<code>Offset</code> is the slide distance in pixels, <code>Delay</code> creates the stagger and <code>Threshold</code> is the fraction of the viewport that triggers it (0.92 = near the bottom).",
+                csharp: `ScrollReveal.SetIsEnabled(card, true);
+ScrollReveal.SetOffset(card, 24);
+ScrollReveal.SetDelay(card, new Duration(TimeSpan.FromMilliseconds(120)));`,
+                callout: {
+                    type: "warn",
+                    body: "Do not enable it on hundreds of virtualised list items — every scroll walks the visual tree. Use it for a few static blocks."
+                }
+            }
+        ]
+    },
+
+    parallaxpanel: {
+        title: "ParallaxPanel — layer that drifts slower",
+        desc: "A content layer that shifts with the scroll position by a <code>Speed</code> factor — put it behind the main content for a sense of depth. It never blocks input.",
+        sections: [
+            {
+                title: "Slow background, normal content",
+                desc: "<code>Speed &lt; 1</code> drifts slower, <code>&gt; 1</code> faster. <code>MaxOffset</code> caps the travel. Set <code>Axis=&quot;Horizontal&quot;</code> for horizontal scrolling.",
+                csharp: `var layer = new ParallaxPanel
+{
+    Speed = 0.45,
+    MaxOffset = 120
+};
+
+// Or bind explicitly when the panel sits outside the ScrollViewer
+layer.Target = PageScroll;`
+            }
+        ]
+    },
+
+    typewritertext: {
+        title: "TypewriterText — types character by character",
+        desc: "Text appears as if being typed, with a blinking caret. Speed is in characters per second; when system animations are off the full text shows immediately.",
+        sections: [
+            {
+                title: "Type a description line",
+                desc: "<code>CharsPerSecond</code> is the speed, <code>StartDelay</code> the wait before typing and <code>IsLooping</code> restarts after <code>RestartDelay</code> seconds.",
+                csharp: `var typer = new TypewriterText
+{
+    Text = "Quantity take-off straight from the BIM model.",
+    CharsPerSecond = 26,
+    StartDelay = 0.25,
+    ShowCaret = true,
+    IsLooping = false
+};`,
+                callout: {
+                    body: "Keep it at 20–30 characters per second. Faster is unreadable, slower feels sluggish."
+                }
+            }
+        ]
+    },
+
+    textreveal: {
+        title: "TextReveal — word-by-word headline",
+        desc: "The headline appears word by word: each word fades and rises, offset by <code>WordDelay</code> seconds. For large headings, not for paragraphs.",
+        sections: [
+            {
+                title: "A headline that assembles itself",
+                desc: "<code>WordDelay</code> spaces the words, <code>WordDuration</code> is each word's animation and <code>OffsetY</code> is the rise distance.",
+                csharp: `var reveal = new TextReveal
+{
+    Text = "Precise structure, safe construction",
+    WordDelay = 0.08,
+    WordDuration = 0.45,
+    OffsetY = 14
+};`,
+                callout: {
+                    type: "warn",
+                    body: "Each word is one <code>FormattedText</code>. Beyond ~15 words use a normal <code>TextBlock</code> to avoid burning CPU every frame."
+                }
+            }
+        ]
     }
 
 });

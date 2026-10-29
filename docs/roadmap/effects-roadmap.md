@@ -114,7 +114,7 @@ Mỗi phase = 1 minor release, làm đủ Definition of Done.
 `TiltCard` (2.5D skew+scale), `MagneticHover`, `CheckMarkDraw`, `ScrollProgressBar`.
 > Đây là nhóm “micro-interaction có mục đích” đúng trend 2026, và `CheckMarkDraw` dùng được ngay trong luồng duyệt/lưu.
 
-### Phase 2 → 3.7.0 (scroll & chữ)
+### Phase 2 → 3.7.0 (scroll & chữ) — ✅ ĐÃ XONG
 `ScrollReveal`, `ParallaxPanel`, `TypewriterText`, `TextReveal`.
 > Nhóm scrollytelling — dùng cho màn hình giới thiệu/tổng quan dự án.
 

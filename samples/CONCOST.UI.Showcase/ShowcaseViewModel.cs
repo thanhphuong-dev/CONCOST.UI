@@ -400,6 +400,10 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("MagneticHover", "Custom Controls", IconKind.TargetGoal, "Attached behaviour that pulls an element toward the pointer.", CreateMagneticHoverDemo));
         AllItems.Add(new ShowcaseItem("CheckMarkDraw", "Custom Controls", IconKind.CheckCircle, "Confirmation tick that draws itself stroke by stroke.", CreateCheckMarkDemo));
         AllItems.Add(new ShowcaseItem("ScrollProgressBar", "Custom Controls", IconKind.ProgressLinear, "Reading progress bar bound to a ScrollViewer.", CreateScrollProgressDemo));
+        AllItems.Add(new ShowcaseItem("ScrollReveal", "Custom Controls", IconKind.ArrowDown, "Fade + slide an element the first time it scrolls into view.", CreateScrollRevealDemo));
+        AllItems.Add(new ShowcaseItem("ParallaxPanel", "Custom Controls", IconKind.Layers, "Background layer that drifts slower than the page.", CreateParallaxDemo));
+        AllItems.Add(new ShowcaseItem("TypewriterText", "Custom Controls", IconKind.Pencil, "Types text character by character with a blinking caret.", CreateTypewriterDemo));
+        AllItems.Add(new ShowcaseItem("TextReveal", "Custom Controls", IconKind.Edit, "Headline revealed word by word with a staggered rise.", CreateTextRevealDemo));
         AllItems.Add(new ShowcaseItem("StackedHeaderDataGrid", "Custom Controls", IconKind.Layers, "Enterprise multi-level stacked column header DataGrid with footer aggregates, context menu, Excel clipboard copy, and rich cell type support.", CreateStackedHeaderDataGridDemo));
     }
 

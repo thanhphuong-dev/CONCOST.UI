@@ -7,6 +7,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 _Nothing yet._
 
+## [3.7.0] - 2026-10-29
+
+### Added
+- `ScrollReveal` — attached behaviour that fades and slides an element the first time it scrolls into view (auto-detects the ScrollViewer, reveals once, then unhooks).
+- `ParallaxPanel` — content layer that drifts with the scroll position by a speed factor, with offset clamping and horizontal support.
+- `TypewriterText` — types text character by character with a blinking caret, optional looping.
+- `TextReveal` — headline revealed word by word with a staggered rise and ease-out.
+
+### Changed
+- Docs: 106 pages / 627 properties; roadmap Phase 2 marked done.
+
 ## [3.6.0] - 2026-10-29
 
 ### Added
@@ -119,7 +130,8 @@ _Nothing yet._
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.6.0...HEAD
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.7.0...HEAD
+[3.7.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.7.0
 [3.6.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.6.0
 [3.5.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.5.0
 [3.4.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.4.0

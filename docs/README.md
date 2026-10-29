@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**102 pages · 599 documented properties · 76 controls mapped to source · 2 languages (VI / EN).**
+**106 pages · 627 documented properties · 80 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -141,6 +141,10 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [MagneticHover](index.html#magnetichover) | Attached behaviour kéo phần tử về phía con trỏ vài pixel rồi trả về vị trí cũ khi rời chuột. Dùng TranslateTransform nên không gây layout mỗi frame. |
 | [CheckMarkDraw](index.html#checkmarkdraw) | Dấu ✓ vẽ dần từng nét trong 320ms khi IsChecked chuyển sang true, và xoá ngược khi false. Dùng cho luồng duyệt, lưu, hoàn tất. |
 | [ScrollProgressBar](index.html#scrollprogressbar) | Thanh mảnh hiển thị đã cuộn được bao nhiêu phần của một ScrollViewer. Không set Target thì tự tìm ScrollViewer cha gần nhất. |
+| [ScrollReveal](index.html#scrollreveal) | Attached behaviour: phần tử bắt đầu ở trạng thái mờ + lệch xuống, và khi cuộn tới ngưỡng thì fade + trượt lên. Tự tìm ScrollViewer cha, hiện **một lần |
+| [ParallaxPanel](index.html#parallaxpanel) | Lớp nội dung tự dịch theo vị trí cuộn với hệ số Speed — đặt phía sau nội dung chính để tạo cảm giác chiều sâu. Không chặn chuột. |
+| [TypewriterText](index.html#typewritertext) | Chữ hiện dần như đang gõ, có caret nhấp nháy. Tốc độ tính theo ký tự/giây; tắt animation hệ thống thì hiện full text ngay. |
+| [TextReveal](index.html#textreveal) | Headline hiện theo từng từ: mỗi từ fade + trượt lên, lệch nhau WordDelay giây. Dùng cho tiêu đề lớn, không dùng cho đoạn văn dài. |
 | [SnowCanvas](index.html#snowcanvas) | Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt (lấy cảm hứng từ WPFDevelopers), hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi,  |
 | [Sprite](index.html#sprite) | Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button) lấy cảm hứng từ HandyControl. Sprite luôn nổi phía trên toàn bộ giao di |
 | [CompareSlider](index.html#compareslider) | Thanh trượt chia đôi màn hình trực quan cho phép so sánh sự thay đổi giữa 2 hình ảnh bản vẽ thiết kế (Rev 01 vs Rev 02), phối cảnh 3D Render trước/sau |
