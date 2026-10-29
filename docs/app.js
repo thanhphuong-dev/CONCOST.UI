@@ -348,15 +348,37 @@
 
         if (!items.length) { el.toc.innerHTML = ""; return; }
 
-        el.toc.innerHTML = `<div class="toc-title">${t("tocTitle")}</div>` +
-            items.map(it => `<a data-scroll="${escAttr(it.id)}">${esc(it.label)}</a>`).join("") +
-            `<div class="toc-stats">
+        el.toc.innerHTML = `<div class="toc-title">${t("tocTitle")}</div>
+            <div class="toc-progress"><i id="tocProgress"></i></div>
+            <div class="toc-links">${items.map((it, i) => `<a data-scroll="${escAttr(it.id)}" title="${escAttr(it.label)}">
+                <span class="toc-num">${String(i + 1).padStart(2, "0")}</span>
+                <span class="toc-label">${esc(it.label)}</span>
+            </a>`).join("")}</div>
+            <div class="toc-stats">
                 <div>${t("tocPage")} <b>${ORDER.indexOf(page.id) + 1}</b>/${ORDER.length}</div>
                 <div>${t("tocGroup")} <b>${esc((LANG === "en" ? GROUP_EN[page.id] : GROUP_OF[page.id]) || "—")}</b></div>
-            </div>`;
+            </div>
+            <button class="toc-top" data-top><i class="fa-solid fa-arrow-up"></i> ${t("backToTop")}</button>`;
 
         setupScrollSpy();
+        updateTocProgress();
     }
+
+    function updateTocProgress() {
+        const bar = document.getElementById("tocProgress");
+        if (!bar) return;
+        const rect = el.main.getBoundingClientRect();
+        const total = rect.height - window.innerHeight + 78;
+        const done = total > 0 ? Math.min(1, Math.max(0, (78 - rect.top) / total)) : 1;
+        bar.style.width = (done * 100).toFixed(1) + "%";
+    }
+
+    let progressTick = false;
+    window.addEventListener("scroll", () => {
+        if (progressTick) return;
+        progressTick = true;
+        requestAnimationFrame(() => { progressTick = false; updateTocProgress(); });
+    }, { passive: true });
 
     let spyObserver;
     function setupScrollSpy() {
@@ -532,6 +554,12 @@
         if (navItem) {
             e.preventDefault();
             go(navItem.dataset.target);
+            return;
+        }
+
+        const topBtn = e.target.closest("[data-top]");
+        if (topBtn) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
             return;
         }
 
