@@ -17,6 +17,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - `docs/tools/check-xaml.py` validates every XAML snippet in the documentation against the real control API.
 - `CHANGELOG.md`.
 
+### Accessibility
+- Colour tokens now meet WCAG AA: muted text 2.87:1 → 5.43:1, accent-as-text 2.63:1 → 5.09:1 (a darker `--accent-ink` is used for text while `--accent` stays for fills), dark-mode muted text 4.59:1 → 6.46:1.
+- Sidebar, pager, quick links and related links are real anchors, so the whole wiki is reachable by keyboard; `aria-current="page"` marks the active page.
+- Visible `:focus-visible` ring on every interactive element, skip-to-content link, `tabindex="-1"` main landmark, `aria-expanded` on the menu and search triggers, focus trap plus focus restore in the command palette, `aria-live` result count.
+- Section cards are `<h2>` elements, giving every page a single `h1` and a proper heading outline.
+- Larger tap targets on phones (40px buttons, 10px nav padding).
+
+### Added
+- `docs/404.html` with a styled not-found page, inline SVG favicon, Open Graph/Twitter meta tags and a `<noscript>` fallback.
+
 ### Changed
 - Documentation installation snippet now merges `Themes/ThemeResources.xaml` (tokens + default theme) and `Themes/Generic.xaml`; the previous snippet merged `Themes/Light.xaml`, which left typography, spacing and corner-radius tokens unresolved.
 - Hand-written property tables replaced by generated ones, so documented properties always match the source.

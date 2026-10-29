@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CONCOST.UI — Tài liệu kỹ thuật &amp; Design System</title>
     <meta name="description" content="Tài liệu đầy đủ cho thư viện WPF CONCOST.UI: hướng dẫn cài đặt, theme tokens, API tham chiếu và code inspector cho hơn 80 controls kỹ thuật CAD/BIM.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="CONCOST.UI — Tài liệu kỹ thuật &amp; Design System">
+    <meta property="og:description" content="80 trang tài liệu song ngữ Việt/Anh cho thư viện WPF CONCOST.UI: API tham chiếu sinh từ source, code inspector XAML/C#, theme tokens.">
+    <meta property="og:url" content="https://thanhphuong-dev.github.io/CONCOST.UI/">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7900'/%3E%3Cpath d='M9 22V10h3.4v9.3H23V22z' fill='%23fff'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,17 +26,22 @@
                 if (t) document.documentElement.setAttribute("data-theme", t);
                 var a = localStorage.getItem("concost.accent");
                 if (a) {
+                    var ink = { "#ff7900": "#b35200", "#0284c7": "#0d6ba6", "#16a34a": "#0f6b32",
+                                "#8b5cf6": "#6a3fd4", "#dc2626": "#a81c1c" };
                     document.documentElement.style.setProperty("--accent", a);
                     document.documentElement.style.setProperty("--accent-soft", a + "1a");
                     document.documentElement.style.setProperty("--accent-line", a + "47");
+                    if (ink[a]) document.documentElement.style.setProperty("--accent-strong", ink[a]);
                 }
             } catch (e) { }
         })();
     </script>
 </head>
 <body>
+    <a class="skip-link" href="#mainContent" id="skipLink">Bỏ qua điều hướng</a>
+
     <header class="topbar">
-        <button class="action-btn menu-toggle" id="menuToggle" aria-label="Mở menu">
+        <button class="action-btn menu-toggle" id="menuToggle" aria-label="Mở menu" aria-expanded="false" aria-controls="sidebar">
             <i class="fa-solid fa-bars"></i>
         </button>
 
@@ -42,7 +53,7 @@
             </div>
         </div>
 
-        <button class="search-trigger" id="searchTrigger">
+        <button class="search-trigger" id="searchTrigger" aria-label="Tìm kiếm trong tài liệu" aria-expanded="false">
             <i class="fa-solid fa-magnifying-glass"></i>
             <span>Tìm control, token, hướng dẫn…</span>
             <kbd>Ctrl K</kbd>
@@ -77,14 +88,14 @@
         </aside>
 
         <div class="content-shell">
-            <main class="main-content" id="mainContent"><!-- injected --></main>
-            <aside class="toc" id="toc"><!-- injected --></aside>
+            <main class="main-content" id="mainContent" tabindex="-1"><!-- injected --></main>
+            <aside class="toc" id="toc" role="navigation" aria-label="Trong trang này"><!-- injected --></aside>
         </div>
     </div>
 
     <!-- Command palette -->
     <div class="cmdk-overlay" id="cmdkOverlay">
-        <div class="cmdk" role="dialog" aria-modal="true">
+        <div class="cmdk" role="dialog" aria-modal="true" aria-label="Tìm kiếm tài liệu">
             <div class="cmdk-input-row">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="cmdkInput" placeholder="Tìm control, thuộc tính, style key…" autocomplete="off" spellcheck="false">
@@ -94,10 +105,20 @@
             <div class="cmdk-foot">
                 <span><kbd>↑</kbd> <kbd>↓</kbd> di chuyển</span>
                 <span><kbd>↵</kbd> mở</span>
-                <span id="cmdkCount"></span>
+                <span id="cmdkCount" aria-live="polite"></span>
             </div>
         </div>
     </div>
+
+    <noscript>
+        <div style="position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:#f7f8fa;color:#101828;font-family:system-ui,sans-serif;padding:24px;text-align:center">
+            <div>
+                <strong style="font-size:18px">Cần bật JavaScript / JavaScript is required</strong>
+                <p style="max-width:46ch;color:#475467">Trang tài liệu này dựng nội dung bằng JavaScript. Vui lòng bật JavaScript, hoặc đọc trực tiếp
+                <a href="https://github.com/thanhphuong-dev/CONCOST.UI/tree/main/docs/data" style="color:#b35200">nguồn dữ liệu trên GitHub</a>.</p>
+            </div>
+        </div>
+    </noscript>
 
     <div class="toast-popup" id="toastNotification">
         <i class="fa-solid fa-circle-check"></i> <span id="toastText">Đã sao chép mã nguồn</span>

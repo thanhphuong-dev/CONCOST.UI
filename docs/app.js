@@ -158,9 +158,11 @@
                 const badgeText = LANG === "en" ? (item.badgeEn || item.badge) : item.badge;
                 const badge = badgeText ? `<span class="nav-badge">${esc(badgeText)}</span>` : "";
                 const label = LANG === "en" ? (item.nameEn || item.name) : item.name;
-                html += `<li class="nav-item" data-target="${escAttr(item.id)}" title="${escAttr(label)}">
-                    <i class="fa-solid ${escAttr(item.icon || "fa-cube")}"></i>
-                    <span class="nav-label">${esc(label)}</span>${badge}
+                html += `<li>
+                    <a class="nav-item" href="#${escAttr(item.id)}" data-target="${escAttr(item.id)}" title="${escAttr(label)}">
+                        <i class="fa-solid ${escAttr(item.icon || "fa-cube")}" aria-hidden="true"></i>
+                        <span class="nav-label">${esc(label)}</span>${badge}
+                    </a>
                 </li>`;
             });
             html += `</ul>`;
@@ -280,16 +282,16 @@
         }
 
         if (page.quick && page.quick.length) {
-            html += `<div class="quick-grid">` + page.quick.map(q => `<div class="quick-card" data-target="${escAttr(q.id)}">
+            html += `<div class="quick-grid">` + page.quick.map(q => `<a class="quick-card" href="#${escAttr(q.id)}" data-target="${escAttr(q.id)}">
                 <div class="qc-ico"><i class="fa-solid ${escAttr(q.icon || "fa-cube")}"></i></div>
                 <div class="qc-t">${esc(q.title)}</div>
                 <div class="qc-d">${esc(q.desc || "")}</div>
-            </div>`).join("") + `</div>`;
+            </a>`).join("") + `</div>`;
         }
 
         if (page.props && page.props.length) {
             html += `<div class="doc-card" id="sec-props">
-                <div class="doc-card-title"><span class="num"><i class="fa-solid fa-sliders" style="font-size:9px"></i></span> ${t("propsTitle", { n: page.props.length })}</div>
+                <h2 class="doc-card-title"><span class="num"><i class="fa-solid fa-sliders" style="font-size:9px" aria-hidden="true"></i></span> ${t("propsTitle", { n: page.props.length })}</h2>
                 <p class="doc-card-desc">${t("propsDesc", { cls: esc(page.className || id) })}</p>
                 ${propsTable(page.props)}
             </div>`;
@@ -297,7 +299,7 @@
 
         if (page.variants && page.variants.length) {
             html += `<div class="doc-card" id="sec-variants">
-                <div class="doc-card-title"><span class="num"><i class="fa-solid fa-layer-group" style="font-size:9px"></i></span> ${t("variantsTitle")}</div>
+                <h2 class="doc-card-title"><span class="num"><i class="fa-solid fa-layer-group" style="font-size:9px" aria-hidden="true"></i></span> ${t("variantsTitle")}</h2>
                 <p class="doc-card-desc">${t("variantsDesc")}</p>
                 ${variantsBlock(page.variants)}
             </div>`;
@@ -305,7 +307,7 @@
 
         (page.sections || []).forEach((sec, i) => {
             html += `<div class="doc-card" id="sec-${i}">
-                <div class="doc-card-title"><span class="num">${i + 1}</span> ${sec.title}</div>
+                <h2 class="doc-card-title"><span class="num">${i + 1}</span> ${sec.title}</h2>
                 ${sec.desc ? `<p class="doc-card-desc">${sec.desc}</p>` : ""}
                 ${callout(sec.callout)}
                 ${tokenTable(sec.table)}
@@ -315,24 +317,29 @@
 
         if (page.related && page.related.length) {
             const links = page.related.filter(r => PAGES[r]).map(r =>
-                `<a data-target="${escAttr(r)}"><i class="fa-solid fa-arrow-right"></i> ${esc(navLabel(r))}</a>`).join("");
-            if (links) html += `<div class="doc-card"><div class="doc-card-title" style="font-size:13px">${t("relatedTitle")}</div><div class="related">${links}</div></div>`;
+                `<a href="#${escAttr(r)}" data-target="${escAttr(r)}"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> ${esc(navLabel(r))}</a>`).join("");
+            if (links) html += `<div class="doc-card"><h2 class="doc-card-title" style="font-size:13px">${t("relatedTitle")}</h2><div class="related">${links}</div></div>`;
         }
 
         html += `<div class="doc-pager">
-            ${prevId ? `<div class="pager-link prev" data-target="${escAttr(prevId)}">
-                <span class="pl"><i class="fa-solid fa-arrow-left"></i> ${t("prev")}</span>
-                <span class="pt">${esc(navLabel(prevId))}</span></div>` : `<div class="pager-link empty"></div>`}
-            ${nextId ? `<div class="pager-link next" data-target="${escAttr(nextId)}">
-                <span class="pl">${t("next")} <i class="fa-solid fa-arrow-right"></i></span>
-                <span class="pt">${esc(navLabel(nextId))}</span></div>` : `<div class="pager-link empty"></div>`}
+            ${prevId ? `<a class="pager-link prev" href="#${escAttr(prevId)}" data-target="${escAttr(prevId)}" rel="prev">
+                <span class="pl"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> ${t("prev")}</span>
+                <span class="pt">${esc(navLabel(prevId))}</span></a>` : `<div class="pager-link empty"></div>`}
+            ${nextId ? `<a class="pager-link next" href="#${escAttr(nextId)}" data-target="${escAttr(nextId)}" rel="next">
+                <span class="pl">${t("next")} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                <span class="pt">${esc(navLabel(nextId))}</span></a>` : `<div class="pager-link empty"></div>`}
         </div>`;
 
         el.main.innerHTML = html;
         renderToc(page);
         if (window.Prism) Prism.highlightAllUnder(el.main);
 
-        $$(".nav-item", el.nav).forEach(n => n.classList.toggle("active", n.dataset.target === id));
+        $$(".nav-item", el.nav).forEach(n => {
+            const on = n.dataset.target === id;
+            n.classList.toggle("active", on);
+            if (on) n.setAttribute("aria-current", "page");
+            else n.removeAttribute("aria-current");
+        });
         document.title = `${String(page.title).replace(/<[^>]+>/g, "")} — CONCOST.UI`;
 
         if (!opts || !opts.keepScroll) window.scrollTo({ top: 0 });
@@ -351,6 +358,7 @@
 
         if (!items.length) { el.toc.innerHTML = ""; return; }
 
+        el.toc.setAttribute("aria-label", t("tocTitle"));
         el.toc.innerHTML = `<div class="toc-title">${t("tocTitle")}</div>
             <div class="toc-progress"><i id="tocProgress"></i></div>
             <div class="toc-links">${items.map((it, i) => `<a data-scroll="${escAttr(it.id)}" title="${escAttr(it.label)}">
@@ -433,8 +441,12 @@
     let cmdkResults = [];
     let cmdkIndex = 0;
 
+    let paletteTrigger = null;
+
     function openPalette() {
+        paletteTrigger = document.activeElement;
         el.overlay.classList.add("open");
+        $("#searchTrigger").setAttribute("aria-expanded", "true");
         el.input.value = "";
         runSearch("");
         setTimeout(() => el.input.focus(), 30);
@@ -442,7 +454,10 @@
 
     function closePalette() {
         el.overlay.classList.remove("open");
+        $("#searchTrigger").setAttribute("aria-expanded", "false");
         el.input.blur();
+        if (paletteTrigger && paletteTrigger.focus) paletteTrigger.focus();
+        paletteTrigger = null;
     }
 
     function runSearch(q) {
@@ -523,6 +538,8 @@
         try { localStorage.setItem("concost.lang", LANG); } catch (e) { }
         document.documentElement.setAttribute("lang", LANG);
 
+        const skip = $("#skipLink");
+        if (skip) skip.textContent = t("skipToContent");
         const trigger = $("#searchTrigger span");
         if (trigger) trigger.textContent = t("searchPlaceholder");
         el.input.placeholder = t("cmdkPlaceholder");
@@ -605,8 +622,17 @@
         if (e.target === el.overlay) closePalette();
     });
 
+    $("#skipLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        el.main.focus();
+        window.scrollTo({ top: 0 });
+    });
+
     $("#searchTrigger").addEventListener("click", openPalette);
-    $("#menuToggle").addEventListener("click", () => el.sidebar.classList.toggle("open"));
+    $("#menuToggle").addEventListener("click", () => {
+        const open = el.sidebar.classList.toggle("open");
+        $("#menuToggle").setAttribute("aria-expanded", open ? "true" : "false");
+    });
     $("#langToggle").addEventListener("click", () => applyLanguage(LANG === "en" ? "vi" : "en", { keepScroll: false }));
     el.input.addEventListener("input", (e) => runSearch(e.target.value));
 
@@ -618,6 +644,7 @@
             const r = cmdkResults[cmdkIndex];
             if (r) { closePalette(); go(r.id); }
         } else if (e.key === "Escape") { closePalette(); }
+        else if (e.key === "Tab") { e.preventDefault(); }
     });
 
     document.addEventListener("keydown", (e) => {
@@ -646,6 +673,14 @@
         applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
     });
 
+    const ACCENT_INK = {
+        "#ff7900": "#b35200",
+        "#0284c7": "#0d6ba6",
+        "#16a34a": "#0f6b32",
+        "#8b5cf6": "#6a3fd4",
+        "#dc2626": "#a81c1c"
+    };
+
     $$(".palette-dot").forEach(dot => {
         const color = dot.dataset.color;
         try {
@@ -660,6 +695,7 @@
             document.documentElement.style.setProperty("--accent", color);
             document.documentElement.style.setProperty("--accent-soft", color + "1a");
             document.documentElement.style.setProperty("--accent-line", color + "47");
+            if (ACCENT_INK[color]) document.documentElement.style.setProperty("--accent-strong", ACCENT_INK[color]);
             try { localStorage.setItem("concost.accent", color); } catch (e) { }
         });
     });
