@@ -7,6 +7,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 _Nothing yet._
 
+## [3.3.0] - 2026-10-29
+
+### Added
+- `AuroraBackground` — animated aurora backdrop (large drifting radial glows, no `BlurEffect`), clipped to its box, for splash screens and hero panels.
+- `BorderBeam` — a comet of light that travels along the rounded-rect perimeter (three-pass glow), wrapping any content via `Child`.
+- `ConfettiBurst` — self-resetting confetti burst for approve/saved moments, with gravity, duration, palette and origin.
+- Showcase demos with View XAML / View C# panels for all three, and bilingual documentation pages (89 pages / 533 properties).
+
+### Changed
+- `BorderBeam` no longer uses a rotating linear gradient: the beam is sampled along the perimeter, so a single light runs around the border instead of two faint arcs.
+
 ## [3.2.0] - 2026-10-29
 
 ### Added
@@ -76,7 +87,8 @@ _Nothing yet._
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.3.0
 [3.2.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.2.0
 [3.1.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.1.0
 [3.0.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.0.0

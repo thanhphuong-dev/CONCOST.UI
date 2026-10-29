@@ -983,6 +983,9 @@ PAGE_CLASS = {
     "avatarstack": ["AvatarStack"],
     "heatmapcalendar": ["HeatmapCalendar"],
     "marqueeticker": ["MarqueeTicker"],
+    "aurorabackground": ["AuroraBackground"],
+    "borderbeam": ["BorderBeam"],
+    "confettiburst": ["ConfettiBurst"],
     # effects
     "snowcanvas": ["SnowCanvas"],
     "sprite": ["Sprite"],

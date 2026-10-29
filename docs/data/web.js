@@ -242,5 +242,106 @@ ticker.IsRunning = false;`,
             }
         ],
         related: ["growl", "spotlightcard", "timeline"]
+    },
+
+    aurorabackground: {
+        title: "AuroraBackground — nền gradient động",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Nền aurora gồm vài quầng sáng lớn trôi chậm, vẽ trực tiếp bằng <code>RadialGradientBrush</code> nên <b>không dùng BlurEffect</b> — vẫn mượt trên máy yếu. Dùng cho splash screen, hero panel, cửa sổ đăng nhập.",
+        keywords: ["aurora", "gradient", "background", "hero", "splash"],
+        sections: [
+            {
+                title: "Đặt sau nội dung trong một Grid",
+                desc: "Đặt <code>AuroraBackground</code> làm lớp dưới cùng, nội dung đè lên trên. Control tự <code>ClipToBounds</code> nên không tràn ra ngoài khung.",
+                xaml: `<Grid Height="170" ClipToBounds="True" Background="#0B0F17">
+    <ui:AuroraBackground BlobCount="5" BlobOpacity="0.45" />
+    <TextBlock Text="CONCOST STUDIO" Foreground="White"
+               HorizontalAlignment="Center" VerticalAlignment="Center" />
+</Grid>`,
+                csharp: `var aurora = new AuroraBackground
+{
+    BlobCount = 5,
+    BlobOpacity = 0.45,
+    Speed = 1.0,               // hệ số tốc độ trôi
+    AccentBrush = Brushes.OrangeRed
+};
+
+// Tạm dừng khi cửa sổ bị ẩn để không vẽ thừa
+aurora.IsAnimated = false;`,
+                callout: {
+                    type: "tip",
+                    body: "Aurora hợp nhất trên nền tối. Nếu dùng trên nền sáng, giảm <code>BlobOpacity</code> xuống 0.25–0.3 để chữ vẫn đạt tương phản AA."
+                }
+            }
+        ],
+        related: ["spotlightcard", "card", "marqueeticker"]
+    },
+
+    borderbeam: {
+        title: "BorderBeam — vệt sáng chạy quanh viền",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Một đốm sáng chạy dọc chu vi khung bo góc, kiểu “border beam” trên các landing page hiện đại. Bọc quanh nội dung bất kỳ, dùng cho item mới, trạng thái đang xử lý hoặc thẻ cần chú ý.",
+        keywords: ["border beam", "glow", "viền sáng", "comet", "shimmer border"],
+        sections: [
+            {
+                title: "Bọc quanh một thẻ",
+                desc: "<code>BorderBeam</code> là <code>Decorator</code>: đặt nội dung vào <code>Child</code>. <code>BeamLength</code> là tỉ lệ chu vi được chiếu sáng (0–1), <code>RevolutionSeconds</code> là thời gian một vòng.",
+                xaml: `<ui:BorderBeam CornerRadius="12" Padding="18"
+               BeamThickness="1.8" BeamLength="0.30" RevolutionSeconds="3.5"
+               SurfaceBrush="{DynamicResource CONCOST.Brush.Surface}">
+    <StackPanel>
+        <TextBlock Text="Nghiệm thu đợt 3" FontWeight="SemiBold" />
+        <TextBlock Text="Đang xử lý..." Foreground="Gray" />
+    </StackPanel>
+</ui:BorderBeam>`,
+                csharp: `var beam = new BorderBeam
+{
+    CornerRadius = new CornerRadius(12),
+    BeamThickness = 1.8,
+    BeamLength = 0.30,          // 30% chu vi
+    RevolutionSeconds = 3.5,    // một vòng mỗi 3.5 giây
+    BeamBrush = Brushes.Orange
+};
+
+beam.Child = new TextBlock { Text = "Đang xử lý..." };`,
+                callout: {
+                    type: "warn",
+                    body: "Beam vẽ 3 lớp (glow + mid + core) mỗi frame. Trên danh sách dài, chỉ bật cho item đang được chọn thay vì mọi item."
+                }
+            }
+        ],
+        related: ["spotlightcard", "card", "badge"]
+    },
+
+    confettiburst: {
+        title: "ConfettiBurst — hiệu ứng ăn mừng",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Bắn một đợt pháo giấy ngắn khi thao tác thành công (lưu mô hình, duyệt hồ sơ). Tự mô phỏng vật lý và <b>tự tắt</b> khi hạt tan hết, không cần code hẹn giờ.",
+        keywords: ["confetti", "celebration", "particle", "ăn mừng", "success"],
+        sections: [
+            {
+                title: "Gắn vào một Grid phủ lên nội dung",
+                desc: "Đặt <code>ConfettiBurst</code> trong cùng <code>Grid</code> với nội dung, đặt <code>IsBursting = true</code> để bắn. <code>Origin</code> mặc định ở giữa-dưới; để trống thì bắn từ tâm.",
+                xaml: `<Grid Height="170" ClipToBounds="True">
+    <Button Content="Duyệt hồ sơ" Click="OnApproveClick" />
+    <ui:ConfettiBurst x:Name="Celebration" ParticleCount="110" />
+</Grid>`,
+                csharp: `private void OnApproveClick(object sender, RoutedEventArgs e)
+{
+    Approve();
+    Celebration.IsBursting = true;   // tự tắt khi hạt tan hết
+}
+
+// Tuỳ chỉnh
+Celebration.Gravity = 1100;                                   // px/s²
+Celebration.Duration = new Duration(TimeSpan.FromSeconds(2));
+Celebration.Palette = new[] { Colors.Orange, Colors.SeaGreen };`,
+                callout: {
+                    type: "tip",
+                    body: "Giữ <code>ParticleCount</code> ≤ 150 và <code>ClipToBounds=&quot;True&quot;</code> trên Grid chứa nó — hạt vẽ bằng <code>DrawRectangle</code> nên rất nhẹ, nhưng vẫn nên giới hạn."
+                }
+            }
+        ],
+        related: ["growl", "dialog", "spotlightcard"]
     }
 };

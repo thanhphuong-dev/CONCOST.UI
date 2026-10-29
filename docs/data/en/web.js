@@ -170,5 +170,78 @@ ticker.IsRunning = false;`,
                 }
             }
         ]
+    },
+
+    aurorabackground: {
+        title: "AuroraBackground — animated gradient backdrop",
+        desc: "An aurora backdrop made of a few large, slowly drifting glows, drawn directly with <code>RadialGradientBrush</code> — <b>no BlurEffect</b>, so it stays smooth on weak machines. Good for splash screens, hero panels and login windows.",
+        sections: [
+            {
+                title: "Layer it behind content in a Grid",
+                desc: "Put <code>AuroraBackground</code> as the bottom layer and the content on top. The control clips itself, so it never bleeds outside its box.",
+                csharp: `var aurora = new AuroraBackground
+{
+    BlobCount = 5,
+    BlobOpacity = 0.45,
+    Speed = 1.0,               // drift speed multiplier
+    AccentBrush = Brushes.OrangeRed
+};
+
+// Pause while the window is hidden to avoid needless painting
+aurora.IsAnimated = false;`,
+                callout: {
+                    body: "Aurora works best on dark surfaces. On light backgrounds drop <code>BlobOpacity</code> to 0.25–0.3 so text keeps AA contrast."
+                }
+            }
+        ]
+    },
+
+    borderbeam: {
+        title: "BorderBeam — light running around the edge",
+        desc: "A comet of light travelling along the rounded-rect perimeter — the “border beam” pattern from modern landing pages. Wrap any content; use it for new items, in-progress states or cards that need attention.",
+        sections: [
+            {
+                title: "Wrap a card",
+                desc: "<code>BorderBeam</code> is a <code>Decorator</code>: put the content in <code>Child</code>. <code>BeamLength</code> is the lit fraction of the perimeter (0–1) and <code>RevolutionSeconds</code> is the time per lap.",
+                csharp: `var beam = new BorderBeam
+{
+    CornerRadius = new CornerRadius(12),
+    BeamThickness = 1.8,
+    BeamLength = 0.30,          // 30% of the perimeter
+    RevolutionSeconds = 3.5,    // one lap every 3.5 s
+    BeamBrush = Brushes.Orange
+};
+
+beam.Child = new TextBlock { Text = "Processing..." };`,
+                callout: {
+                    type: "warn",
+                    body: "The beam draws three passes (glow + mid + core) per frame. On long lists enable it only for the selected item, not for every row."
+                }
+            }
+        ]
+    },
+
+    confettiburst: {
+        title: "ConfettiBurst — celebration effect",
+        desc: "Fires a short confetti burst on success (model saved, submittal approved). It simulates the particles itself and <b>resets itself</b> when they fade — no timer code required.",
+        sections: [
+            {
+                title: "Drop it into a Grid above the content",
+                desc: "Place <code>ConfettiBurst</code> in the same <code>Grid</code> as the content and set <code>IsBursting = true</code> to fire. <code>Origin</code> defaults to the centre-bottom; leave it empty to burst from the centre.",
+                csharp: `private void OnApproveClick(object sender, RoutedEventArgs e)
+{
+    Approve();
+    Celebration.IsBursting = true;   // clears itself when the particles fade
+}
+
+// Tuning
+Celebration.Gravity = 1100;                                   // px/s²
+Celebration.Duration = new Duration(TimeSpan.FromSeconds(2));
+Celebration.Palette = new[] { Colors.Orange, Colors.SeaGreen };`,
+                callout: {
+                    body: "Keep <code>ParticleCount</code> ≤ 150 and set <code>ClipToBounds=&quot;True&quot;</code> on the hosting Grid — particles are plain rectangles, but bound them anyway."
+                }
+            }
+        ]
     }
 });

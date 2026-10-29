@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**86 pages · 511 documented properties · 62 controls mapped to source · 2 languages (VI / EN).**
+**89 pages · 533 documented properties · 65 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -125,6 +125,9 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Ripple](index.html#ripple) | Hiệu ứng gợn sóng Material khi click, dùng độc lập hoặc gắn vào bất kỳ phần tử nào qua attached RippleElement. |
 | [SpotlightCard](index.html#spotlightcard) | Bề mặt thẻ có vệt sáng bám theo con trỏ và viền gradient hiện dần khi hover — pattern “spotlight card” quen thuộc trên các landing page hiện đại, port |
 | [MarqueeTicker](index.html#marqueeticker) | Dải chữ chạy liên tục cho thanh trạng thái, bảng tin công trường hoặc ticker chứng khoán. Render trực tiếp và chạy bằng CompositionTarget.Rendering nê |
+| [AuroraBackground](index.html#aurorabackground) | Nền aurora gồm vài quầng sáng lớn trôi chậm, vẽ trực tiếp bằng RadialGradientBrush nên không dùng BlurEffect — vẫn mượt trên máy yếu. Dùng cho splash  |
+| [BorderBeam](index.html#borderbeam) | Một đốm sáng chạy dọc chu vi khung bo góc, kiểu “border beam” trên các landing page hiện đại. Bọc quanh nội dung bất kỳ, dùng cho item mới, trạng thái |
+| [ConfettiBurst](index.html#confettiburst) | Bắn một đợt pháo giấy ngắn khi thao tác thành công (lưu mô hình, duyệt hồ sơ). Tự mô phỏng vật lý và tự tắt khi hạt tan hết, không cần code hẹn giờ. |
 | [SnowCanvas](index.html#snowcanvas) | Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt (lấy cảm hứng từ WPFDevelopers), hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi,  |
 | [Sprite](index.html#sprite) | Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button) lấy cảm hứng từ HandyControl. Sprite luôn nổi phía trên toàn bộ giao di |
 | [CompareSlider](index.html#compareslider) | Thanh trượt chia đôi màn hình trực quan cho phép so sánh sự thay đổi giữa 2 hình ảnh bản vẽ thiết kế (Rev 01 vs Rev 02), phối cảnh 3D Render trước/sau |

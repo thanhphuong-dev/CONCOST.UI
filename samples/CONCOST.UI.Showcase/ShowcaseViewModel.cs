@@ -384,6 +384,9 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("AvatarStack", "Custom Controls", IconKind.Users, "Overlapping avatar row with a +N overflow chip for reviewers and assignees.", CreateAvatarStackDemo));
         AllItems.Add(new ShowcaseItem("HeatmapCalendar", "Custom Controls", IconKind.Calendar, "GitHub-style daily intensity heatmap for pours, inspections and site activity.", CreateHeatmapCalendarDemo));
         AllItems.Add(new ShowcaseItem("MarqueeTicker", "Custom Controls", IconKind.ArrowLeftRight, "Continuously scrolling status strip for site notices and live tickers.", CreateMarqueeTickerDemo));
+        AllItems.Add(new ShowcaseItem("AuroraBackground", "Custom Controls", IconKind.LightMode, "Animated aurora backdrop for splash screens and hero panels.", CreateAuroraBackgroundDemo));
+        AllItems.Add(new ShowcaseItem("BorderBeam", "Custom Controls", IconKind.LightMode, "A comet of light running around the border of any content.", CreateBorderBeamDemo));
+        AllItems.Add(new ShowcaseItem("ConfettiBurst", "Custom Controls", IconKind.Star, "Short confetti celebration for approve / saved moments.", CreateConfettiBurstDemo));
         AllItems.Add(new ShowcaseItem("StackedHeaderDataGrid", "Custom Controls", IconKind.Layers, "Enterprise multi-level stacked column header DataGrid with footer aggregates, context menu, Excel clipboard copy, and rich cell type support.", CreateStackedHeaderDataGridDemo));
     }
 
