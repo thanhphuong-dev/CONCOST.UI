@@ -7,6 +7,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 _Nothing yet._
 
+## [3.6.0] - 2026-10-29
+
+### Added
+- `TiltCard` — card that leans toward the pointer and lifts on hover (skew + scale 2.5D, no Viewport3D), with `Base` and `Elevated` variants.
+- `MagneticHover` — attached behaviour pulling an element toward the pointer via `TranslateTransform` (no layout pass), with strength/offset limits.
+- `CheckMarkDraw` — confirmation tick that draws itself in 320 ms and erases in reverse.
+- `ScrollProgressBar` — reading progress bar bound to a `ScrollViewer`, auto-detecting the nearest ancestor when `Target` is omitted.
+
+### Changed
+- Docs: 102 pages / 599 properties; the effects roadmap marks Phase 1 done.
+
 ## [3.5.0] - 2026-10-29
 
 ### Added
@@ -108,7 +119,8 @@ _Nothing yet._
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.5.0...HEAD
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.6.0...HEAD
+[3.6.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.6.0
 [3.5.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.5.0
 [3.4.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.4.0
 [3.3.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.3.0

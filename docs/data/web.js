@@ -614,6 +614,115 @@ MotionSettings.Changed += (s, e) => UpdateMotionLabel();`,
             }
         ],
         related: ["spotlightcard", "aurorabackground", "loadings"]
+    },
+
+    tiltcard: {
+        title: "TiltCard — thẻ nghiêng theo con trỏ",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Thẻ nghiêng về phía con trỏ và nhấc nhẹ khi hover. Độ nghiêng làm bằng <b>skew + scale (2.5D)</b> chứ không dùng <code>Viewport3D</code>, nên chữ vẫn sắc nét và không tốn thêm lớp 3D.",
+        keywords: ["tilt", "3d", "hover", "card", "nghiêng"],
+        variants: [
+            { key: "CONCOST.TiltCard.Base", desc: "Nền surface, viền 1px, nghiêng tối đa 6°." },
+            { key: "CONCOST.TiltCard.Elevated", desc: "Không viền, có shadow, nghiêng 8° và nhấc 1.04." }
+        ],
+        sections: [
+            {
+                title: "Thẻ thông tin cấu kiện",
+                desc: "<code>MaxTilt</code> là độ nghiêng tối đa ở mép, <code>Lift</code> là tỉ lệ phóng khi hover. Rời chuột thẻ tự về phẳng với easing.",
+                xaml: `<ui:TiltCard Width="280" MaxTilt="6" Lift="1.02"
+             Style="{DynamicResource CONCOST.TiltCard.Base}">
+    <StackPanel>
+        <TextBlock Text="Dầm B1 — 300×600" FontWeight="SemiBold" />
+        <TextBlock Text="Di chuột để thấy độ nghiêng" Opacity="0.6" />
+    </StackPanel>
+</ui:TiltCard>`,
+                csharp: `var card = new TiltCard
+{
+    MaxTilt = 6,
+    Lift = 1.02
+};
+
+// Cần cả hiệu ứng sáng theo chuột? Bọc SpotlightCard bên trong.`,
+                callout: {
+                    type: "tip",
+                    body: "Giữ <code>MaxTilt</code> ≤ 8°. Nghiêng quá tay làm chữ khó đọc và tạo cảm giác “đồ chơi” trong app nghiệp vụ."
+                }
+            }
+        ],
+        related: ["spotlightcard", "card", "magnetichover"]
+    },
+
+    magnetichover: {
+        title: "MagneticHover — nút hút theo con trỏ",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Attached behaviour kéo phần tử về phía con trỏ vài pixel rồi trả về vị trí cũ khi rời chuột. Dùng <code>TranslateTransform</code> nên <b>không gây layout</b> mỗi frame.",
+        keywords: ["magnetic", "hover", "button", "hút", "micro-interaction"],
+        sections: [
+            {
+                title: "Bật cho một nút",
+                desc: "<code>Strength</code> là tỉ lệ bám theo con trỏ (0.1–0.4), <code>MaxOffset</code> chặn trôi quá xa. Tự bỏ qua khi người dùng tắt animation hệ thống.",
+                xaml: `<Button Content="Kéo tôi về phía con trỏ"
+        attached:MagneticHover.IsEnabled="True"
+        attached:MagneticHover.Strength="0.3"
+        attached:MagneticHover.MaxOffset="12" />`,
+                csharp: `MagneticHover.SetIsEnabled(button, true);
+MagneticHover.SetStrength(button, 0.3);
+MagneticHover.SetMaxOffset(button, 12);`,
+                callout: {
+                    type: "warn",
+                    body: "Đừng bật cho mọi nút trong toolbar — mắt sẽ bị “nhấp nháy”. Chỉ dùng cho 1 CTA chính mỗi màn hình."
+                }
+            }
+        ],
+        related: ["button", "tiltcard", "sheensweep"]
+    },
+
+    checkmarkdraw: {
+        title: "CheckMarkDraw — dấu tích tự vẽ",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Dấu ✓ vẽ dần từng nét trong 320ms khi <code>IsChecked</code> chuyển sang true, và xoá ngược khi false. Dùng cho luồng duyệt, lưu, hoàn tất.",
+        keywords: ["check", "tick", "success", "confirm", "duyệt"],
+        sections: [
+            {
+                title: "Gắn vào trạng thái duyệt",
+                desc: "<code>ShowCircle</code> vẽ nền tròn mờ phía sau. <code>Duration</code> đặt <code>0</code> để hiện ngay (ví dụ khi load lại danh sách đã duyệt).",
+                xaml: `<ui:CheckMarkDraw Width="52" Height="52"
+                  IsChecked="{Binding IsApproved}"
+                  StrokeThickness="3" />`,
+                csharp: `ApprovalMark.IsChecked = true;
+
+// Hiện ngay, không vẽ
+ApprovalMark.Duration = new Duration(TimeSpan.Zero);`,
+                callout: {
+                    type: "tip",
+                    body: "Màu mặc định lấy <code>CONCOST.Brush.Success</code> nếu có, không thì <code>CONCOST.Brush.Primary</code> — đặt <code>Stroke</code> nếu muốn màu riêng."
+                }
+            }
+        ],
+        related: ["growl", "dialog", "progressbar"]
+    },
+
+    scrollprogressbar: {
+        title: "ScrollProgressBar — thanh tiến độ đọc",
+        badge: "Hiệu ứng & Trang trí",
+        desc: "Thanh mảnh hiển thị đã cuộn được bao nhiêu phần của một <code>ScrollViewer</code>. Không set <code>Target</code> thì tự tìm ScrollViewer cha gần nhất.",
+        keywords: ["scroll", "progress", "reading", "thanh tiến độ"],
+        sections: [
+            {
+                title: "Đặt trên cùng của trang",
+                desc: "Gán <code>Target</code> tường minh khi thanh nằm ngoài ScrollViewer; đặt bên trong thì không cần. <code>ShowTrack=&quot;False&quot;</code> để chỉ còn phần đã đọc.",
+                xaml: `<ui:ScrollProgressBar Target="{Binding ElementName=PageScroll}"
+                      Thickness="3" />`,
+                csharp: `bar.Target = PageScroll;
+bar.Thickness = 3;
+bar.ShowTrack = false;`,
+                callout: {
+                    type: "info",
+                    body: "Khi nội dung ngắn hơn khung (không cuộn được), thanh tự hiển thị đầy 100% thay vì 0%."
+                }
+            }
+        ],
+        related: ["scrollviewer", "divider", "loadings"]
     }
 
 };

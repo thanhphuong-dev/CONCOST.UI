@@ -396,6 +396,10 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("ShakeElement", "Custom Controls", IconKind.Warning, "Attached shake feedback for invalid input.", CreateShakeDemo));
         AllItems.Add(new ShowcaseItem("ThemePreset.Brutal", "Custom Controls", IconKind.LayerColor, "Neo-brutalist preset: cream surfaces, ink borders, electric accent.", CreateBrutalThemeDemo));
         AllItems.Add(new ShowcaseItem("Reduced motion", "Custom Controls", IconKind.Settings, "Every effect follows the Windows animation setting via MotionSettings.", CreateReducedMotionDemo));
+        AllItems.Add(new ShowcaseItem("TiltCard", "Custom Controls", IconKind.Layers, "Card that leans toward the pointer with a slight lift (2.5D).", CreateTiltCardDemo));
+        AllItems.Add(new ShowcaseItem("MagneticHover", "Custom Controls", IconKind.TargetGoal, "Attached behaviour that pulls an element toward the pointer.", CreateMagneticHoverDemo));
+        AllItems.Add(new ShowcaseItem("CheckMarkDraw", "Custom Controls", IconKind.CheckCircle, "Confirmation tick that draws itself stroke by stroke.", CreateCheckMarkDemo));
+        AllItems.Add(new ShowcaseItem("ScrollProgressBar", "Custom Controls", IconKind.ProgressLinear, "Reading progress bar bound to a ScrollViewer.", CreateScrollProgressDemo));
         AllItems.Add(new ShowcaseItem("StackedHeaderDataGrid", "Custom Controls", IconKind.Layers, "Enterprise multi-level stacked column header DataGrid with footer aggregates, context menu, Excel clipboard copy, and rich cell type support.", CreateStackedHeaderDataGridDemo));
     }
 

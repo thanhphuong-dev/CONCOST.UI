@@ -8858,4 +8858,39 @@
 
   <Style TargetType="{x:Type controls:OdometerNumber}" BasedOn="{StaticResource CONCOST.OdometerNumber.Base}" />
 
+  <!-- ============================ TiltCard ============================ -->
+  <Style x:Key="CONCOST.TiltCard.Base" TargetType="{x:Type controls:TiltCard}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="18" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="controls:TiltCard.CornerRadius" Value="14" />
+    <Setter Property="controls:TiltCard.MaxTilt" Value="6" />
+    <Setter Property="controls:TiltCard.Lift" Value="1.02" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:TiltCard}">
+          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding controls:TiltCard.CornerRadius}" SnapsToDevicePixels="True">
+            <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.TiltCard.Elevated" TargetType="{x:Type controls:TiltCard}" BasedOn="{StaticResource CONCOST.TiltCard.Base}">
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="controls:TiltCard.MaxTilt" Value="8" />
+    <Setter Property="controls:TiltCard.Lift" Value="1.04" />
+    <Setter Property="Effect">
+      <Setter.Value>
+        <DropShadowEffect BlurRadius="24" ShadowDepth="6" Direction="270" Opacity="0.18" Color="#101828" />
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type controls:TiltCard}" BasedOn="{StaticResource CONCOST.TiltCard.Base}" />
+
 </ResourceDictionary>

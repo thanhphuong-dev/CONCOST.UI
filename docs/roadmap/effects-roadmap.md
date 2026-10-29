@@ -110,8 +110,8 @@ Mỗi phase = 1 minor release, làm đủ Definition of Done.
 > Việc còn lại (không chặn phase sau): migrate 8 hiệu ứng cũ sang `AnimatedEffectBase` để bỏ ~40 dòng trùng lặp mỗi file.
 > Giá trị: sửa nợ + 3 hiệu ứng, không có rủi ro API.
 
-### Phase 1 → 3.6.0 (tương tác)
-`TiltCard`, `MagneticHover`, `CheckMarkDraw`, `ScrollProgressBar`.
+### Phase 1 → 3.6.0 (tương tác) — ✅ ĐÃ XONG
+`TiltCard` (2.5D skew+scale), `MagneticHover`, `CheckMarkDraw`, `ScrollProgressBar`.
 > Đây là nhóm “micro-interaction có mục đích” đúng trend 2026, và `CheckMarkDraw` dùng được ngay trong luồng duyệt/lưu.
 
 ### Phase 2 → 3.7.0 (scroll & chữ)

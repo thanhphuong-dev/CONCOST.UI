@@ -451,6 +451,85 @@ MotionSettings.Changed += (s, e) => UpdateMotionLabel();`,
                 }
             }
         ]
+    },
+
+    tiltcard: {
+        title: "TiltCard — card that leans toward the pointer",
+        desc: "The card leans toward the pointer and lifts slightly on hover. The tilt is built from <b>skew + scale (2.5D)</b> rather than <code>Viewport3D</code>, so text stays crisp and there is no extra 3D layer.",
+        variants: [
+            { desc: "Surface background, 1px border, 6° max tilt." },
+            { desc: "No border, drop shadow, 8° tilt and 1.04 lift." }
+        ],
+        sections: [
+            {
+                title: "A member info card",
+                desc: "<code>MaxTilt</code> is the angle at the edges and <code>Lift</code> the hover scale. Leaving the card eases it back to flat.",
+                csharp: `var card = new TiltCard
+{
+    MaxTilt = 6,
+    Lift = 1.02
+};
+
+// Want a cursor glow too? Nest a SpotlightCard inside.`,
+                callout: {
+                    body: "Keep <code>MaxTilt</code> ≤ 8°. More than that hurts readability and feels toy-like in a business app."
+                }
+            }
+        ]
+    },
+
+    magnetichover: {
+        title: "MagneticHover — button that follows the pointer",
+        desc: "Attached behaviour that pulls an element a few pixels toward the pointer and eases back on leave. It moves a <code>TranslateTransform</code>, so it never triggers a layout pass.",
+        sections: [
+            {
+                title: "Enable it on a button",
+                desc: "<code>Strength</code> is how much of the pointer offset the element follows (0.1–0.4) and <code>MaxOffset</code> caps the travel. Skipped automatically when system animations are off.",
+                csharp: `MagneticHover.SetIsEnabled(button, true);
+MagneticHover.SetStrength(button, 0.3);
+MagneticHover.SetMaxOffset(button, 12);`,
+                callout: {
+                    type: "warn",
+                    body: "Do not enable it on every toolbar button — the eye reads it as flicker. One primary CTA per screen is enough."
+                }
+            }
+        ]
+    },
+
+    checkmarkdraw: {
+        title: "CheckMarkDraw — tick that draws itself",
+        desc: "A ✓ that draws stroke by stroke in 320 ms when <code>IsChecked</code> becomes true, and erases in reverse when it goes false. For approve / save / complete flows.",
+        sections: [
+            {
+                title: "Bind it to an approval state",
+                desc: "<code>ShowCircle</code> draws a soft disc behind the tick. Set <code>Duration</code> to zero to show it instantly (for example when reloading a list of already-approved rows).",
+                csharp: `ApprovalMark.IsChecked = true;
+
+// Show immediately, no drawing
+ApprovalMark.Duration = new Duration(TimeSpan.Zero);`,
+                callout: {
+                    body: "The default colour is <code>CONCOST.Brush.Success</code> when available, otherwise <code>CONCOST.Brush.Primary</code> — set <code>Stroke</code> to override."
+                }
+            }
+        ]
+    },
+
+    scrollprogressbar: {
+        title: "ScrollProgressBar — reading progress",
+        desc: "A thin bar showing how far a <code>ScrollViewer</code> has been scrolled. Without an explicit <code>Target</code> it walks up to the nearest scroll viewer.",
+        sections: [
+            {
+                title: "Pin it to the top of the page",
+                desc: "Set <code>Target</code> explicitly when the bar sits outside the ScrollViewer; when it sits inside, no binding is needed. <code>ShowTrack=&quot;False&quot;</code> leaves only the read portion.",
+                csharp: `bar.Target = PageScroll;
+bar.Thickness = 3;
+bar.ShowTrack = false;`,
+                callout: {
+                    type: "info",
+                    body: "When the content is shorter than the viewport (nothing to scroll), the bar shows 100% instead of 0%."
+                }
+            }
+        ]
     }
 
 });
