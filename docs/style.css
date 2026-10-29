@@ -319,10 +319,14 @@ kbd {
 /* ---------- Content shell ---------- */
 .content-shell {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--toc-w);
+    grid-template-columns: minmax(0, 860px) var(--toc-w);
+    justify-content: center;
+    align-items: start;
     gap: 44px;
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
     padding: 38px 44px 96px;
-    max-width: 1240px;
 }
 
 .main-content { min-width: 0; max-width: 860px; }
@@ -936,7 +940,13 @@ table.props-table {
 .menu-toggle { display: none; }
 
 @media (max-width: 1180px) {
-    .content-shell { grid-template-columns: minmax(0, 1fr); padding: 32px 32px 80px; }
+    .content-shell {
+        grid-template-columns: minmax(0, 1fr);
+        justify-content: stretch;
+        max-width: 900px;
+        padding: 32px 32px 80px;
+    }
+    .main-content { max-width: none; }
     .toc { display: none; }
 }
 
