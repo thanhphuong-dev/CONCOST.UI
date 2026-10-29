@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**80 pages · 457 documented properties · 56 controls mapped to source · 2 languages (VI / EN).**
+**84 pages · 491 documented properties · 60 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -54,6 +54,9 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [StatisticCard (KPI)](index.html#statisticcard) | Thẻ hiển thị số liệu quan trọng trên Dashboard, hỗ trợ chỉ số tăng/giảm phần trăm (Trend) và Icon điểm nhấn. |
 | [Timeline](index.html#timeline) | Hiển thị chuỗi sự kiện hoặc tiến độ thi công công trình theo trục thời gian tuyến tính với các nút trạng thái Semantic, Vector Icon, và đường nối tự đ |
 | [CardCarousel](index.html#cardcarousel) | Bộ điều khiển vòng xoay thẻ 3D Coverflow mượt mà, hỗ trợ tạo phối cảnh chiều sâu không gian (Depth Perspective), gán Z-Index phân tầng, nút điều hướng |
+| [OdometerNumber](index.html#odometernumber) | Số liệu tự “cuộn” từ giá trị cũ sang giá trị mới với easing, dùng cho KPI, dashboard và bảng tổng hợp. Không cần viết Storyboard cho từng lần cập nhật |
+| [Sparkline](index.html#sparkline) | Đường xu hướng cực gọn để nhét vào ô bảng, thẻ KPI hay thanh trạng thái: tự co giãn theo khung, có miền tô gradient và chấm đánh dấu điểm cuối. |
+| [AvatarStack](index.html#avatarstack) | Hiển thị nhóm người phụ trách dưới dạng avatar chồng lên nhau kèm chip +N — pattern quen thuộc của bảng quản lý công việc. Nhận chuỗi (tự lấy chữ cái  |
 | [PropertyGrid](index.html#propertygrid) | Bảng duyệt và chỉnh sửa thông số đối tượng CAD / BIM chuyên dụng, tự động gom nhóm Category, hỗ trợ editor nội dòng (TextBox, CheckBox, ComboBox, Colo |
 
 ### Input & Form
@@ -119,6 +122,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | Page | Nội dung |
 | --- | --- |
 | [Ripple](index.html#ripple) | Hiệu ứng gợn sóng Material khi click, dùng độc lập hoặc gắn vào bất kỳ phần tử nào qua attached RippleElement. |
+| [SpotlightCard](index.html#spotlightcard) | Bề mặt thẻ có vệt sáng bám theo con trỏ và viền gradient hiện dần khi hover — pattern “spotlight card” quen thuộc trên các landing page hiện đại, port |
 | [SnowCanvas](index.html#snowcanvas) | Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt (lấy cảm hứng từ WPFDevelopers), hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi,  |
 | [Sprite](index.html#sprite) | Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button) lấy cảm hứng từ HandyControl. Sprite luôn nổi phía trên toàn bộ giao di |
 | [CompareSlider](index.html#compareslider) | Thanh trượt chia đôi màn hình trực quan cho phép so sánh sự thay đổi giữa 2 hình ảnh bản vẽ thiết kế (Rev 01 vs Rev 02), phối cảnh 3D Render trước/sau |

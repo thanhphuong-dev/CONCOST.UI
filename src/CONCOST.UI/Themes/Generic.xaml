@@ -8770,4 +8770,92 @@
     <Setter Property="Height" Value="108" />
     <Setter Property="controls:Skeleton.CornerRadius" Value="10" />
   </Style>
+
+  <!-- ============================ SpotlightCard ============================ -->
+  <Style x:Key="CONCOST.SpotlightCard.Base" TargetType="{x:Type controls:SpotlightCard}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="20" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+    <Setter Property="controls:SpotlightCard.CornerRadius" Value="14" />
+    <Setter Property="controls:SpotlightCard.SpotlightSize" Value="260" />
+    <Setter Property="controls:SpotlightCard.SpotlightOpacity" Value="0.20" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:SpotlightCard}">
+          <Grid SnapsToDevicePixels="True">
+            <Border x:Name="PART_Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding controls:SpotlightCard.CornerRadius}" />
+            <Border x:Name="PART_Glow" BorderThickness="1" CornerRadius="{TemplateBinding controls:SpotlightCard.CornerRadius}" BorderBrush="{TemplateBinding controls:SpotlightCard.BorderGradient}" Opacity="0" IsHitTestVisible="False" />
+            <Canvas x:Name="PART_SpotlightLayer" ClipToBounds="True" IsHitTestVisible="False">
+              <Ellipse x:Name="PART_Spotlight" Opacity="0" IsHitTestVisible="False" />
+            </Canvas>
+            <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Trigger.EnterActions>
+                <BeginStoryboard>
+                  <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="PART_Glow" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.EnterActions>
+              <Trigger.ExitActions>
+                <BeginStoryboard>
+                  <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="PART_Glow" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.25" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.ExitActions>
+            </Trigger>
+            <Trigger Property="controls:SpotlightCard.ShowHoverBorder" Value="False">
+              <Setter TargetName="PART_Glow" Property="Opacity" Value="0" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.SpotlightCard.Glass" TargetType="{x:Type controls:SpotlightCard}" BasedOn="{StaticResource CONCOST.SpotlightCard.Base}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="controls:SpotlightCard.CornerRadius" Value="18" />
+    <Setter Property="controls:SpotlightCard.SpotlightOpacity" Value="0.28" />
+  </Style>
+
+  <Style TargetType="{x:Type controls:SpotlightCard}" BasedOn="{StaticResource CONCOST.SpotlightCard.Base}" />
+
+  <!-- ============================ OdometerNumber ============================ -->
+  <Style x:Key="CONCOST.OdometerNumber.Base" TargetType="{x:Type controls:OdometerNumber}">
+    <Setter Property="FontSize" Value="28" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="SnapsToDevicePixels" Value="True" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:OdometerNumber}">
+          <TextBlock x:Name="PART_Text" Text="{TemplateBinding controls:OdometerNumber.DisplayText}" Foreground="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" TextOptions.TextFormattingMode="Ideal" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.OdometerNumber.Hero" TargetType="{x:Type controls:OdometerNumber}" BasedOn="{StaticResource CONCOST.OdometerNumber.Base}">
+    <Setter Property="FontSize" Value="42" />
+    <Setter Property="FontWeight" Value="ExtraBold" />
+  </Style>
+
+  <Style x:Key="CONCOST.OdometerNumber.Compact" TargetType="{x:Type controls:OdometerNumber}" BasedOn="{StaticResource CONCOST.OdometerNumber.Base}">
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style TargetType="{x:Type controls:OdometerNumber}" BasedOn="{StaticResource CONCOST.OdometerNumber.Base}" />
+
 </ResourceDictionary>

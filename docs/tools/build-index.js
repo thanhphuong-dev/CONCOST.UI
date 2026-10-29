@@ -14,6 +14,7 @@ const FILES = [
     "data/legacy.js",
     "data/guides.js",
     "data/examples.js",
+    "data/web.js",
     "data/custom.js",
     "data/basic.js",
     "data/enrich.js",
@@ -23,6 +24,7 @@ const FILES = [
     "data/en/ui.js",
     "data/en/guides.js",
     "data/en/examples.js",
+    "data/en/web.js",
     "data/en/engineering.js",
     "data/en/data.js",
     "data/en/input.js",
@@ -121,7 +123,7 @@ push("- [Changelog](../CHANGELOG.md).", "");
 fs.writeFileSync(path.join(DOCS, "README.md"), out.join("\n"), "utf8");
 
 // ---- page -> source file map (used by the "edit this page" link) ----
-const SOURCE_FILES = ["data/legacy.js", "data/guides.js", "data/examples.js",
+const SOURCE_FILES = ["data/legacy.js", "data/guides.js", "data/examples.js", "data/web.js",
                       "data/custom.js", "data/basic.js", "data/enrich.js"];
 const sources = {};
 for (const rel of SOURCE_FILES) {
@@ -131,6 +133,7 @@ for (const rel of SOURCE_FILES) {
         "typeof DOCS_LEGACY !== 'undefined' ? DOCS_LEGACY : null," +
         "typeof DOCS_GUIDES !== 'undefined' ? DOCS_GUIDES : null," +
         "typeof DOCS_EXAMPLES !== 'undefined' ? DOCS_EXAMPLES : null," +
+        "typeof DOCS_WEB !== 'undefined' ? DOCS_WEB : null," +
         "typeof DOCS_CUSTOM !== 'undefined' ? DOCS_CUSTOM : null," +
         "typeof DOCS_BASIC !== 'undefined' ? DOCS_BASIC : null," +
         "typeof DOCS_ENRICH !== 'undefined' ? DOCS_ENRICH : null" +

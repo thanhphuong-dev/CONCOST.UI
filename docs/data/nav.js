@@ -32,6 +32,9 @@ const DOCS_NAV = [
             { id: "statisticcard", name: "StatisticCard (KPI)", icon: "fa-chart-line" },
             { id: "timeline", name: "Timeline", icon: "fa-timeline" },
             { id: "cardcarousel", name: "CardCarousel", icon: "fa-cubes" },
+            { id: "odometernumber", name: "OdometerNumber", icon: "fa-arrow-trend-up", badge: "Mới", badgeEn: "New" },
+            { id: "sparkline", name: "Sparkline", icon: "fa-chart-simple", badge: "Mới", badgeEn: "New" },
+            { id: "avatarstack", name: "AvatarStack", icon: "fa-user-group", badge: "Mới", badgeEn: "New" },
             { id: "propertygrid", name: "PropertyGrid", icon: "fa-sliders" }
         ]
     },
@@ -97,6 +100,7 @@ const DOCS_NAV = [
         title: "Hiệu ứng & Trang trí", titleEn: "Effects & Decoration",
         items: [
             { id: "ripple", name: "Ripple", icon: "fa-water", badge: "Mới", badgeEn: "New" },
+            { id: "spotlightcard", name: "SpotlightCard", icon: "fa-wand-sparkles", badge: "Mới", badgeEn: "New" },
             { id: "snowcanvas", name: "SnowCanvas", icon: "fa-snowflake" },
             { id: "sprite", name: "Sprite", icon: "fa-circle-dot" },
             { id: "compareslider", name: "CompareSlider", icon: "fa-arrows-left-right" },

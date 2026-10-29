@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- Four controls ported from modern web UI patterns:
+  - `SpotlightCard` — cursor-following radial spotlight plus a gradient border revealed on hover (`CONCOST.SpotlightCard.Base` / `.Glass`).
+  - `OdometerNumber` — rolls from the previous value to the new one with easing (`Base` / `Hero` / `Compact`), no per-update storyboard.
+  - `Sparkline` — inline mini chart with optional smooth curves, gradient area fill and last-point marker.
+  - `AvatarStack` — overlapping avatars with a `+N` overflow chip; accepts names (initials derived) or `ImageSource`.
+- Showcase demos for all four (`ShowcaseViewModel.WebDemos.cs`), documentation pages in both languages, and 20 new property descriptions.
 - Offline build: fonts (latin/latin-ext/vietnamese subsets), Font Awesome and Prism are vendored under `docs/vendor/`, so the wiki renders with no CDN and no network.
 - `docs/tools/fetch-fonts.py` re-downloads the localised font subsets; `docs/tools/build-index.js` now also emits the page → source file map.
 - "Edit this page" link in the reading rail, pointing at the exact data file that owns the page.

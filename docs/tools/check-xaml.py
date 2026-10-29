@@ -83,7 +83,7 @@ ATTR_RE = re.compile(r"([A-Za-z][\w:.]*)\s*=\s*\"([^\"]*)\"")
 def load_pages():
     """Extract the xaml snippets from the data files without a JS engine."""
     pages = []
-    for f in ("legacy.js", "guides.js", "examples.js", "custom.js", "basic.js", "enrich.js"):
+    for f in ("legacy.js", "guides.js", "examples.js", "web.js", "custom.js", "basic.js", "enrich.js"):
         path = os.path.join(DOCS, "data", f)
         src = open(path, encoding="utf-8").read()
         for m in re.finditer(r'xaml: `(.*?)`', src, re.S):

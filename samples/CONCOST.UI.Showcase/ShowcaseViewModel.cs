@@ -378,6 +378,10 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("Spreadsheet", "Custom Controls", IconKind.File, "Enterprise-grade native WPF Spreadsheet suite with recursive formula engine, multi-sheet tabs, formatting toolbar, and BoQ cost estimation template.", CreateSpreadsheetDemo));
         AllItems.Add(new ShowcaseItem("Ripple", "Custom Controls", IconKind.Layers, "Material-design water wave feedback effect originating from the pointer click position.", CreateRippleDemo));
         AllItems.Add(new ShowcaseItem("Skeleton (Shimmer)", "Custom Controls", IconKind.Layers, "Animated linear gradient shimmer placeholder loading effect for cards, avatars, and text.", CreateSkeletonDemo));
+        AllItems.Add(new ShowcaseItem("SpotlightCard", "Custom Controls", IconKind.Star, "Card with a cursor-following spotlight and a gradient border revealed on hover (web-inspired).", CreateSpotlightCardDemo));
+        AllItems.Add(new ShowcaseItem("OdometerNumber", "Custom Controls", IconKind.ChartLine, "Numeric readout that rolls from the previous value to the new one with easing.", CreateOdometerNumberDemo));
+        AllItems.Add(new ShowcaseItem("Sparkline", "Custom Controls", IconKind.Sparkline, "Inline mini trend chart for table cells, KPI cards and status strips.", CreateSparklineDemo));
+        AllItems.Add(new ShowcaseItem("AvatarStack", "Custom Controls", IconKind.Users, "Overlapping avatar row with a +N overflow chip for reviewers and assignees.", CreateAvatarStackDemo));
         AllItems.Add(new ShowcaseItem("StackedHeaderDataGrid", "Custom Controls", IconKind.Layers, "Enterprise multi-level stacked column header DataGrid with footer aggregates, context menu, Excel clipboard copy, and rich cell type support.", CreateStackedHeaderDataGridDemo));
     }
 
