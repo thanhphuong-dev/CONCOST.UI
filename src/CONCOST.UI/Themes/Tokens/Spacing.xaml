@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Spacing Values -->
+    <sys:Double x:Key="CONCOST.Spacing.XXS">2</sys:Double>
+    <sys:Double x:Key="CONCOST.Spacing.XS">4</sys:Double>
+    <sys:Double x:Key="CONCOST.Spacing.SM">6</sys:Double>
+    <sys:Double x:Key="CONCOST.Spacing.MD">8</sys:Double>
+    <sys:Double x:Key="CONCOST.Spacing.LG">12</sys:Double>
+    <sys:Double x:Key="CONCOST.Spacing.XL">16</sys:Double>
+    <sys:Double x:Key="CONCOST.Spacing.XXL">24</sys:Double>
+    <sys:Double x:Key="CONCOST.Spacing.3XL">32</sys:Double>
+    <sys:Double x:Key="CONCOST.Spacing.4XL">48</sys:Double>
+
+    <!-- Thickness Tokens -->
+    <Thickness x:Key="CONCOST.Padding.None">0</Thickness>
+    <Thickness x:Key="CONCOST.Padding.XS">4,2</Thickness>
+    <Thickness x:Key="CONCOST.Padding.SM">8,4</Thickness>
+    <Thickness x:Key="CONCOST.Padding.Control">10,6</Thickness>
+    <Thickness x:Key="CONCOST.Padding.MD">12,8</Thickness>
+    <Thickness x:Key="CONCOST.Padding.LG">16,12</Thickness>
+    <Thickness x:Key="CONCOST.Padding.Card">16</Thickness>
+    <Thickness x:Key="CONCOST.Padding.Dialog">24</Thickness>
+
+    <Thickness x:Key="CONCOST.Margin.Control">0,0,8,8</Thickness>
+    <Thickness x:Key="CONCOST.Margin.Bottom">0,0,0,8</Thickness>
+    <Thickness x:Key="CONCOST.Margin.Row">0,0,0,12</Thickness>
+
+</ResourceDictionary>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONCOST.UI - Tài Liệu Hướng Dẫn & Thư Viện WPF UI Components</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo-box">
+                <i class="fa-solid fa-ruler-combined"></i>
+            </div>
+            <div class="brand-text">
+                <div class="brand-title">CONCOST<span>.UI</span> <span class="badge-ver">v3.0.0 Pro</span></div>
+                <div class="brand-sub">Tài Liệu Hướng Dẫn Kỹ Thuật & Design System</div>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Tìm kiếm nhanh control (vd: CardCarousel, Timeline, Dialog, Button...)..." autocomplete="off">
+            <kbd>Ctrl + K</kbd>
+        </div>
+
+        <div class="header-actions">
+            <!-- Theme Palette Switcher -->
+            <div class="palette-picker" title="Chọn Theme Accent Color">
+                <span class="palette-dot active" style="--c:#FF7900" data-color="#FF7900"></span>
+                <span class="palette-dot" style="--c:#0284C7" data-color="#0284C7"></span>
+                <span class="palette-dot" style="--c:#16A34A" data-color="#16A34A"></span>
+                <span class="palette-dot" style="--c:#8B5CF6" data-color="#8B5CF6"></span>
+                <span class="palette-dot" style="--c:#DC2626" data-color="#DC2626"></span>
+            </div>
+
+            <button id="themeToggleBtn" class="action-btn" title="Chuyển chế độ Sáng / Tối">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <a href="https://github.com/VIETQSPHUONGIT" target="_blank" class="action-btn" title="GitHub Repository">
+                <i class="fa-brands fa-github"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-category-title">BẮT ĐẦU</div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-target="intro">
+                    <i class="fa-solid fa-book-open"></i> Giới thiệu & Cài đặt
+                </li>
+                <li class="nav-item" data-target="class-library">
+                    <i class="fa-solid fa-puzzle-piece"></i> Dùng Trong Class Library / Plugin DLL
+                </li>
+                <li class="nav-item" data-target="theming">
+                    <i class="fa-solid fa-palette"></i> Hệ Thống Theme & Token
+                </li>
+                <li class="nav-item" data-target="attached-props">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Attached Properties
+                </li>
+            </ul>
+
+            <div class="nav-category-title">ENGINEERING & CAD CONTROLS (FLAGSHIP)</div>
+            <ul class="nav-menu" id="engineeringControlsMenu">
+                <!-- Injected via JS -->
+            </ul>
+
+            <div class="nav-category-title">CUSTOM CONTROLS CAO CẤP</div>
+            <ul class="nav-menu" id="customControlsMenu">
+                <!-- Injected via JS -->
+            </ul>
+
+            <div class="nav-category-title">BASIC & ENHANCED CONTROLS</div>
+            <ul class="nav-menu" id="basicControlsMenu">
+                <!-- Injected via JS -->
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="mainContent">
+            <!-- Dynamic Content loaded here -->
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="toast-popup">
+        <i class="fa-solid fa-circle-check"></i> Đã sao chép mã nguồn vào Clipboard!
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

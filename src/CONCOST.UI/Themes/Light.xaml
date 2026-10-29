@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Light Theme Semantic Colors -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Background" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Surface" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSecondary" Color="#F1F5F9" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceHover" Color="#E2E8F0" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfacePressed" Color="#CBD5E1" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Border" Color="#E2E8F0" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderSecondary" Color="#CBD5E1" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderHover" Color="#94A3B8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderFocused" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.TextPrimary" Color="#0F172A" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextSecondary" Color="#64748B" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextTertiary" Color="#94A3B8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextDisabled" Color="#CBD5E1" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextInverse" Color="#FFFFFF" />
+
+    <!-- Control Specific Overrides for Light -->
+    <SolidColorBrush x:Key="CONCOST.Brush.InputBackground" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.InputBorder" Color="#CBD5E1" />
+    <SolidColorBrush x:Key="CONCOST.Brush.InputHoverBorder" Color="#94A3B8" />
+
+    <!-- Shadow -->
+    <Color x:Key="CONCOST.Color.Shadow">#15000000</Color>
+
+</ResourceDictionary>

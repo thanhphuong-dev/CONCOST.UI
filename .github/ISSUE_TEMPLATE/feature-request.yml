@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest a new feature or control for CONCOST.UI.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: input
+    id: use-case
+    attributes:
+      label: Use case
+      description: Which application or workflow needs this capability?
+      placeholder: Structural design, CAD, desktop workflow...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or requirement
+      description: Describe what is missing and the outcome you need.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the control or behavior you would like to see.
+    validations:
+      required: false
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Blocker
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true

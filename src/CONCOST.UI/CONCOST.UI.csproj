@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net48;net8.0-windows;net10.0-windows</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>CONCOST.UI</RootNamespace>
+    <AssemblyName>CONCOST.UI</AssemblyName>
+    <PackageId>CONCOST.UI</PackageId>
+    <Description>A multi-target WPF control library for .NET Framework 4.8, .NET 8, and .NET 10, built for desktop, Revit, and AutoCAD plugin workflows.</Description>
+    <PackageTags>wpf;ui;controls;design-system;engineering;cad</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="**\*.cs" Exclude="obj\**;bin\**" />
+    <Page Include="Themes\Dark.xaml" />
+    <Page Include="Themes\Generic.xaml" />
+    <Page Include="Themes\Light.xaml" />
+    <Page Include="Themes\ThemeResources.xaml" />
+    <Page Include="Themes\Tokens\Colors.xaml" />
+    <Page Include="Themes\Tokens\CornerRadius.xaml" />
+    <Page Include="Themes\Tokens\Spacing.xaml" />
+    <Page Include="Themes\Tokens\Typography.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+</Project>

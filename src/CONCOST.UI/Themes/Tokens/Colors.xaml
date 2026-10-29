@@ -1,0 +1,49 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- CONCOST Brand & Semantic Colors -->
+    <Color x:Key="CONCOST.Color.Primary">#FF7900</Color>
+    <Color x:Key="CONCOST.Color.PrimaryHover">#FF9433</Color>
+    <Color x:Key="CONCOST.Color.PrimaryPressed">#D96600</Color>
+    <Color x:Key="CONCOST.Color.PrimaryLight">#FFA040</Color>
+    <Color x:Key="CONCOST.Color.PrimaryDark">#CC6000</Color>
+
+    <Color x:Key="CONCOST.Color.Success">#28A745</Color>
+    <Color x:Key="CONCOST.Color.Warning">#FFB020</Color>
+    <Color x:Key="CONCOST.Color.Danger">#DC3545</Color>
+    <Color x:Key="CONCOST.Color.Info">#2196F3</Color>
+
+    <!-- Neutral Palette -->
+    <Color x:Key="CONCOST.Color.Gray50">#FAFAFA</Color>
+    <Color x:Key="CONCOST.Color.Gray100">#F4F5F7</Color>
+    <Color x:Key="CONCOST.Color.Gray200">#E4E7EB</Color>
+    <Color x:Key="CONCOST.Color.Gray300">#D2D6DC</Color>
+    <Color x:Key="CONCOST.Color.Gray400">#9FA6B2</Color>
+    <Color x:Key="CONCOST.Color.Gray500">#6B7280</Color>
+    <Color x:Key="CONCOST.Color.Gray600">#4B5563</Color>
+    <Color x:Key="CONCOST.Color.Gray700">#374151</Color>
+    <Color x:Key="CONCOST.Color.Gray800">#1F2937</Color>
+    <Color x:Key="CONCOST.Color.Gray900">#111827</Color>
+    <Color x:Key="CONCOST.Color.Gray950">#0B0F19</Color>
+
+    <Color x:Key="CONCOST.Color.White">#FFFFFF</Color>
+    <Color x:Key="CONCOST.Color.Black">#000000</Color>
+    <Color x:Key="CONCOST.Color.Transparent">#00000000</Color>
+
+    <!-- Global Base Brushes -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Primary" Color="{StaticResource CONCOST.Color.Primary}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryHover" Color="{StaticResource CONCOST.Color.PrimaryHover}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryPressed" Color="{StaticResource CONCOST.Color.PrimaryPressed}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryLight" Color="{StaticResource CONCOST.Color.PrimaryLight}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryDark" Color="{StaticResource CONCOST.Color.PrimaryDark}" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Success" Color="{StaticResource CONCOST.Color.Success}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Warning" Color="{StaticResource CONCOST.Color.Warning}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Danger" Color="{StaticResource CONCOST.Color.Danger}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Info" Color="{StaticResource CONCOST.Color.Info}" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.White" Color="{StaticResource CONCOST.Color.White}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Black" Color="{StaticResource CONCOST.Color.Black}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Transparent" Color="{StaticResource CONCOST.Color.Transparent}" />
+
+</ResourceDictionary>

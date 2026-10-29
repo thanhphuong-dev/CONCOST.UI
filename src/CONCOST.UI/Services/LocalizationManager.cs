@@ -1,0 +1,281 @@
+using System.Globalization;
+using CONCOST.UI.Core.MVVM;
+
+namespace CONCOST.UI.Services;
+
+public class LocalizationManager : ObservableObject
+{
+    private static readonly Lazy<LocalizationManager> _current = new(() => new LocalizationManager());
+    public static LocalizationManager Current => _current.Value;
+
+    private CultureInfo _culture = new("vi-VN");
+    private readonly Dictionary<string, Dictionary<string, string>> _translations = new();
+
+    public CultureInfo Culture
+    {
+        get => _culture;
+        set
+        {
+            if (SetProperty(ref _culture, value))
+            {
+                OnPropertyChanged("Item[]");
+            }
+        }
+    }
+
+    public LocalizationManager()
+    {
+        // Default translations
+        _translations["vi-VN"] = new()
+        {
+            ["Common.Save"] = "Lưu",
+            ["Common.Cancel"] = "Hủy",
+            ["Common.Delete"] = "Xóa",
+            ["Common.Edit"] = "Sửa",
+            ["Common.Search"] = "Tìm kiếm...",
+            ["Common.Confirm"] = "Xác nhận",
+            ["Common.NoData"] = "Không có dữ liệu",
+            ["Unit.Length"] = "Chiều dài",
+            ["Unit.Width"] = "Bề rộng",
+            ["Unit.Moment"] = "Mô-men uốn"
+        };
+
+        _translations["en-US"] = new()
+        {
+            ["Common.Save"] = "Save",
+            ["Common.Cancel"] = "Cancel",
+            ["Common.Delete"] = "Delete",
+            ["Common.Edit"] = "Edit",
+            ["Common.Search"] = "Search...",
+            ["Common.Confirm"] = "Confirm",
+            ["Common.NoData"] = "No Data Available",
+            ["Unit.Length"] = "Length",
+            ["Unit.Width"] = "Width",
+            ["Unit.Moment"] = "Bending Moment"
+        };
+
+        AddShowcaseTranslations("vi-VN", new()
+        {
+            ["Showcase.WindowTitle"] = "Thư viện thành phần",
+            ["Showcase.Brand.Caption"] = "THƯ VIỆN THÀNH PHẦN WPF",
+            ["Showcase.Header.Accent"] = "MÀU CHỦ ĐẠO",
+            ["Showcase.Header.TestToast"] = "Thử thông báo",
+            ["Showcase.Header.Language"] = "Ngôn ngữ",
+            ["Showcase.Filters.All"] = "Tất cả",
+            ["Showcase.Filters.Basic"] = "Cơ bản",
+            ["Showcase.Filters.Custom"] = "Mở rộng",
+            ["Showcase.Catalog.Title"] = "THÀNH PHẦN",
+            ["Showcase.Catalog.Subtitle"] = "Duyệt thư viện",
+            ["Showcase.Catalog.Search"] = "Tìm thành phần...",
+            ["Showcase.Catalog.Items"] = "mục",
+            ["Showcase.Category.Basic"] = "Điều khiển cơ bản",
+            ["Showcase.Category.Custom"] = "Điều khiển mở rộng",
+            ["Showcase.Category.GettingStarted"] = "Bắt đầu",
+            ["Showcase.Item.Overview"] = "Tổng quan",
+            ["Showcase.Item.Documentation"] = "Tài liệu",
+            ["Showcase.Description.Overview"] = "Duyệt danh mục và mở bản trình diễn trực tiếp.",
+            ["Showcase.Overview.Eyebrow"] = "CONCOST.UI  /  TRÌNH DIỄN THÀNH PHẦN",
+            ["Showcase.Overview.Headline"] = "Giao diện kỹ thuật,\nsẵn sàng cho dự án thực tế.",
+            ["Showcase.Overview.Summary"] = "Khám phá các điều khiển WPF dành cho quy trình kỹ thuật, CAD, BIM và xây dựng. Mỗi ví dụ đều có thể tương tác và thể hiện cách thành phần hoạt động trong ứng dụng.",
+            ["Showcase.Overview.OpenSpreadsheet"] = "Khám phá Spreadsheet",
+            ["Showcase.Overview.BrowseCustom"] = "Duyệt điều khiển mở rộng",
+            ["Showcase.Overview.StructuralSummary"] = "TỔNG QUAN KẾT CẤU",
+            ["Showcase.Overview.Live"] = "ĐANG CHẠY",
+            ["Showcase.Overview.ProjectName"] = "Tháp A · Mô hình kết cấu",
+            ["Showcase.Overview.ProjectCaption"] = "Tóm tắt phối hợp mô hình",
+            ["Showcase.Overview.Floors"] = "TẦNG",
+            ["Showcase.Overview.Columns"] = "CỘT",
+            ["Showcase.Overview.Concrete"] = "BÊ TÔNG",
+            ["Showcase.Overview.Footprint"] = "DIỆN TÍCH SÀN",
+            ["Showcase.Overview.Interactive"] = "THÀNH PHẦN TƯƠNG TÁC",
+            ["Showcase.Overview.Foundation"] = "ĐIỀU KHIỂN CƠ BẢN",
+            ["Showcase.Overview.Custom"] = "ĐIỀU KHIỂN MỞ RỘNG",
+            ["Showcase.Overview.RuntimeThemes"] = "GIAO DIỆN SÁNG / TỐI",
+            ["Showcase.Overview.Featured"] = "Bản trình diễn nổi bật",
+            ["Showcase.Overview.FeaturedSubtitle"] = "Mở ví dụ trực tiếp để trải nghiệm thành phần.",
+            ["Showcase.Overview.Browse"] = "Duyệt thư viện",
+            ["Showcase.Overview.BrowseSubtitle"] = "Lọc danh mục hoặc mở hướng dẫn bắt đầu.",
+            ["Showcase.Overview.CategoryBasicDescription"] = "Các điều khiển WPF quen thuộc với giao diện CONCOST đồng nhất.",
+            ["Showcase.Overview.CategoryCustomDescription"] = "Thành phần chuyên dụng cho ứng dụng kỹ thuật nhiều dữ liệu.",
+            ["Showcase.Overview.CategoryGettingStartedDescription"] = "Tổng quan và hướng dẫn tích hợp thư viện.",
+            ["Showcase.Overview.PresentationTipTitle"] = "CÁCH KHÁM PHÁ THƯ VIỆN",
+            ["Showcase.Overview.PresentationTip"] = "Chọn một điều khiển trong danh mục bên trái để mở bản demo tương tác. Chọn Xem mã để tham khảo XAML và C#.",
+            ["Showcase.Component.Spreadsheet"] = "Bảng tính kỹ thuật",
+            ["Showcase.Description.Spreadsheet"] = "Chỉnh sửa công thức, làm việc với nhiều trang tính và lập lịch biểu khối lượng.",
+            ["Showcase.Component.StackedHeaderDataGrid"] = "Lưới dữ liệu tiêu đề nhiều tầng",
+            ["Showcase.Description.StackedHeaderDataGrid"] = "Nhóm tiêu đề cột cho các bảng dữ liệu kỹ thuật chuyên sâu.",
+            ["Showcase.Component.StatisticCard (KPI)"] = "Thẻ thống kê (KPI)",
+            ["Showcase.Description.StatisticCard (KPI)"] = "Hiển thị nhanh chỉ số, trạng thái và xu hướng.",
+            ["Showcase.Component.PropertyGrid"] = "Lưới thuộc tính",
+            ["Showcase.Description.PropertyGrid"] = "Trình kiểm tra thuộc tính có thể chỉnh sửa cho đối tượng CAD và BIM.",
+            ["Showcase.Component.CheckComboBox"] = "Hộp chọn nhiều mục",
+            ["Showcase.Description.CheckComboBox"] = "Chọn nhiều mục có tìm kiếm và phản hồi lựa chọn rõ ràng.",
+            ["Showcase.Component.Drawer"] = "Ngăn trượt",
+            ["Showcase.Description.Drawer"] = "Bảng điều khiển trượt cho các tác vụ phụ.",
+            ["Showcase.Description.Brush"] = "Hệ thống màu và brush gồm màu chủ đạo, màu ngữ nghĩa, bề mặt, đường viền và kiểu chữ, tự điều chỉnh theo giao diện sáng hoặc tối.",
+            ["Showcase.Description.Button"] = "Các kiểu nút tương tác: chủ đạo, phụ, thành công, viền và nguy hiểm, kèm biểu tượng vector.",
+            ["Showcase.Description.ToggleButton"] = "Nút bật tắt hai trạng thái với chỉ báo trực quan.",
+            ["Showcase.Description.RadioButton"] = "Chọn một tùy chọn trong nhóm lựa chọn.",
+            ["Showcase.Description.CheckBox"] = "Hộp chọn nhiều lựa chọn với trạng thái chọn, bỏ chọn và không xác định.",
+            ["Showcase.Description.ToggleSwitch"] = "Công tắc bật/tắt có chuyển động mượt cho thiết lập ứng dụng.",
+            ["Showcase.Description.ScrollViewer"] = "Vùng cuộn gọn với thanh cuộn tự ẩn và kiểu thanh cuộn mảnh.",
+            ["Showcase.Description.Slider"] = "Thanh trượt điều chỉnh giá trị liên tục, có vạch chia và kiểu ngữ nghĩa.",
+            ["Showcase.Description.TextBlock"] = "Hệ thống hiển thị chữ với các kiểu tiêu đề và nội dung được chuẩn hóa.",
+            ["Showcase.Description.TextBox"] = "Ô nhập liệu có gợi ý, nút xóa nhanh và biểu tượng đầu/cuối.",
+            ["Showcase.Description.ComboBox"] = "Hộp chọn thả xuống với mũi tên chuyển động và nhiều kiểu hiển thị.",
+            ["Showcase.Description.PasswordBox"] = "Ô nhập mật khẩu bảo mật với nút hiện/ẩn và biểu tượng khóa.",
+            ["Showcase.Description.Expander"] = "Khung nội dung có thể thu gọn để nhóm thông tin.",
+            ["Showcase.Description.ProgressBar"] = "Thanh tiến trình xác định, theo ngữ nghĩa hoặc chạy liên tục.",
+            ["Showcase.Description.Calendar"] = "Lịch tương tác để chọn ngày trong quy trình lập tiến độ.",
+            ["Showcase.Description.DatePicker"] = "Bộ chọn ngày thả xuống cho mốc tiến độ dự án.",
+            ["Showcase.Description.TabControl"] = "Điều hướng theo tab để chuyển đổi các màn hình chức năng.",
+            ["Showcase.Description.DataGrid"] = "Bảng dữ liệu kỹ thuật có hàng xen kẽ và hỗ trợ giao diện sáng/tối.",
+            ["Showcase.Description.TreeView"] = "Cây dự án phân cấp cho tầng, cấu kiện và mô hình.",
+            ["Showcase.Description.ListBox"] = "Danh sách chọn mục với trạng thái rê chuột và lựa chọn riêng.",
+            ["Showcase.Description.GroupBox"] = "Khung có tiêu đề để nhóm các tham số.",
+            ["Showcase.Description.Menu"] = "Thanh menu ứng dụng và các menu ngữ cảnh thả xuống.",
+            ["Showcase.Description.Border"] = "Khung chứa với bo góc và mức đổ bóng đồng nhất.",
+            ["Showcase.Description.Card"] = "Thẻ thông tin gồm tiêu đề, nội dung và chân thẻ.",
+            ["Showcase.Description.Badge"] = "Nhãn trạng thái cho thành công, cảnh báo và thông tin cần chú ý.",
+            ["Showcase.Description.SearchBox"] = "Ô tìm kiếm có lọc trực tiếp và nút xóa nhanh.",
+            ["Showcase.Description.Tag / Chip"] = "Thẻ cấu kiện có thể đóng cùng biểu tượng vector.",
+            ["Showcase.Description.Pagination"] = "Điều hướng phân trang cho danh sách dữ liệu lớn.",
+            ["Showcase.Description.Charts Suite"] = "Bộ biểu đồ vector hiệu năng cao gồm cột, đường, radar và hình tròn.",
+            ["Showcase.Description.FilePicker"] = "Bộ chọn tệp và thư mục tích hợp hộp thoại hệ thống.",
+            ["Showcase.Description.Breadcrumb"] = "Đường dẫn điều hướng theo cấp cho các màn hình nhiều tầng.",
+            ["Showcase.Description.Divider"] = "Đường phân cách gọn, có thể kèm nhãn tiêu đề.",
+            ["Showcase.Description.EmptyState"] = "Màn hình hướng dẫn khi danh sách hoặc dữ liệu đang trống.",
+            ["Showcase.Description.Icons Gallery"] = "Bộ sưu tập biểu tượng vector dành cho quy trình BIM, CAD và xây dựng.",
+            ["Showcase.Description.Rating"] = "Đánh giá sao tương tác cho duyệt tài liệu và kiểm soát chất lượng.",
+            ["Showcase.Description.Watermark"] = "Lớp watermark bản nháp hoặc bản quyền trên bản vẽ và báo cáo.",
+            ["Showcase.Description.ListView"] = "Danh sách và bảng nhiều cột với tiêu đề, định dạng và trạng thái chọn.",
+            ["Showcase.Description.PinBox"] = "Ô nhập OTP/PIN theo từng ký tự, hỗ trợ che mã và tự chuyển ô.",
+            ["Showcase.Description.Growl"] = "Thông báo nổi tự đóng cùng xác nhận tương tác.",
+            ["Showcase.Description.Dialog"] = "Hộp thoại dạng thẻ với hiệu ứng phóng, tiêu đề tùy chỉnh và nền mờ.",
+            ["Showcase.Description.StepBar"] = "Thanh tiến độ quy trình nhiều bước với trạng thái và chỉ báo tương tác.",
+            ["Showcase.Description.Transfer"] = "Danh sách hai khung để tìm kiếm, chọn nhiều và chuyển mục hàng loạt.",
+            ["Showcase.Description.NumericUpDown"] = "Ô số chính xác có đơn vị, tiền tố/hậu tố, giới hạn và nhiều kiểu hiển thị.",
+            ["Showcase.Description.Clock"] = "Bộ chọn giờ dạng vòng tròn, tự chuyển giữa giờ, phút và giây.",
+            ["Showcase.Description.CalendarWithClock"] = "Bộ chọn ngày giờ kết hợp lịch và đồng hồ tương tác.",
+            ["Showcase.Description.ColorPicker"] = "Bộ chọn màu HSV với vùng bão hòa, thanh màu, alpha, mã Hex và màu mẫu.",
+            ["Showcase.Description.SplitButton"] = "Nút hành động chính kết hợp menu tùy chọn thả xuống.",
+            ["Showcase.Description.SideMenu"] = "Menu điều hướng dọc có thể thu gọn, kèm huy hiệu và biểu tượng.",
+            ["Showcase.Description.Timeline"] = "Dòng thời gian có trạng thái, biểu tượng, mốc thời gian và thẻ nội dung.",
+            ["Showcase.Description.CardCarousel"] = "Băng chuyền thẻ có chiều sâu 3D, chuyển động mượt và tự xoay.",
+            ["Showcase.Description.DrawerMenu"] = "Menu trượt có thể thu gọn, hỗ trợ chế độ thanh biểu tượng và huy hiệu.",
+            ["Showcase.Description.SnowCanvas"] = "Hiệu ứng tuyết GPU với mật độ, tốc độ, hướng gió và màu tùy chỉnh.",
+            ["Showcase.Description.Sprite"] = "Trợ lý nổi có thể kéo, tự bám cạnh và mở menu thao tác nhanh.",
+            ["Showcase.Description.CompareSlider"] = "Thanh kéo so sánh hai ảnh trước/sau bằng vùng cắt chuyển động mượt.",
+            ["Showcase.Description.Magnifier"] = "Kính lúp nổi có tâm ngắm để kiểm tra chi tiết bản vẽ CAD/BIM.",
+            ["Showcase.Description.RangeSlider"] = "Thanh trượt hai đầu để chọn khoảng giá trị và lọc tham số kết cấu.",
+            ["Showcase.Description.AutoCompleteTextBox"] = "Ô nhập gợi ý có lọc tức thời cho mã vật liệu và dữ liệu BIM.",
+            ["Showcase.Description.DragDropHelper"] = "Hỗ trợ kéo-thả để sắp xếp hoặc chuyển mục giữa các danh sách và bảng.",
+            ["Showcase.Description.Ripple"] = "Hiệu ứng gợn sóng bắt đầu từ vị trí nhấn chuột.",
+            ["Showcase.Description.Skeleton (Shimmer)"] = "Hiệu ứng shimmer chuyển màu làm placeholder khi tải thẻ, ảnh đại diện và dòng chữ.",
+            ["Showcase.Description.Documentation"] = "Hướng dẫn tích hợp CONCOST.UI vào ứng dụng WPF và plugin Revit/AutoCAD, cấu hình theme, sử dụng control và phân phối thư viện.",
+            ["Showcase.Overview.CategoryData"] = "DỮ LIỆU",
+            ["Showcase.Overview.CategoryDashboard"] = "BẢNG ĐIỀU KHIỂN",
+            ["Showcase.Overview.CategoryInput"] = "NHẬP LIỆU",
+            ["Showcase.Overview.CategoryNavigation"] = "ĐIỀU HƯỚNG",
+            ["Showcase.Overview.FeatureSpreadsheet"] = "Công thức, nhiều trang tính và bảng khối lượng kỹ thuật.",
+            ["Showcase.Overview.FeatureStackedGrid"] = "Tiêu đề nhóm cho bảng dữ liệu kỹ thuật chuyên sâu.",
+            ["Showcase.Overview.FeatureStatistic"] = "Chỉ số tổng quan cùng trạng thái và xu hướng.",
+            ["Showcase.Overview.FeatureProperty"] = "Trình kiểm tra thuộc tính cho đối tượng CAD và BIM.",
+            ["Showcase.Overview.FeatureCheckCombo"] = "Chọn nhiều mục có tìm kiếm và phản hồi lựa chọn.",
+            ["Showcase.Overview.FeatureDrawer"] = "Ngăn trượt cho các quy trình phụ.",
+            ["Showcase.Toast.Title"] = "CONCOST UI",
+            ["Showcase.Toast.Message"] = "Thao tác đã được thực hiện thành công!"
+        });
+
+        AddShowcaseTranslations("en-US", new()
+        {
+            ["Showcase.WindowTitle"] = "Component Gallery",
+            ["Showcase.Brand.Caption"] = "WPF COMPONENT LIBRARY",
+            ["Showcase.Header.Accent"] = "ACCENT",
+            ["Showcase.Header.TestToast"] = "Test Toast",
+            ["Showcase.Header.Language"] = "Language",
+            ["Showcase.Filters.All"] = "All",
+            ["Showcase.Filters.Basic"] = "Basic",
+            ["Showcase.Filters.Custom"] = "Custom",
+            ["Showcase.Catalog.Title"] = "COMPONENTS",
+            ["Showcase.Catalog.Subtitle"] = "Browse the library",
+            ["Showcase.Catalog.Search"] = "Search components...",
+            ["Showcase.Catalog.Items"] = "items",
+            ["Showcase.Category.Basic"] = "Basic Controls",
+            ["Showcase.Category.Custom"] = "Custom Controls",
+            ["Showcase.Category.GettingStarted"] = "Getting Started",
+            ["Showcase.Item.Overview"] = "Overview",
+            ["Showcase.Description.Overview"] = "Browse the catalog and open live control demos.",
+            ["Showcase.Overview.Eyebrow"] = "CONCOST.UI  /  LIVE COMPONENT SHOWCASE",
+            ["Showcase.Overview.Headline"] = "Engineering interfaces,\nready for real projects.",
+            ["Showcase.Overview.Summary"] = "Explore polished WPF controls built for engineering, CAD, BIM, and construction workflows. Every example is interactive and designed to show how the component behaves in an application.",
+            ["Showcase.Overview.OpenSpreadsheet"] = "Explore Spreadsheet",
+            ["Showcase.Overview.BrowseCustom"] = "Browse custom controls",
+            ["Showcase.Overview.StructuralSummary"] = "STRUCTURAL SUMMARY",
+            ["Showcase.Overview.Live"] = "LIVE",
+            ["Showcase.Overview.ProjectName"] = "Tower A · Structural model",
+            ["Showcase.Overview.ProjectCaption"] = "Coordination snapshot",
+            ["Showcase.Overview.Floors"] = "FLOORS",
+            ["Showcase.Overview.Columns"] = "COLUMNS",
+            ["Showcase.Overview.Concrete"] = "CONCRETE",
+            ["Showcase.Overview.Footprint"] = "FOOTPRINT",
+            ["Showcase.Overview.Interactive"] = "INTERACTIVE COMPONENTS",
+            ["Showcase.Overview.Foundation"] = "FOUNDATION CONTROLS",
+            ["Showcase.Overview.Custom"] = "CUSTOM CONTROLS",
+            ["Showcase.Overview.RuntimeThemes"] = "RUNTIME THEMES",
+            ["Showcase.Overview.Featured"] = "Featured demonstrations",
+            ["Showcase.Overview.FeaturedSubtitle"] = "Open a live example to experience each component.",
+            ["Showcase.Overview.Browse"] = "Browse the library",
+            ["Showcase.Overview.BrowseSubtitle"] = "Filter the catalog by type or open the getting started guide.",
+            ["Showcase.Overview.CategoryBasicDescription"] = "Familiar WPF essentials with a consistent CONCOST finish.",
+            ["Showcase.Overview.CategoryCustomDescription"] = "Purpose-built components for data-heavy engineering applications.",
+            ["Showcase.Overview.CategoryGettingStartedDescription"] = "An overview and guide to integrating the library.",
+            ["Showcase.Overview.PresentationTipTitle"] = "EXPLORE THE LIBRARY",
+            ["Showcase.Overview.PresentationTip"] = "Choose a control from the catalog to open its interactive demo. Select View Code to inspect the XAML and C# examples.",
+            ["Showcase.Component.Spreadsheet"] = "Engineering Spreadsheet",
+            ["Showcase.Description.Spreadsheet"] = "Formula editing, multi-sheet workbooks, and engineering quantity schedules.",
+            ["Showcase.Component.StackedHeaderDataGrid"] = "Stacked Header Data Grid",
+            ["Showcase.Description.StackedHeaderDataGrid"] = "Grouped column headers for dense engineering datasets.",
+            ["Showcase.Component.StatisticCard (KPI)"] = "Statistic Card (KPI)",
+            ["Showcase.Description.StatisticCard (KPI)"] = "At-a-glance metrics with status and trend indicators.",
+            ["Showcase.Component.PropertyGrid"] = "Property Grid",
+            ["Showcase.Description.PropertyGrid"] = "An editable property inspector for CAD and BIM objects.",
+            ["Showcase.Component.CheckComboBox"] = "Multi-Select Combo Box",
+            ["Showcase.Description.CheckComboBox"] = "Searchable multi-select with clear selection feedback.",
+            ["Showcase.Component.Drawer"] = "Drawer",
+            ["Showcase.Description.Drawer"] = "An animated side panel for secondary workflows.",
+            ["Showcase.Overview.CategoryData"] = "DATA CONTROLS",
+            ["Showcase.Overview.CategoryDashboard"] = "DASHBOARD",
+            ["Showcase.Overview.CategoryInput"] = "INPUT CONTROLS",
+            ["Showcase.Overview.CategoryNavigation"] = "NAVIGATION",
+            ["Showcase.Overview.FeatureSpreadsheet"] = "Formula editing, multi-sheet workbooks, and engineering schedules.",
+            ["Showcase.Overview.FeatureStackedGrid"] = "Grouped headers for dense engineering datasets.",
+            ["Showcase.Overview.FeatureStatistic"] = "At-a-glance metrics with status and trend indicators.",
+            ["Showcase.Overview.FeatureProperty"] = "An editable property inspector for CAD and BIM objects.",
+            ["Showcase.Overview.FeatureCheckCombo"] = "Searchable multi-select with clear selection feedback.",
+            ["Showcase.Overview.FeatureDrawer"] = "An animated side panel for secondary workflows.",
+            ["Showcase.Toast.Title"] = "CONCOST UI",
+            ["Showcase.Toast.Message"] = "Action executed successfully!"
+        });
+    }
+
+    private void AddShowcaseTranslations(string culture, Dictionary<string, string> values)
+    {
+        foreach (var entry in values)
+            _translations[culture][entry.Key] = entry.Value;
+    }
+
+    public string this[string key] => GetString(key);
+
+    public string GetString(string key, string? defaultValue = null)
+    {
+        string cultureName = Culture.Name;
+        if (_translations.TryGetValue(cultureName, out var dict) && dict.TryGetValue(key, out var val))
+            return val;
+
+        if (_translations.TryGetValue("en-US", out var fallbackDict) && fallbackDict.TryGetValue(key, out var fallbackVal))
+            return fallbackVal;
+
+        return defaultValue ?? key;
+    }
+}

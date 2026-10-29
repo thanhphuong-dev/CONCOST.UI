@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Authors>CONCOST Ecosystem</Authors>
+    <Company>CONCOST</Company>
+    <Product>CONCOST WPF UI Library</Product>
+    <Copyright>Copyright © 2026 CONCOST</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+</Project>
