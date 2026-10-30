@@ -28,3 +28,7 @@ Desktop.ini
 
 # Local assistant workspace data
 .workbuddy-ai/
+
+# AI assistant instructions — kept local, never published
+AGENTS.md
+.agents/

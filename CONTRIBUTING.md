@@ -29,12 +29,21 @@ dotnet test tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Debug
 
 ## Control and theme guidelines
 
-- Follow the component and Showcase standards in [`.agents/rules/showcase-standards.md`](.agents/rules/showcase-standards.md).
+- Build each control from first principles, tuned for `CONCOST.UI` (theme integration, design tokens, modern animation).
+- Implement every meaningful variant and style, so users can see how to apply the control.
 - Use the existing design tokens and dynamic theme resources where applicable.
 - Keep controls keyboard accessible and verify their behavior in light and dark themes.
 - Add or update a Showcase example for new controls or meaningful variants.
 - Add focused tests for behavior that can be tested without UI interaction.
 - Keep the library as one `CONCOST.UI` assembly unless an architectural change has been discussed.
+
+### Showcase layout
+
+- Section cards use a surface background, `CornerRadius="10"`, a 1 px theme border and consistent padding.
+- Controls in the same group share a uniform width or grid column — no ragged alignment.
+- Show the active/enabled state; redundant "disabled" tiles are not needed.
+- Every demo exposes **View XAML** and **View C#** at the top-right of its card, with a copy button.
+- The snippet must match the running demo exactly — no truncated placeholders.
 
 ## Pull request checklist
 
