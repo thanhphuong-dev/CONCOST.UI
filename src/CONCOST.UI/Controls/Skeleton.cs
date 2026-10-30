@@ -30,7 +30,7 @@ public enum SkeletonShape
 }
 
 /// <summary>
-/// Modern Shimmer/Skeleton loading placeholder control inspired by HandyControl and WPFDevelopers.
+/// Modern Shimmer/Skeleton loading placeholder control.
 /// Renders an animated gradient sweep across placeholder shapes during asynchronous data fetching,
 /// and smoothly transitions to actual content once loading completes.
 /// </summary>

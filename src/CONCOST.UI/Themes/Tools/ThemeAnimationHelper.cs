@@ -10,7 +10,7 @@ namespace CONCOST.UI.Themes.Tools;
 
 /// <summary>
 /// Adorner that renders a smooth circular mask / crossfade transition from a snapshot of the previous theme.
-/// Inspired by modern Web View Transitions API and WPFDevelopers Circular Reveal Theme effect.
+/// Inspired by the modern Web View Transitions API and the circular-reveal theme transition.
 /// </summary>
 public class ThemeTransitionAdorner : Adorner
 {

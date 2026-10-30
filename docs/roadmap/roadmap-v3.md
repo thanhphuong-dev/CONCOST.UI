@@ -2,7 +2,7 @@
 
 ## 1. Mục tiêu dự án
 
-`CONCOST.UI` được định hướng trở thành một **WPF UI Library / Design System** dùng lại được cho nhiều phần mềm trong hệ sinh thái CONCOST, tương tự HandyControl nhưng tập trung vào các nhu cầu thực tế của phần mềm kỹ thuật, CAD, xây dựng và desktop.
+`CONCOST.UI` được định hướng trở thành một **WPF UI Library / Design System** dùng lại được cho nhiều phần mềm trong hệ sinh thái CONCOST, tập trung vào các nhu cầu thực tế của phần mềm kỹ thuật, CAD, xây dựng và desktop.
 
 Mục tiêu chính:
 
@@ -2115,7 +2115,7 @@ Design System
 
 Nếu nền tảng Theme + Token + Style + AttachedProperty được làm tốt từ đầu thì thư viện có thể mở rộng lên hàng chục hoặc hàng trăm control mà vẫn dễ maintain.
 
-Phần tạo khác biệt lớn nhất so với HandyControl nên tập trung vào các control dành riêng cho phần mềm kỹ thuật và xây dựng như:
+Phần tạo khác biệt lớn nhất nên tập trung vào các control dành riêng cho phần mềm kỹ thuật và xây dựng như:
 
 ```text
 UnitBox
@@ -3392,7 +3392,7 @@ Vẫn giữ API tĩnh (`ThemeManager.Current...`) cho project nhỏ không dùng
 ## Tránh xung đột khi dùng chung với thư viện UI khác
 
 ```text
-- Namespace resource key luôn có prefix "CONCOST." (đã quy định ở mục 62) — không trùng với HandyControl/MahApps/MaterialDesignInXaml.
+- Namespace resource key luôn có prefix "CONCOST." (đã quy định ở mục 62) — không trùng với các thư viện WPF UI phổ biến khác.
 - Tài liệu hướng dẫn merge ResourceDictionary đúng thứ tự khi 1 project bắt buộc dùng chung 2 thư viện UI (ví dụ do dependency của bên thứ ba).
 - Test thử tích hợp chung với 1 thư viện phổ biến (ví dụ MahApps.Metro) trong CI để phát hiện sớm xung đột style key.
 ```

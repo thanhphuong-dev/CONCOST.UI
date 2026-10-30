@@ -8,8 +8,8 @@ namespace CONCOST.UI.Controls;
 
 public enum LoadingIndicatorType
 {
-    ThreeDotsWave,       // HandyControl / WPFDevelopers 3 Dots Bouncing Wave
-    CircularDotsRing,     // WPFDevelopers Orbiting Spinner Ring
+    ThreeDotsWave,       // 3 dots bouncing wave
+    CircularDotsRing,     // orbiting spinner ring
     LinePulse,           // Smooth modern horizontal progress line
     PulseCircle          // Pulsing radar ripple
 }

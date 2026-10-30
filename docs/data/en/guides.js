@@ -3,7 +3,7 @@ Object.assign(DOCS_EN.pages, {
 
     intro: {
         title: "A WPF library for engineering, CAD &amp; BIM",
-        desc: "CONCOST.UI is a WPF component library tuned for structural, BIM, CAD and technical desktop applications. It ships design tokens that adapt to light and dark, six theme presets and more than 60 controls inspired by WPFDevelopers &amp; HandyControl.",
+        desc: "CONCOST.UI is a WPF component library tuned for structural, BIM, CAD and technical desktop applications. It ships design tokens that adapt to light and dark, six theme presets and more than 60 controls.",
         heroStats: [
             { label: "Controls" },
             { label: "Target frameworks" },

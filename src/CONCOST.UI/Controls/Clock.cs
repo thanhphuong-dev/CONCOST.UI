@@ -140,7 +140,7 @@ public class Clock : Control
             _isDragging = false;
             _canvas?.ReleaseMouseCapture();
 
-            // Auto-advance mode: Hour -> Minute (HandyControl pattern)
+            // Auto-advance mode: Hour -> Minute
             if (DisplayMode == ClockDisplayMode.Hour)
             {
                 DisplayMode = ClockDisplayMode.Minute;

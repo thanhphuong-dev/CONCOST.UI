@@ -2,8 +2,7 @@
 
 ## 1. Control Research & Development Strategy
 Whenever a control is requested:
-- **Reference Libraries**: Deeply inspect and extract best ideas from [WPFDevelopers](https://github.com/WPFDevelopersOrg/WPFDevelopers) and [HandyControl](https://github.com/HandyOrg/HandyControl).
-- **Custom Development**: Adapt and evolve those patterns uniquely for `CONCOST.UI` (theme integration, modern animations, token system).
+- **Custom Development**: Build each control from first principles, tuned for `CONCOST.UI` (theme integration, modern animations, token system).
 - **Variant Completeness**: Implement all meaningful variants and styles so users know how to apply them.
 - **Language**: Synchronize all UI labels, code comments, titles, tooltips, and documentation in **English**.
 

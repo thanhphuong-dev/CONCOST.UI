@@ -108,7 +108,7 @@ public class DrawerMenuItem : DependencyObject
 }
 
 /// <summary>
-/// DrawerMenu navigation control inspired by WPFDevelopers.
+/// DrawerMenu navigation control for collapsible side navigation.
 /// Features smooth animated collapse/expand, mask overlay, header/footer branding, search filter, and menu item selection.
 /// </summary>
 public class DrawerMenu : HeaderedItemsControl

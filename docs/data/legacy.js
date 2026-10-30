@@ -5,7 +5,7 @@ const DOCS_LEGACY = {
         hero: true,
         title: "Thư viện WPF cho kỹ thuật, CAD & BIM",
         badge: "Bắt Đầu Nhanh",
-        desc: "CONCOST.UI là bộ thư viện giao diện WPF tối ưu cho phần mềm kết cấu, BIM, CAD và ứng dụng desktop kỹ thuật. Thư viện đi kèm hệ thống design tokens tự thích ứng Dark/Light, 6 theme preset và hơn 60 controls lấy cảm hứng từ WPFDevelopers &amp; HandyControl.",
+        desc: "CONCOST.UI là bộ thư viện giao diện WPF tối ưu cho phần mềm kết cấu, BIM, CAD và ứng dụng desktop kỹ thuật. Thư viện đi kèm hệ thống design tokens tự thích ứng Dark/Light, 6 theme preset và hơn 60 controls.",
         heroStats: [
             { value: "60+", label: "Controls" },
             { value: "3", label: "Target frameworks" },
@@ -711,7 +711,7 @@ Growl.Error("Không thể kết nối đến máy chủ CSDL SQL!", "Lỗi Kết
     drawermenu: {
         title: "DrawerMenu — menu ngăn kéo",
         badge: "Custom Controls & Navigation",
-        desc: "Thanh điều hướng ngăn kéo thông minh lấy cảm hứng từ WPFDevelopers, hỗ trợ thu gọn/mở rộng động (Expand/Collapse Animation mượt mà), thanh Header chứa Logo & Nút Toggle Menu, Item Template kèm Vector Icon, Title, Badge thông báo và khu vực Footer cố định.",
+        desc: "Thanh điều hướng ngăn kéo thông minh, hỗ trợ thu gọn/mở rộng động (Expand/Collapse Animation mượt mà), thanh Header chứa Logo & Nút Toggle Menu, Item Template kèm Vector Icon, Title, Badge thông báo và khu vực Footer cố định.",
         sections: [
             {
                 title: "1. Khai Báo Trong XAML",
@@ -749,7 +749,7 @@ public ObservableCollection<DrawerMenuItem> MenuItemsList { get; } = new()
     snowcanvas: {
         title: "SnowCanvas (Hiệu Ứng Tuyết Rơi Hạt GPU)",
         badge: "Canvas Effects",
-        desc: "Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt (lấy cảm hứng từ WPFDevelopers), hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi, độ lắc lư dao động (Oscillation Swing), lực gió thổi ngang (Wind Drift), màu hạt và tạm dừng/tiếp tục chuyển động.",
+        desc: "Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt, hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi, độ lắc lư dao động (Oscillation Swing), lực gió thổi ngang (Wind Drift), màu hạt và tạm dừng/tiếp tục chuyển động.",
         sections: [
             {
                 title: "1. Sử Dụng Trong XAML",
@@ -780,7 +780,7 @@ public ObservableCollection<DrawerMenuItem> MenuItemsList { get; } = new()
     sprite: {
         title: "Sprite — trợ lý nổi",
         badge: "Floating Assistant & Widget",
-        desc: "Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button) lấy cảm hứng từ HandyControl. Sprite luôn nổi phía trên toàn bộ giao diện, cho phép người dùng kéo thả tự do bằng chuột khắp màn hình, tự động 'hít' (Auto-Snap) vào mép viền cửa sổ gần nhất khi thả tay và bung mở Popup Menu phím tắt nhanh chỉ với 1 click.",
+        desc: "Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button). Sprite luôn nổi phía trên toàn bộ giao diện, cho phép người dùng kéo thả tự do bằng chuột khắp màn hình, tự động 'hít' (Auto-Snap) vào mép viền cửa sổ gần nhất khi thả tay và bung mở Popup Menu phím tắt nhanh chỉ với 1 click.",
         sections: [
             {
                 title: "1. Khai Báo Trong XAML",
@@ -836,7 +836,7 @@ public ObservableCollection<DrawerMenuItem> MenuItemsList { get; } = new()
     magnifier: {
         title: "Magnifier — kính lúp bản vẽ",
         badge: "Interactive & Engineering",
-        desc: "Tròng kính lúp phóng to tọa độ điểm ảnh độ nét cao (lấy cảm hứng từ HandyControl & WPFDevelopers). Khi rê chuột vào khu vực bản vẽ CAD hoặc mặt cắt dầm cột, kính lúp tròn có hồng tâm chữ thập sẽ tự động bám theo và phóng to chi tiết 2x - 5x.",
+        desc: "Tròng kính lúp phóng to tọa độ điểm ảnh độ nét cao. Khi rê chuột vào khu vực bản vẽ CAD hoặc mặt cắt dầm cột, kính lúp tròn có hồng tâm chữ thập sẽ tự động bám theo và phóng to chi tiết 2x - 5x.",
         sections: [
             {
                 title: "1. Sử Dụng Trong XAML",

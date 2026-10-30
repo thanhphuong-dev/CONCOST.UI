@@ -367,9 +367,9 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("SideMenu", "Custom Controls", IconKind.Menu, "Modern vertical sidebar navigation menu with collapsible state, badges, and icon indicators.", CreateSideMenuDemo));
         AllItems.Add(new ShowcaseItem("Timeline", "Custom Controls", IconKind.TimelineCalendar, "Chronological event stream with semantic status nodes, icons, timestamps, and card containers.", CreateTimelineDemo));
         AllItems.Add(new ShowcaseItem("CardCarousel", "Custom Controls", IconKind.Layers, "Dynamic 3D depth perspective card carousel with smooth easing transitions and auto-rotation.", CreateCardCarouselDemo));
-        AllItems.Add(new ShowcaseItem("DrawerMenu", "Custom Controls", IconKind.Menu, "WPFDevelopers-inspired animated collapsible drawer navigation sidebar with compact rail mode and badges.", CreateDrawerMenuDemo));
+        AllItems.Add(new ShowcaseItem("DrawerMenu", "Custom Controls", IconKind.Menu, "Animated collapsible drawer navigation sidebar with compact rail mode and badges.", CreateDrawerMenuDemo));
         AllItems.Add(new ShowcaseItem("SnowCanvas", "Custom Controls", IconKind.Layers, "High-performance GPU falling snow particle canvas with configurable density, speed, wind drift, and color.", CreateSnowCanvasDemo));
-        AllItems.Add(new ShowcaseItem("Sprite", "Custom Controls", IconKind.Layers, "HandyControl-inspired floating draggable assistant widget with auto-edge snap and interactive quick action menu.", CreateSpriteDemo));
+        AllItems.Add(new ShowcaseItem("Sprite", "Custom Controls", IconKind.Layers, "Floating draggable assistant widget with auto-edge snap and interactive quick action menu.", CreateSpriteDemo));
         AllItems.Add(new ShowcaseItem("CompareSlider", "Custom Controls", IconKind.Layers, "Draggable before/after comparison split slider with smooth masking for CAD drawings and 3D renders.", CreateCompareSliderDemo));
         AllItems.Add(new ShowcaseItem("Magnifier", "Custom Controls", IconKind.Search, "Interactive floating zoom lens with crosshair for pixel-level inspection of CAD/BIM drawings.", CreateMagnifierDemo));
         AllItems.Add(new ShowcaseItem("RangeSlider", "Custom Controls", IconKind.Edit, "Dual-thumb interval selector with track highlighting for structural engineering parameter filtering.", CreateRangeSliderDemo));
@@ -6451,7 +6451,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
             return badge;
         }
 
-        // ==================== SECTION 1: 4-Directional Multi-Style Expanders (HandyControl 1:1) ====================
+        // ==================== SECTION 1: 4-Directional Multi-Style Expanders ====================
         System.Windows.Controls.Expander CreateHcExp(string title, System.Windows.Controls.ExpandDirection dir, string? styleKey = null, bool isExpanded = false, double? height = null, Thickness? margin = null, string? tooltip = null)
         {
             var exp = new System.Windows.Controls.Expander
@@ -6592,7 +6592,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         sec1Sp.Children.Add(row2Grid);
 
         string sec1Code =
-@"<!-- HandyControl 1:1 4-Directional Expander Architecture -->
+@"<!-- 4-Directional Expander Architecture -->
 <!-- 1. ExpandDirection=""Down"" (Default, Primary, Success, Warning) -->
 <Expander Header=""Title"" ExpandDirection=""Down"" />
 <Expander Header=""Title"" ExpandDirection=""Down"" Style=""{DynamicResource CONCOST.Expander.Primary}"" />
@@ -6608,7 +6608,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
 <!-- 4. ExpandDirection=""Right"" (Vertical Side-Docked Header with RotateTransform) -->
 <Expander Header=""Title"" ExpandDirection=""Right"" Height=""152"" />";
 
-        AddCardSection("1. 4-Directional Multi-Style Expanders (HandyControl 1:1 Architecture)", sec1Sp, sec1Code);
+        AddCardSection("1. 4-Directional Multi-Style Expanders", sec1Sp, sec1Code);
 
         // ==================== SECTION 2: Standard & Elevated Card Engineering Expanders ====================
         var grid1 = new Grid();
@@ -6671,7 +6671,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         </StackPanel>
     </Expander>
 
-    <!-- Elevated Floating Card Expander (WPFDevelopers Style) -->
+    <!-- Elevated Floating Card Expander -->
     <Expander Grid.Column=""2"" Style=""{DynamicResource CONCOST.Expander.Card}"" Header=""Elevated Card: Rebar Schedule"" IsExpanded=""True"">
         <StackPanel Margin=""4"">
             <!-- Parameter Badges: 4xD20, As=1,256mm², D10@150, B500B -->
@@ -7877,7 +7877,7 @@ cal.BlackoutDates.Add(new CalendarDateRange(DateTime.Today.AddDays(1), DateTime.
         sec1Sp.Children.Add(tcTop);
 
         string sec1Code = @"<!-- ==================== XAML MARKUP ==================== -->
-<!-- Modern Underline TabControl with Continuous 1px Baseline (HandyControl 1:1) -->
+<!-- Modern Underline TabControl with Continuous 1px Baseline -->
 <TabControl Style=""{DynamicResource CONCOST.TabControl.Base}"">
     <TabItem Header=""Structural Framing"" attached:IconElement.Kind=""Layers"">
         <WrapPanel Orientation=""Horizontal"">
@@ -8028,7 +8028,7 @@ private void OnSidebarTabChanged(object sender, SelectionChangedEventArgs e)
         // Sub-title for InLine
         var inlineLabel = new TextBlock
         {
-            Text = "INLINE FULL-WIDTH TABS (HandyControl UniformGrid 1:1)",
+            Text = "INLINE FULL-WIDTH TABS (UniformGrid)",
             FontSize = 11,
             FontWeight = System.Windows.FontWeights.Normal,
             Margin = new System.Windows.Thickness(0, 0, 0, 8)
@@ -8074,7 +8074,7 @@ private void OnSidebarTabChanged(object sender, SelectionChangedEventArgs e)
         // Sub-title for Card
         var cardLabel = new TextBlock
         {
-            Text = "CONNECTED FOLDER CARD TABS (WPFDevelopers & Chrome Grade)",
+            Text = "CONNECTED FOLDER CARD TABS (Chrome Grade)",
             FontSize = 11,
             FontWeight = System.Windows.FontWeights.Normal,
             Margin = new System.Windows.Thickness(0, 0, 0, 8)
@@ -8114,7 +8114,7 @@ private void OnSidebarTabChanged(object sender, SelectionChangedEventArgs e)
         sec3Sp.Children.Add(tcCard);
 
         string sec3Code = @"<!-- ==================== XAML MARKUP ==================== -->
-<!-- 1. InLine UniformGrid Full-Width TabControl (1:1 HandyControl) -->
+<!-- 1. InLine UniformGrid Full-Width TabControl -->
 <TabControl Style=""{DynamicResource CONCOST.TabControl.InLine}"">
     <TabItem Header=""1. Foundation Slabs"">
         <WrapPanel Orientation=""Horizontal"">
@@ -8161,7 +8161,7 @@ private void OnInLineTabChanged(object sender, SelectionChangedEventArgs e)
         // Sub-title for Sliding
         var slidingLabel = new TextBlock
         {
-            Text = "SLIDING PILL TRACK (HandyControl 1:1 Inset Capsule)",
+            Text = "SLIDING PILL TRACK (Inset Capsule)",
             FontSize = 11,
             FontWeight = System.Windows.FontWeights.Normal,
             Margin = new System.Windows.Thickness(0, 0, 0, 8)
@@ -8235,7 +8235,7 @@ private void OnInLineTabChanged(object sender, SelectionChangedEventArgs e)
         sec4Sp.Children.Add(tcSegmented);
 
         string sec4Code = @"<!-- ==================== XAML MARKUP ==================== -->
-<!-- 1. HandyControl 1:1 Sliding Pill Track TabControl -->
+<!-- 1. Sliding Pill Track TabControl -->
 <TabControl Style=""{DynamicResource CONCOST.TabControl.Sliding}"">
     <TabItem Header=""Project Overview"">
         <WrapPanel Orientation=""Horizontal"">
@@ -8271,7 +8271,7 @@ private void OnUnitTabChanged(object sender, SelectionChangedEventArgs e)
         ToastService.Info($""Switched Engineering Units: {tab.Header}"", ""Unit System"");
     }
 }";
-        AddCardSection("4. Sliding Pill Track & Segmented Capsule (HandyControl & Segmented Switchers)", sec4Sp, sec4Code);
+        AddCardSection("4. Sliding Pill Track & Segmented Capsule", sec4Sp, sec4Code);
 
         // =========================================================================
         // SECTION 5: Floating Standalone Pills & Badged Tabs
@@ -15020,7 +15020,7 @@ public class ProjectFilterViewModel : ObservableObject
             mainSp.Children.Add(card);
         }
 
-        // Section 1: Window Scope GroupBox (HandyControl 1:1)
+        // Section 1: Window Scope GroupBox
         var winGroupBox = new GroupBox
         {
             Header = "Window",
@@ -15071,7 +15071,7 @@ public class ProjectFilterViewModel : ObservableObject
         winBtnWrap.Children.Add(wClear);
         winGroupBox.Content = winBtnWrap;
 
-        // Desktop Scope GroupBox (HandyControl 1:1)
+        // Desktop Scope GroupBox
         var deskGroupBox = new GroupBox
         {
             Header = "Desktop",
@@ -15147,7 +15147,7 @@ public class ProjectFilterViewModel : ObservableObject
     </WrapPanel>
 </hc:GroupBox>";
 
-        AddCardSection("Interactive Growl Notification Console (HandyControl 1:1)", fullDemoStack, demoXaml);
+        AddCardSection("Interactive Growl Notification Console", fullDemoStack, demoXaml);
 
         return mainSp;
     }
@@ -15248,7 +15248,7 @@ public class ProjectFilterViewModel : ObservableObject
         bgBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
         bgBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
 
-        // Center Matrix Controls matching WPFDevelopers 1:1
+        // Center Matrix Controls
         var centerGrid = new Grid { VerticalAlignment = System.Windows.VerticalAlignment.Center, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
         centerGrid.RowDefinitions.Add(new RowDefinition { Height = System.Windows.GridLength.Auto });
         centerGrid.RowDefinitions.Add(new RowDefinition { Height = new System.Windows.GridLength(40) });
@@ -15366,7 +15366,7 @@ public class ProjectFilterViewModel : ObservableObject
         <TextBox Text=""Parameter Settings"" />
     </StackPanel>
 </controls:Drawer>";
-        AddCardSection("4-Way Directional Drawer (Left / Right / Top / Bottom - WPFDevelopers 1:1)", hostGrid, sec1Xaml);
+        AddCardSection("4-Way Directional Drawer", hostGrid, sec1Xaml);
 
         return mainSp;
     }
@@ -15532,7 +15532,7 @@ public class ProjectFilterViewModel : ObservableObject
         }
 
         // =========================================================================
-        // SECTION 1: Standard Modal Dialog Variants (HandyControl 1:1 Clean Trigger Bar)
+        // SECTION 1: Standard Modal Dialog Variants (Clean Trigger Bar)
         // =========================================================================
         var sec1Host = new Grid { Height = 360, ClipToBounds = true };
         var sec1Bg = new Border
@@ -15787,10 +15787,10 @@ public class ProjectFilterViewModel : ObservableObject
 // 1. Programmatic Trigger
 MainDialog.IsOpen = true;
 
-// 2. Or using HandyControl 1:1 Static API
+// 2. Or using the static API
 Dialog.Show(new CustomParameterView(), ""Engineering Calculation Parameters"");";
 
-        AddCardSection("1. Standard Modal Dialog (HandyControl & WPFDevelopers 1:1)", sec1Host, sec1Code);
+        AddCardSection("1. Standard Modal Dialog", sec1Host, sec1Code);
 
         // =========================================================================
         // SECTION 2: Asynchronous Fluent Dialog Services (Prompt & Confirm)
@@ -16495,7 +16495,7 @@ public class BimTransferViewModel : ObservableObject
         HighStrength_Q460
     }
 
-    public class HandyPropertyGridDemoModel
+    public class PropertyGridDemoModel
     {
         [System.ComponentModel.Category("Identification")]
         [System.ComponentModel.DisplayName("Element Mark")]
@@ -16709,7 +16709,7 @@ public class BimTransferViewModel : ObservableObject
         // Section 1: BIM Beam Object Inspector (Full Spacious Height)
         var pg1 = new PropertyGrid
         {
-            SelectedObject = new HandyPropertyGridDemoModel(),
+            SelectedObject = new PropertyGridDemoModel(),
             HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
         };
         string sec1Xaml = @"<controls:PropertyGrid SelectedObject=""{Binding SelectedBeamModel}"" HorizontalAlignment=""Stretch"" />";
@@ -16736,7 +16736,7 @@ public class BimTransferViewModel : ObservableObject
         return mainSp;
     }
     // =========================================================================
-    // DEMO: NumericUpDown (HandyControl & WPFDevelopers 1:1)
+    // DEMO: NumericUpDown
     // =========================================================================
     private object CreateNumericUpDownDemo()
     {
@@ -17989,7 +17989,7 @@ public partial class ShowcaseViewModel
         sec1Sp.Children.Add(demoContainer);
 
         string sec1Code = @"<!-- ==================== XAML MARKUP ==================== -->
-<!-- Animated Collapsible Navigation DrawerMenu (WPFDevelopers Architecture) -->
+<!-- Animated Collapsible Navigation DrawerMenu -->
 <controls:DrawerMenu x:Name=""drawerMenu""
                      IsOpen=""True""
                      CompactWidth=""64""
@@ -18032,7 +18032,7 @@ drawerMenu.SelectionChanged += (s, e) =>
     }
 };";
 
-        AddCardSection("1. Interactive Animated DrawerMenu (WPFDevelopers & HandyControl Architecture)", sec1Sp, sec1Code);
+        AddCardSection("1. Interactive Animated DrawerMenu", sec1Sp, sec1Code);
 
         // =========================================================================
         // SECTION 2: Compact Rail Mode & Standalone Drawer Demonstration
@@ -18164,7 +18164,7 @@ drawerMenu.SelectionChanged += (s, e) =>
 
         var subTxt = new TextBlock
         {
-            Text = "GPU-accelerated composition rendering particle canvas - Inspired by WPFDevelopers",
+            Text = "GPU-accelerated composition-rendered particle canvas",
             FontSize = 13,
             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#94A3B8")),
             Margin = new Thickness(0, 8, 0, 20),
@@ -18236,7 +18236,7 @@ drawerMenu.SelectionChanged += (s, e) =>
 
         var titleTxt = new TextBlock
         {
-            Text = "Interactive Floating Sprite Assistant (HandyControl)",
+            Text = "Interactive Floating Sprite Assistant",
             FontSize = 18,
             FontWeight = FontWeights.Normal,
             Foreground = (Brush)Application.Current.FindResource("CONCOST.Brush.TextPrimary"),
@@ -19640,7 +19640,7 @@ beamRangeSlider.ValueChanged += (s, e) =>
     }
 
     // =========================================================================================
-    // AUTOCOMPLETETEXTBOX DEMO (HandyControl & WPFDevelopers 1:1)
+    // AUTOCOMPLETETEXTBOX DEMO
     // =========================================================================================
     public record MaterialSuggestionItem(string Code, string Name, string Standard, string Category, string Price, IconKind Icon);
 
@@ -20235,7 +20235,7 @@ public class MaterialSearchViewModel : ObservableObject
         </DataTemplate>
     </controls:AutoCompleteTextBox.ItemTemplate>
 </controls:AutoCompleteTextBox>";
-        AddCardSection("2. Rich Custom ItemTemplate with Categorized Badges & Pricing (HandyControl 1:1)", sec2Sp, sec2Code);
+        AddCardSection("2. Rich Custom ItemTemplate with Categorized Badges & Pricing", sec2Sp, sec2Code);
 
         // =========================================================================
         // SECTION 3: AISC & Eurocode Structural Steel Section Catalog Lookup
@@ -20387,7 +20387,7 @@ public record SteelProfile(string Name, double DepthMm, double WidthMm, double S
     }
 
     // =========================================================================================
-    // DRAGDROPHELPER DEMO (GongSolutions & HandyControl Pattern 1:1)
+    // DRAGDROPHELPER DEMO (GongSolutions Pattern)
     // =========================================================================================
     public record BimDragElement(string Mark, string Type, string Spec, string Weight, IconKind Icon);
 

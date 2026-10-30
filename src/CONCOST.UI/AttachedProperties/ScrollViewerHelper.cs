@@ -8,7 +8,7 @@ using System.Windows.Media.Animation;
 namespace CONCOST.UI.AttachedProperties
 {
     /// <summary>
-    /// Advanced ScrollViewer attached behavior suite inspired by HandyControl and WPFDevelopers.
+    /// Advanced ScrollViewer attached behavior suite.
     /// Features:
     /// - Smooth inertia wheel scrolling with CubicEase & HandoffBehavior.Compose
     /// - Shift + MouseWheel horizontal scrolling

@@ -22,7 +22,7 @@ public class Snowflake
 }
 
 /// <summary>
-/// SnowCanvas creates a high-performance, GPU-accelerated falling snow particle effect (inspired by WPFDevelopers).
+/// SnowCanvas creates a high-performance, GPU-accelerated falling snow particle effect.
 /// Supports customizable particle count, colors, speed, wind drift, and pause/resume animation.
 /// </summary>
 public class SnowCanvas : System.Windows.Controls.Canvas

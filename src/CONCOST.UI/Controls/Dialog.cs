@@ -145,7 +145,7 @@ public class Dialog : ContentControl
         _globalHostPanel = panel;
     }
 
-    #region HandyControl & WPFDevelopers 1:1 Static Show APIs
+    #region Static Show APIs
 
     public static Dialog Show(object content, string title = "Dialog", string token = "")
     {

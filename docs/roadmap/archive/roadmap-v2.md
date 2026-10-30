@@ -2,7 +2,7 @@
 
 ## 1. Mục tiêu dự án
 
-`CONCOST.UI` được định hướng trở thành một **WPF UI Library / Design System** dùng lại được cho nhiều phần mềm trong hệ sinh thái CONCOST, tương tự HandyControl nhưng tập trung vào các nhu cầu thực tế của phần mềm kỹ thuật, CAD, xây dựng và desktop.
+`CONCOST.UI` được định hướng trở thành một **WPF UI Library / Design System** dùng lại được cho nhiều phần mềm trong hệ sinh thái CONCOST, tập trung vào các nhu cầu thực tế của phần mềm kỹ thuật, CAD, xây dựng và desktop.
 
 Mục tiêu chính:
 
@@ -2115,7 +2115,7 @@ Design System
 
 Nếu nền tảng Theme + Token + Style + AttachedProperty được làm tốt từ đầu thì thư viện có thể mở rộng lên hàng chục hoặc hàng trăm control mà vẫn dễ maintain.
 
-Phần tạo khác biệt lớn nhất so với HandyControl nên tập trung vào các control dành riêng cho phần mềm kỹ thuật và xây dựng như:
+Phần tạo khác biệt lớn nhất nên tập trung vào các control dành riêng cho phần mềm kỹ thuật và xây dựng như:
 
 ```text
 UnitBox

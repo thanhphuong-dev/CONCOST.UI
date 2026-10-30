@@ -7,7 +7,7 @@ using System.Windows.Media;
 namespace CONCOST.UI.Controls;
 
 /// <summary>
-/// Sprite is a floating assistant widget inspired by HandyControl (or Assistive Touch / Floating Action Button).
+/// Sprite is a floating assistant widget - the Assistive Touch / Floating Action Button pattern.
 /// It floats above application content, is freely draggable across the window, automatically snaps to screen edges,
 /// and expands an interactive quick-action menu when clicked or hovered.
 /// </summary>

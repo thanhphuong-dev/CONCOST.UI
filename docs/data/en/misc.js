@@ -109,7 +109,7 @@ Object.assign(DOCS_EN.pages, {
 
     sprite: {
         title: "Sprite — floating assistant",
-        desc: "Draggable floating helper that snaps to the screen edge, with a context menu — the HandyControl-style assistant pattern.",
+        desc: "Draggable floating helper that snaps to the screen edge, with a context menu — the assistive-touch pattern.",
         sections: [
             { title: "XAML example", desc: "Provide <code>MenuContent</code> for the quick actions and enable <code>AutoSnap</code>." }
         ]

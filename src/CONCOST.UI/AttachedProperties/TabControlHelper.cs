@@ -9,7 +9,7 @@ namespace CONCOST.UI.AttachedProperties;
 
 /// <summary>
 /// Provides attached properties and routed commands for TabControl and TabItem,
-/// including closable tabs, tab close commands, and header action hosts (HandyControl & WPFDevelopers pattern).
+/// including closable tabs, tab close commands, and header action hosts.
 /// </summary>
 public static class TabControlHelper
 {

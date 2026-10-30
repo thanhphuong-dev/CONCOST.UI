@@ -13,7 +13,7 @@ using System.Windows.Threading;
 namespace CONCOST.UI.Controls;
 
 /// <summary>
-/// AutoCompleteTextBox provides an instant filterable dropdown suggestion list as user types (inspired by HandyControl and WPFDevelopers).
+/// AutoCompleteTextBox provides an instant filterable dropdown suggestion list as the user types.
 /// Supports custom ItemTemplate, DisplayMemberPath, SelectedItem binding, search icon, clear button, and placeholder text.
 /// Optimized for zero lag with cached property reflection and high-performance UI filtering.
 /// </summary>

@@ -7,7 +7,7 @@ using System.Windows.Input;
 namespace CONCOST.UI.Controls;
 
 /// <summary>
-/// RangeSlider allows selecting a numeric sub-range [StartValue, EndValue] with dual interactive thumbs (inspired by HandyControl).
+/// RangeSlider allows selecting a numeric sub-range [StartValue, EndValue] with dual interactive thumbs.
 /// Essential for engineering filters, structural dimensions, cost intervals, and load limits.
 /// </summary>
 public class RangeSlider : Control

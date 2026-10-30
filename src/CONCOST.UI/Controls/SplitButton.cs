@@ -27,7 +27,7 @@ public enum SplitButtonHitMode
 
 /// <summary>
 /// A modern enterprise SplitButton combining a primary action button and a dropdown menu trigger.
-/// Inspired by HandyControl and WPFDevelopers, supporting:
+/// Supporting:
 /// - Split & DropDown interaction modes (<see cref="HitMode"/>)
 /// - Flexible dropdown placements (Bottom, Top, Left, Right)
 /// - Left or Right chevron placement (<see cref="DropDownButtonPosition"/>)

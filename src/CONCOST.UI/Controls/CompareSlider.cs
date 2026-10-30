@@ -9,7 +9,7 @@ namespace CONCOST.UI.Controls;
 
 /// <summary>
 /// CompareSlider splits two visual contents (e.g. Before / After CAD drawings, 3D renderings, revisions)
-/// with a draggable split handle and smooth clipping mask (inspired by HandyControl).
+/// with a draggable split handle and smooth clipping mask.
 /// </summary>
 public class CompareSlider : Control
 {

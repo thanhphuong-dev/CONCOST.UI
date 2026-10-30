@@ -88,7 +88,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | --- | --- |
 | [NavigationView](index.html#navigationview) | Thanh điều hướng dạng danh sách item có icon, badge trạng thái và SelectedItem hai-way — bản gọn hơn SideMenu cho panel hẹp. |
 | [SideMenu](index.html#sidemenu) | Menu điều hướng dọc hiện đại, hỗ trợ mở rộng/thu gọn icon-only, hiển thị Badge số lượng thông báo và phân nhóm cấp mục. |
-| [DrawerMenu](index.html#drawermenu) | Thanh điều hướng ngăn kéo thông minh lấy cảm hứng từ WPFDevelopers, hỗ trợ thu gọn/mở rộng động (Expand/Collapse Animation mượt mà), thanh Header chứa |
+| [DrawerMenu](index.html#drawermenu) | Thanh điều hướng ngăn kéo thông minh, hỗ trợ thu gọn/mở rộng động (Expand/Collapse Animation mượt mà), thanh Header chứa Logo & Nút Toggle Menu, Item  |
 | [Breadcrumb](index.html#breadcrumb) | Đường dẫn điều hướng vị trí trong mô hình công trình (vd: Tòa Nhà A > Tầng 15 > Khu Vực Cốt Thép Dầm). |
 | [Pagination](index.html#pagination) | Bộ điều khiển phân trang dữ liệu cho các bảng khối lượng lớn, hỗ trợ nhảy trang nhanh và cấu hình PageSize. |
 | [StepBar](index.html#stepbar) | Thanh hiển thị tiến trình công việc nhiều bước (Wizard Steps) với các trạng thái Đang Chờ (Waiting), Đang Làm (In-Progress), Hoàn Thành (Finished) và  |
@@ -145,10 +145,10 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [ParallaxPanel](index.html#parallaxpanel) | Lớp nội dung tự dịch theo vị trí cuộn với hệ số Speed — đặt phía sau nội dung chính để tạo cảm giác chiều sâu. Không chặn chuột. |
 | [TypewriterText](index.html#typewritertext) | Chữ hiện dần như đang gõ, có caret nhấp nháy. Tốc độ tính theo ký tự/giây; tắt animation hệ thống thì hiện full text ngay. |
 | [TextReveal](index.html#textreveal) | Headline hiện theo từng từ: mỗi từ fade + trượt lên, lệch nhau WordDelay giây. Dùng cho tiêu đề lớn, không dùng cho đoạn văn dài. |
-| [SnowCanvas](index.html#snowcanvas) | Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt (lấy cảm hứng từ WPFDevelopers), hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi,  |
-| [Sprite](index.html#sprite) | Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button) lấy cảm hứng từ HandyControl. Sprite luôn nổi phía trên toàn bộ giao di |
+| [SnowCanvas](index.html#snowcanvas) | Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt, hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi, độ lắc lư dao động (Oscillation  |
+| [Sprite](index.html#sprite) | Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button). Sprite luôn nổi phía trên toàn bộ giao diện, cho phép người dùng kéo t |
 | [CompareSlider](index.html#compareslider) | Thanh trượt chia đôi màn hình trực quan cho phép so sánh sự thay đổi giữa 2 hình ảnh bản vẽ thiết kế (Rev 01 vs Rev 02), phối cảnh 3D Render trước/sau |
-| [Magnifier](index.html#magnifier) | Tròng kính lúp phóng to tọa độ điểm ảnh độ nét cao (lấy cảm hứng từ HandyControl & WPFDevelopers). Khi rê chuột vào khu vực bản vẽ CAD hoặc mặt cắt dầ |
+| [Magnifier](index.html#magnifier) | Tròng kính lúp phóng to tọa độ điểm ảnh độ nét cao. Khi rê chuột vào khu vực bản vẽ CAD hoặc mặt cắt dầm cột, kính lúp tròn có hồng tâm chữ thập sẽ tự |
 | [Icons Gallery](index.html#icons) | Kho hơn 120+ vector icons độ phân giải vô cực được tối ưu hóa cho ngành kỹ thuật, xây dựng, CAD và BIM. |
 
 ### Basic Controls
@@ -217,7 +217,7 @@ Run all three after adding or renaming a `DependencyProperty`; the checker must 
 
 ## Related documents
 
-- [Getting Started](GettingStarted.md) — integration, theming, plugin hosting, build. Vietnamese: [GettingStarted.vi.md](GettingStarted.vi.md).
-- [Migration Guide](MigrationGuide.md) — WinForms/WPF mapping and deprecation policy. Vietnamese: [MigrationGuide.vi.md](MigrationGuide.vi.md).
+- [Getting Started](GettingStarted.md) — integration, theming, plugin hosting, build.
+- [Migration Guide](MigrationGuide.md) — WinForms/WPF mapping and deprecation policy.
 - [Roadmap](roadmap/) — active roadmap (revision 3) and archived plans.
 - [Changelog](../CHANGELOG.md).

@@ -20,7 +20,7 @@ namespace CONCOST.UI.Showcase;
 public partial class ShowcaseViewModel
 {
     // =========================================================================
-    // DEMO: SplitButton (HandyControl & WPFDevelopers 1:1)
+    // DEMO: SplitButton
     // =========================================================================
     private object CreateSplitButtonDemo()
     {
@@ -700,7 +700,7 @@ private void OnCalculateRebarClicked(object sender, RoutedEventArgs e)
     }
 
     // =========================================================================
-    // DEMO: SideMenu (HandyControl & Modern Vertical Navigation Suite)
+    // DEMO: SideMenu (Modern Vertical Navigation Suite)
     // =========================================================================
     private object CreateSideMenuDemo()
     {
@@ -917,7 +917,7 @@ private void OnCalculateRebarClicked(object sender, RoutedEventArgs e)
     }
 
     // =========================================================================
-    // DEMO: Timeline (HandyControl & Modern Process Stream Suite)
+    // DEMO: Timeline (Modern Process Stream Suite)
     // =========================================================================
     private object CreateTimelineDemo()
     {
@@ -1248,7 +1248,7 @@ timeline.Items.Add(new TimelineItem
     }
 
     // =========================================================================
-    // DEMO: CardCarousel (WPFDevelopers & HandyControl Grade 3D Card Flow)
+    // DEMO: CardCarousel (3D Card Flow)
     // =========================================================================
     private object CreateCardCarouselDemo()
     {

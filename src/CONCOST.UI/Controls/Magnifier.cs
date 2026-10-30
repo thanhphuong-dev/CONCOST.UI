@@ -7,7 +7,7 @@ using System.Windows.Media;
 namespace CONCOST.UI.Controls;
 
 /// <summary>
-/// Magnifier control that provides a floating zoom lens over any visual element (inspired by HandyControl & WPFDevelopers).
+/// Magnifier control that provides a floating zoom lens over any visual element.
 /// Supports configurable zoom factor, lens radius, border brush, and border thickness.
 /// </summary>
 public class Magnifier : Control
