@@ -1,5 +1,5 @@
 <Window x:Class="CONCOST.UI.Showcase.MainWindow"
-        Icon="Assets/CONCOST.ico"
+        Icon="Assets/AppIcon.ico"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -80,7 +80,7 @@
 
                 <!-- Brand Logo & Meta -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Source="Assets/CONCOST.ico" Width="42" Height="42" Margin="0,0,11,0" Stretch="Uniform" ToolTip="CONCOST company logo" />
+                    <Image Source="Assets/AppIcon.ico" Width="42" Height="42" Margin="0,0,11,0" Stretch="Uniform" ToolTip="CONCOST.UI component library" />
                     <StackPanel VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="CONCOST" FontSize="19" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}"/>

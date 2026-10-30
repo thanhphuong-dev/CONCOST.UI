@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>CONCOST.UI.Showcase</RootNamespace>
     <AssemblyName>CONCOST.UI.Showcase</AssemblyName>
-    <ApplicationIcon>Assets\CONCOST.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\CONCOST.ico" />
+    <Resource Include="Assets\AppIcon.ico" />
   </ItemGroup>
 
 </Project>
