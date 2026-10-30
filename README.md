@@ -1,40 +1,68 @@
-# CONCOST.UI
+<div align="center">
+  <img src="docs/assets/banner.png" width="100%" alt="CONCOST.UI — WPF controls for people who build things">
 
-**A multi-target WPF component library for engineering, CAD, BIM, and desktop applications.**
+  <p>
+    <a href="https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest"><img src="https://img.shields.io/github/v/release/thanhphuong-dev/CONCOST.UI?label=release&color=ff7900" alt="Latest release"></a>
+    <img src="https://img.shields.io/badge/.NET-4.8%20%7C%208%20%7C%2010-512BD4" alt=".NET Framework 4.8, .NET 8, .NET 10">
+    <img src="https://img.shields.io/badge/platform-Windows%20%C2%B7%20WPF-0078D4" alt="Windows and WPF">
+    <img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="MIT license">
+    <img src="https://img.shields.io/badge/docs-106%20pages-ff7900" alt="106 documentation pages">
+  </p>
 
-[English](README.md) · [Tiếng Việt](README.vi.md)
+  <p>
+    <a href="https://thanhphuong-dev.github.io/CONCOST.UI/"><b>Documentation</b></a> &nbsp;·&nbsp;
+    <a href="docs/GettingStarted.md">Getting started</a> &nbsp;·&nbsp;
+    <a href="CHANGELOG.md">Changelog</a> &nbsp;·&nbsp;
+    <a href="https://github.com/thanhphuong-dev/CONCOST.UI/releases">Releases</a> &nbsp;·&nbsp;
+    <a href="README.vi.md">Tiếng Việt</a>
+  </p>
+</div>
 
-![Frameworks](https://img.shields.io/badge/frameworks-.NET%20Framework%204.8%20%7C%20.NET%208%20%7C%20.NET%2010-512BD4)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20WPF-0078D4)
-![License](https://img.shields.io/badge/license-MIT-2ea44f)
-[![Wiki](https://img.shields.io/badge/wiki-online-ff7900)](https://thanhphuong-dev.github.io/CONCOST.UI/)
-[![Release](https://img.shields.io/github/v/release/thanhphuong-dev/CONCOST.UI?label=release&color=ff7900)](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest)
+---
 
-CONCOST.UI provides reusable controls, theme resources, icons, and engineering-focused components in the **`CONCOST.UI`** library. It is designed for standalone WPF applications and WPF views hosted by products such as Revit and AutoCAD.
+**CONCOST.UI is a WPF component library for software that draws things** — CAD editors, BIM tools, quantity take-off, structural reports. It ships the controls a technical product actually needs: a spreadsheet, a zoomable canvas with ruler, rebar input, KPI dashboards, 20+ visual effects, and a theme system that works inside a Revit or AutoCAD plugin without taking over the host application's resources.
 
-**Documentation:** [thanhphuong-dev.github.io/CONCOST.UI](https://thanhphuong-dev.github.io/CONCOST.UI/) — 79 pages, bilingual VI / EN, searchable.
+## Why teams pick it
 
-## Highlights
+- **Three target frameworks, one API.** `net48`, `net8.0-windows`, `net10.0-windows` from the same source. A project reference picks the matching build automatically, so the same view compiles into a .NET Framework 4.8 AutoCAD plugin and a .NET 8 desktop app.
+- **Theming that respects the host.** `ThemeManager.ApplyTheme(this, …)` scopes light/dark, accent and preset to a single view — no `Application` instance, no global resource hijack. That is what makes the library usable inside a Revit add-in.
+- **Effects that stay cheap.** Every animation is drawn with `DrawingContext` or a transform — no shaders, no `BlurEffect`, no per-item visual trees — and all of them honour the Windows "Show animations" setting (WCAG 2.2.2).
+- **Documented from source.** Property tables and C# samples are generated from the real `DependencyProperty` declarations and validated against the compiled API, so the docs cannot drift from the code.
 
-- **Three target frameworks:** .NET Framework 4.8, .NET 8, and .NET 10. Select the build that matches the host application.
-- **A broad WPF control set:** data grids, spreadsheet, navigation, input, dashboards, charts, engineering tools, and visual effects.
-- **Consistent styling:** light and dark themes, accent colors, theme presets, and shared design tokens.
-- **Host-aware theming:** apply resources to a plugin view without requiring a separate WPF `Application` or taking over the host application's global resources.
-- **Interactive examples:** use the Showcase application to explore controls, change themes, and inspect usage examples.
+## What's inside
+
+| Area | Highlights |
+| --- | --- |
+| **Engineering & CAD** | `Spreadsheet` with formula engine, `StackedHeaderDataGrid`, `ZoomableCanvas` + `Ruler`, internal-force line charts, `RebarInput`, `CompassIndicator` |
+| **Data & dashboards** | `StatisticCard`, `OdometerNumber`, `Sparkline`, `HeatmapCalendar`, `AvatarStack`, `Timeline`, `CardCarousel`, `DataPager`, `PropertyGrid` |
+| **Input & forms** | 15 controls — `UnitBox` (value + unit + decimals), `NumericUpDown`, `OtpInput`, `PinBox`, `CheckComboBox`, `AutoCompleteTextBox`, `ColorPicker`, `RangeSlider`, `Rating`, `ToggleSwitch` |
+| **Navigation & shell** | `NavigationView`, `SideMenu`, `DrawerMenu`, `Breadcrumb`, `StepBar`, `Pagination`, `Transfer`, `TabControl`, `SplitButton`, `CONCOSTWindow` |
+| **Feedback & status** | `Dialog`, `Drawer`, `Growl` toast, loading indicators and overlays, `Skeleton` shimmer, `EmptyState`, `Watermark` |
+| **Visual effects** | `SpotlightCard`, `TiltCard`, `MagneticHover`, `AuroraBackground`, `BorderBeam`, `ConfettiBurst`, `TypewriterText`, `ScrollReveal`, `ParallaxPanel`, `PulseRing`, `GradientText` and more |
+| **Theming** | Light / dark, 8 presets, 5 accent colours, shared design tokens, three surface styles |
 
 ## Framework compatibility
 
-| Library build | Intended host |
+| Build | Use it for |
 | --- | --- |
-| `net48` | WPF applications and plugins targeting .NET Framework 4.8 |
-| `net8.0-windows` | WPF applications and plugins targeting .NET 8 |
-| `net10.0-windows` | WPF applications and plugins targeting .NET 10 |
+| `net48` | .NET Framework 4.8 desktop apps and Revit / AutoCAD plugins on that runtime |
+| `net8.0-windows` | .NET 8 desktop apps and plugins |
+| `net10.0-windows` | .NET 10 desktop apps and plugins |
 
-Revit and AutoCAD runtime requirements vary by release. Check the requirements for the exact host version, then reference the matching `CONCOST.UI.dll`. A project reference selects a compatible target automatically when one is available.
+Revit and AutoCAD runtime requirements vary by release. Check the requirements for your exact host version, then reference the matching `CONCOST.UI.dll`.
 
-## Quick start
+## Install
 
-### Add a project reference
+### A. NuGet package from the release
+
+Download `CONCOST.UI.3.7.0.nupkg` from the [latest release](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), then:
+
+```powershell
+dotnet nuget add source "C:\path\to\downloads" --name concost-local
+dotnet add package CONCOST.UI --version 3.7.0
+```
+
+### B. Project reference
 
 ```xml
 <ItemGroup>
@@ -42,7 +70,7 @@ Revit and AutoCAD runtime requirements vary by release. Check the requirements f
 </ItemGroup>
 ```
 
-Or reference the prebuilt assembly for the host's target framework:
+### C. Prebuilt assembly
 
 ```text
 src/CONCOST.UI/bin/Release/net48/CONCOST.UI.dll
@@ -50,11 +78,11 @@ src/CONCOST.UI/bin/Release/net8.0-windows/CONCOST.UI.dll
 src/CONCOST.UI/bin/Release/net10.0-windows/CONCOST.UI.dll
 ```
 
-The library targets Windows because WPF is Windows-only. The host application must provide its matching .NET runtime and WPF framework. The `net48` build uses `System.Text.Json` and its runtime dependencies; when distributing that target, use the NuGet package or include the dependencies from the build output.
+> The `net48` build depends on `System.Text.Json` and its transitive dependencies. Use the NuGet package or ship the dependencies from the build output alongside the DLL.
 
-### Merge the theme dictionaries
+## Quick start
 
-For a standalone WPF application, add the library dictionaries to `App.xaml`:
+### 1. Merge the theme dictionaries
 
 ```xml
 <Application.Resources>
@@ -67,31 +95,31 @@ For a standalone WPF application, add the library dictionaries to `App.xaml`:
 </Application.Resources>
 ```
 
-### Use a control
+### 2. Drop in a control
 
 ```xml
-<Window
-    x:Class="MyApplication.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="clr-namespace:CONCOST.UI.Controls;assembly=CONCOST.UI">
+<Window x:Class="MyApplication.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:CONCOST.UI.Controls;assembly=CONCOST.UI">
 
     <StackPanel Margin="24">
-        <ui:UnitBox Header="Beam width"
-                    Value="300"
-                    Unit="mm"
-                    DecimalPlaces="0" />
+        <ui:UnitBox Header="Beam width" Value="300" Unit="mm" DecimalPlaces="0" />
 
-        <ui:NumericUpDown Value="25"
-                          Minimum="0"
-                          Maximum="1000"
-                          Increment="5"
-                          Suffix=" kN" />
+        <ui:NumericUpDown Value="25" Minimum="0" Maximum="1000" Increment="5" Suffix=" kN" />
+
+        <ui:SpotlightCard Margin="0,16,0,0">
+            <StackPanel>
+                <TextBlock Text="Concrete poured" FontSize="12" Opacity=".65" />
+                <ui:OdometerNumber Value="1284.6" Format="N1" Suffix=" m³" />
+                <ui:Sparkline Values="{Binding WeeklyPour}" Height="40" ShowArea="True" />
+            </StackPanel>
+        </ui:SpotlightCard>
     </StackPanel>
 </Window>
 ```
 
-### Change the theme at runtime
+### 3. Change the theme at runtime
 
 ```csharp
 using System.Windows.Media;
@@ -102,13 +130,12 @@ ThemeManager.Current.Preset = ThemePreset.Ocean;
 ThemeManager.Current.AccentColor = Color.FromRgb(2, 132, 199);
 ```
 
-Available presets include `Default`, `Forest`, `Sunset`, `Slate`, `Midnight`, and `HighContrast`.
+## Hosted in Revit or AutoCAD
 
-## Use in a Revit or AutoCAD plugin
-
-A plugin class library does not need its own `App.xaml` or `Application` instance. Apply the theme to the plugin's root `UserControl` or window so its resources remain scoped to that view:
+A plugin class library has no `App.xaml` and must not touch the host's global resources. Apply the theme to the plugin's root view instead — the resources stay scoped to that `UserControl` or `Window`:
 
 ```csharp
+using System.Windows.Controls;
 using System.Windows.Media;
 using CONCOST.UI.Themes;
 
@@ -120,91 +147,99 @@ public partial class SettingsPanel : UserControl
         ThemeManager.Current.ApplyTheme(this, AppTheme.Light);
         ThemeManager.Current.ApplyAccentColor(this, Color.FromRgb(2, 132, 199));
     }
-
-    private void UseDarkTheme()
-    {
-        ThemeManager.Current.ApplyTheme(this, AppTheme.Dark);
-    }
 }
 ```
 
-The same view-level API supports runtime theme changes and works without `Application.Current`. See the [Getting Started guide](docs/GettingStarted.md) for more integration details.
+This works without `Application.Current`, and it survives runtime theme changes. See the [Getting Started guide](docs/GettingStarted.md) for the full integration notes.
 
-## Build, run, and verify
+## Theming
 
-### Requirements
+| Preset | Character |
+| --- | --- |
+| `Default` | Neutral surfaces, orange accent — the everyday look |
+| `Ocean` | Cool blues, calm and technical |
+| `Forest` | Desaturated greens for long sessions |
+| `Sunset` | Warm amber, good for presentation screens |
+| `Slate` | Low-chroma greys, CAD-adjacent |
+| `Midnight` | Deep navy, high-contrast dark |
+| `HighContrast` | Accessibility-first, maximum legibility |
+| `Brutal` | Neo-brutalism: cream surfaces, ink borders, electric accent |
 
-- Windows 10 or later
-- .NET 8 SDK and .NET 10 SDK
-- Visual Studio 2022 with the **.NET desktop development** workload (optional)
-- .NET Framework 4.8 reference assemblies are restored automatically for the `net48` build
+Five accent colours ship in the docs site palette (orange, sky, green, violet, red). Switching a preset restores the previous colours when you switch back — the manager snapshots what it overrides.
 
-### Build the solution
+## Visual effects
 
-```powershell
-dotnet restore CONCOST.UI.sln
-dotnet build CONCOST.UI.sln --configuration Release
-```
+All of these are drawn directly, so they cost almost nothing and stay crisp at any DPI.
 
-### Run the Showcase
+| Group | Controls |
+| --- | --- |
+| **Pointer** | `SpotlightCard`, `CursorGlow`, `TiltCard`, `MagneticHover`, `Ripple`, `Magnifier` |
+| **Motion & reveal** | `ScrollReveal`, `ParallaxPanel`, `TypewriterText`, `TextReveal`, `CheckMarkDraw`, `ScrollProgressBar`, `MarqueeTicker` |
+| **Ambience** | `AuroraBackground`, `GridPattern`, `WaveDivider`, `SnowCanvas`, `Sprite` |
+| **Accent & celebration** | `BorderBeam`, `SheenSweep`, `PulseRing`, `GradientText`, `ConfettiBurst` |
 
-```powershell
-dotnet run --project samples/CONCOST.UI.Showcase/CONCOST.UI.Showcase.csproj
-```
-
-### Run tests
-
-```powershell
-dotnet test tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Release
-```
-
-## Repository structure
-
-```text
-.
-├── .github/                          # CI workflow and contribution templates
-├── docs/                             # Documentation wiki — the GitHub Pages source
-│   ├── index.html · app.js · style.css   # Site shell, renderer, design system
-│   ├── data/                         # Page content (VI) + generated API tables
-│   │   └── en/                       # English overlay for all 79 pages
-│   ├── tools/                        # build-props.py · check-xaml.py
-│   ├── GettingStarted.md
-│   ├── MigrationGuide.md
-│   └── roadmap/                      # Active roadmap (v3) + archived plans
-├── samples/
-│   └── CONCOST.UI.Showcase/          # Interactive control gallery
-├── src/
-│   └── CONCOST.UI/                   # Multi-target WPF library
-├── tests/
-│   └── CONCOST.UI.Tests/             # Automated test project
-├── CHANGELOG.md
-├── CONCOST.UI.sln
-├── Directory.Build.props
-├── README.md
-└── README.vi.md
-```
-
-The solution contains one library project. Namespaces such as `CONCOST.UI.Core` and `CONCOST.UI.Themes` organize code within the assembly; they are not separate DLL dependencies.
+`MotionSettings` is the single switch behind all of them. It reads the Windows *Show animations* setting by default, can be muted app-wide with `MotionSettings.ForceDisabled`, and every effect falls back to a static, readable frame instead of freezing mid-animation.
 
 ## Documentation
 
-The full reference is an interactive static wiki with 79 pages, search (`Ctrl K`), XAML/C# code inspector and light/dark themes — open [`docs/index.html`](docs/index.html).
+[![Documentation preview](docs/assets/docs-preview.png)](https://thanhphuong-dev.github.io/CONCOST.UI/)
 
+The reference is a static wiki — **106 pages**, bilingual **Vietnamese / English**, searchable with `Ctrl K`, with an XAML ↔ C# code inspector on every page. It is fully offline-capable: fonts, icons and syntax highlighting are self-hosted, no CDN.
+
+- **Online:** <https://thanhphuong-dev.github.io/CONCOST.UI/> (`?lang=en` for English)
 - [Documentation index](docs/README.md) — page map and maintenance workflow
 - [Getting Started](docs/GettingStarted.md) — integration, theming, plugin hosting, build
-- [Migration Guide](docs/MigrationGuide.md) — WinForms/WPF mapping and deprecation policy
-- [Interactive component documentation](docs/index.html) — bilingual VI / EN, `?lang=en` to open in English
-- **Online wiki:** <https://thanhphuong-dev.github.io/CONCOST.UI/>
+- [Migration Guide](docs/MigrationGuide.md) — WinForms / WPF mapping and deprecation policy
+- [Effects roadmap](docs/roadmap/effects-roadmap.md) — what is planned next
 - [Changelog](CHANGELOG.md)
-- [Control Showcase](samples/CONCOST.UI.Showcase/)
-- [Contributing](CONTRIBUTING.md)
 
-Property tables and C# samples are generated from the source: run `python docs/tools/build-props.py` after adding or renaming a `DependencyProperty`, and `python docs/tools/check-xaml.py` to verify that every snippet still matches the real API.
+## Build from source
+
+**Requirements:** Windows 10+, .NET 8 SDK, .NET 10 SDK. .NET Framework 4.8 reference assemblies are restored automatically for the `net48` target. Visual Studio 2022 with the *.NET desktop development* workload is optional.
+
+```powershell
+dotnet restore CONCOST.UI.sln
+dotnet build   CONCOST.UI.sln --configuration Release
+dotnet test    tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Release
+dotnet run     --project samples/CONCOST.UI.Showcase/CONCOST.UI.Showcase.csproj
+```
+
+The Showcase app is the fastest way to see everything: browse by category, switch theme and accent, and open **View XAML** / **View C#** on any demo to copy the exact code.
+
+### Keeping the docs honest
+
+```powershell
+python docs/tools/build-props.py     # regenerate property tables from DependencyProperty declarations
+python docs/tools/check-xaml.py      # verify every XAML snippet still matches the real API
+node   docs/tools/build-index.js     # rebuild the page map and the page → source file map
+```
+
+## Repository layout
+
+```text
+.
+├── docs/                        Documentation wiki — the GitHub Pages source
+│   ├── index.html · app.js · style.css     site shell, renderer, design system
+│   ├── data/                    page content (VI) + generated API tables
+│   │   └── en/                  English overlay for every page
+│   ├── assets/                  banner and screenshots used by this README
+│   ├── tools/                   build-props.py · check-xaml.py · build-index.js · fetch-fonts.py · banner.html
+│   ├── vendor/                  self-hosted fonts, Font Awesome, Prism (offline build)
+│   └── roadmap/                 active roadmap and archived plans
+├── samples/CONCOST.UI.Showcase/ Interactive control gallery
+├── src/CONCOST.UI/              Multi-target WPF library
+├── tests/CONCOST.UI.Tests/      Automated tests
+├── artifacts/                   release packages and demo builds (git-ignored)
+├── CHANGELOG.md · CONTRIBUTING.md · Directory.Build.props · CONCOST.UI.sln
+└── README.md · README.vi.md
+```
+
+The solution contains one library project. Namespaces such as `CONCOST.UI.Core`, `CONCOST.UI.Themes` and `CONCOST.UI.Controls` organise code inside that assembly — they are not separate DLLs.
 
 ## Contributing
 
-Bug reports, feature requests, and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before contributing. New controls should include appropriate theme resources, a Showcase example, and tests where practical.
+Bug reports, feature requests and pull requests are welcome — please read [CONTRIBUTING.md](CONTRIBUTING.md) first. A new control is expected to ship with theme resources, a Showcase demo (with XAML and C# panels), documentation in both languages, and tests where practical.
 
 ## License
 
-CONCOST.UI is distributed under the [MIT License](LICENSE).
+[MIT](LICENSE) — use it in commercial and open-source products alike.

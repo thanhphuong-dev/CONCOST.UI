@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../vendor/fonts.css">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body { width: 1280px; height: 400px; overflow: hidden; }
+
+    body {
+        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+        background: #0b0f17;
+        color: #eef2f8;
+        position: relative;
+    }
+
+    /* ---- backdrop layers ---- */
+    .grid {
+        position: absolute; inset: 0;
+        background-image: radial-gradient(circle, rgba(255,255,255,.085) 1px, transparent 1px);
+        background-size: 22px 22px;
+        mask-image: radial-gradient(ellipse 78% 72% at 26% 42%, #000 18%, transparent 76%);
+    }
+    .glow-a {
+        position: absolute; width: 640px; height: 640px; left: -200px; top: -280px;
+        background: radial-gradient(circle, rgba(255,121,0,.40) 0%, rgba(255,121,0,.09) 44%, transparent 70%);
+    }
+    .glow-b {
+        position: absolute; width: 580px; height: 580px; right: -140px; bottom: -320px;
+        background: radial-gradient(circle, rgba(2,132,199,.32) 0%, rgba(2,132,199,.07) 46%, transparent 72%);
+    }
+    .hairline {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,121,0,.55), rgba(255,255,255,.10), transparent);
+    }
+
+    /* ---- left column ---- */
+    .left { position: absolute; left: 62px; top: 52px; width: 590px; }
+
+    .mark { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .mark svg { display: block; }
+    .mark .name {
+        font-size: 14px; font-weight: 800; letter-spacing: 3.6px; text-transform: uppercase;
+        color: #ffb26b;
+    }
+
+    h1 {
+        font-size: 51px; line-height: 1.08; font-weight: 800; letter-spacing: -1.9px;
+        color: #ffffff;
+    }
+    h1 .thin { color: #ff9d3d; }
+
+    .tag {
+        margin-top: 16px; font-size: 15.5px; line-height: 1.5; color: #a9b4c6; font-weight: 500;
+    }
+
+    .chips { margin-top: 24px; display: flex; gap: 8px; }
+    .chip {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px; font-weight: 500;
+        padding: 6px 11px; border-radius: 7px;
+        color: #cfd8e6;
+        background: rgba(255,255,255,.055);
+        border: 1px solid rgba(255,255,255,.10);
+    }
+    .chip.hot { color: #ffd0a1; background: rgba(255,121,0,.13); border-color: rgba(255,121,0,.38); }
+
+    /* ---- right column ---- */
+    .right { position: absolute; right: 56px; top: 46px; width: 500px; }
+
+    .card {
+        position: absolute;
+        background: rgba(18,25,38,.94);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+        box-shadow: 0 26px 50px -24px rgba(0,0,0,.9);
+    }
+    .label {
+        font-size: 9px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase;
+        color: #6f7d92;
+    }
+
+    /* KPI card with sparkline */
+    .kpi { left: 0; top: 0; width: 246px; padding: 15px 17px; transform: rotate(-1.5deg); }
+    .kpi .value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 26px; font-weight: 600; color: #fff; margin-top: 6px; letter-spacing: -1px;
+    }
+    .kpi .value small { font-size: 12.5px; color: #8a97a8; font-weight: 400; letter-spacing: 0; }
+    .kpi .delta { font-size: 10px; color: #3ddc97; font-weight: 700; margin-left: 5px; }
+    .kpi svg { margin-top: 8px; display: block; }
+
+    /* badge + avatars */
+    .meta { left: 264px; top: 4px; width: 212px; padding: 15px 17px; transform: rotate(1.3deg); }
+    .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+        color: #ffd0a1; background: rgba(255,121,0,.16);
+        border: 1px solid rgba(255,121,0,.40);
+        padding: 4px 9px; border-radius: 99px;
+    }
+    .badge i { width: 5px; height: 5px; border-radius: 50%; background: #ff7900; }
+    .avatars { display: flex; margin-top: 15px; align-items: center; }
+    .av {
+        width: 30px; height: 30px; border-radius: 50%; margin-left: -8px;
+        border: 2px solid #121926;
+        font-size: 10px; font-weight: 800; color: #0b0f17;
+        display: grid; place-items: center;
+    }
+    .av:first-child { margin-left: 0; }
+    .av.more { background: rgba(255,255,255,.10); color: #cfd8e6; font-size: 9.5px; }
+
+    /* heatmap card */
+    .heat { left: 44px; top: 130px; width: 452px; padding: 16px 18px; transform: rotate(.6deg); }
+    .rows { margin-top: 12px; display: flex; gap: 4px; }
+    .col { display: flex; flex-direction: column; gap: 4px; }
+    .cell { width: 12px; height: 12px; border-radius: 3px; background: rgba(255,255,255,.06); }
+
+    .heat .foot {
+        display: flex; justify-content: space-between; align-items: center; margin-top: 12px;
+        font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: #6f7d92;
+    }
+    .legend { display: flex; align-items: center; gap: 3px; }
+    .legend .cell { width: 9px; height: 9px; border-radius: 2px; }
+</style>
+</head>
+<body>
+    <div class="grid"></div>
+    <div class="glow-a"></div>
+    <div class="glow-b"></div>
+    <div class="hairline"></div>
+
+    <div class="left">
+        <div class="mark">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <rect width="32" height="32" rx="9" fill="#ff7900"/>
+                <path d="M9 22V10h3.4v9.3H23V22z" fill="#fff"/>
+            </svg>
+            <span class="name">Concost.UI</span>
+        </div>
+
+        <h1>WPF controls for<br>people who <span class="thin">build things</span>.</h1>
+
+        <p class="tag">Engineering, CAD and BIM desktop software — with the themes,<br>icons and effects a technical product actually needs.</p>
+
+        <div class="chips">
+            <span class="chip hot">net48</span>
+            <span class="chip hot">net8.0-windows</span>
+            <span class="chip hot">net10.0-windows</span>
+            <span class="chip">70+ controls</span>
+            <span class="chip">8 presets</span>
+        </div>
+    </div>
+
+    <div class="right">
+        <div class="card kpi">
+            <div class="label">Concrete poured</div>
+            <div class="value">1,284.6<small> m³</small><span class="delta">+12.4%</span></div>
+            <svg width="212" height="40" viewBox="0 0 212 40" fill="none">
+                <defs>
+                    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#ff7900" stop-opacity=".38"/>
+                        <stop offset="100%" stop-color="#ff7900" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <path d="M0 30 L24 24 L48 27 L72 16 L96 20 L120 9 L144 13 L168 5 L192 8 L212 1 L212 40 L0 40 Z" fill="url(#area)"/>
+                <path d="M0 30 L24 24 L48 27 L72 16 L96 20 L120 9 L144 13 L168 5 L192 8 L212 1"
+                      stroke="#ff9d3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="212" cy="1" r="3.2" fill="#fff"/>
+            </svg>
+        </div>
+
+        <div class="card meta">
+            <div class="badge"><i></i>BIM ready</div>
+            <div class="avatars">
+                <div class="av" style="background:#ffb26b">NA</div>
+                <div class="av" style="background:#7dd3fc">TB</div>
+                <div class="av" style="background:#86efac">LC</div>
+                <div class="av more">+7</div>
+            </div>
+        </div>
+
+        <div class="card heat">
+            <div class="label">Site activity · 26 weeks</div>
+            <div class="rows" id="heat"></div>
+            <div class="foot">
+                <span>1,842 pours logged</span>
+                <span class="legend">
+                    <span style="margin-right:4px">less</span>
+                    <span class="cell" style="background:rgba(255,255,255,.06)"></span>
+                    <span class="cell" style="background:rgba(255,121,0,.22)"></span>
+                    <span class="cell" style="background:rgba(255,121,0,.42)"></span>
+                    <span class="cell" style="background:rgba(255,121,0,.68)"></span>
+                    <span class="cell" style="background:#ff9d3d"></span>
+                    <span style="margin-left:4px">more</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const levels = ['rgba(255,255,255,.06)', 'rgba(255,121,0,.22)', 'rgba(255,121,0,.42)', 'rgba(255,121,0,.68)', '#ff9d3d'];
+    const heat = document.getElementById('heat');
+    let seed = 7;
+    const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+    for (let c = 0; c < 26; c++) {
+        const col = document.createElement('div');
+        col.className = 'col';
+        for (let r = 0; r < 6; r++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            const v = rnd();
+            cell.style.background = levels[v < .34 ? 0 : v < .55 ? 1 : v < .74 ? 2 : v < .90 ? 3 : 4];
+            col.appendChild(cell);
+        }
+        heat.appendChild(col);
+    }
+</script>
+</body>
+</html>
