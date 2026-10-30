@@ -10,7 +10,7 @@ gh release edit v{{VERSION}} --title "{{VERSION}} — {{THEME}}" --notes-file ar
 
 Rules learned the hard way:
 
-- **Title stays under ~55 characters** and never repeats the version twice — GitHub already prints the tag under it. Pattern: `{{VERSION}} — {{THEME}}` (`3.7.0 — Phase 2 · Scroll & chữ`).
+- **Title stays under ~55 characters** and never repeats the version twice — GitHub already prints the tag under it. Pattern: `{{VERSION}} — {{THEME}}` (`1.1.0 — Command palette`).
 - **Banner first, always.** It is the only thing that makes the release page look like the README.
 - **No shields.io badges in release bodies.** GitHub's image proxy intermittently fails on them and leaves a broken-image icon; a chip line in inline code looks the same and never breaks.
 - **One table per idea**, with the doc link in the last column — a release page is a changelog, not a manual.

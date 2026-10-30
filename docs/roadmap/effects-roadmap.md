@@ -101,24 +101,24 @@ Lợi ích: 13 hiệu ứng giảm ~500 dòng trùng lặp, và **tự động**
 
 ## 4. Lộ trình 4 phase
 
-Mỗi phase = 1 minor release, làm đủ Definition of Done.
+Mỗi phase = 1 minor release, làm đủ Definition of Done. Phase 0–2 đã xong trước bản công khai đầu tiên (1.0.0); các số 3.x bên dưới là mốc nội bộ, không phải bản phát hành công khai.
 
-### Phase 0 → 3.5.0 (nền móng, ưu tiên tuyệt đối) — ✅ ĐÃ XONG
+### Phase 0 (nền móng) — ✅ ĐÃ XONG, có trong 1.0.0
 1. ✅ `MotionSettings` + `AnimatedEffectBase` (3 hiệu ứng mới dùng base; 8 hiệu ứng cũ đã thêm guard).
 2. ✅ Tôn trọng `SystemParameters.ClientAreaAnimation` (reduced motion) toàn thư viện.
 3. ✅ `CursorGlow`, `GridPattern`, `ShakeElement` + `ThemePreset.Brutal`.
 > Việc còn lại (không chặn phase sau): migrate 8 hiệu ứng cũ sang `AnimatedEffectBase` để bỏ ~40 dòng trùng lặp mỗi file.
 > Giá trị: sửa nợ + 3 hiệu ứng, không có rủi ro API.
 
-### Phase 1 → 3.6.0 (tương tác) — ✅ ĐÃ XONG
+### Phase 1 (tương tác) — ✅ ĐÃ XONG, có trong 1.0.0
 `TiltCard` (2.5D skew+scale), `MagneticHover`, `CheckMarkDraw`, `ScrollProgressBar`.
 > Đây là nhóm “micro-interaction có mục đích” đúng trend 2026, và `CheckMarkDraw` dùng được ngay trong luồng duyệt/lưu.
 
-### Phase 2 → 3.7.0 (scroll & chữ) — ✅ ĐÃ XONG
+### Phase 2 (scroll & chữ) — ✅ ĐÃ XONG, có trong 1.0.0
 `ScrollReveal`, `ParallaxPanel`, `TypewriterText`, `TextReveal`.
 > Nhóm scrollytelling — dùng cho màn hình giới thiệu/tổng quan dự án.
 
-### Phase 3 → 3.8.0 (nâng cao)
+### Phase 3 → 1.1.0 (nâng cao)
 `CommandPalette`, `ParticleField`, `RadialGauge`, `PageTransitionHost`.
 > `CommandPalette` là control giá trị nhất còn lại nhưng cũng nặng nhất; tách release riêng để test kỹ bàn phím.
 

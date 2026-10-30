@@ -7,7 +7,7 @@ The current repository structure and supported setup are documented in the root 
 ## Active
 
 - [Roadmap revision 3](roadmap-v3.md) — current direction, control coverage and release themes.
-- [Effects roadmap](effects-roadmap.md) — planned visual effects (web 2026 trends), phases 3.5.0 → 3.8.0, definition of done.
+- [Effects roadmap](effects-roadmap.md) — planned visual effects (web 2026 trends), phases 0–2 shipped in 1.0.0, phase 3 planned for 1.1.0, definition of done.
 
 ## Archived
 
