@@ -8,6 +8,7 @@ The current repository structure and supported setup are documented in the root 
 
 - [Roadmap revision 3](roadmap-v3.md) — current direction, control coverage and release themes.
 - [Effects roadmap](effects-roadmap.md) — planned visual effects (web 2026 trends), phases 0–2 shipped in 1.0.0, phase 3 planned for 1.1.0, definition of done.
+- [Ribbon plan](ribbon-plan.md) — 22 controls in P0/P1/P2, layout engine, keytips, persistence; 1.1.0 = P0, 1.2.0 = P1, 1.3.0 = P2.
 
 ## Archived
 
