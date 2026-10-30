@@ -7,6 +7,40 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 _Nothing yet._
 
+## [1.0.0] - 2026-10-30
+
+First public release. This is the library as it stands, not a delta — everything listed below ships in this version.
+
+### Controls
+
+- **Engineering & CAD** — `Spreadsheet` with a formula engine, `StackedHeaderDataGrid`, `ZoomableCanvas` + `RulerControl`, internal-force charts, `RebarInput`, `UnitBox`, `MomentBox`, `CompassIndicator`.
+- **Data & dashboards** — `StatisticCard`, `OdometerNumber`, `Sparkline`, `HeatmapCalendar`, `AvatarStack`, `Timeline`, `CardCarousel`, `DataPager`, `PropertyGrid`.
+- **Input & forms** — `NumericUpDown`, `OtpInput`, `PinBox`, `CheckComboBox`, `AutoCompleteTextBox`, `SearchBox`, `FilePicker`, `ColorPicker`, `RangeSlider`, `Rating`, `Tag`, `ToggleSwitch`.
+- **Navigation & shell** — `NavigationView`, `SideMenu`, `DrawerMenu`, `Breadcrumb`, `Pagination`, `StepBar`, `Transfer`, `TabControl`, `SplitButton`, `Expander`, `CONCOSTWindow`.
+- **Feedback** — `Dialog`, `Drawer`, `Growl`, loading indicators and overlays, `Skeleton`, `EmptyState`, `Watermark`.
+- **Visual effects** — `SpotlightCard`, `TiltCard`, `MagneticHover`, `CursorGlow`, `AuroraBackground`, `BorderBeam`, `SheenSweep`, `PulseRing`, `WaveDivider`, `GradientText`, `ConfettiBurst`, `GridPattern`, `MarqueeTicker`, `ScrollReveal`, `ParallaxPanel`, `TypewriterText`, `TextReveal`, `CheckMarkDraw`, `ScrollProgressBar`, `ShakeElement`, `Ripple`, `SnowCanvas`, `Sprite`, `CompareSlider`, `Magnifier`.
+
+### Platform
+
+- Three target frameworks from one source: `net48`, `net8.0-windows`, `net10.0-windows`.
+- 8 theme presets (`Default`, `Ocean`, `Forest`, `Sunset`, `Slate`, `Midnight`, `HighContrast`, `Brutal`), light/dark, 5 accent colours, shared design tokens.
+- `MotionSettings` honours the Windows "Show animations" setting across every effect (WCAG 2.2.2).
+
+### Documentation
+
+- Static wiki: **106 pages**, bilingual Vietnamese / English, search with `Ctrl K`, XAML ↔ C# inspector, fully offline (self-hosted fonts, icons, syntax highlighting), WCAG AA contrast.
+- Property tables and C# samples generated from the source; `check-xaml.py` validates every snippet against the real API.
+
+### Packaging
+
+- NuGet package, framework-dependent demo and self-contained demo attached to the release.
+
+---
+
+## Internal history (pre-public)
+
+Versions 3.0.0 – 3.7.0 below were internal milestones reached before the first public release. They are kept for reference; no public release carries those numbers.
+
 ## [3.7.0] - 2026-10-29
 
 ### Added
@@ -130,12 +164,5 @@ _Nothing yet._
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v3.7.0...HEAD
-[3.7.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.7.0
-[3.6.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.6.0
-[3.5.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.5.0
-[3.4.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.4.0
-[3.3.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.3.0
-[3.2.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.2.0
-[3.1.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.1.0
-[3.0.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v3.0.0
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v1.0.0

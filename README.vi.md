@@ -55,11 +55,11 @@ Yêu cầu runtime của Revit và AutoCAD khác nhau theo phiên bản. Kiểm 
 
 ### A. Gói NuGet từ bản phát hành
 
-Tải `CONCOST.UI.3.7.0.nupkg` ở [bản mới nhất](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), sau đó:
+Tải `CONCOST.UI.1.0.0.nupkg` ở [bản mới nhất](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), sau đó:
 
 ```powershell
 dotnet nuget add source "C:\duong\dan\tai\ve" --name concost-local
-dotnet add package CONCOST.UI --version 3.7.0
+dotnet add package CONCOST.UI --version 1.0.0
 ```
 
 ### B. Tham chiếu project
