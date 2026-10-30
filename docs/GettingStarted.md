@@ -1,5 +1,7 @@
 # Getting Started with CONCOST.UI
 
+**English** · [Tiếng Việt](GettingStarted.vi.md)
+
 CONCOST.UI is a multi-target WPF library (`net48`, `net8.0-windows`, `net10.0-windows`) that ships controls, theme tokens and style variants for engineering, CAD and BIM desktop applications.
 
 The complete, searchable reference for every control (properties, style keys, XAML and C# samples) lives in the interactive wiki: open [`docs/index.html`](index.html) in a browser.
@@ -67,7 +69,7 @@ using System.Windows.Media;
 using CONCOST.UI.Themes;
 
 ThemeManager.Current.Theme = AppTheme.System;        // Light | Dark | System
-ThemeManager.Current.Preset = ThemePreset.Default;   // Default | Ocean | Forest | Sunset | Slate | Midnight | HighContrast
+ThemeManager.Current.Preset = ThemePreset.Default;   // Default | Ocean | Forest | Sunset | Slate | Midnight | HighContrast | Brutal
 ThemeManager.Current.AccentColor = Color.FromRgb(0xFF, 0x79, 0x00);
 ```
 

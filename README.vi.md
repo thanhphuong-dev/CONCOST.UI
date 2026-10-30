@@ -11,7 +11,7 @@
 
   <p>
     <a href="https://thanhphuong-dev.github.io/CONCOST.UI/"><b>Tài liệu</b></a> &nbsp;·&nbsp;
-    <a href="docs/GettingStarted.md">Bắt đầu</a> &nbsp;·&nbsp;
+    <a href="docs/GettingStarted.vi.md">Bắt đầu</a> &nbsp;·&nbsp;
     <a href="CHANGELOG.md">Nhật ký thay đổi</a> &nbsp;·&nbsp;
     <a href="https://github.com/thanhphuong-dev/CONCOST.UI/releases">Tải về</a> &nbsp;·&nbsp;
     <a href="README.md">English</a>
@@ -150,7 +150,7 @@ public partial class SettingsPanel : UserControl
 }
 ```
 
-Cách này chạy được khi **không có** `Application.Current`, và vẫn đổi theme được lúc runtime. Xem [hướng dẫn Getting Started](docs/GettingStarted.md) để biết chi tiết tích hợp.
+Cách này chạy được khi **không có** `Application.Current`, và vẫn đổi theme được lúc runtime. Xem [hướng dẫn Getting Started](docs/GettingStarted.vi.md) để biết chi tiết tích hợp.
 
 ## Theme
 
@@ -188,8 +188,8 @@ Tài liệu là một wiki tĩnh — **106 trang**, song ngữ **Việt / Anh**,
 
 - **Bản online:** <https://thanhphuong-dev.github.io/CONCOST.UI/>
 - [Mục lục tài liệu](docs/README.md) — bản đồ trang và quy trình bảo trì
-- [Getting Started](docs/GettingStarted.md) — tích hợp, theme, plugin hosting, build
-- [Migration Guide](docs/MigrationGuide.md) — ánh xạ WinForms / WPF và chính sách deprecation
+- [Getting Started](docs/GettingStarted.vi.md) — tích hợp, theme, plugin hosting, build
+- [Migration Guide](docs/MigrationGuide.vi.md) — ánh xạ WinForms / WPF và chính sách deprecation
 - [Roadmap hiệu ứng](docs/roadmap/effects-roadmap.md) — kế hoạch tiếp theo
 - [Nhật ký thay đổi](CHANGELOG.md)
 

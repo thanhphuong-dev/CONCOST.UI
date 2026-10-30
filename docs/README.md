@@ -217,7 +217,7 @@ Run all three after adding or renaming a `DependencyProperty`; the checker must 
 
 ## Related documents
 
-- [Getting Started](GettingStarted.md) — integration, theming, plugin hosting, build.
-- [Migration Guide](MigrationGuide.md) — WinForms/WPF mapping and deprecation policy.
+- [Getting Started](GettingStarted.md) — integration, theming, plugin hosting, build. Vietnamese: [GettingStarted.vi.md](GettingStarted.vi.md).
+- [Migration Guide](MigrationGuide.md) — WinForms/WPF mapping and deprecation policy. Vietnamese: [MigrationGuide.vi.md](MigrationGuide.vi.md).
 - [Roadmap](roadmap/) — active roadmap (revision 3) and archived plans.
 - [Changelog](../CHANGELOG.md).

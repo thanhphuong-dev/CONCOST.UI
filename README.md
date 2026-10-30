@@ -188,8 +188,8 @@ The reference is a static wiki — **106 pages**, bilingual **Vietnamese / Engli
 
 - **Online:** <https://thanhphuong-dev.github.io/CONCOST.UI/> (`?lang=en` for English)
 - [Documentation index](docs/README.md) — page map and maintenance workflow
-- [Getting Started](docs/GettingStarted.md) — integration, theming, plugin hosting, build
-- [Migration Guide](docs/MigrationGuide.md) — WinForms / WPF mapping and deprecation policy
+- [Getting Started](docs/GettingStarted.md) — integration, theming, plugin hosting, build ([Tiếng Việt](docs/GettingStarted.vi.md))
+- [Migration Guide](docs/MigrationGuide.md) — WinForms / WPF mapping and deprecation policy ([Tiếng Việt](docs/MigrationGuide.vi.md))
 - [Effects roadmap](docs/roadmap/effects-roadmap.md) — what is planned next
 - [Changelog](CHANGELOG.md)
 
