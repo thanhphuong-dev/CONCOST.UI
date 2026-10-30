@@ -3,10 +3,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
-    <Version>1.0.0</Version>
-    <PackageVersion>1.0.0</PackageVersion>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.1</Version>
+    <PackageVersion>1.0.1</PackageVersion>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
     <RepositoryUrl>https://github.com/thanhphuong-dev/CONCOST.UI</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://thanhphuong-dev.github.io/CONCOST.UI/</PackageProjectUrl>

@@ -86,7 +86,7 @@
                             <TextBlock Text="CONCOST" FontSize="19" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}"/>
                             <TextBlock Text=".UI" FontSize="19" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.Primary}"/>
                             <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" CornerRadius="5" Padding="7,2" Margin="9,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="v1.0.0" FontSize="10" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}"/>
+                                <TextBlock Text="v1.0.1" FontSize="10" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}"/>
                             </Border>
                         </StackPanel>
                         <TextBlock Text="{Binding Source={x:Static services:LocalizationManager.Current}, Path=[Showcase.Brand.Caption]}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="0,3,0,0"/>

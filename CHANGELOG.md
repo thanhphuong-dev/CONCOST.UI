@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 _Nothing yet._
 
+## [1.0.1] - 2026-10-30
+
+### Fixed
+- The Showcase app icon rendered as a blank square in Explorer and was missing in the header. The .ico stored only PNG payloads; Windows needs DIB (BMP) frames for 16-128 px and reserves PNG for 256. The packer now emits real DIB frames, and the in-app logo uses a PNG so it never depends on frame selection.
+- Replay buttons did nothing: `AnimatedEffectBase` kept accumulating elapsed time, so toggling `IsAnimated` re-hooked the loop but the effect stayed finished. Added `Restart()` (plus `OnRestarted()` for derived phase state); the TypewriterText and TextReveal demos use it.
+
 ## [1.0.0] - 2026-10-30
 
 First public release. This is the library as it stands, not a delta — everything listed below ships in this version.
@@ -164,5 +170,6 @@ Versions 3.0.0 – 3.7.0 below were internal milestones reached before the first
 - Attached property sets: `InfoElement`, `IconElement`, `ButtonElement`, `BorderElement`, `VisualElement`, `ProgressBarElement`, `DataGridElement`, `TextBoxHelper`, `PasswordBoxHelper`, `TabControlHelper`, `ScrollViewerHelper`, `DragDropHelper`.
 - Interactive Showcase application and automated test project.
 
-[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/thanhphuong-dev/CONCOST.UI/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v1.0.1
 [1.0.0]: https://github.com/thanhphuong-dev/CONCOST.UI/releases/tag/v1.0.0

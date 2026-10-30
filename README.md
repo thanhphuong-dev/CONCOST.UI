@@ -55,11 +55,11 @@ Revit and AutoCAD runtime requirements vary by release. Check the requirements f
 
 ### A. NuGet package from the release
 
-Download `CONCOST.UI.1.0.0.nupkg` from the [latest release](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), then:
+Download `CONCOST.UI.1.0.1.nupkg` from the [latest release](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), then:
 
 ```powershell
 dotnet nuget add source "C:\path\to\downloads" --name concost-local
-dotnet add package CONCOST.UI --version 1.0.0
+dotnet add package CONCOST.UI --version 1.0.1
 ```
 
 ### B. Project reference
