@@ -831,7 +831,7 @@ layer.Target = PageScroll;`
 };`,
                 callout: {
                     type: "warn",
-                    body: "Mỗi từ là một lần <code>FormattedText</code>. Với đoạn văn dài (hơn ~15 từ) hãy dùng <code>TextBlock</code> thường để tránh tốn CPU mỗi frame."
+                    body: "Mỗi từ là một lần <code>FormattedText</code>. Với đoạn văn dài (hơn ~15 từ) hãy dùng <code>TextBlock</code> thường để tránh tốn CPU mỗi frame. Muốn chạy lại từ đầu thì gọi <code>Restart()</code> — đổi <code>IsAnimated</code> không đủ vì thời gian đã tích luỹ."
                 }
             }
         ],

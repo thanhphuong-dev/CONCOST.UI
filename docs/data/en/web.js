@@ -585,7 +585,7 @@ layer.Target = PageScroll;`
     IsLooping = false
 };`,
                 callout: {
-                    body: "Keep it at 20–30 characters per second. Faster is unreadable, slower feels sluggish."
+                    body: "Keep it at 20–30 characters per second. Faster is unreadable, slower feels sluggish. To type the text again call <code>Restart()</code>."
                 }
             }
         ]
@@ -607,7 +607,7 @@ layer.Target = PageScroll;`
 };`,
                 callout: {
                     type: "warn",
-                    body: "Each word is one <code>FormattedText</code>. Beyond ~15 words use a normal <code>TextBlock</code> to avoid burning CPU every frame."
+                    body: "Each word is one <code>FormattedText</code>. Beyond ~15 words use a normal <code>TextBlock</code> to avoid burning CPU every frame. To replay from the start call <code>Restart()</code> — toggling <code>IsAnimated</code> is not enough because elapsed time is kept."
                 }
             }
         ]

@@ -118,8 +118,7 @@ public partial class ShowcaseViewModel
         again.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         again.Click += (_, _) =>
         {
-            typewriter.IsAnimated = false;
-            typewriter.IsAnimated = true;
+            typewriter.Restart();
         };
 
         var content = new StackPanel();
@@ -159,8 +158,7 @@ public partial class ShowcaseViewModel
         again.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         again.Click += (_, _) =>
         {
-            reveal.IsAnimated = false;
-            reveal.IsAnimated = true;
+            reveal.Restart();
         };
 
         var content = new StackPanel();

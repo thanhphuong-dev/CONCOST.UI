@@ -33,6 +33,23 @@ public abstract class AnimatedEffectBase : FrameworkElement
     /// <summary>Time accumulated while the effect was running, in seconds.</summary>
     protected double Elapsed { get; private set; }
 
+    /// <summary>
+    /// Restarts the effect from its first frame. Use this for a “replay” button:
+    /// toggling <see cref="IsAnimated"/> is not enough, because <see cref="Elapsed"/>
+    /// keeps its value and a finished effect simply stays finished.
+    /// </summary>
+    public void Restart()
+    {
+        Elapsed = 0;
+        _lastFrame = TimeSpan.Zero;
+        OnRestarted();
+        InvalidateVisual();
+        SyncMotionState();
+    }
+
+    /// <summary>Called by <see cref="Restart"/> so derived controls can clear their own phase.</summary>
+    protected virtual void OnRestarted() { }
+
     protected AnimatedEffectBase()
     {
         IsHitTestVisible = false;
