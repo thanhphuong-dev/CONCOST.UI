@@ -24,7 +24,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "TiltCard — thẻ nghiêng theo con trỏ",
+            "Mặc định",
             card,
             xaml: "<ui:TiltCard Width=\"280\" MaxTilt=\"6\" Lift=\"1.02\"\n" +
                   "             Style=\"{DynamicResource CONCOST.TiltCard.Base}\">\n" +
@@ -59,7 +59,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "MagneticHover — nút hút theo con trỏ",
+            "Mặc định",
             button,
             xaml: "<Button Content=\"Kéo tôi về phía con trỏ\"\n" +
                   "        attached:MagneticHover.IsEnabled=\"True\"\n" +
@@ -90,7 +90,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "CheckMarkDraw — dấu tích tự vẽ",
+            "Đã duyệt",
             content,
             xaml: "<ui:CheckMarkDraw Width=\"52\" Height=\"52\"\n" +
                   "                  IsChecked=\"{Binding IsApproved}\" />",
@@ -121,7 +121,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "ScrollProgressBar — thanh tiến độ đọc",
+            "Mặc định",
             content,
             xaml: "<ui:ScrollProgressBar Target=\"{Binding ElementName=PageScroll}\" />\n" +
                   "<ScrollViewer x:Name=\"PageScroll\">…</ScrollViewer>",

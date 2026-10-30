@@ -379,6 +379,7 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("Ripple", "Custom Controls", IconKind.Layers, "Material-design water wave feedback effect originating from the pointer click position.", CreateRippleDemo));
         AllItems.Add(new ShowcaseItem("Skeleton (Shimmer)", "Custom Controls", IconKind.Layers, "Animated linear gradient shimmer placeholder loading effect for cards, avatars, and text.", CreateSkeletonDemo));
         AllItems.Add(new ShowcaseItem("SpotlightCard", "Custom Controls", IconKind.Star, "Card with a cursor-following spotlight and a gradient border revealed on hover (web-inspired).", CreateSpotlightCardDemo));
+        AllItems.Add(new ShowcaseItem("Ribbon", "Custom Controls", IconKind.Menu, "Tabbed ribbon with 3-row groups, large/medium/small commands and a collapsible body.", CreateRibbonDemo));
         AllItems.Add(new ShowcaseItem("OdometerNumber", "Custom Controls", IconKind.ChartLine, "Numeric readout that rolls from the previous value to the new one with easing.", CreateOdometerNumberDemo));
         AllItems.Add(new ShowcaseItem("Sparkline", "Custom Controls", IconKind.Sparkline, "Inline mini trend chart for table cells, KPI cards and status strips.", CreateSparklineDemo));
         AllItems.Add(new ShowcaseItem("AvatarStack", "Custom Controls", IconKind.Users, "Overlapping avatar row with a +N overflow chip for reviewers and assignees.", CreateAvatarStackDemo));
@@ -638,7 +639,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <icons:Icon Kind=""Column"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""Foundation"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""Truss"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />";
-        AddCardSection("1. Structural & Civil Engineering (50 Icons)", CreateIconGroupGrid(cat1Icons), cat1Xaml);
+        AddCardSection("1. Kết cấu và xây dựng dân dụng (50 icon)", CreateIconGroupGrid(cat1Icons), cat1Xaml);
 
         // 2. CAD & Drafting Suite (50 icons)
         var cat2Icons = allEnumValues.Skip(51).Take(50);
@@ -646,7 +647,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <icons:Icon Kind=""Drawing"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""DimensionLinear"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""SnapIntersection"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />";
-        AddCardSection("2. CAD & Drafting Suite (50 Icons)", CreateIconGroupGrid(cat2Icons), cat2Xaml);
+        AddCardSection("2. Bộ CAD và bản vẽ (50 icon)", CreateIconGroupGrid(cat2Icons), cat2Xaml);
 
         // 3. BIM & 3D Modeling (50 icons)
         var cat3Icons = allEnumValues.Skip(101).Take(50);
@@ -654,7 +655,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <icons:Icon Kind=""Cylinder"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""Orbit3D"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""RevitSync"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />";
-        AddCardSection("3. BIM & 3D Modeling (50 Icons)", CreateIconGroupGrid(cat3Icons), cat3Xaml);
+        AddCardSection("3. BIM và mô hình 3D (50 icon)", CreateIconGroupGrid(cat3Icons), cat3Xaml);
 
         // 4. Data, Tables & Calculations (50 icons)
         var cat4Icons = allEnumValues.Skip(151).Take(50);
@@ -662,7 +663,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <icons:Icon Kind=""Formula"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""TableData"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""QuantityTakeoff"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />";
-        AddCardSection("4. Data, Tables & Calculations (50 Icons)", CreateIconGroupGrid(cat4Icons), cat4Xaml);
+        AddCardSection("4. Dữ liệu, bảng và tính toán (50 icon)", CreateIconGroupGrid(cat4Icons), cat4Xaml);
 
         // 5. Charts & Analytics (50 icons)
         var cat5Icons = allEnumValues.Skip(201).Take(50);
@@ -670,7 +671,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <icons:Icon Kind=""ChartLineSmooth"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""ChartPie"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""AnalyticsDashboard"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />";
-        AddCardSection("5. Charts & Analytics (50 Icons)", CreateIconGroupGrid(cat5Icons), cat5Xaml);
+        AddCardSection("5. Biểu đồ và phân tích (50 icon)", CreateIconGroupGrid(cat5Icons), cat5Xaml);
 
         // 6. Files, Cloud & Storage (50 icons)
         var cat6Icons = allEnumValues.Skip(251).Take(50);
@@ -678,7 +679,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <icons:Icon Kind=""FolderOpen"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""CloudSync"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""Database"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />";
-        AddCardSection("6. Files, Cloud & Storage (50 Icons)", CreateIconGroupGrid(cat6Icons), cat6Xaml);
+        AddCardSection("6. Tệp, cloud và lưu trữ (50 icon)", CreateIconGroupGrid(cat6Icons), cat6Xaml);
 
         // 7. Actions, Editing & Workflow (50 icons)
         var cat7Icons = allEnumValues.Skip(301).Take(50);
@@ -686,7 +687,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <icons:Icon Kind=""FilterRemove"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""SortAscending"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""ExportFile"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />";
-        AddCardSection("7. Actions, Editing & Workflow (50 Icons)", CreateIconGroupGrid(cat7Icons), cat7Xaml);
+        AddCardSection("7. Thao tác, chỉnh sửa và quy trình (50 icon)", CreateIconGroupGrid(cat7Icons), cat7Xaml);
 
         // 8. System, Navigation & UI Controls (50 icons)
         var cat8Icons = allEnumValues.Skip(351).Take(50);
@@ -694,7 +695,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <icons:Icon Kind=""Settings"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""ShieldCheck"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />
 <icons:Icon Kind=""DarkMode"" Width=""24"" Height=""24"" Foreground=""{DynamicResource CONCOST.Brush.Primary}"" />";
-        AddCardSection("8. System, Navigation & UI Controls (50 Icons)", CreateIconGroupGrid(cat8Icons), cat8Xaml);
+        AddCardSection("8. Hệ thống, điều hướng và điều khiển UI (50 icon)", CreateIconGroupGrid(cat8Icons), cat8Xaml);
 
         return mainSp;
     }
@@ -1130,7 +1131,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <Button Content=""Warning"" Style=""{DynamicResource CONCOST.Button.Warning}"" Width=""110"" />
 <Button Content=""Danger"" Style=""{DynamicResource CONCOST.Button.Danger}"" Width=""110"" />";
 
-        AddCardSection("1. Solid Semantic Appearances", solidPanel, solidXaml);
+        AddCardSection("1. Giao diện ngữ nghĩa dạng đặc", solidPanel, solidXaml);
 
         // Section 2: Outline & Ghost Appearances
         var outlinePanel = new StackPanel();
@@ -1157,7 +1158,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <Button Content=""Warning"" Style=""{DynamicResource CONCOST.Button.Outline.Warning}"" Width=""110"" />
 <Button Content=""Danger"" Style=""{DynamicResource CONCOST.Button.Outline.Danger}"" Width=""110"" />";
 
-        AddCardSection("2. Outline & Bordered Variants", outlinePanel, outlineXaml);
+        AddCardSection("2. Biến thể viền và khung", outlinePanel, outlineXaml);
 
         // Section 3: Buttons with Vector Icons
         var iconPanel = new StackPanel();
@@ -1195,7 +1196,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <Button Content=""Refresh Data"" Style=""{DynamicResource CONCOST.Button.Info}"" attached:IconElement.Kind=""Refresh"" Width=""140"" />
 <Button Content=""Delete Beam"" Style=""{DynamicResource CONCOST.Button.Danger}"" attached:IconElement.Kind=""Delete"" Width=""140"" />";
 
-        AddCardSection("3. Action Buttons with Vector Icons", iconPanel, iconXaml);
+        AddCardSection("3. Nút hành động có icon vector", iconPanel, iconXaml);
 
         // Section 4: Pure Icon-Only Buttons (No Text: Square, Rounded, Circle & Ghost)
         var iconOnlyPanel = new StackPanel();
@@ -1246,7 +1247,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <Button Style=""{DynamicResource CONCOST.Button.Icon.Ghost}"" attached:IconElement.Kind=""Delete"" ToolTip=""Remove Item"" />
 <Button Style=""{DynamicResource CONCOST.Button.Icon.Ghost}"" attached:IconElement.Kind=""Settings"" ToolTip=""Settings"" />";
 
-        AddCardSection("4. Icon-Only Buttons", iconOnlyPanel, iconOnlyXaml);
+        AddCardSection("4. Nút chỉ có icon", iconOnlyPanel, iconOnlyXaml);
 
         return mainSp;
     }
@@ -1440,7 +1441,7 @@ public partial class ShowcaseViewModel : ObservableObject
 
         sec1.Children.Add(grid1);
 
-        AddCardSection("1. Visual Style Presets  (Default 6px · Round Pill · Underline · Filled · Ghost)", sec1,
+        AddCardSection("1. Preset phong cách  (mặc định 6px · Pill tròn · Underline · Filled · Ghost)", sec1,
 @"<!-- Default 6px Rounded TextBox -->
 <TextBox Text=""Default Rounded""
          attached:InfoElement.Placeholder=""Enter project name...""
@@ -1495,7 +1496,7 @@ public partial class ShowcaseViewModel : ObservableObject
         Grid.SetColumn(tbLg, 4); row2.Children.Add(tbLg);
         sec2.Children.Add(row2);
 
-        AddCardSection("2. Sizing Scale & Typography Hierarchy  (Small 28px · Medium 34px · Large 42px)", sec2,
+        AddCardSection("2. Thang kích thước và phân cấp chữ  (nhỏ 28px · vừa 34px · lớn 42px)", sec2,
 @"<!-- Small Size: 28px height, 12px font, 13px icon -->
 <TextBox Text=""Small Size""
          Style=""{StaticResource CONCOST.TextBox.Small}""
@@ -1554,7 +1555,7 @@ public partial class ShowcaseViewModel : ObservableObject
         Grid.SetRow(tbItem4, 2); Grid.SetColumn(tbItem4, 2); grid3.Children.Add(tbItem4);
         sec3.Children.Add(grid3);
 
-        AddCardSection("3. Vector Icons, Prefix Labels & Suffix Units  (IconElement · InfoElement.Prefix / Suffix)", sec3,
+        AddCardSection("3. Icon vector, nhãn tiền tố và đơn vị hậu tố  (IconElement · InfoElement.Prefix / Suffix)", sec3,
 @"<!-- 1. Prefix Vector Icon with Clear Button -->
 <TextBox Text=""Girder G1 - Level +14.4m""
          attached:IconElement.Kind=""Edit""
@@ -1636,7 +1637,7 @@ public partial class ShowcaseViewModel : ObservableObject
         Grid.SetRow(tbFilter4, 2); Grid.SetColumn(tbFilter4, 2); grid4.Children.Add(tbFilter4);
         sec4.Children.Add(grid4);
 
-        AddCardSection("4. Smart Input Restriction & Keyboard Navigation  (TextBoxHelper.InputType · SelectAll · Escape)", sec4,
+        AddCardSection("4. Giới hạn nhập thông minh và điều hướng bàn phím  (TextBoxHelper.InputType · SelectAll · Escape)", sec4,
 @"<!-- 1. Positive Decimal Input (h = 550.5 mm) -->
 <TextBox Text=""550.5""
          attached:TextBoxHelper.InputType=""PositiveDecimal""
@@ -1699,7 +1700,7 @@ public partial class ShowcaseViewModel : ObservableObject
         Grid.SetRow(tbForm3, 2); Grid.SetColumn(tbForm3, 0); Grid.SetColumnSpan(tbForm3, 3); grid5.Children.Add(tbForm3);
         sec5.Children.Add(grid5);
 
-        AddCardSection("5. Form Field Labels, Required Asterisk & Character Counter  (InfoElement.Title / Required / CharacterCount)", sec5,
+        AddCardSection("5. Nhãn trường, dấu bắt buộc và đếm ký tự  (InfoElement.Title / Required / CharacterCount)", sec5,
 @"<!-- 1. Top Title with Required Asterisk (*) and Live Character Limit (x/40) -->
 <TextBox Text=""Tower A - Core Wall""
          MaxLength=""40""
@@ -1897,7 +1898,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <ui:ToggleSwitch IsChecked=""False"" OnContent=""Auto Calculate"" OffContent=""Manual Input"" Width=""160"" />
 <ui:ToggleSwitch IsChecked=""True"" OnContent=""Dark Mode"" OffContent=""Light Mode"" Width=""150"" />";
 
-        AddCardSection("1. Interactive Animated Toggle Switches", togglePanel, toggleXaml);
+        AddCardSection("1. Công tắc bật/tắt có animation", togglePanel, toggleXaml);
 
         return mainSp;
     }
@@ -2104,7 +2105,7 @@ public partial class ShowcaseViewModel : ObservableObject
     </StackPanel>
 </controls:Card>";
 
-        AddCardSection("1. Standard Structural Member Card", CreateStandardCard(), sec1Xaml);
+        AddCardSection("1. Thẻ cấu kiện kết cấu chuẩn", CreateStandardCard(), sec1Xaml);
 
         // ==============================================================================?
         // SECTION 2: Header-Filled Container Card with Actions
@@ -2213,7 +2214,7 @@ public partial class ShowcaseViewModel : ObservableObject
     </controls:Card.Footer>
 </controls:Card>";
 
-        AddCardSection("2. Header-Filled Container Card with Footer Actions", CreateActionCard(), sec2Xaml);
+        AddCardSection("2. Thẻ có header tô đặc và hành động ở footer", CreateActionCard(), sec2Xaml);
 
         // ==============================================================================?
         // SECTION 3: Metric KPI Summary Card
@@ -2326,7 +2327,7 @@ public partial class ShowcaseViewModel : ObservableObject
     </Grid>
 </controls:Card>";
 
-        AddCardSection("3. Metric KPI Quantity Takeoff Summary Card", CreateKPISummaryCard(), sec3Xaml);
+        AddCardSection("3. Thẻ tổng hợp KPI bóc tách khối lượng", CreateKPISummaryCard(), sec3Xaml);
 
         return mainSp;
     }
@@ -2522,7 +2523,7 @@ public partial class ShowcaseViewModel : ObservableObject
     <controls:Badge Style=""{DynamicResource CONCOST.Badge.Base}"" Content=""Neutral Draft"" Appearance=""Neutral"" Margin=""0,0,10,8"" />
 </WrapPanel>";
 
-        AddCardSection("1. Solid Semantic Status Badges", CreateSolidBadges(), sec1Code);
+        AddCardSection("1. Badge trạng thái ngữ nghĩa dạng đặc", CreateSolidBadges(), sec1Code);
 
         // ==================== SECTION 2: Modern Soft Tinted Badges ====================
         WrapPanel CreateSoftBadges()
@@ -2548,7 +2549,7 @@ public partial class ShowcaseViewModel : ObservableObject
     <controls:Badge Style=""{DynamicResource CONCOST.Badge.Soft}"" Content=""Unassigned"" Appearance=""Neutral"" Margin=""0,0,10,8"" />
 </WrapPanel>";
 
-        AddCardSection("2. Soft Tinted High-End Badges", CreateSoftBadges(), sec2Code);
+        AddCardSection("2. Badge cao cấp nền nhạt", CreateSoftBadges(), sec2Code);
 
         // ==================== SECTION 3: Outlined Crisp Engineering Badges ====================
         WrapPanel CreateOutlinedBadges()
@@ -2574,7 +2575,7 @@ public partial class ShowcaseViewModel : ObservableObject
     <controls:Badge Style=""{DynamicResource CONCOST.Badge.Outline}"" Content=""Preliminary"" Appearance=""Neutral"" Margin=""0,0,10,8"" />
 </WrapPanel>";
 
-        AddCardSection("3. Outlined Crisp Engineering Badges", CreateOutlinedBadges(), sec3Code);
+        AddCardSection("3. Badge kỹ thuật viền nét", CreateOutlinedBadges(), sec3Code);
 
         // ==================== SECTION 4: Corner Notification Badges (Wrapping Buttons) ====================
         WrapPanel CreateCornerBadges()
@@ -2632,7 +2633,7 @@ public partial class ShowcaseViewModel : ObservableObject
     </controls:Badge>
 </WrapPanel>";
 
-        AddCardSection("4. Corner Notification Badges (Target Wrapping)", CreateCornerBadges(), sec4Code);
+        AddCardSection("4. Badge thông báo ở góc (bọc theo target)", CreateCornerBadges(), sec4Code);
 
         // ==================== SECTION 5: Live Status Beacons & Pulsing Dots ====================
         StackPanel CreateStatusBeacons()
@@ -2654,7 +2655,7 @@ public partial class ShowcaseViewModel : ObservableObject
     <controls:Badge Style=""{DynamicResource CONCOST.Badge.Dot}"" Appearance=""Info"" Content=""Cloud Backup Service: Scheduled at 02:00 AM"" Margin=""0,0,0,8"" />
 </StackPanel>";
 
-        AddCardSection("5. Live Status Beacons & Indicator Dots", CreateStatusBeacons(), sec5Code);
+        AddCardSection("5. Đèn báo trạng thái live và chấm chỉ báo", CreateStatusBeacons(), sec5Code);
 
         // ==================== SECTION 6: Rounded Pill Badges ====================
         WrapPanel CreatePillBadges()
@@ -2680,7 +2681,7 @@ public partial class ShowcaseViewModel : ObservableObject
     <controls:Badge Style=""{DynamicResource CONCOST.Badge.Pill}"" Content=""Default"" Appearance=""Neutral"" Margin=""0,0,10,8"" />
 </WrapPanel>";
 
-        AddCardSection("6. Rounded Pill Status Badges", CreatePillBadges(), sec6Code);
+        AddCardSection("6. Badge trạng thái dạng pill tròn", CreatePillBadges(), sec6Code);
 
         return mainSp;
     }
@@ -2839,7 +2840,7 @@ public partial class ShowcaseViewModel : ObservableObject
         dg1.Columns.Add(new DataGridTextColumn { Header = "Depth h (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
         dg1.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
-        AddCardSection("1. Floating Row Cards Style (Standard 40px Height)", dg1,
+        AddCardSection("1. Kiểu hàng dạng thẻ nổi (cao chuẩn 40px)", dg1,
 @"<!-- Standard DataGrid with Floating Card Rows -->
 <DataGrid ItemsSource=""{Binding BeamList}"" Height=""210"">
     <DataGrid.Columns>
@@ -2868,7 +2869,7 @@ public partial class ShowcaseViewModel : ObservableObject
         dg2.Columns.Add(new DataGridTextColumn { Header = "Length L (mm)", Binding = new System.Windows.Data.Binding("Length"), Width = new DataGridLength(1.2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
         dg2.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
-        AddCardSection("2. Interactive CheckBox & Selection Columns", dg2,
+        AddCardSection("2. Cột checkbox và chọn dòng tương tác", dg2,
 @"<!-- DataGrid with Interactive CheckBox Column -->
 <DataGrid ItemsSource=""{Binding BeamList}"" Height=""210"">
     <DataGrid.Columns>
@@ -2894,7 +2895,7 @@ public partial class ShowcaseViewModel : ObservableObject
         dg3.Columns.Add(new DataGridTextColumn { Header = "Depth h (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
         dg3.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
-        AddCardSection("3. Seamless Style (Center-Aligned Header & Cells via Attached Properties)", dg3,
+        AddCardSection("3. Kiểu liền mạch (header và ô canh giữa bằng attached property)", dg3,
 @"<!-- Center-Aligned Header & Cells via DataGridElement Attached Properties -->
 <DataGrid Style=""{StaticResource CONCOST.DataGrid.Seamless}""
           attached:DataGridElement.HeaderHorizontalContentAlignment=""Center""
@@ -2918,7 +2919,7 @@ public partial class ShowcaseViewModel : ObservableObject
         dg4.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
         dg4.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
 
-        AddCardSection("4. Small Dense Style (28px Row Height)", dg4,
+        AddCardSection("4. Kiểu dày đặc (hàng cao 28px)", dg4,
 @"<!-- Small Dense DataGrid -->
 <DataGrid Style=""{StaticResource CONCOST.DataGrid.Small}"" ItemsSource=""{Binding BeamList}"" Height=""160"">
     <DataGrid.Columns>
@@ -2981,7 +2982,7 @@ public partial class ShowcaseViewModel : ObservableObject
         grp2.Children.Add(new CONCOST.UI.Controls.ColumnLeaf { HeaderText = "Width (mm)", BindingPath = "W2", Width = new DataGridLength(1, DataGridLengthUnitType.Star), AggregateType = CONCOST.UI.Controls.AggregateType.Average, CanUserSort = true, CanUserResize = true });
         dg5.ColumnHeaderTree.Add(grp2);
 
-        AddCardSection("5. Multi-Level Hierarchical Header DataGrid (Tree-Based with Footer Aggregates)", dg5,
+        AddCardSection("5. DataGrid header phân cấp nhiều tầng (dạng cây, tổng hợp ở footer)", dg5,
 @"<!-- Multi-Level Header DataGrid (Tree-Based with Footer Sum / Average Summary) -->
 <controls:StackedHeaderDataGrid ItemsSource=""{Binding StoryList}""
                                 Height=""230"" StackedRowHeight=""34""
@@ -3063,7 +3064,7 @@ public partial class ShowcaseViewModel : ObservableObject
         // Ensure proper height and full horizontal scrolling
         dg6.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
 
-        AddCardSection("6. Structural Slab Detailing Multi-Level Grid (Engineering Spec)", dg6,
+        AddCardSection("6. Lưới nhiều tầng cho chi tiết sàn (đặc tả kỹ thuật)", dg6,
 @"<!-- Multi-Level Structural Slab Detailing DataGrid (English Standard) -->
 <controls:StackedHeaderDataGrid ItemsSource=""{Binding SlabRebarList}""
                                 Height=""240"" StackedRowHeight=""32""
@@ -3142,7 +3143,7 @@ public partial class ShowcaseViewModel : ObservableObject
         grpFinance.Children.Add(new CONCOST.UI.Controls.ColumnLeaf { HeaderText = "Budget ($)", BindingPath = "Budget", CellType = CONCOST.UI.Controls.CellType.Numeric, StringFormat = "N0", HorizontalAlignment = System.Windows.HorizontalAlignment.Right, Width = new DataGridLength(140), AggregateType = CONCOST.UI.Controls.AggregateType.Sum, CanUserSort = true });
         dg7.ColumnHeaderTree.Add(grpFinance);
 
-        AddCardSection("7. Rich Cell Types & Spreadsheet Operations (Progress, Badge, Rating, Date, Numeric & Right-Click Menu)", dg7,
+        AddCardSection("7. Nhiều kiểu ô và thao tác bảng tính (tiến độ, badge, đánh giá, ngày, số và menu chuột phải)", dg7,
 @"<!-- DataGrid with Rich Cell Types (Progress, Badge, Rating, Date, Numeric) + Context Menu & Excel Copy -->
 <controls:StackedHeaderDataGrid ItemsSource=""{Binding ProjectTasks}""
                                 Height=""280"" StackedRowHeight=""34""
@@ -3208,7 +3209,7 @@ public partial class ShowcaseViewModel : ObservableObject
         // Add default grouping by FloorLevel
         groupPanel.AddGroup("FloorLevel");
 
-        AddCardSection("8. Enterprise Grouping Drop Panel & Subtotal Aggregates (Syncfusion/Telerik-Grade)", sec8Panel,
+        AddCardSection("8. Panel nhóm doanh nghiệp và tổng phụ (chuẩn Syncfusion/Telerik)", sec8Panel,
 @"<!-- Enterprise Grouping DataGrid with GroupPanel -->
 <StackPanel>
     <!-- Group Drop Panel: 'Drag a column header here to group' -->
@@ -3410,7 +3411,7 @@ public partial class ShowcaseViewModel : ObservableObject
         // Load 1,000 rows initially for display
         LoadData(1000);
 
-        AddCardSection("9. Big Data Stress Test & Real-Time Performance Benchmarking (1K -> 100K Rows)", benchmarkPanel,
+        AddCardSection("9. Kiểm thử dữ liệu lớn và đo hiệu năng thời gian thực (1K đến 100K dòng)", benchmarkPanel,
 @"<!-- Big Data High-Performance StackedHeaderDataGrid (1K - 100K Rows) -->
 <controls:StackedHeaderDataGrid ItemsSource=""{Binding BigDataset}""
                                 Height=""360"" StackedRowHeight=""34""
@@ -3678,7 +3679,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <ToggleButton Content=""Outline On"" IsChecked=""True"" Style=""{DynamicResource CONCOST.ToggleButton.Outline}"" Width=""120"" />
 <ToggleButton Content=""Outline Off"" IsChecked=""False"" Style=""{DynamicResource CONCOST.ToggleButton.Outline}"" Width=""120"" />";
 
-        AddCardSection("1. Semantic & Appearance Variations", semPanel, semXaml);
+        AddCardSection("1. Biến thể ngữ nghĩa và giao diện", semPanel, semXaml);
 
         // Section 2: Action Toggle Buttons with Vector Icons
         var iconPanel = new StackPanel();
@@ -3731,7 +3732,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <ToggleButton Content=""Filter"" IsChecked=""True"" Style=""{DynamicResource CONCOST.ToggleButton.Base}"" attached:IconElement.Kind=""Filter"" Width=""140"" />
 <ToggleButton Content=""Bookmark"" IsChecked=""False"" Style=""{DynamicResource CONCOST.ToggleButton.Outline}"" attached:IconElement.Kind=""Layers"" Width=""140"" />";
 
-        AddCardSection("2. Action Toggle Buttons with Vector Icons", iconPanel, iconActionXaml);
+        AddCardSection("2. Nút toggle hành động có icon vector", iconPanel, iconActionXaml);
 
         // Section 3: Icon-Only Buttons (Square, Circle, Outline, Success, Ghost)
         var iconOnlyPanel = new StackPanel();
@@ -3788,7 +3789,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <ToggleButton Style=""{DynamicResource CONCOST.ToggleButton.Icon.Ghost}"" IsChecked=""True"" attached:IconElement.Kind=""Eye"" ToolTip=""Toggle Visibility"" />
 <ToggleButton Style=""{DynamicResource CONCOST.ToggleButton.Icon.Ghost}"" IsChecked=""False"" attached:IconElement.Kind=""EyeOff"" ToolTip=""Toggle Visibility"" />";
 
-        AddCardSection("3. Icon-Only Toggle Buttons", iconOnlyPanel, iconOnlyToggleXaml);
+        AddCardSection("3. Nút toggle chỉ có icon", iconOnlyPanel, iconOnlyToggleXaml);
 
         // Section 4: Modern Segmented Toolbar Groups (CAD & Modeling Control)
         var segmentedPanel = new StackPanel();
@@ -3866,7 +3867,7 @@ public partial class ShowcaseViewModel : ObservableObject
     </StackPanel>
 </Border>";
 
-        AddCardSection("4. Segmented Toolbar Groups", segmentedPanel, segXaml);
+        AddCardSection("4. Nhóm toolbar phân đoạn", segmentedPanel, segXaml);
 
         return mainSp;
     }
@@ -4034,7 +4035,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <RadioButton GroupName=""DesignStandard"" Content=""ACI 318-19 (American Concrete Institute)"" />
 <RadioButton GroupName=""DesignStandard"" Content=""Eurocode 2: EN 1992-1-1 (Design of Concrete Structures)"" />";
 
-        AddCardSection("1. Standard Traditional RadioButtons", stdPanel, stdXaml);
+        AddCardSection("1. RadioButton truyền thống", stdPanel, stdXaml);
 
         // Section 2: Button-Like Radio Cards with Indicator Bar (Solid & Outline)
         var cardPanel = new StackPanel();
@@ -4082,7 +4083,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <RadioButton GroupName=""CardGroup"" Content=""RadioButton"" Style=""{DynamicResource CONCOST.RadioButton.Button.Outline}"" attached:IconElement.Kind=""Calendar"" Width=""140"" />
 <RadioButton GroupName=""CardGroup"" Content=""RadioButton"" Style=""{DynamicResource CONCOST.RadioButton.Button.Outline}"" Width=""130"" />";
 
-        AddCardSection("2. Button-Like Radio Cards with Indicator Bar (Custom Appearance)", cardPanel, cardXaml);
+        AddCardSection("2. Thẻ radio dạng nút có thanh chỉ báo (giao diện tuỳ biến)", cardPanel, cardXaml);
 
         return mainSp;
     }
@@ -4249,7 +4250,7 @@ public partial class ShowcaseViewModel : ObservableObject
 <CheckBox Content=""Verify deflection and crack width limits (SLS)"" IsChecked=""True"" />
 <CheckBox Content=""Export structural framing directly to AutoCAD (.dwg)"" IsChecked=""False"" />";
 
-        AddCardSection("1. Structural Calculation Options (Standard CheckBoxes)", stdPanel, stdXaml);
+        AddCardSection("1. Tuỳ chọn tính toán kết cấu (checkbox chuẩn)", stdPanel, stdXaml);
 
         return mainSp;
     }
@@ -4555,7 +4556,7 @@ public partial class ShowcaseViewModel : ObservableObject
 
         sec1.Children.Add(g1);
 
-        AddCardSection("1. Vertical Slim ScrollViewer & Quick Navigation  (Inertia · Boundary Bubble · Smooth APIs)", sec1,
+        AddCardSection("1. ScrollViewer dọc mảnh và điều hướng nhanh  (quán tính · boundary bubble · API mượt)", sec1,
 @"<!-- Auto-Hiding Slim Vertical ScrollViewer with Inertia and Boundary Bubble -->
 <ScrollViewer x:Name=""BeamScrollViewer""
               Height=""220""
@@ -4673,7 +4674,7 @@ ScrollViewerHelper.ScrollToBottom(BeamScrollViewer);");
         btnLeft.Click += (s, e) => CONCOST.UI.AttachedProperties.ScrollViewerHelper.ScrollToLeft(svH);
         btnRight.Click += (s, e) => CONCOST.UI.AttachedProperties.ScrollViewerHelper.ScrollToRight(svH);
 
-        AddCardSection("2. Horizontal ScrollViewer & Shift + Wheel  (Natural Bubble · Shift-Wheel Detection)", sec2,
+        AddCardSection("2. ScrollViewer ngang và Shift + cuộn  (natural bubble · nhận diện Shift-Wheel)", sec2,
 @"<!-- Horizontal ScrollViewer with Shift+Wheel & Boundary Bubbling -->
 <ScrollViewer x:Name=""ComboScrollViewer""
               Height=""95""
@@ -4765,7 +4766,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         sv2DBorder.Child = sv2D;
         sec3.Children.Add(sv2DBorder);
 
-        AddCardSection("3. Bidirectional 2D Data Grid Matrix  (2-Axis Inertia · Anti-Trap Boundary Bubble)", sec3,
+        AddCardSection("3. Ma trận dữ liệu 2 chiều  (quán tính 2 trục · chống kẹt ở biên)", sec3,
 @"<!-- Bidirectional 2D ScrollViewer with Boundary Bubbling -->
 <ScrollViewer x:Name=""MatrixScrollViewer""
               Height=""230""
@@ -4883,7 +4884,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         svTopBorder.Child = svTop;
         sec4.Children.Add(svTopBorder);
 
-        AddCardSection("4. Automated Floating 'Back to Top' Action  (ShowBackToTop · Animated Glide)", sec4,
+        AddCardSection("4. Nút Lên đầu trang tự động nổi  (ShowBackToTop · trượt có animation)", sec4,
 @"<!-- Floating Back-to-Top Button Integration -->
 <ScrollViewer Height=""240""
               VerticalScrollBarVisibility=""Auto""
@@ -4994,7 +4995,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
 
         sec5.Children.Add(g5);
 
-        AddCardSection("5. Style Presets & Scrollbar Density  (Base Overlay · AlwaysVisible Docked · Minimal Ultra-Slim)", sec5,
+        AddCardSection("5. Preset style và độ dày thanh cuộn  (overlay nền · luôn hiện · tối giản siêu mảnh)", sec5,
 @"<!-- 1. Modern Auto-Hiding Overlay Style (Default) -->
 <ScrollViewer Style=""{DynamicResource CONCOST.ScrollViewer.Base}"" ... />
 
@@ -5194,7 +5195,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(s1DCol2, 2); grid1D.Children.Add(s1DCol2);
         sec1.Children.Add(grid1D);
 
-        AddCardSection("1. Continuous Horizontal Sliders  (Standard · Auto-Fill Track)", sec1,
+        AddCardSection("1. Slider ngang liên tục  (chuẩn · tự tô thanh)", sec1,
 @"<!-- Continuous Horizontal Slider -->
 <Slider Minimum=""0""
         Maximum=""100""
@@ -5258,7 +5259,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(s2DCol2, 2); grid2D.Children.Add(s2DCol2);
         sec2.Children.Add(grid2D);
 
-        AddCardSection("2. Discrete Sliders  (Tick Marks · Snap to Step)", sec2,
+        AddCardSection("2. Slider rời rạc  (vạch chia · bám theo bước)", sec2,
 @"<!-- Discrete Slider with Bottom Ticks & Snapping -->
 <Slider Minimum=""0""
         Maximum=""100""
@@ -5317,7 +5318,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         v4P.Children.Add(v4Lbl); v4P.Children.Add(v4Slider); row3D.Children.Add(v4P);
         sec3.Children.Add(row3D);
 
-        AddCardSection("3. Vertical Sliders  (Orientation=\"Vertical\")", sec3,
+        AddCardSection("3. Slider dọc  (Orientation=\"Vertical\")", sec3,
 @"<!-- Vertical Slider with Snap & Ticks -->
 <Slider Orientation=""Vertical""
         Height=""140""
@@ -5503,7 +5504,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         g1D.Children.Add(tH1D); g1D.Children.Add(tH2D);
         sec1.Children.Add(g1D);
 
-        AddCardSection("1. Heading Hierarchy  (H1 · H2 · H3 · H4)", sec1,
+        AddCardSection("1. Phân cấp tiêu đề  (H1 · H2 · H3 · H4)", sec1,
 @"<TextBlock Text=""H1 Title"" Style=""{StaticResource CONCOST.TextBlock.H1}"" />
 <TextBlock Text=""H2 Subtitle"" Style=""{StaticResource CONCOST.TextBlock.H2}"" />
 <TextBlock Text=""H3 Section Header"" Style=""{StaticResource CONCOST.TextBlock.H3}"" />
@@ -5539,7 +5540,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         g2D.Children.Add(tBodyD); g2D.Children.Add(tCodeD);
         sec2.Children.Add(g2D);
 
-        AddCardSection("2. Body, Captions & Engineering Code Text", sec2,
+        AddCardSection("2. Nội dung, chú thích và chữ mã kỹ thuật", sec2,
 @"<!-- Regular Body text -->
 <TextBlock Text=""Ultimate limit state check..."" Style=""{StaticResource CONCOST.TextBlock.Body}"" />
 
@@ -5586,7 +5587,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         row3D.Children.Add(tPriD); row3D.Children.Add(tSucD); row3D.Children.Add(tWrnD); row3D.Children.Add(tDgrD);
         sec3.Children.Add(row3D);
 
-        AddCardSection("3. Semantic Status Typography  (Primary · Success · Warning · Danger)", sec3,
+        AddCardSection("3. Chữ trạng thái ngữ nghĩa  (Primary · Success · Warning · Danger)", sec3,
 @"<!-- Primary Status Text -->
 <TextBlock Text=""ℹ Primary: Ready"" Style=""{StaticResource CONCOST.TextBlock.Primary}"" />
 
@@ -5797,7 +5798,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(cbFilD, 4); grid1D.Children.Add(cbFilD);
         sec1.Children.Add(grid1D);
 
-        AddCardSection("1. Style Variants  (Default · Round Pill · Filled Background)", sec1,
+        AddCardSection("1. Biến thể style  (mặc định · Pill tròn · nền đặc)", sec1,
 @"<!-- Default 6px Rounded ComboBox -->
 <ComboBox SelectedIndex=""0"">
     <ComboBoxItem Content=""Concrete C25/30 (fck = 25 MPa)"" />
@@ -5873,7 +5874,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(cbLgD, 4); row2D.Children.Add(cbLgD);
         sec2.Children.Add(row2D);
 
-        AddCardSection("2. Size Variants  (Small 28px · Medium 34px · Large 42px)", sec2,
+        AddCardSection("2. Biến thể kích thước  (nhỏ 28px · vừa 34px · lớn 42px)", sec2,
 @"<!-- Small ComboBox (28px height) -->
 <ComboBox Style=""{StaticResource CONCOST.ComboBox.Small}"" SelectedIndex=""0"" />
 
@@ -5928,7 +5929,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(cbLoadD, 2); grid3D.Children.Add(cbLoadD);
         sec3.Children.Add(grid3D);
 
-        AddCardSection("3. Engineering Domain Selectors  (Cross-Section · Load Combinations)", sec3,
+        AddCardSection("3. Bộ chọn chuyên ngành  (mặt cắt · tổ hợp tải)", sec3,
 @"<!-- Structural Cross-Section Selector -->
 <ComboBox SelectedIndex=""0"">
     <ComboBoxItem Content=""Beam Section 300x600 mm"" />
@@ -6125,7 +6126,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(piFilD, 4); grid1D.Children.Add(piFilD);
         sec1.Children.Add(grid1D);
 
-        AddCardSection("1. Style Variants  (Default · Round Pill · Filled Background)", sec1,
+        AddCardSection("1. Biến thể style  (mặc định · Pill tròn · nền đặc)", sec1,
 @"<!-- Default 6px Rounded PasswordInput -->
 <controls:PasswordInput Password=""SecretPassword123"" Placeholder=""Enter password..."" />
 
@@ -6181,7 +6182,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(piLgD, 4); row2D.Children.Add(piLgD);
         sec2.Children.Add(row2D);
 
-        AddCardSection("2. Size Variants  (Small 28px · Medium 34px · Large 42px)", sec2,
+        AddCardSection("2. Biến thể kích thước  (nhỏ 28px · vừa 34px · lớn 42px)", sec2,
 @"<!-- Small Size (28px height, 12px font) -->
 <controls:PasswordInput Style=""{StaticResource CONCOST.PasswordBox.Small}"" />
 
@@ -6233,7 +6234,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(piNoIconD, 4); grid3D.Children.Add(piNoIconD);
         sec3.Children.Add(grid3D);
 
-        AddCardSection("3. Interactive Password Peek Toggle & Prefix Icon (Lock · Revealed · No Icon)", sec3,
+        AddCardSection("3. Nút hiện mật khẩu và icon tiền tố (khoá · đã hiện · không icon)", sec3,
 @"<!-- Password with Lock Icon (Masked by default) -->
 <controls:PasswordInput Password=""ConcostSecurePass2026"" IconKind=""Lock"" />
 
@@ -6608,7 +6609,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
 <!-- 4. ExpandDirection=""Right"" (Vertical Side-Docked Header with RotateTransform) -->
 <Expander Header=""Title"" ExpandDirection=""Right"" Height=""152"" />";
 
-        AddCardSection("1. 4-Directional Multi-Style Expanders", sec1Sp, sec1Code);
+        AddCardSection("1. Expander 4 hướng, nhiều kiểu", sec1Sp, sec1Code);
 
         // ==================== SECTION 2: Standard & Elevated Card Engineering Expanders ====================
         var grid1 = new Grid();
@@ -6680,7 +6681,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
     </Expander>
 </Grid>";
 
-        AddCardSection("2. Standard & Elevated Card Engineering Expanders", grid1, sec2Code);
+        AddCardSection("2. Expander kỹ thuật dạng thẻ chuẩn và thẻ nổi", grid1, sec2Code);
 
         // ==================== SECTION 3: Clean Underline Accordion ====================
         var sec3Sp = new StackPanel();
@@ -6737,7 +6738,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
     </Expander>
 </StackPanel>";
 
-        AddCardSection("3. Clean Underline Accordion (Calculation Breakdown)", sec3Sp, sec3Code);
+        AddCardSection("3. Accordion gạch chân gọn (bóc tách tính toán)", sec3Sp, sec3Code);
 
         return mainSp;
     }
@@ -6961,7 +6962,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(spPb4D, 6); grid1D.Children.Add(spPb4D);
         sec1.Children.Add(grid1D);
 
-        AddCardSection("1. Semantic Variants & Value Percentage (Primary · Success · Warning · Danger)", sec1,
+        AddCardSection("1. Biến thể ngữ nghĩa và phần trăm giá trị (Primary · Success · Warning · Danger)", sec1,
 @"<!-- Primary Progress with Percentage Text (Default ShowText=True) -->
 <ProgressBar Value=""65"" />
 
@@ -7000,7 +7001,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(spIndet2, 2); grid2.Children.Add(spIndet2);
         sec2.Children.Add(grid2);
 
-        AddCardSection("2. Indeterminate & Real-Time Loading Wave Animation", sec2,
+        AddCardSection("2. Trạng thái không xác định và sóng tải thời gian thực", sec2,
 @"<!-- Indeterminate Standard Wave -->
 <ProgressBar IsIndeterminate=""True"" Height=""8"" />
 
@@ -7042,7 +7043,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
         Grid.SetColumn(spThick, 4); grid3.Children.Add(spThick);
         sec3.Children.Add(grid3);
 
-        AddCardSection("3. Size System & Corner Radius (Thin 4px · Standard 8px · Thick 14px)", sec3,
+        AddCardSection("3. Hệ kích thước và bo góc (mảnh 4px · chuẩn 8px · dày 14px)", sec3,
 @"<!-- Thin 4px Compact Progress -->
 <ProgressBar Style=""{StaticResource CONCOST.ProgressBar.Thin}"" Value=""55"" />
 
@@ -7260,7 +7261,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
               SelectedDate=""{Binding InspectionDate}"" HorizontalAlignment=""Center"" />
 </Grid>";
 
-        AddCardSection("1. Single Date Selection & Today Highlight (Base vs Primary)", grid1, sec1Code);
+        AddCardSection("1. Chọn một ngày và làm nổi hôm nay (Base và Primary)", grid1, sec1Code);
 
         // ==================== SECTION 2: Milestone Multiple Range Selection ====================
         var sec2Grid = new Grid();
@@ -7331,7 +7332,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
     </Border>
 </Grid>";
 
-        AddCardSection("2. Milestone Multiple Range Selection (Gantt Period)", sec2Grid, sec2Code);
+        AddCardSection("2. Chọn nhiều khoảng mốc (chu kỳ Gantt)", sec2Grid, sec2Code);
 
         // ==================== SECTION 3: Blackout Dates (Site Non-Working Days) ====================
         var sec3Sp = new StackPanel();
@@ -7353,7 +7354,7 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
 cal.BlackoutDates.AddDatesInPast();
 cal.BlackoutDates.Add(new CalendarDateRange(DateTime.Today.AddDays(1), DateTime.Today.AddDays(3)));";
 
-        AddCardSection("3. Blackout Dates (Site Non-Working Days & Past Lockout)", sec3Sp, sec3Code);
+        AddCardSection("3. Ngày bị khoá (ngày nghỉ công trường và ngày đã qua)", sec3Sp, sec3Code);
 
         // ==================== SECTION 4: Elevated Card Calendar with Action Presets ====================
         var sec4Host = new Grid();
@@ -7422,7 +7423,7 @@ cal.BlackoutDates.Add(new CalendarDateRange(DateTime.Today.AddDays(1), DateTime.
     </StackPanel>
 </Grid>";
 
-        AddCardSection("4. Elevated Card & Compact Calendar with Action Presets", sec4Host, sec4Code);
+        AddCardSection("4. Lịch dạng thẻ nổi và lịch gọn có preset hành động", sec4Host, sec4Code);
 
         return mainSp;
     }
@@ -7588,7 +7589,7 @@ cal.BlackoutDates.Add(new CalendarDateRange(DateTime.Today.AddDays(1), DateTime.
 
         sec1.Children.Add(grid1);
 
-        AddCardSection("1. Standard & Compact Sizes (Standard 34px · Small 28px)", sec1,
+        AddCardSection("1. Kích thước chuẩn và gọn (chuẩn 34px · nhỏ 28px)", sec1,
 @"<!-- Standard DatePicker -->
 <DatePicker SelectedDate=""{x:Static sys:DateTime.Today}"" />
 
@@ -7622,7 +7623,7 @@ cal.BlackoutDates.Add(new CalendarDateRange(DateTime.Today.AddDays(1), DateTime.
 
         sec2.Children.Add(grid2);
 
-        AddCardSection("2. Shape & Surface Variants (Round Pill · Filled Solid)", sec2,
+        AddCardSection("2. Biến thể hình dạng và bề mặt (Pill tròn · đặc)", sec2,
 @"<!-- Round Pill DatePicker -->
 <DatePicker Style=""{StaticResource CONCOST.DatePicker.Round}"" SelectedDate=""{x:Static sys:DateTime.Today}"" />
 
@@ -7655,7 +7656,7 @@ cal.BlackoutDates.Add(new CalendarDateRange(DateTime.Today.AddDays(1), DateTime.
 
         sec3.Children.Add(grid3);
 
-        AddCardSection("3. Disabled / Locked State", sec3,
+        AddCardSection("3. Trạng thái vô hiệu hoá / khoá", sec3,
 @"<!-- Disabled Standard DatePicker -->
 <DatePicker IsEnabled=""False"" SelectedDate=""{x:Static sys:DateTime.Today}"" />
 
@@ -7915,7 +7916,7 @@ private void OnTabSelectionChanged(object sender, SelectionChangedEventArgs e)
         ToastService.Info($""Active View: '{tab.Header}'"", ""Navigation"");
     }
 }";
-        AddCardSection("1. Modern Underline Style with Continuous Baseline (Top Placement with Icons)", sec1Sp, sec1Code);
+        AddCardSection("1. Kiểu gạch chân hiện đại, đường đáy liền (đặt trên, có icon)", sec1Sp, sec1Code);
 
         // =========================================================================
         // SECTION 2: Vertical Sidebar Navigation (Left Placement)
@@ -8018,7 +8019,7 @@ private void OnSidebarTabChanged(object sender, SelectionChangedEventArgs e)
         ToastService.Success($""Selected Module: {tab.Header}"", ""BIM Navigator"");
     }
 }";
-        AddCardSection("2. Vertical Sidebar Navigation (Left Placement with Subsystem Detail View)", sec2Sp, sec2Code);
+        AddCardSection("2. Điều hướng sidebar dọc (đặt trái, có khung chi tiết phân hệ)", sec2Sp, sec2Code);
 
         // =========================================================================
         // SECTION 3: InLine Full-Width & Connected Card Inset Tabs
@@ -8151,7 +8152,7 @@ private void OnInLineTabChanged(object sender, SelectionChangedEventArgs e)
         ToastService.Info($""Subsystem: {tab.Header}"", ""BIM Inspector"");
     }
 }";
-        AddCardSection("3. InLine Full-Width & Connected Card Inset Variants (UniformGrid & Folder Card Tabs)", sec3Sp, sec3Code);
+        AddCardSection("3. Biến thể tab full-width và tab thẻ liền khối (UniformGrid và folder card)", sec3Sp, sec3Code);
 
         // =========================================================================
         // SECTION 4: Sliding Pill Track & Segmented Capsule
@@ -8271,7 +8272,7 @@ private void OnUnitTabChanged(object sender, SelectionChangedEventArgs e)
         ToastService.Info($""Switched Engineering Units: {tab.Header}"", ""Unit System"");
     }
 }";
-        AddCardSection("4. Sliding Pill Track & Segmented Capsule", sec4Sp, sec4Code);
+        AddCardSection("4. Thanh pill trượt và capsule phân đoạn", sec4Sp, sec4Code);
 
         // =========================================================================
         // SECTION 5: Floating Standalone Pills & Badged Tabs
@@ -8415,7 +8416,7 @@ private void OnPillFilterChanged(object sender, SelectionChangedEventArgs e)
         ToastService.Info($""Filtering BIM members by: {tab.Header}"", ""Quality Check"");
     }
 }";
-        AddCardSection("5. Floating Standalone Pills & Status Badges (Pills Variant with Tags & Counters)", sec5Sp, sec5Code);
+        AddCardSection("5. Pill nổi độc lập và badge trạng thái (có tag và bộ đếm)", sec5Sp, sec5Code);
 
         // =========================================================================
         // SECTION 6: IDE Closable Chrome Tabs & Dynamic Management
@@ -8582,7 +8583,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
         ToastService.Info($""Closed tab: {closedTab.Header}"", ""Tab Manager"");
     }
 }";
-        AddCardSection("6. IDE Closable Chrome Tabs with Header Actions (Dynamic Add / Close & TabControlHelper)", sec6Sp, sec6Code);
+        AddCardSection("6. Tab kiểu IDE đóng được, có hành động trên header (thêm/xoá động và TabControlHelper)", sec6Sp, sec6Code);
 
         return mainSp;
     }
@@ -8781,7 +8782,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </TreeViewItem>
 </TreeView>";
 
-        AddCardSection("1. Project Hierarchy Structure (Project > Level > Elements)", CreateSampleTree(), sec1Code);
+        AddCardSection("1. Cấu trúc phân cấp dự án (dự án > tầng > cấu kiện)", CreateSampleTree(), sec1Code);
 
         // ==================== SECTION 2: Rich Engineering Nodes with Vector Icons & Status Chips ====================
         TreeView CreateRichTree()
@@ -8867,7 +8868,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </TreeViewItem>
 </TreeView>";
 
-        AddCardSection("2. Rich Tree Nodes with Vector Icons & Status Badges", CreateRichTree(), sec2Code);
+        AddCardSection("2. Node cây nhiều thông tin với icon vector và badge trạng thái", CreateRichTree(), sec2Code);
 
         // ==================== SECTION 3: Directory & File Explorer Style ====================
         TreeView CreateDirectoryTree()
@@ -8903,7 +8904,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </TreeViewItem>
 </TreeView>";
 
-        AddCardSection("3. Directory & File Explorer Style", CreateDirectoryTree(), sec3Code);
+        AddCardSection("3. Kiểu cây thư mục và file explorer", CreateDirectoryTree(), sec3Code);
 
         // ==================== SECTION 4: Multi-Select CheckBox TreeView ====================
         TreeView CreateCheckTree()
@@ -8959,7 +8960,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </TreeViewItem>
 </TreeView>";
 
-        AddCardSection("4. Multi-Select CheckBox TreeView (Member Batch Processing)", CreateCheckTree(), sec4Code);
+        AddCardSection("4. TreeView checkbox chọn nhiều (xử lý hàng loạt cấu kiện)", CreateCheckTree(), sec4Code);
 
         return mainSp;
     }
@@ -9156,7 +9157,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <ListBoxItem Content=""Element D4 - Sloped Roof Beam Axis 3-4 (Span 5.0m)"" />
 </ListBox>";
 
-        AddCardSection("1. Standard Structural Element Selection ListBox", CreateStandardListBox(), sec1Xaml);
+        AddCardSection("1. ListBox chọn cấu kiện kết cấu chuẩn", CreateStandardListBox(), sec1Xaml);
 
         // ==============================================================================?
         // SECTION 2: Rich Card-Style ListBox
@@ -9301,7 +9302,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </ListBoxItem>
 </ListBox>";
 
-        AddCardSection("2. Rich Card-Style ListBox with Metadata & Status Badges", CreateCardListBox(), sec2Xaml);
+        AddCardSection("2. ListBox kiểu thẻ với metadata và badge trạng thái", CreateCardListBox(), sec2Xaml);
 
         // ==============================================================================?
         // SECTION 3: Multi-Select CheckBox ListBox
@@ -9359,7 +9360,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </ListBoxItem>
 </ListBox>";
 
-        AddCardSection("3. Multi-Select Criteria CheckBox ListBox", CreateMultiCheckListBox(), sec3Xaml);
+        AddCardSection("3. ListBox checkbox chọn nhiều tiêu chí", CreateMultiCheckListBox(), sec3Xaml);
 
         return mainSp;
     }
@@ -9585,7 +9586,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </GroupBox>
 </Grid>";
 
-        AddCardSection("1. Standard Accent-Indicator & Header-Filled GroupBox", grid1, sec1Code);
+        AddCardSection("1. GroupBox chuẩn có thanh accent và header tô đặc", grid1, sec1Code);
 
         // ==================== SECTION 2: Primary Accent & Elevated Card ====================
         var grid2 = new Grid();
@@ -9644,7 +9645,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </GroupBox>
 </Grid>";
 
-        AddCardSection("2. Primary Accent & Elevation Card GroupBox", grid2, sec2Code);
+        AddCardSection("2. GroupBox dạng thẻ accent chính, có đổ bóng", grid2, sec2Code);
 
         // ==================== SECTION 3: Semantic Validation Cards ====================
         var grid3 = new Grid();
@@ -9703,7 +9704,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </GroupBox>
 </Grid>";
 
-        AddCardSection("3. Semantic Validation Cards (Success & Danger Alert Boxes)", grid3, sec3Code);
+        AddCardSection("3. Thẻ kiểm tra ngữ nghĩa (hộp cảnh báo thành công và lỗi)", grid3, sec3Code);
 
         // ==================== SECTION 4: Minimal Underline Style ====================
         var gbUnderline = new GroupBox
@@ -9754,7 +9755,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </StackPanel>
 </GroupBox>";
 
-        AddCardSection("4. Minimal Underline Style (Clean Parameter Form)", gbUnderline, sec4Code);
+        AddCardSection("4. Kiểu gạch chân tối giản (form tham số gọn)", gbUnderline, sec4Code);
 
         return mainSp;
     }
@@ -9999,7 +10000,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </MenuItem>
 </Menu>";
 
-        AddCardSection("1. Standard Application Main Menu Bar", CreateStandardMenu(), sec1Code);
+        AddCardSection("1. Menu bar chính của ứng dụng", CreateStandardMenu(), sec1Code);
 
         // ==================== SECTION 2: Modern Floating Pill NavMenu ====================
         Menu CreatePillMenu()
@@ -10041,7 +10042,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <MenuItem Header=""Reports &amp; BOQ"" />
 </Menu>";
 
-        AddCardSection("2. Modern Floating Pill NavMenu (Command Bar)", CreatePillMenu(), sec2Code);
+        AddCardSection("2. NavMenu pill nổi hiện đại (thanh lệnh)", CreatePillMenu(), sec2Code);
 
         // ==================== SECTION 3: Interactive Right-Click ContextMenu ====================
         var sec3Card = new Border
@@ -10088,7 +10089,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <TextBlock Text=""Right-click here to view ContextMenu"" />
 </Border>";
 
-        AddCardSection("3. Interactive Right-Click ContextMenu (Elevated Card)", sec3Card, sec3Code);
+        AddCardSection("3. ContextMenu chuột phải (thẻ nổi)", sec3Card, sec3Code);
 
         return mainSp;
     }
@@ -10324,7 +10325,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </Border>
 </WrapPanel>";
 
-        AddCardSection("1. Standardized CornerRadius Tokens", CreateCornerRadiusTokensDemo(), sec1Xaml);
+        AddCardSection("1. Token CornerRadius chuẩn hoá", CreateCornerRadiusTokensDemo(), sec1Xaml);
 
         // ==============================================================================?
         // SECTION 2: Elevated Card Containers
@@ -10377,7 +10378,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </Grid>
 </Border>";
 
-        AddCardSection("2. Elevated Surface Card Container", CreateElevationBordersDemo(), sec2Xaml);
+        AddCardSection("2. Khung thẻ bề mặt nổi", CreateElevationBordersDemo(), sec2Xaml);
 
         // ==============================================================================?
         // SECTION 3: Accent-Left Indicator Border
@@ -10429,7 +10430,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </Grid>
 </Border>";
 
-        AddCardSection("3. Accent-Left Indicator Container", CreateAccentLeftDemo(), sec3Xaml);
+        AddCardSection("3. Khung có thanh accent bên trái", CreateAccentLeftDemo(), sec3Xaml);
 
         return mainSp;
     }
@@ -10633,7 +10634,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </controls:Breadcrumb.Items>
 </controls:Breadcrumb>";
 
-        AddCardSection("1. Standard Structural Hierarchy Breadcrumb", CreateStandardBreadcrumb(), sec1Xaml);
+        AddCardSection("1. Breadcrumb phân cấp kết cấu chuẩn", CreateStandardBreadcrumb(), sec1Xaml);
 
         // =========================================================================
         // VARIANT 2: Icon-Prefixed Engineering Style
@@ -10673,7 +10674,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </controls:Breadcrumb.Items>
 </controls:Breadcrumb>";
 
-        AddCardSection("2. Icon-Prefixed BIM & CAD Navigation Breadcrumb", CreateIconBreadcrumb(), sec2Xaml);
+        AddCardSection("2. Breadcrumb điều hướng BIM/CAD có icon tiền tố", CreateIconBreadcrumb(), sec2Xaml);
 
         // =========================================================================
         // VARIANT 3: Modern Pill / Badge Container Style
@@ -10711,7 +10712,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </controls:Breadcrumb.Items>
 </controls:Breadcrumb>";
 
-        AddCardSection("3. Modern Pill Badge Navigation Breadcrumb", CreatePillBreadcrumb(), sec3Xaml);
+        AddCardSection("3. Breadcrumb điều hướng dạng pill badge", CreatePillBreadcrumb(), sec3Xaml);
 
         return mainSp;
     }
@@ -10904,7 +10905,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <TextBlock Text=""Concrete Class B25 (fcd = 14.5 MPa), Longitudinal Reinforcement CB400V..."" Foreground=""{DynamicResource CONCOST.Brush.TextSecondary}"" />
 </StackPanel>";
 
-        AddCardSection("1. Standard Centered Section Divider", CreateBaseDivider(), sec1Xaml);
+        AddCardSection("1. Đường phân cách căn giữa chuẩn", CreateBaseDivider(), sec1Xaml);
 
         // =========================================================================
         // VARIANT 2: Left-Aligned Accent Title with Vector Icon
@@ -10937,7 +10938,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <TextBlock Text=""Capacity MRd = 224.8 kN·m (Utilization Ratio: 82.5% — Section Passed)"" Foreground=""{DynamicResource CONCOST.Brush.TextSecondary}"" />
 </StackPanel>";
 
-        AddCardSection("2. Left-Aligned Section Divider with Icon Accent", CreateLeftAccentDivider(), sec2Xaml);
+        AddCardSection("2. Đường phân cách canh trái có icon accent", CreateLeftAccentDivider(), sec2Xaml);
 
         // =========================================================================
         // VARIANT 3: Dashed Engineering Line with Pill Badge
@@ -10966,7 +10967,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <TextBlock Text=""Secondary Framing Schedule: Cantilever Balconies and Staircase Slabs"" Foreground=""{DynamicResource CONCOST.Brush.TextSecondary}"" />
 </StackPanel>";
 
-        AddCardSection("3. Dashed Engineering Divider with Pill Badge", CreateDashedDivider(), sec3Xaml);
+        AddCardSection("3. Đường phân cách nét đứt kèm pill badge", CreateDashedDivider(), sec3Xaml);
 
         // =========================================================================
         // VARIANT 4: Vertical Separator for Multi-Column Data
@@ -11033,7 +11034,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </StackPanel>
 </Grid>";
 
-        AddCardSection("4. Vertical Column Divider for Data Grids", CreateVerticalDivider(), sec4Xaml);
+        AddCardSection("4. Đường phân cách dọc cho bảng dữ liệu", CreateVerticalDivider(), sec4Xaml);
 
         return mainSp;
     }
@@ -11219,7 +11220,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                      Title=""No Structural Model Loaded""
                      Description=""Select a calculation sheet from the left project tree or import an analysis model to view structural schedules."" />";
 
-        AddCardSection("1. Informational Empty State Placeholder", CreateBaseEmptyState(), sec1Xaml);
+        AddCardSection("1. EmptyState thông tin", CreateBaseEmptyState(), sec1Xaml);
 
         // =========================================================================
         // VARIANT 2: Actionable EmptyState with Primary Call-to-Action
@@ -11246,7 +11247,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                      ActionButtonText=""Generate Drawing Sheets""
                      ActionButtonIcon=""Add"" />";
 
-        AddCardSection("2. Actionable Empty State with Call-to-Action Button", CreateActionEmptyState(), sec2Xaml);
+        AddCardSection("2. EmptyState có nút kêu gọi hành động", CreateActionEmptyState(), sec2Xaml);
 
         // =========================================================================
         // VARIANT 3: Compact Inline EmptyState for Data Grids & Tables
@@ -11289,7 +11290,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                          Description=""Deflection limits and minimum reinforcement ratios meet TCVN 5574:2018 requirements."" />
 </StackPanel>";
 
-        AddCardSection("3. Compact Inline Empty State for Tables & Reports", CreateCompactEmptyState(), sec3Xaml);
+        AddCardSection("3. EmptyState gọn cho bảng và báo cáo", CreateCompactEmptyState(), sec3Xaml);
 
         return mainSp;
     }
@@ -11480,7 +11481,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                       Width=""100""
                       Height=""100"" />";
 
-        AddCardSection("1. Glowing Particle Orbit Loading (RingLoading)", CreateRingLoadingDemo(), sec1Xaml);
+        AddCardSection("1. Loading hạt quay phát sáng (RingLoading)", CreateRingLoadingDemo(), sec1Xaml);
 
         // =========================================================================
         // SECTION 2: Bouncing Line Wave Dots (Standard & Large)
@@ -11505,7 +11506,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <controls:LoadingLine Style=""{DynamicResource CONCOST.LoadingLine.Large}"" />
 </StackPanel>";
 
-        AddCardSection("2. Bouncing Line Wave Dots (LoadingLine)", CreateLoadingLineDemo(), sec2Xaml);
+        AddCardSection("2. Sóng chấm nảy (LoadingLine)", CreateLoadingLineDemo(), sec2Xaml);
 
         // =========================================================================
         // SECTION 3: Orbiting Particle Ring (Standard & Large)
@@ -11530,7 +11531,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <controls:LoadingCircle Style=""{DynamicResource CONCOST.LoadingCircle.Large}"" />
 </StackPanel>";
 
-        AddCardSection("3. Orbiting Particle Ring (LoadingCircle)", CreateLoadingCircleDemo(), sec3Xaml);
+        AddCardSection("3. Vòng hạt quay (LoadingCircle)", CreateLoadingCircleDemo(), sec3Xaml);
 
         // =========================================================================
         // SECTION 4: 3-Color Dynamic Interchange Loading
@@ -11552,7 +11553,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
         string sec4Xaml = @"<!-- 3-Color Dynamic Position Interchange Loading -->
 <controls:WaitLoading Style=""{DynamicResource CONCOST.WaitLoading.Base}"" />";
 
-        AddCardSection("4. Tri-Color Dynamic Switch Loading (WaitLoading)", CreateWaitLoadingDemo(), sec4Xaml);
+        AddCardSection("4. Loading chuyển sắc ba màu (WaitLoading)", CreateWaitLoadingDemo(), sec4Xaml);
 
         // =========================================================================
         // SECTION 5: Full Engineering Calculation Masking Overlay
@@ -11613,7 +11614,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </controls:LoadingOverlay>
 </StackPanel>";
 
-        AddCardSection("5. Engineering Calculation Modal Masking Overlay (LoadingOverlay)", CreateOverlayDemo(), sec5Xaml);
+        AddCardSection("5. Lớp phủ chờ khi tính toán kỹ thuật (LoadingOverlay)", CreateOverlayDemo(), sec5Xaml);
 
         return mainSp;
     }
@@ -11905,7 +11906,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </Border>
 </StackPanel>";
 
-        AddCardSection("1. Interactive Live-Filtering SearchBox with Quick Clear", CreateBaseSearchBox(), sec1Xaml);
+        AddCardSection("1. SearchBox lọc trực tiếp khi gõ, có nút xoá nhanh", CreateBaseSearchBox(), sec1Xaml);
 
         // ==============================================================================?
         // SECTION 2: Modern Pill SearchBox
@@ -11927,7 +11928,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                     Width=""520""
                     HorizontalAlignment=""Left"" />";
 
-        AddCardSection("2. Rounded Pill SearchBox for Toolbars & Headers", CreatePillSearchBox(), sec2Xaml);
+        AddCardSection("2. SearchBox pill tròn cho toolbar và header", CreatePillSearchBox(), sec2Xaml);
 
         // ==============================================================================?
         // SECTION 3: Soft-Filled Inset SearchBox
@@ -11949,7 +11950,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                     Width=""520""
                     HorizontalAlignment=""Left"" />";
 
-        AddCardSection("3. Soft Surface-Secondary Filled SearchBox", CreateFilledSearchBox(), sec3Xaml);
+        AddCardSection("3. SearchBox nền SurfaceSecondary nhạt", CreateFilledSearchBox(), sec3Xaml);
 
         return mainSp;
     }
@@ -12139,7 +12140,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <controls:Tag Style=""{DynamicResource CONCOST.Tag.Base}"" Content=""Section 300x600 mm"" Icon=""Ruler"" Margin=""0,0,8,8"" />
 </WrapPanel>";
 
-        AddCardSection("1. Standard Structural Metadata Tag Chips", CreateStandardTags(), sec1Xaml);
+        AddCardSection("1. Chip tag metadata kết cấu chuẩn", CreateStandardTags(), sec1Xaml);
 
         // ==============================================================================?
         // SECTION 2: Rounded Pill & Accent Tags
@@ -12162,7 +12163,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <controls:Tag Style=""{DynamicResource CONCOST.Tag.Accent}"" Content=""Level 2 Floor Plan"" Icon=""Folder"" Margin=""0,0,8,8"" />
 </WrapPanel>";
 
-        AddCardSection("2. Rounded Pill & Primary Accent Tag Chips", CreatePillTags(), sec2Xaml);
+        AddCardSection("2. Chip tag pill tròn, accent chính", CreatePillTags(), sec2Xaml);
 
         // ==============================================================================?
         // SECTION 3: Interactive Closable Filter Chips
@@ -12185,7 +12186,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <controls:Tag Style=""{DynamicResource CONCOST.Tag.Base}"" Content=""Shear Wall W1"" Icon=""File"" IsClosable=""True"" Margin=""0,0,8,8"" />
 </WrapPanel>";
 
-        AddCardSection("3. Interactive Closable Filter Tag Chips", CreateClosableTags(), sec3Xaml);
+        AddCardSection("3. Chip tag lọc đóng được", CreateClosableTags(), sec3Xaml);
 
         return mainSp;
     }
@@ -12456,7 +12457,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                          HorizontalAlignment=""Left"" />
 </StackPanel>";
 
-        AddCardSection("1. Interactive Structural Calculation Ledger with Live Pagination", CreateBasePagination(), sec1Xaml);
+        AddCardSection("1. Sổ tính toán kết cấu có phân trang trực tiếp", CreateBasePagination(), sec1Xaml);
 
         // -------------------------------------------------------------
         // SECTION 2: Floating Card Pagination
@@ -12480,7 +12481,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                      TotalItems=""120""
                      HorizontalAlignment=""Left"" />";
 
-        AddCardSection("2. Inset Card Floating Pagination", CreateCardPagination(), sec2Xaml);
+        AddCardSection("2. Phân trang nổi trong thẻ", CreateCardPagination(), sec2Xaml);
 
         // -------------------------------------------------------------
         // SECTION 3: Compact Minimalist Pagination
@@ -12504,7 +12505,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                      TotalItems=""400""
                      HorizontalAlignment=""Left"" />";
 
-        AddCardSection("3. Compact Minimalist Pagination for Toolbars", CreateCompactPagination(), sec3Xaml);
+        AddCardSection("3. Phân trang tối giản cho toolbar", CreateCompactPagination(), sec3Xaml);
 
         return mainSp;
     }
@@ -12710,7 +12711,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                  Background=""{DynamicResource CONCOST.Brush.SurfaceSecondary}""
                  Foreground=""{DynamicResource CONCOST.Brush.TextPrimary}"" />";
 
-        AddCardSection("1. Column Bar Chart for Structural Volume Breakdown", CreateBarChartSection(), sec1Xaml);
+        AddCardSection("1. Biểu đồ cột khối lượng kết cấu", CreateBarChartSection(), sec1Xaml);
 
         // -------------------------------------------------------------
         // SECTION 2: ChartLine / LineChart (Cost & Force Trends)
@@ -12752,7 +12753,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                   Background=""{DynamicResource CONCOST.Brush.SurfaceSecondary}""
                   Foreground=""{DynamicResource CONCOST.Brush.TextPrimary}"" />";
 
-        AddCardSection("2. Area Line Chart for Timeline & Expenditure Tracking", CreateLineChartSection(), sec2Xaml);
+        AddCardSection("2. Biểu đồ vùng theo dõi tiến độ và chi phí", CreateLineChartSection(), sec2Xaml);
 
         // -------------------------------------------------------------
         // SECTION 3: ChartRadar (Multi-Dimensional Quality & Capacity)
@@ -12791,7 +12792,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                    Background=""{DynamicResource CONCOST.Brush.SurfaceSecondary}""
                    Foreground=""{DynamicResource CONCOST.Brush.TextPrimary}"" />";
 
-        AddCardSection("3. Radar Chart for Multi-Axis Performance Evaluation", CreateRadarChartSection(), sec3Xaml);
+        AddCardSection("3. Biểu đồ radar đánh giá đa trục", CreateRadarChartSection(), sec3Xaml);
 
         // -------------------------------------------------------------
         // SECTION 4: ChartPie & Donut PieControl (Cost Distribution)
@@ -12871,7 +12872,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <charts:PieControl Grid.Column=""1"" ArcThickness=""32"" Segments=""{Binding BudgetSegments}"" />
 </Grid>";
 
-        AddCardSection("4. Circular Proportions (Solid Pie and Donut Ring)", CreatePieSection(), sec4Xaml);
+        AddCardSection("4. Tỉ lệ vòng tròn (pie đặc và donut)", CreatePieSection(), sec4Xaml);
 
         return mainSp;
     }
@@ -13070,7 +13071,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                      Filter=""AutoCAD Drawings (*.dwg)|*.dwg|DXF Files (*.dxf)|*.dxf|All Files (*.*)|*.*""
                      Title=""Select Structural CAD Drawing"" />";
 
-        AddCardSection("1. Standard Structural CAD Drawing FilePicker", CreateBaseFileSection(), sec1Xaml);
+        AddCardSection("1. FilePicker chuẩn cho bản vẽ CAD kết cấu", CreateBaseFileSection(), sec1Xaml);
 
         // ==============================================================================?
         // SECTION 2: Rounded Pill BIM / IFC Model Picker
@@ -13102,7 +13103,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                      Filter=""IFC 3D BIM Models (*.ifc)|*.ifc|Revit Exchange (*.rvt)|*.rvt|All Files (*.*)|*.*""
                      Title=""Select BIM Model"" />";
 
-        AddCardSection("2. Rounded Pill BIM / IFC Model Picker", CreatePillFileSection(), sec2Xaml);
+        AddCardSection("2. Bộ chọn mô hình BIM / IFC dạng pill tròn", CreatePillFileSection(), sec2Xaml);
 
         // ==============================================================================?
         // SECTION 3: Soft-Filled Inset Analysis Database Picker
@@ -13134,7 +13135,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                      Filter=""ETABS Model (*.edb;*.$et)|*.edb;*.$et|SAP2000 Model (*.sdb)|*.sdb|All Files (*.*)|*.*""
                      Title=""Select Analysis Model"" />";
 
-        AddCardSection("3. Soft-Filled Inset Analysis Database Picker", CreateFilledFileSection(), sec3Xaml);
+        AddCardSection("3. Bộ chọn cơ sở dữ liệu phân tích nền nhạt", CreateFilledFileSection(), sec3Xaml);
 
         return mainSp;
     }
@@ -13341,7 +13342,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <dash:StatisticCard Grid.Column=""4"" Title=""Rebar Tonnage"" Value=""186.4 Ton"" Trend=""On schedule"" Icon=""Check"" />
 </Grid>";
 
-        AddCardSection("1. Standard Structural Metric KPI Cards", CreateBaseKpiSection(), sec1Xaml);
+        AddCardSection("1. Thẻ KPI chỉ số kết cấu chuẩn", CreateBaseKpiSection(), sec1Xaml);
 
         // ==============================================================================?
         // SECTION 2: Accent Left Border Structural Health KPI Cards
@@ -13384,7 +13385,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                        Title=""Shear Utilization"" Value=""68.5%"" Trend=""Shear Links OK"" Icon=""Filter"" />
 </Grid>";
 
-        AddCardSection("2. Accent Left Border Structural Health Cards", CreateAccentKpiSection(), sec2Xaml);
+        AddCardSection("2. Thẻ sức khoẻ kết cấu có viền accent trái", CreateAccentKpiSection(), sec2Xaml);
 
         // ==============================================================================?
         // SECTION 3: Cost & Budget Financial KPI Metrics
@@ -13424,7 +13425,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     <dash:StatisticCard Grid.Column=""4"" Title=""Contingency Budget Reserve"" Value=""$142,000"" Trend=""Adequate (+7.7%)"" Icon=""ShieldCheck"" />
 </Grid>";
 
-        AddCardSection("3. Project Cost & Budget Financial KPI Metrics", CreateCostKpiSection(), sec3Xaml);
+        AddCardSection("3. Chỉ số tài chính chi phí và ngân sách dự án", CreateCostKpiSection(), sec3Xaml);
 
         // ------------------------------------------------------------------------------------------------------------------------
         // SECTION 4: Construction Milestone Progress KPI Cards
@@ -13467,7 +13468,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                        Title=""Formwork Stripping Rate"" Value=""94.2"" Unit=""%"" Progress=""94.2"" Icon=""Check"" />
 </Grid>";
 
-        AddCardSection("4. Construction Milestone Progress KPI Cards", CreateProgressKpiSection(), sec4Xaml);
+        AddCardSection("4. Thẻ KPI tiến độ mốc thi công", CreateProgressKpiSection(), sec4Xaml);
 
         // ------------------------------------------------------------------------------------------------------------------------
         // SECTION 5: Executive Hero Accent KPI Cards
@@ -13510,7 +13511,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
                        Title=""Total Certified Value"" Value=""$2.4M"" Trend=""On schedule"" Icon=""Layers"" />
 </Grid>";
 
-        AddCardSection("5. Executive Hero Accent KPI Cards", CreateHeroKpiSection(), sec5Xaml);
+        AddCardSection("5. Thẻ KPI hero accent cho báo cáo lãnh đạo", CreateHeroKpiSection(), sec5Xaml);
 
         return mainSp;
     }
@@ -13714,7 +13715,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </StackPanel>
 </StackPanel>";
 
-        AddCardSection("1. Interactive Gold Star Rating (5-Star Standard)", CreateInteractiveStarSection(), sec1Xaml);
+        AddCardSection("1. Đánh giá sao vàng (chuẩn 5 sao)", CreateInteractiveStarSection(), sec1Xaml);
 
         // =========================================================================================
         // SECTION 2: Large Precision Rating with Real-time Score Badge
@@ -13754,7 +13755,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </StackPanel>
 </StackPanel>";
 
-        AddCardSection("2. Large Precision Rating with Real-time Score Badge", CreateScoreBadgeSection(), sec2Xaml);
+        AddCardSection("2. Đánh giá cỡ lớn có badge điểm thời gian thực", CreateScoreBadgeSection(), sec2Xaml);
 
         // =========================================================================================
         // SECTION 3: Primary Theme Brand Accent & Compact Rating
@@ -13794,7 +13795,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </StackPanel>
 </StackPanel>";
 
-        AddCardSection("3. Primary Theme Accent & Compact Audit Rating", CreateSmallBrandSection(), sec3Xaml);
+        AddCardSection("3. Đánh giá accent theo theme chính và bản gọn cho audit", CreateSmallBrandSection(), sec3Xaml);
 
         return mainSp;
     }
@@ -14005,7 +14006,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </StackPanel>
 </controls:Watermark>";
 
-        AddCardSection("1. Preliminary Draft Drawing Watermark (Base Overlay)", CreateDraftWatermarkSection(), sec1Xaml);
+        AddCardSection("1. Watermark bản vẽ nháp (lớp phủ nền)", CreateDraftWatermarkSection(), sec1Xaml);
 
         // =========================================================================================
         // SECTION 2: Security Red Box Confidential Watermark
@@ -14052,7 +14053,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </StackPanel>
 </controls:Watermark>";
 
-        AddCardSection("2. Confidential Proprietary Security Stamp", CreateConfidentialWatermarkSection(), sec2Xaml);
+        AddCardSection("2. Dấu bảo mật tài liệu nội bộ", CreateConfidentialWatermarkSection(), sec2Xaml);
 
         // =========================================================================================
         // SECTION 3: Approved for Construction (AFC) Green Seal
@@ -14099,7 +14100,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
     </StackPanel>
 </controls:Watermark>";
 
-        AddCardSection("3. Approved for Construction (AFC) Official Seal", CreateApprovedWatermarkSection(), sec3Xaml);
+        AddCardSection("3. Dấu chính thức phê duyệt thi công (AFC)", CreateApprovedWatermarkSection(), sec3Xaml);
 
         return mainSp;
     }
@@ -14312,19 +14313,19 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
         </GridView>
     </ListView.View>
 </ListView>";
-        AddCardSection("1. Structural Framing Schedule (GridView Table)", lv1, sec1Xaml);
+        AddCardSection("1. Bảng thống kê khung kết cấu (dạng GridView)", lv1, sec1Xaml);
 
         // Section 2: Drawing Sheets Multi-Select Card List
         var items2 = new[] { "ST-01 General Structural Notes & Rebar Lap Splice Rules", "ST-02 Foundation Pile Layout & Cap Reinforcement", "ST-03 Column Elevation & Confinement Tie Spacing Schedule", "ST-04 Transfer Girder Detailing & PT Tendon Profile" };
         var lv2 = new ListView { Height = 140, ItemsSource = items2, SelectionMode = SelectionMode.Multiple };
         string sec2Xaml = @"<ListView ItemsSource=""{Binding DrawingSheetTitles}"" SelectionMode=""Multiple"" Height=""140"" />";
-        AddCardSection("2. Engineering Drawing Sheets (Multi-Select List)", lv2, sec2Xaml);
+        AddCardSection("2. Danh sách bản vẽ kỹ thuật (chọn nhiều)", lv2, sec2Xaml);
 
         // Section 3: Material Takeoff Summary List
         var items3 = new[] { "Concrete C30/37 - Total Volume: 1,420 m³ (Status: Ordered)", "Rebar Grade B500B - Total Weight: 142.5 Tons (Status: Delivered)", "Formwork Plywood 18mm - Total Area: 5,280 m² (Status: On Site)" };
         var lv3 = new ListView { Height = 120, ItemsSource = items3 };
         string sec3Xaml = @"<ListView ItemsSource=""{Binding MaterialTakeoffs}"" Height=""120"" />";
-        AddCardSection("3. Material Quantity Takeoff (Single-Select Audit List)", lv3, sec3Xaml);
+        AddCardSection("3. Bóc tách khối lượng vật liệu (danh sách chọn một để audit)", lv3, sec3Xaml);
 
         return mainSp;
     }
@@ -14599,7 +14600,7 @@ public class ProjectFilterViewModel : ObservableObject
     }
 }";
 
-        AddCardSection("1. Standard Multi-Select Project Stories Filter", CreateBaseSection(), sec1Code);
+        AddCardSection("1. Bộ lọc tầng dự án chọn nhiều chuẩn", CreateBaseSection(), sec1Code);
 
         // =========================================================================================
         // SECTION 2: Rounded Pill Active Brand Filter
@@ -14671,7 +14672,7 @@ public class ProjectFilterViewModel : ObservableObject
 // The Pill style uses CornerRadius=""18"" with Primary accent outline.
 // Supports full keyboard navigation and multi-select toggling without losing selection.";
 
-        AddCardSection("2. Rounded Pill Active Brand Filter", CreatePillSection(), sec2Code);
+        AddCardSection("2. Bộ lọc thương hiệu đang chọn dạng pill", CreatePillSection(), sec2Code);
 
         // =========================================================================================
         // SECTION 3: Compact Toolbar Filter Bar
@@ -14742,7 +14743,7 @@ public class ProjectFilterViewModel : ObservableObject
 /* ==================== C# CODE-BEHIND / VIEWMODEL ==================== */
 // Compact variant has Height=""30"" and CornerRadius=""4"", ideal for dense toolbar filter bars.";
 
-        AddCardSection("3. Compact Toolbar Drawing Sheet Filter", CreateCompactSection(), sec3Code);
+        AddCardSection("3. Bộ lọc bản vẽ gọn trên toolbar", CreateCompactSection(), sec3Code);
 
         return mainSp;
     }
@@ -14914,17 +14915,17 @@ public class ProjectFilterViewModel : ObservableObject
         // Section 1: Standard 4-Digit License PIN
         var pb1 = new PinBox { Length = 4, Password = "8492", HorizontalAlignment = System.Windows.HorizontalAlignment.Left };
         string sec1Xaml = @"<controls:PinBox Style=""{DynamicResource CONCOST.PinBox.Base}"" Length=""4"" Password=""8492"" />";
-        AddCardSection("1. 4-Digit License Activation PIN Input", pb1, sec1Xaml);
+        AddCardSection("1. Nhập PIN kích hoạt bản quyền 4 số", pb1, sec1Xaml);
 
         // Section 2: 6-Digit Rounded Pill Cloud MFA
         var pb2 = new PinBox { Style = (System.Windows.Style)App.Current.Resources["CONCOST.PinBox.Rounded"], Length = 6, Password = "491820", HorizontalAlignment = System.Windows.HorizontalAlignment.Left };
         string sec2Xaml = @"<controls:PinBox Style=""{DynamicResource CONCOST.PinBox.Rounded}"" Length=""6"" Password=""491820"" />";
-        AddCardSection("2. 6-Digit Rounded Pill Cloud Sync MFA Input", pb2, sec2Xaml);
+        AddCardSection("2. Nhập MFA 6 số đồng bộ cloud dạng pill", pb2, sec2Xaml);
 
         // Section 3: Password Masked Security PIN
         var pb3 = new PinBox { Style = (System.Windows.Style)App.Current.Resources["CONCOST.PinBox.Password"], Length = 4, Password = "5500", HorizontalAlignment = System.Windows.HorizontalAlignment.Left };
         string sec3Xaml = @"<controls:PinBox Style=""{DynamicResource CONCOST.PinBox.Password}"" Length=""4"" Password=""5500"" />";
-        AddCardSection("3. Secret Approval Passcode (Masked)", pb3, sec3Xaml);
+        AddCardSection("3. Mã phê duyệt bí mật (ẩn ký tự)", pb3, sec3Xaml);
 
         return mainSp;
     }
@@ -15147,7 +15148,7 @@ public class ProjectFilterViewModel : ObservableObject
     </WrapPanel>
 </hc:GroupBox>";
 
-        AddCardSection("Interactive Growl Notification Console", fullDemoStack, demoXaml);
+        AddCardSection("Growl — bảng thông báo tương tác", fullDemoStack, demoXaml);
 
         return mainSp;
     }
@@ -15366,7 +15367,7 @@ public class ProjectFilterViewModel : ObservableObject
         <TextBox Text=""Parameter Settings"" />
     </StackPanel>
 </controls:Drawer>";
-        AddCardSection("4-Way Directional Drawer", hostGrid, sec1Xaml);
+        AddCardSection("Drawer 4 hướng", hostGrid, sec1Xaml);
 
         return mainSp;
     }
@@ -15790,7 +15791,7 @@ MainDialog.IsOpen = true;
 // 2. Or using the static API
 Dialog.Show(new CustomParameterView(), ""Engineering Calculation Parameters"");";
 
-        AddCardSection("1. Standard Modal Dialog", sec1Host, sec1Code);
+        AddCardSection("1. Dialog modal chuẩn", sec1Host, sec1Code);
 
         // =========================================================================
         // SECTION 2: Asynchronous Fluent Dialog Services (Prompt & Confirm)
@@ -15889,7 +15890,7 @@ if (!string.IsNullOrEmpty(projectCode))
     ExportProject(projectCode);
 }";
 
-        AddCardSection("2. Asynchronous Fluent Dialog Services (ShowConfirmAsync & ShowInputAsync)", sec2Host, sec2Code);
+        AddCardSection("2. Dịch vụ dialog bất đồng bộ (ShowConfirmAsync và ShowInputAsync)", sec2Host, sec2Code);
 
         return mainSp;
     }
@@ -16092,7 +16093,7 @@ if (!string.IsNullOrEmpty(projectCode))
     <controls:StepBarItem Content=""Cost Estimation"" Description=""BOQ &amp; BIM 5D takeoff export"" />
     <controls:StepBarItem Content=""Final Approval"" Description=""Signed structural engineer stamp"" />
 </controls:StepBar>";
-        AddCardSection("1. Interactive BIM Structural Pipeline Workflow Tracker", sb1Panel, sec1Xaml);
+        AddCardSection("1. Theo dõi quy trình kết cấu BIM", sb1Panel, sec1Xaml);
 
         // Section 2: 3-Stage Project License Verification StepBar
         var sb2 = new StepBar
@@ -16109,7 +16110,7 @@ if (!string.IsNullOrEmpty(projectCode))
     <controls:StepBarItem Content=""USB Dongle Key"" Description=""Hardware lock verification"" />
     <controls:StepBarItem Content=""Ready to Launch"" Description=""Full BIM engine activated"" />
 </controls:StepBar>";
-        AddCardSection("2. 3-Stage Enterprise License Activation Flow", sb2, sec2Xaml);
+        AddCardSection("2. Luồng kích hoạt bản quyền doanh nghiệp 3 bước", sb2, sec2Xaml);
 
         // Section 3: 4-Stage Slab Design Calculation Verification
         var sb3 = new StepBar
@@ -16128,7 +16129,7 @@ if (!string.IsNullOrEmpty(projectCode))
     <controls:StepBarItem Content=""Moment Capacity"" Description=""Wood-Armer &amp; Yield line check"" />
     <controls:StepBarItem Content=""Deflection &amp; Cracking"" Description=""ACI / Eurocode serviceability"" />
 </controls:StepBar>";
-        AddCardSection("3. Automated RC Slab Detailing Calculation Stages", sb3, sec3Xaml);
+        AddCardSection("3. Các bước tính toán chi tiết sàn bê tông cốt thép", sb3, sec3Xaml);
 
         return mainSp;
     }
@@ -16362,7 +16363,7 @@ public class BimTransferViewModel : ObservableObject
     }
 }";
 
-        AddCardSection("1. Standard Searchable BIM Structural Elements Transfer", sec1Container, sec1Code);
+        AddCardSection("1. Transfer chuẩn, tìm kiếm được cấu kiện BIM", sec1Container, sec1Code);
 
         // Section 2: Compact Transfer Shuttle Variant
         var sec2Container = new StackPanel();
@@ -16401,7 +16402,7 @@ public class BimTransferViewModel : ObservableObject
 /* ==================== C# CODE-BEHIND / VIEWMODEL ==================== */
 // Compact transfer has ListWidth=""200"" and ListHeight=""260"", ideal for compact tool palettes.";
 
-        AddCardSection("2. Compact Transfer Shuttle Variant", sec2Container, sec2Code);
+        AddCardSection("2. Biến thể shuttle gọn", sec2Container, sec2Code);
 
         // Section 3: Spacious Engineering Scope Transfer Variant
         var sec3Container = new StackPanel();
@@ -16448,7 +16449,7 @@ public class BimTransferViewModel : ObservableObject
 /* ==================== C# CODE-BEHIND / VIEWMODEL ==================== */
 // Spacious variant uses ListWidth=""300"" and ListHeight=""380"" for large-scale engineering modules.";
 
-        AddCardSection("3. Spacious Engineering Scope Transfer Variant", sec3Container, sec3Code);
+        AddCardSection("3. Biến thể transfer rộng cho phạm vi kỹ thuật", sec3Container, sec3Code);
 
         return mainSp;
     }
@@ -16713,7 +16714,7 @@ public class BimTransferViewModel : ObservableObject
             HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
         };
         string sec1Xaml = @"<controls:PropertyGrid SelectedObject=""{Binding SelectedBeamModel}"" HorizontalAlignment=""Stretch"" />";
-        AddCardSection("1. Structural Beam BIM Object Inspector", pg1, sec1Xaml);
+        AddCardSection("1. Inspector đối tượng dầm BIM", pg1, sec1Xaml);
 
         // Section 2: Project Engineering Metadata Inspector (Full Spacious Height)
         var pg2 = new PropertyGrid
@@ -16722,7 +16723,7 @@ public class BimTransferViewModel : ObservableObject
             HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
         };
         string sec2Xaml = @"<controls:PropertyGrid SelectedObject=""{Binding ProjectMetadata}"" HorizontalAlignment=""Stretch"" />";
-        AddCardSection("2. Project Engineering Metadata Inspector", pg2, sec2Xaml);
+        AddCardSection("2. Inspector metadata kỹ thuật dự án", pg2, sec2Xaml);
 
         // Section 3: Material & Slab Detailing Inspector (Full Spacious Height)
         var pg3 = new PropertyGrid
@@ -16731,7 +16732,7 @@ public class BimTransferViewModel : ObservableObject
             HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch
         };
         string sec3Xaml = @"<controls:PropertyGrid SelectedObject=""{Binding SelectedSlabDetailing}"" HorizontalAlignment=""Stretch"" />";
-        AddCardSection("3. Material & Slab Detailing Inspector", pg3, sec3Xaml);
+        AddCardSection("3. Inspector vật liệu và chi tiết sàn", pg3, sec3Xaml);
 
         return mainSp;
     }
@@ -16885,7 +16886,7 @@ public class BimTransferViewModel : ObservableObject
 // ==================== C# CODE-BEHIND / VIEWMODEL ====================
 public double BeamSectionWidth { get; set; } = 350.0;
 public double RebarWeightPerMeter { get; set; } = 78.5;";
-        AddCardSection("1. Numeric Stepper Appearance Variants (Base, Filled, Pill)", sec1Grid, sec1Code);
+        AddCardSection("1. Biến thể giao diện NumericUpDown (Base, Filled, Pill)", sec1Grid, sec1Code);
 
         // Section 2: Prefix, Currency & Engineering Parameters
         var sec2Grid = new UniformGrid { Columns = 3 };
@@ -16901,7 +16902,7 @@ public double RebarWeightPerMeter { get; set; } = 78.5;";
 <controls:NumericUpDown Value=""2500000"" Prefix=""$"" Increment=""50000"" DecimalPlaces=""0"" FormatString=""N0"" />
 <controls:NumericUpDown Value=""0.0025"" Increment=""0.0005"" DecimalPlaces=""4"" Suffix=""rad"" />
 <controls:NumericUpDown Value=""25"" Minimum=""-50"" Maximum=""100"" Increment=""1"" Suffix=""°C"" />";
-        AddCardSection("2. Currency Prefix, Precision Decimals & Constraints", sec2Grid, sec2Code);
+        AddCardSection("2. Tiền tố tiền tệ, số lẻ và ràng buộc", sec2Grid, sec2Code);
 
         return mainSp;
     }
@@ -17114,7 +17115,7 @@ public double RebarWeightPerMeter { get; set; } = 78.5;";
 // 1. Listen or bind to SelectedTime
 clock.SelectedTime = DateTime.Now;
 clock.DisplayMode = ClockDisplayMode.Minute;";
-        AddCardSection("1. Interactive Radial Clock with Auto-Advance Selection", clockHost, clockCode);
+        AddCardSection("1. Đồng hồ tròn tương tác, tự chuyển bước chọn", clockHost, clockCode);
 
         // Section 2: Full Style Variants (Circle Base, Card Rounded Box, Filled, Borderless)
         var sec2Grid = new UniformGrid { Columns = 3 };
@@ -17141,7 +17142,7 @@ clock.DisplayMode = ClockDisplayMode.Minute;";
 
 <!-- 3. Borderless Minimal Style -->
 <controls:Clock Style=""{StaticResource CONCOST.Clock.Borderless}"" DisplayMode=""Second"" ShowSeconds=""True"" />";
-        AddCardSection("2. Style Variants (Card Box, Filled Surface, Borderless Minimal)", sec2Grid, sec2Code);
+        AddCardSection("2. Biến thể style (hộp thẻ, nền đặc, tối giản không viền)", sec2Grid, sec2Code);
 
         return mainSp;
     }
@@ -17284,7 +17285,7 @@ clock.DisplayMode = ClockDisplayMode.Minute;";
 
 // ==================== C# CODE-BEHIND / VIEWMODEL ====================
 public DateTime InspectionScheduledDateTime { get; set; } = DateTime.Now;";
-        AddCardSection("1. Integrated Calendar & Time Picker", cwc, cwcCode);
+        AddCardSection("1. Lịch kèm chọn giờ", cwc, cwcCode);
 
         // Section 2: Style Variants (Base Surface, Filled Surface, Borderless Minimal)
         var sec2Grid = new UniformGrid { Columns = 2 };
@@ -17313,7 +17314,7 @@ public DateTime InspectionScheduledDateTime { get; set; } = DateTime.Now;";
 
 <!-- 2. Borderless Minimal Preset -->
 <controls:CalendarWithClock Style=""{StaticResource CONCOST.CalendarWithClock.Borderless}"" />";
-        AddCardSection("2. Style Variants (Filled Surface, Borderless Minimal)", sec2Grid, sec2Code);
+        AddCardSection("2. Biến thể style (nền đặc, tối giản không viền)", sec2Grid, sec2Code);
 
         return mainSp;
     }
@@ -17467,7 +17468,7 @@ public DateTime InspectionScheduledDateTime { get; set; } = DateTime.Now;";
 // ==================== C# CODE-BEHIND / VIEWMODEL ====================
 public Color ElementHighlightColor { get; set; } = (Color)ColorConverter.ConvertFromString(""#FF7900"");
 public string ElementHighlightHex { get; set; } = ""#FFFF7900"";";
-        AddCardSection("1. Interactive HSV Color Canvas & Swatch Palette", cpGrid, cpCode);
+        AddCardSection("1. Bảng chọn màu HSV và dải swatch", cpGrid, cpCode);
 
         return mainSp;
     }
@@ -18032,7 +18033,7 @@ drawerMenu.SelectionChanged += (s, e) =>
     }
 };";
 
-        AddCardSection("1. Interactive Animated DrawerMenu", sec1Sp, sec1Code);
+        AddCardSection("1. DrawerMenu có animation", sec1Sp, sec1Code);
 
         // =========================================================================
         // SECTION 2: Compact Rail Mode & Standalone Drawer Demonstration
@@ -18109,7 +18110,7 @@ drawerMenu.SelectionChanged += (s, e) =>
                      ExpandedWidth=""220""
                      ItemsSource=""{Binding MenuItems}"" />";
 
-        AddCardSection("2. Compact Rail Mode & Minimalist Sidebar (64px Dock)", sec2Sp, sec2Code);
+        AddCardSection("2. Chế độ rail gọn và sidebar tối giản (dock 64px)", sec2Sp, sec2Code);
 
         return mainSp;
     }
@@ -18930,7 +18931,7 @@ magnifier.Scale = 3.5;         // Set zoom factor to 3.5x
 magnifier.Radius = 80;        // Set lens radius to 80px
 magnifier.ShowCrosshair = true; // Enable precision reticle crosshair";
 
-        AddCardSection("1. CAD Structural Column Detail Inspection (Interactive High-Precision Lens)", sec1Sp, sec1Code);
+        AddCardSection("1. Soi chi tiết cột CAD (kính lúp chính xác cao)", sec1Sp, sec1Code);
 
         // =========================================================================
         // SECTION 2: Fine-Print Blueprint BoQ Schedule Verification
@@ -19034,7 +19035,7 @@ magnifier.ShowCrosshair = true; // Enable precision reticle crosshair";
                     Scale=""3.0""
                     ShowCrosshair=""True"" />";
 
-        AddCardSection("2. Blueprint BoQ Schedule & Micro-Text Reader (Fine-Print Verification)", sec2Sp, sec2Code);
+        AddCardSection("2. Đọc bảng khối lượng và chữ nhỏ trên bản vẽ (kiểm tra bản in mảnh)", sec2Sp, sec2Code);
 
         return mainSp;
     }
@@ -19478,7 +19479,7 @@ beamRangeSlider.ValueChanged += (s, e) =>
     FilteredBeams = AllBeams.Where(b => b.Width >= min && b.Width <= max).ToList();
 };";
 
-        AddCardSection("1. BIM Structural Beam Width & Depth Filter (Live Dynamic Element Highlighting)", sec1Sp, sec1Code);
+        AddCardSection("1. Lọc bề rộng và chiều cao dầm BIM (làm nổi cấu kiện trực tiếp)", sec1Sp, sec1Code);
 
         // =========================================================================
         // SECTION 2: Rebar Pitch & Spacing Interval Selector (Discrete Increments)
@@ -19562,7 +19563,7 @@ beamRangeSlider.ValueChanged += (s, e) =>
                       SmallChange=""25""
                       Unit=""mm"" />";
 
-        AddCardSection("2. Rebar Stirrup Pitch & Spacing Criteria (Discrete Interval Snapping)", sec2Sp, sec2Code);
+        AddCardSection("2. Tiêu chí bước đai và khoảng cách thép (bám theo khoảng rời rạc)", sec2Sp, sec2Code);
 
         // =========================================================================
         // SECTION 3: Direct Cost & BoQ Budget Range Constraint (Currency Interval)
@@ -19634,7 +19635,7 @@ beamRangeSlider.ValueChanged += (s, e) =>
                       SmallChange=""5000""
                       Unit=""$"" />";
 
-        AddCardSection("3. Direct Cost & BoQ Budget Range Constraint (Currency Interval)", sec3Sp, sec3Code);
+        AddCardSection("3. Ràng buộc khoảng ngân sách chi phí trực tiếp và BoQ (khoảng tiền tệ)", sec3Sp, sec3Code);
 
         return mainSp;
     }
@@ -20070,7 +20071,7 @@ public class MaterialSearchViewModel : ObservableObject
         set => SetProperty(ref _selectedMaterial, value);
     }
 }";
-        AddCardSection("1. BIM Structural Material Specifications (Search with Quick Filter Chips & Live Spec Card)", sec1Sp, sec1Code);
+        AddCardSection("1. Đặc tả vật liệu kết cấu BIM (tìm kiếm với chip lọc nhanh và thẻ đặc tả trực tiếp)", sec1Sp, sec1Code);
 
         // =========================================================================
         // SECTION 2: Rich Custom ItemTemplate with Categorized Badges & Pricing
@@ -20235,7 +20236,7 @@ public class MaterialSearchViewModel : ObservableObject
         </DataTemplate>
     </controls:AutoCompleteTextBox.ItemTemplate>
 </controls:AutoCompleteTextBox>";
-        AddCardSection("2. Rich Custom ItemTemplate with Categorized Badges & Pricing", sec2Sp, sec2Code);
+        AddCardSection("2. ItemTemplate tuỳ biến với badge phân loại và giá", sec2Sp, sec2Code);
 
         // =========================================================================
         // SECTION 3: AISC & Eurocode Structural Steel Section Catalog Lookup
@@ -20381,7 +20382,7 @@ public class MaterialSearchViewModel : ObservableObject
 
 /* ==================== C# CODE-BEHIND ==================== */
 public record SteelProfile(string Name, double DepthMm, double WidthMm, double SxCm3, double WeightKgM);";
-        AddCardSection("3. AISC & Eurocode Structural Steel Section Catalog Lookup", sec3Sp, sec3Code);
+        AddCardSection("3. Tra cứu tiết diện thép theo AISC và Eurocode", sec3Sp, sec3Code);
 
         return mainSp;
     }
@@ -20766,7 +20767,7 @@ public class KanbanWorkflowViewModel : ObservableObject
     public ObservableCollection<BimElement> AssemblyStageElements { get; } = new();
     // DragDropHelper automatically handles ObservableCollection remove and insert!
 }";
-        AddCardSection("1. Multi-Stage BIM Fabrication & Assembly Workflow (Inter-List Kanban Transfer)", sec1Sp, sec1Code);
+        AddCardSection("1. Quy trình chế tạo và lắp dựng BIM nhiều bước (kanban chuyển giữa danh sách)", sec1Sp, sec1Code);
 
         // =========================================================================
         // SECTION 2: Construction Pour Sequence Reordering (Intra-List Priority Scheduling)
@@ -20887,7 +20888,7 @@ public class KanbanWorkflowViewModel : ObservableObject
 /* ==================== C# CODE-BEHIND ==================== */
 // Items within the same group can be reordered purely through attached properties.
 // InsertionAdorner draws the guide line with start/end anchor circles during drag-over.";
-        AddCardSection("2. Construction Pour Sequence Reordering (Intra-List Priority Scheduling)", sec2Sp, sec2Code);
+        AddCardSection("2. Sắp xếp lại thứ tự đổ bê tông (ưu tiên trong danh sách)", sec2Sp, sec2Code);
 
         // =========================================================================
         // SECTION 3: BoQ Scope Allocation with Group Boundary Isolation
@@ -20993,7 +20994,7 @@ public class KanbanWorkflowViewModel : ObservableObject
 <ListBox attached:DragDropHelper.IsDragSource=""True""
          attached:DragDropHelper.IsDropTarget=""True""
          attached:DragDropHelper.DragDropGroup=""GroupB"" />";
-        AddCardSection("3. Work Package Scope Allocation (DragDropGroup Isolation & Security)", sec3Sp, sec3Code);
+        AddCardSection("3. Phân bổ phạm vi gói công việc (cô lập nhóm kéo thả)", sec3Sp, sec3Code);
 
         return mainSp;
     }
@@ -21366,7 +21367,7 @@ sumCell.Formula = ""=SUM(F2:F9)"";
 sumCell.Format = SpreadsheetCellFormat.Currency;
 sumCell.IsBold = true;";
 
-        AddCardSection("1. Interactive Engineering Spreadsheet (Live Formulas, In-Place Edit, Multi-Sheet BoQ)", spBoQ, boqXaml);
+        AddCardSection("1. Bảng tính kỹ thuật tương tác (công thức trực tiếp, sửa tại chỗ, BoQ nhiều sheet)", spBoQ, boqXaml);
 
         // Section 2: Standalone Formula Evaluator & Mini Calculator Playground
         var miniCard = new StackPanel();
@@ -21433,7 +21434,7 @@ var engine = new SpreadsheetFormulaEngine();
 var result = engine.EvaluateExpression(sheet, ""SUM(A1:A10) * 1.10"");
 var ifResult = engine.EvaluateExpression(sheet, ""IF(B2 > 100, B2 * 0.9, B2)"");";
 
-        AddCardSection("2. Built-in Recursive Formula Engine (Excel Compatibility & Standalone Evaluator)", miniCard, formulaXaml);
+        AddCardSection("2. Engine công thức đệ quy tích hợp (tương thích Excel, tự đánh giá)", miniCard, formulaXaml);
 
         return mainSp;
     }
@@ -21666,7 +21667,7 @@ BeamList.Add(new BeamElement {
     RebarTop = ""4D20"", RebarWeight = 850.5
 });";
 
-        AddCardSection("1. Stacked Column Headers — Multi-Level Grouping", dg1, xamlBasic, csBasic);
+        AddCardSection("1. Header cột xếp tầng — nhóm nhiều cấp", dg1, xamlBasic, csBasic);
 
         // ── Section 2: Footer Aggregates ──────────────────────────────────────
         var footerInfoSp = new StackPanel { Orientation = Orientation.Horizontal, Margin = new System.Windows.Thickness(0, 0, 0, 12) };
@@ -21720,7 +21721,7 @@ BeamList.Add(new BeamElement {
     ShowFooterSummary=""True""
     FooterRowHeight=""30"" />";
 
-        AddCardSection("2. Footer Aggregate Summary Row — AggregateType", infoGrid, footerXaml);
+        AddCardSection("2. Dòng tổng hợp ở footer — AggregateType", infoGrid, footerXaml);
 
         // ── Section 3: Cell Types ─────────────────────────────────────────────
         var ctSp = new StackPanel { Orientation = Orientation.Horizontal, Margin = new System.Windows.Thickness(0, 0, 0, 8) };
@@ -21759,7 +21760,7 @@ BeamList.Add(new BeamElement {
     CellType=""Numeric""
     StringFormat=""N2"" />";
 
-        AddCardSection("3. Rich Cell Types — CellType Enum", wrapCt, ctXaml);
+        AddCardSection("3. Nhiều kiểu ô — enum CellType", wrapCt, ctXaml);
 
         // ── Section 4: Context Menu & Clipboard ───────────────────────────────
         var ctxDesc = new StackPanel();
@@ -21807,7 +21808,7 @@ DataGridClipboardHelper.CopySelectedRows(myGrid, includeHeaders: true);
 // Or listen to built-in command:
 myGrid.EnableContextMenu = true; // default";
 
-        AddCardSection("4. Built-In Context Menu & Clipboard Copy", ctxDesc, ctxXaml, ctxCs);
+        AddCardSection("4. Menu chuột phải và copy clipboard tích hợp", ctxDesc, ctxXaml, ctxCs);
 
         // ── Section 5: Grouping & Group Drop Area ─────────────────────────────
         var sec5Sp = new StackPanel();
@@ -21891,7 +21892,7 @@ groupPanel.AddGroup(""Category"");
 var view = CollectionViewSource.GetDefaultView(groupedGrid.ItemsSource);
 view.GroupDescriptions.Add(new PropertyGroupDescription(""Category""));";
 
-        AddCardSection("5. Multi-Level Grouping & Drag-Drop Group Drop Area", sec5Sp, sec5Xaml, sec5Cs);
+        AddCardSection("5. Nhóm nhiều cấp và vùng thả nhóm bằng kéo thả", sec5Sp, sec5Xaml, sec5Cs);
 
         // ── Section 6: Master-Details Hierarchical Grid ───────────────────────
         var masterGrid = new StackedHeaderDataGrid
@@ -22032,7 +22033,7 @@ public class RebarScheduleItem
     public double Weight { get; set; }
 }";
 
-        AddCardSection("6. Master-Details Hierarchical Grid — RowDetailsTemplate", masterGrid, sec6Xaml, sec6Cs);
+        AddCardSection("6. Lưới phân cấp master-details — RowDetailsTemplate", masterGrid, sec6Xaml, sec6Cs);
 
         // ── Section 7: Data Validation & Conditional Formatting ───────────────
         var valGrid = new StackedHeaderDataGrid
@@ -22104,7 +22105,7 @@ public class ElementSafetyItem : INotifyDataErrorInfo
     }
 }";
 
-        AddCardSection("7. Data Validation & Conditional Formatting", valGrid, sec7Xaml, sec7Cs);
+        AddCardSection("7. Kiểm tra dữ liệu và định dạng có điều kiện", valGrid, sec7Xaml, sec7Cs);
 
         // ── Section 8: Real-Time Auto-Filter & DataPager ─────────────────────
         var sec8Sp = new StackPanel();
@@ -22254,7 +22255,7 @@ public IEnumerable<RecordItem> PagedRecords =>
 // Re-evaluate on PageChanged:
 OnPropertyChanged(nameof(PagedRecords));";
 
-        AddCardSection("8. Real-Time Auto-Filter & Pagination — DataPager", sec8Sp, sec8Xaml, sec8Cs);
+        AddCardSection("8. Tự lọc và phân trang trực tiếp — DataPager", sec8Sp, sec8Xaml, sec8Cs);
 
         return mainSp;
     }

@@ -96,7 +96,9 @@ const DOCS_NAV = [
             { id: "badge", name: "Badge", icon: "fa-certificate", badge: "Mới", badgeEn: "New" },
             { id: "divider", name: "Divider", icon: "fa-minus" },
             { id: "adaptivepanel", name: "AdaptivePanel", icon: "fa-table-cells-large", badge: "Mới", badgeEn: "New" },
-            { id: "concostwindow", name: "CONCOSTWindow", icon: "fa-window-restore", badge: "Mới", badgeEn: "New" }
+            { id: "concostwindow", name: "CONCOSTWindow", icon: "fa-window-restore", badge: "Mới", badgeEn: "New" },
+            { id: "ribbon", name: "Ribbon", icon: "fa-table-columns", badge: "Mới", badgeEn: "New" },
+            { id: "ribboncommands", name: "Ribbon commands", icon: "fa-rectangle-list", badge: "Mới", badgeEn: "New" }
         ]
     },
     {

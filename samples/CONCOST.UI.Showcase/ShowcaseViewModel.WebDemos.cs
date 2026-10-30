@@ -184,7 +184,7 @@ public partial class ShowcaseViewModel
         row.Children.Add(glass);
 
         root.Children.Add(DemoSection(
-            "SpotlightCard — vệt sáng theo chuột + viền gradient",
+            "Mặc định",
             row,
             xaml: "<ui:SpotlightCard Width=\"300\" Style=\"{DynamicResource CONCOST.SpotlightCard.Base}\">\n" +
                   "    <StackPanel>\n" +
@@ -238,7 +238,7 @@ public partial class ShowcaseViewModel
         content.Children.Add(run);
 
         root.Children.Add(DemoSection(
-            "OdometerNumber — số tự chạy khi giá trị đổi",
+            "Ba kích thước",
             content,
             xaml: "<ui:OdometerNumber Value=\"{Binding ConcreteM3}\" Format=\"N1\" Suffix=\" m³\"\n" +
                   "                   Style=\"{DynamicResource CONCOST.OdometerNumber.Hero}\" />\n" +
@@ -283,7 +283,7 @@ public partial class ShowcaseViewModel
         AddCell("Chênh lệch tiến độ", new double[] { 4, 6, 3, 7, 5, 9, 12, 10, 14 }, Brushes.IndianRed, false);
 
         root.Children.Add(DemoSection(
-            "Sparkline — biểu đồ mini trong dòng",
+            "Ba kiểu",
             grid,
             xaml: "<ui:Sparkline Values=\"{Binding Last7Days}\" Height=\"28\"\n" +
                   "              Smooth=\"True\" ShowArea=\"True\" ShowLastDot=\"True\"\n" +
@@ -328,7 +328,7 @@ public partial class ShowcaseViewModel
         content.Children.Add(compact);
 
         root.Children.Add(DemoSection(
-            "AvatarStack — chồng avatar + chip +N",
+            "Mặc định",
             content,
             xaml: "<ui:AvatarStack Items=\"{Binding Reviewers}\" MaxVisible=\"4\" Size=\"36\" Overlap=\"12\" />",
             csharp: "// Chuỗi → tự lấy chữ cái đầu (\"Nguyen Van A\" → \"NA\")\n" +
@@ -380,7 +380,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "HeatmapCalendar — mật độ theo ngày",
+            "Mặc định",
             content,
             xaml: "<ui:HeatmapCalendar Values=\"{Binding PourCounts}\"\n" +
                   "                    StartDate=\"{Binding StartDate}\"\n" +
@@ -422,7 +422,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "MarqueeTicker — dòng thông báo chạy ngang",
+            "Mặc định",
             host,
             xaml: "<ui:MarqueeTicker Text=\"{Binding SiteNotice}\" Speed=\"55\" Height=\"30\" />",
             csharp: "var ticker = new MarqueeTicker\n" +

@@ -1,4 +1,4 @@
-// English overlay — controls ported from modern web UI patterns.
+﻿// English overlay — controls ported from modern web UI patterns.
 Object.assign(DOCS_EN.pages, {
 
     spotlightcard: {
@@ -611,6 +611,384 @@ layer.Target = PageScroll;`
                 }
             }
         ]
+    },
+
+    ribbon: {
+        title: "Ribbon — a tabbed command bar",
+        badge: "Layout & Shell",
+        desc: "An Office / AutoCAD style ribbon: a tab strip on top, each tab holds groups, each group lays its commands out on a three-row grid. When space runs out it demotes command sizes and then collapses groups into a single button — a command never disappears.",
+        keywords: ["ribbon", "tab", "group", "toolbar", "office", "autocad"],
+        sections: [
+            {
+                title: "Declaring a ribbon",
+                desc: "The controls live in the <code>CONCOST.UI.Controls.Ribbon</code> namespace. <code>ItemsSource</code> takes <code>RibbonTabItem</code>s; each tab's <code>Content</code> is a list of <code>RibbonGroup</code>s.",
+                xaml: `<Window xmlns:ribbon="clr-namespace:CONCOST.UI.Controls.Ribbon;assembly=CONCOST.UI">
+
+    <ribbon:Ribbon>
+        <ribbon:RibbonTabItem Header="Home">
+            <ribbon:RibbonGroup Header="Clipboard">
+                <ribbon:RibbonButton Header="Save" Size="Large" />
+                <ribbon:RibbonSeparator />
+                <ribbon:RibbonButton Header="Copy" Size="Small" />
+            </ribbon:RibbonGroup>
+        </ribbon:RibbonTabItem>
+    </ribbon:Ribbon>
+</Window>`,
+                csharp: `var ribbon = new Ribbon();
+
+var clipboard = new RibbonGroup { Header = "Clipboard" };
+clipboard.Items.Add(new RibbonButton { Header = "Save", Size = RibbonItemSize.Large });
+clipboard.Items.Add(new RibbonSeparator());
+clipboard.Items.Add(new RibbonButton { Header = "Copy", Size = RibbonItemSize.Small });
+
+var home = new RibbonTabItem { Header = "Home" };
+home.Content = new List<RibbonGroup> { clipboard };
+ribbon.ItemsSource = new List<RibbonTabItem> { home };`,
+                callout: {
+                    type: "tip",
+                    body: "An <code>ImageSource</code> does <b>not</b> recolour itself when the theme changes. If your app switches themes at runtime, share one <b>unfrozen</b> <code>SolidColorBrush</code> between every icon and change its <code>Color</code> on the theme change — that is what the Showcase does. Otherwise the glyphs stay dark on a dark ribbon."
+                }
+            },
+            {
+                title: "Three command sizes",
+                desc: "<code>Size</code> decides how many rows a command takes: <code>Large</code> = all three (28 px icon above the label), <code>Medium</code> = two, <code>Small</code> = one (16 px icon beside the label). A column holds one Medium plus one Small, or three Smalls.",
+                xaml: `<ribbon:RibbonGroup Header="Mixed">
+    <ribbon:RibbonButton Header="Large" Size="Large" />
+    <ribbon:RibbonButton Header="Medium" Size="Medium" />
+    <ribbon:RibbonButton Header="Small" Size="Small" />
+</ribbon:RibbonGroup>`,
+                callout: {
+                    type: "tip",
+                    body: "To keep every column full, order items as <code>Large</code> · <code>Medium + Small</code> · <code>3 × Small</code>. Two Mediums side by side push the second one into a new column and leave the last row empty."
+                }
+            },
+            {
+                title: "Automatic collapsing",
+                desc: "The ribbon measures the active tab and steps down: demote every Large to Medium, then everything to Small, then collapse groups into a single button one at a time. A collapsed group keeps all its commands in its flyout.",
+                csharp: `// Critical group: never collapses
+var review = new RibbonGroup { Header = "Review", CollapsePriority = 0 };
+
+// Secondary group: collapses first (lower number = earlier)
+var utilities = new RibbonGroup { Header = "Utilities", CollapsePriority = 10 };
+
+// Collapse the whole ribbon down to its tab strip
+ribbon.IsMinimized = true;`,
+                callout: {
+                    type: "warn",
+                    body: "<code>CollapsePriority = 0</code> pins a group: it never collapses, however narrow the ribbon gets. Use it for commands that must stay reachable."
+                }
+            },
+            {
+                title: "Group flyout",
+                desc: "The arrow next to a group name opens a flyout with every command of that group — the same idea as AutoCAD's panel flyout. The flyout is at least as wide as the group and closes on Escape, on a click outside, or after a command runs.",
+                csharp: `// Open/close the flyout from code
+group.IsDropDownOpen = true;
+
+// The flyout content is a menu built from the group's items
+RibbonMenu flyout = group.CollapsedMenu;`,
+                callout: {
+                    type: "warn",
+                    body: "The flyout is currently a <b>command menu</b>, not a re-laid-out panel like AutoCAD — a WPF control can only have one visual parent, so the live items cannot be reparented into the popup."
+                }
+            },
+            {
+                title: "Quick Access — always-on commands",
+                desc: "The always-on strip: by default it sits <b>on the same row as the tabs</b>, hard against the right edge (`QuickAccessPlacement.HeaderRight`); switch to `AboveRibbon` or `BelowRibbon` to give it its own strip. Anything pinned there stays clickable no matter which tab is open. The chevron on the right opens the customise panel: every command in the ribbon, grouped by tab, with icons and a tick on the pinned ones. The panel is height-capped and scrolls, and stays open so several commands can be pinned in a row.",
+                csharp: `// Pin / unpin
+ribbon.PinToQuickAccess(saveButton);
+ribbon.UnpinFromQuickAccess(saveButton);
+
+// Show the labels, not just the icons
+ribbon.QuickAccess.ShowLabels = true;
+
+// Open the customise menu from code
+ribbon.QuickAccess.IsCustomizeOpen = true;
+
+// Move the strip: inline (default), above the tabs, or below the ribbon body
+ribbon.QuickAccessPlacement = RibbonQuickAccessPlacement.AboveRibbon;
+
+// Or drive a toolbar of your own
+var bar = new RibbonQuickAccessToolBar { PinnableItems = ribbon.AllItems };
+bar.Pin(ribbon.AllItems[0]);`,
+                callout: {
+                    type: "tip",
+                    body: "A WPF control can only have one visual parent, so the toolbar does not host the original <code>RibbonItem</code> — it hosts a light clone (<code>RibbonQuickAccessButton</code>) that shares the same <code>Command</code>, icon and tooltip. Pinning a command never duplicates its logic."
+                }
+            },
+            {
+                title: "File menu — ApplicationMenu",
+                desc: "<code>RibbonApplicationMenu</code> is the raised block in the top-left corner, set apart from the tab strip. Clicking it opens a two-column panel: commands on the left, recent documents on the right, plus a footer group (Options, Exit). The block is <b>neutral</b> by default (grey surface, strong text) so it does not compete with the accent colour, which belongs to the selected tab; set <code>Background</code> / <code>Foreground</code> on the control for the Office 2010 coloured block.",
+                xaml: `<ribbon:Ribbon.ApplicationMenu>
+    <ribbon:RibbonApplicationMenu Header="File" RecentHeader="Recent">
+        <ribbon:RibbonMenuItem Header="New" InputGestureText="Ctrl+N" />
+        <ribbon:RibbonMenuItem Header="Open" InputGestureText="Ctrl+O" />
+        <ribbon:RibbonMenuSeparator />
+        <ribbon:RibbonMenuItem Header="Print" InputGestureText="Ctrl+P" />
+    </ribbon:RibbonApplicationMenu>
+</ribbon:Ribbon.ApplicationMenu>`,
+                csharp: `var file = new RibbonApplicationMenu { Header = "File", RecentHeader = "Recent" };
+file.Items.Add(new RibbonMenuItem { Header = "New", InputGestureText = "Ctrl+N" });
+file.FooterItems = new object[] { new RibbonMenuItem { Header = "Exit" } };
+file.RecentItems = new object[] { "Tower-A.dwg", "Site-plan.dwg" };
+
+ribbon.ApplicationMenu = file;`,
+                callout: {
+                    type: "warn",
+                    body: "This is the Office 2010 <b>menu panel</b>, not the full-window backstage of 2013+. For a backstage, build your own <code>Grid</code> and swap the window content."
+                }
+            },
+            {
+                title: "Contextual tabs",
+                desc: "<code>RibbonContextualTabGroup</code> wraps tabs that only exist in one mode (Sketch, Table, Modify). Drop it straight into <code>ItemsSource</code>; the ribbon expands it into its child tabs and paints a coloured band above them, merging adjacent tabs of the same group into one band.",
+                xaml: `<ribbon:Ribbon>
+    <ribbon:RibbonTabItem Header="Home" />
+
+    <ribbon:RibbonContextualTabGroup Header="Drawing Tools" Accent="#D93B3B">
+        <ribbon:RibbonTabItem Header="Sketch" />
+    </ribbon:RibbonContextualTabGroup>
+</ribbon:Ribbon>`,
+                csharp: `var sketch = new RibbonContextualTabGroup
+{
+    Header = "Drawing Tools",
+    Accent = Brushes.Crimson
+};
+sketch.Items.Add(new RibbonTabItem { Header = "Sketch" });
+
+ribbon.ItemsSource = new object[] { homeTab, sketch };
+
+// Show or hide the whole group with the current mode
+sketch.Visibility = Visibility.Visible;   // or Collapsed`,
+                callout: {
+                    type: "tip",
+                    body: "Use <code>Visibility</code> instead of adding and removing tabs: a hidden tab keeps its state and <code>SelectedIndex</code> falls back to the nearest valid tab on its own. Set <code>IsAvailable</code> on a single tab to hide just that one."
+                }
+            },
+            {
+                title: "Screen tips",
+                desc: "Every command already has a screen tip built from <code>Header</code>, <code>ScreenTip</code> and <code>GestureText</code> — nothing else to write. Assign a <code>RibbonToolTip</code> when you want a picture or a footer line.",
+                xaml: `<ribbon:RibbonButton Header="Save"
+                     ScreenTip="Write the current drawing to disk"
+                     GestureText="Ctrl+S" />
+
+<ribbon:RibbonButton Header="Print">
+    <ribbon:RibbonButton.ToolTip>
+        <ribbon:RibbonToolTip Title="Print"
+                              Description="Send the drawing to a printer or export a PDF."
+                              GestureText="Ctrl+P"
+                              Footer="Press F1 for more help" />
+    </ribbon:RibbonButton.ToolTip>
+</ribbon:RibbonButton>`,
+                csharp: `// Generated from Header + ScreenTip + GestureText
+save.GestureText = "Ctrl+S";
+
+// Or built by hand
+var tip = new RibbonToolTip
+{
+    Title = "Print",
+    Description = "Send the drawing to a printer or export a PDF.",
+    GestureText = "Ctrl+P",
+    Footer = "Press F1 for more help",
+    Preview = screenshot
+};
+print.ToolTip = tip;`,
+                callout: {
+                    type: "tip",
+                    body: "The tip still shows on a disabled command (<code>ToolTipService.ShowOnDisabled</code>) — why a command is greyed out is usually exactly what the user needs to know. Assign your own <code>ToolTip</code> and the ribbon stops overwriting it."
+                }
+            },
+            {
+                title: "Inputs on the grid",
+                desc: "<code>RibbonComboBox</code>, <code>RibbonTextBox</code> and <code>RibbonCheckBox</code> sit on the same three-row grid. All three derive from <code>RibbonItem</code>, so they keep <code>Command</code>, <code>ScreenTip</code>, <code>Size</code> and <b><code>ColumnSpan</code></b> — how many group columns the control takes, 1 by default.",
+                xaml: `<ribbon:RibbonGroup Header="Text">
+    <ribbon:RibbonComboBox Header="Font" ColumnSpan="2"
+                           ItemsSource="{Binding Fonts}" SelectedItem="{Binding Font}" />
+    <ribbon:RibbonComboBox Header="Size" ColumnSpan="2"
+                           ItemsSource="{Binding Sizes}" SelectedItem="{Binding Size}" />
+
+    <ribbon:RibbonSeparator />
+
+    <ribbon:RibbonCheckBox Header="Snap" IsChecked="{Binding Snap}" />
+    <ribbon:RibbonTextBox Header="Step" ColumnSpan="2" Text="{Binding Step}" />
+</ribbon:RibbonGroup>`,
+                csharp: `var font = new RibbonComboBox
+{
+    Header = "Font",          // label on the left; leave it empty for a bare box
+    ColumnSpan = 2,           // two columns = 140 px
+    ItemsSource = fonts,
+    DisplayMemberPath = "Name"
+};
+
+font.SelectedItem = "Calibri";    // or font.SelectedIndex = 0
+
+var step = new RibbonTextBox { Header = "Step", Text = "10", ColumnSpan = 2 };
+var snap = new RibbonCheckBox { Header = "Snap", IsChecked = true };`,
+                callout: {
+                    type: "tip",
+                    body: "One column is only 70 px, so <code>RibbonComboBox</code> and <code>RibbonTextBox</code> almost always want <code>ColumnSpan=\"2\"</code> — otherwise the label eats the box. Two spanning controls in a row stack inside the same column band, so the group stays narrow."
+                }
+            },
+            {
+                title: "Gallery",
+                desc: "<code>RibbonGallery</code> is a selectable grid of pictures, made for colour swatches and style libraries. On the ribbon the grid draws <b>swatches only</b>; the chevron opens the full list in a pop-up where every tile carries its name. Both views share one <code>SelectedItem</code>, so a pick anywhere is the same pick.",
+                xaml: `<ribbon:RibbonGroup Header="Styles">
+    <ribbon:RibbonGallery ColumnSpan="3"
+                          ItemWidth="34" ItemHeight="32"
+                          ItemsSource="{Binding Swatches}"
+                          SelectedItem="{Binding Material}" />
+</ribbon:RibbonGroup>`,
+                csharp: `var gallery = new RibbonGallery
+{
+    ColumnSpan = 3,
+    ItemWidth = 34,           // ribbon cell: room for the swatch alone
+    ItemHeight = 32,
+    ItemsSource = new[]
+    {
+        new RibbonGalleryItem("Steel", steelIcon),
+        new RibbonGalleryItem("Sand", sandIcon)
     }
+};
+
+gallery.SelectedItem = gallery.ItemsSource.First();
+gallery.SelectionChanged += (_, _) => Apply(gallery.SelectedItem);
+
+// The pop-up is roomier, so it can afford a caption under each tile
+gallery.ExpandedItemTemplate = (DataTemplate)FindResource("MyNamedTile");
+
+// Drop the chevron when the grid already fits
+gallery.ShowExpandButton = false;`,
+                callout: {
+                    type: "warn",
+                    body: "<code>RibbonGalleryItem</code> is a plain object (Header / Icon / ToolTip / Tag), not a control — that is what lets one item render both on the ribbon and in the pop-up. By default the ribbon grid draws the picture alone (<code>ItemTemplate</code>) and the pop-up draws picture + name (<code>ExpandedItemTemplate</code>): a 32 px cell has no room for a label, so it would either trim to <code>Gr…</code> or spill into the next row. The gallery sets <code>IsFixedSize</code>, so it is <b>not</b> squeezed into one row when the ribbon compacts."
+                }
+            },
+            {
+                title: "Key tips (Alt)",
+                desc: "Press <b>Alt</b> while the ribbon is on screen: every tab, command and group launcher grows a small letter badge. Type the letters to run the command, type another tab's letter to switch tabs and re-badge, press <b>Esc</b> to leave. Nothing to declare — leave <code>KeyTip</code> empty and the ribbon derives a unique letter from <code>Header</code>.",
+                xaml: `<ribbon:RibbonTabItem Header="Home" KeyTip="H">
+    <ribbon:RibbonGroup Header="Font" KeyTip="F"
+                        DialogLauncherCommand="{Binding OpenFontDialog}">
+        <ribbon:RibbonToggleButton Header="Bold" KeyTip="B" />
+        <ribbon:RibbonToggleButton Header="Italic" />      <!-- becomes "I" -->
+    </ribbon:RibbonGroup>
+</ribbon:RibbonTabItem>`,
+                csharp: `// The ribbon already listens for Alt on its host window
+ribbon.ShowKeyTips();      // or open it by hand, e.g. from a toolbar button
+ribbon.HideKeyTips();
+
+bool showing = ribbon.IsShowingKeyTips;
+
+// Hand Alt back to the application if it means something else there
+KeyTipService.SetIsEnabled(ribbon, false);
+
+// Hosts with their own keyboard pipeline can forward keys directly
+bool handled = ribbon.ProcessKeyTipKey(Key.B);`,
+                callout: {
+                    type: "tip",
+                    body: "Badges are drawn inside the ribbon itself (<code>PART_KeyTipLayer</code>), not in an <code>AdornerLayer</code>, so they stay put inside popups and scrolling panels. Commands that are not on screen — a collapsed group, a hidden tab — get no badge and cannot be reached by key tip. The first pass also badges the open tab's commands, so what you can see is one letter away."
+                }
+            },
+            {
+                title: "Colour, search and saved state",
+                desc: "<code>RibbonColorPicker</code> is the large colour tile: a swatch on the grid and the full <code>ColorPicker</code> in a popup. <code>RibbonSearchBox</code> wraps <code>SearchBox</code> into a grid cell. <code>RibbonStateStore</code> handles what users expect most — the tab they left on, the minimised state, their pinned commands and the groups they folded away.",
+                xaml: `<ribbon:RibbonGroup Header="Paint">
+    <ribbon:RibbonColorPicker Header="Colour" KeyTip="C"
+                              SelectedColor="#DC2626" ShowAlpha="True" />
+</ribbon:RibbonGroup>
+
+<ribbon:RibbonGroup Header="Find">
+    <ribbon:RibbonSearchBox Header="Find" ColumnSpan="3"
+                            Placeholder="Search commands, colours…"
+                            SearchCommand="{Binding SearchCommand}" />
+</ribbon:RibbonGroup>`,
+                csharp: `var colour = new RibbonColorPicker { Header = "Colour", ShowAlpha = true };
+colour.SelectedColorChanged += (_, _) => Apply(colour.SelectedColor);
+
+var search = new RibbonSearchBox
+{
+    ColumnSpan = 3,
+    Placeholder = "Search commands, colours…",
+    IsInstantSearch = true,       // runs as you type, no Enter needed
+    SearchCommand = SearchCommand
+};
+
+// Save and restore the user's layout
+RibbonStateStore.Save(ribbon.CaptureState(), "ribbon.json");
+ribbon.ApplyState(RibbonStateStore.Load("ribbon.json"));
+
+// Or keep the JSON yourself
+string json = RibbonStateStore.ToJson(ribbon.CaptureState());
+RibbonState? state = RibbonStateStore.FromJson(json);`,
+                callout: {
+                    type: "warn",
+                    body: "State is matched by <code>Id</code>: a tab uses <code>Id</code> then <code>Header</code>, a command uses <code>Id</code>, a group uses <code>tab:Header</code>. Without an <code>Id</code> a command is <b>not</b> restored to the quick-access bar. Unknown ids in an old file are ignored, so an old snapshot never breaks a newer ribbon."
+                }
+            },
+            {
+                title: "MenuBar above the ribbon",
+                desc: "<code>RibbonMenuBar</code> is a horizontal strip placed above a ribbon (or used alone in a simpler app). Each <code>RibbonMenuBarItem</code> opens a dropdown of <code>RibbonMenuItem</code> and <code>RibbonMenuSeparator</code> instances, reusing the existing menu system outright. Click to open, hover to switch while a menu is open, Left/Right arrows to navigate, Escape to close.",
+                csharp: `var file = new RibbonMenuBarItem { Header = "File" };
+file.Items.Add(new RibbonMenuItem { Header = "New" });
+
+var bar = new RibbonMenuBar();
+bar.Items.Add(file);
+bar.Items.Add(new RibbonMenuBarItem { Header = "Edit" });`
+            }
+        ],
+        related: ["ribboncommands", "splitbutton", "concostwindow"]
+    },
+
+    ribboncommands: {
+        title: "Ribbon commands — buttons, split, menus",
+        badge: "Layout & Shell",
+        desc: "The command set that lives inside a ribbon: buttons, toggles, radios, two-zone split buttons, dropdowns and nested menus. All of them follow <code>ICommand</code>: <code>IsEnabled</code> mirrors <code>CanExecute</code>.",
+        keywords: ["ribbon button", "split button", "dropdown", "menu", "command", "radio"],
+        sections: [
+            {
+                title: "Buttons, toggles and radios",
+                desc: "<code>RibbonToggleButton</code> keeps a checked state. Give several the same <code>GroupName</code> and they behave like radio buttons; use <code>RibbonRadioButton</code> so clicking again cannot uncheck the active one.",
+                xaml: `<ribbon:RibbonGroup Header="Units">
+    <ribbon:RibbonRadioButton Header="mm" Size="Small" GroupName="unit" IsChecked="True" />
+    <ribbon:RibbonRadioButton Header="cm" Size="Small" GroupName="unit" />
+    <ribbon:RibbonRadioButton Header="m"  Size="Small" GroupName="unit" />
+</ribbon:RibbonGroup>`,
+                csharp: `var bold = new RibbonToggleButton { Header = "Bold", Size = RibbonItemSize.Small };
+bold.Command = EditingCommands.ToggleBold;   // IsEnabled follows CanExecute
+
+// Radio: clicking the active one keeps it checked
+var mm = new RibbonRadioButton { Header = "mm", GroupName = "unit", IsChecked = true };`
+            },
+            {
+                title: "Split button — two hit zones",
+                desc: "The body runs <code>Command</code>, the arrow opens the menu. The two zones are hit-tested separately: on a large button the arrow zone is the bottom band (where the triangle sits), on a small one it is the right edge.",
+                xaml: `<ribbon:RibbonSplitButton Header="Export" Size="Large">
+    <ribbon:RibbonMenuItem Header="PDF" />
+    <ribbon:RibbonMenuSeparator />
+    <ribbon:RibbonMenuItem Header="CSV" />
+</ribbon:RibbonSplitButton>`,
+                csharp: `var export = new RibbonSplitButton { Header = "Export", Size = RibbonItemSize.Large };
+export.Command = ExportCommand;                            // body
+export.Items.Add(new RibbonMenuItem { Header = "PDF" });   // arrow
+export.ArrowWidth = 20;                                    // arrow zone size`
+            },
+            {
+                title: "Nested menus",
+                desc: "<code>RibbonMenu</code> is a vertical list; <code>RibbonMenuItem</code> runs a command, or opens a submenu when it has children. <code>InputGestureText</code> only displays a shortcut — it does not register one.",
+                xaml: `<ribbon:RibbonDropDownButton Header="Insert" Size="Large">
+    <ribbon:RibbonMenuItem Header="Table" />
+    <ribbon:RibbonMenuItem Header="Chart">
+        <ribbon:RibbonMenuItem Header="Bar" />
+        <ribbon:RibbonMenuItem Header="Line" />
+    </ribbon:RibbonMenuItem>
+    <ribbon:RibbonMenuSeparator />
+    <ribbon:RibbonMenuItem Header="Link" InputGestureText="Ctrl+K" />
+</ribbon:RibbonDropDownButton>`,
+                callout: {
+                    type: "tip",
+                    body: "Submenus open on hover or with <code>→</code>, and close with <code>Esc</code>. Invoking a command closes the whole popup chain."
+                }
+            }
+        ],
+        related: ["ribbon", "splitbutton", "badge"]
+    },
 
 });

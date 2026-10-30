@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="clr-namespace:CONCOST.UI" xmlns:icons="clr-namespace:CONCOST.UI.Icons" xmlns:attached="clr-namespace:CONCOST.UI.AttachedProperties" xmlns:controls="clr-namespace:CONCOST.UI.Controls" xmlns:charts="clr-namespace:CONCOST.UI.Controls.Charts" xmlns:canvas="clr-namespace:CONCOST.UI.Controls.Canvas" xmlns:eng="clr-namespace:CONCOST.UI.Controls.Engineering" xmlns:nav="clr-namespace:CONCOST.UI.Controls.Navigation" xmlns:dash="clr-namespace:CONCOST.UI.Controls.Dashboard" xmlns:win="clr-namespace:CONCOST.UI.Controls.Windows" xmlns:converters="clr-namespace:CONCOST.UI.Core.Converters">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="clr-namespace:CONCOST.UI" xmlns:icons="clr-namespace:CONCOST.UI.Icons" xmlns:attached="clr-namespace:CONCOST.UI.AttachedProperties" xmlns:controls="clr-namespace:CONCOST.UI.Controls" xmlns:charts="clr-namespace:CONCOST.UI.Controls.Charts" xmlns:canvas="clr-namespace:CONCOST.UI.Controls.Canvas" xmlns:eng="clr-namespace:CONCOST.UI.Controls.Engineering" xmlns:nav="clr-namespace:CONCOST.UI.Controls.Navigation" xmlns:dash="clr-namespace:CONCOST.UI.Controls.Dashboard" xmlns:win="clr-namespace:CONCOST.UI.Controls.Windows" xmlns:converters="clr-namespace:CONCOST.UI.Core.Converters" xmlns:ribbon="clr-namespace:CONCOST.UI.Controls.Ribbon">
   <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
   <converters:PaddingToContentHostMarginConverter x:Key="CONCOST.Converter.PaddingToContentHostMargin" />
   <converters:NullToVisibilityConverter x:Key="CONCOST.Converter.NullToVisibility" />
@@ -1810,7 +1810,7 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ComboBox}">
           <Grid Name="templateRoot" SnapsToDevicePixels="True">
-            <ToggleButton Name="toggleButton" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" attached:BorderElement.CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" ClickMode="Press" Template="{StaticResource CONCOST.ComboBoxToggleButton.Template}" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" />
+            <ToggleButton Name="toggleButton" Style="{x:Null}" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" attached:BorderElement.CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" ClickMode="Press" Template="{StaticResource CONCOST.ComboBoxToggleButton.Template}" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" />
             <ContentPresenter Name="contentPresenter" Content="{TemplateBinding ComboBox.SelectionBoxItem}" ContentTemplate="{TemplateBinding ComboBox.SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemsControl.ItemTemplateSelector}" ContentStringFormat="{TemplateBinding ComboBox.SelectionBoxItemStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" Margin="{TemplateBinding Control.Padding}" IsHitTestVisible="False" />
             <Popup Name="PART_Popup" AllowsTransparency="True" Placement="Bottom" HorizontalOffset="-4" PopupAnimation="Fade" IsOpen="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
               <Border Name="dropDownBorder" Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="6" Margin="4,4,4,10" MaxHeight="{TemplateBinding ComboBox.MaxDropDownHeight}" Padding="2" SnapsToDevicePixels="True" MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
@@ -8911,5 +8911,1355 @@
   </Style>
 
   <Style TargetType="{x:Type controls:ParallaxPanel}" BasedOn="{StaticResource CONCOST.ParallaxPanel.Base}" />
+
+  <!-- ============================ Ribbon ============================ -->
+  <Style x:Key="CONCOST.RibbonItem.FocusVisual" TargetType="{x:Type Control}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate>
+          <Border Margin="1" BorderBrush="{DynamicResource CONCOST.Brush.Primary}" BorderThickness="1" CornerRadius="5" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonTabItem.Base" TargetType="{x:Type ribbon:RibbonTabItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonTabItem}">
+          <ContentPresenter />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonSeparator.Base" TargetType="{x:Type ribbon:RibbonSeparator}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonSeparator}">
+          <Border Width="1" Margin="4,6" Background="{DynamicResource CONCOST.Brush.Border}" HorizontalAlignment="Center" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- ============================ Ribbon screen tip ============================ -->
+  <Style x:Key="CONCOST.RibbonToolTip.Base" TargetType="{x:Type ribbon:RibbonToolTip}">
+    <Setter Property="HasDropShadow" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonToolTip}">
+          <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="6" Padding="10,8" MaxWidth="340" SnapsToDevicePixels="True">
+            <Border.Effect>
+              <DropShadowEffect BlurRadius="18" ShadowDepth="4" Direction="270" Opacity="0.18" Color="#101828" />
+            </Border.Effect>
+            <StackPanel>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="TitleText" Grid.Column="0" Text="{TemplateBinding Title}" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                <TextBlock x:Name="GestureText" Grid.Column="1" Text="{TemplateBinding GestureText}" Margin="16,0,0,0" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+              </Grid>
+              <Image x:Name="PreviewImage" Source="{TemplateBinding Preview}" MaxHeight="64" Margin="0,8,0,0" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality" />
+              <TextBlock x:Name="DescriptionText" Text="{TemplateBinding Description}" Margin="0,4,0,0" FontSize="11.5" TextWrapping="Wrap" LineHeight="16" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+              <TextBlock x:Name="FooterText" Text="{TemplateBinding Footer}" Margin="0,6,0,0" FontSize="10.5" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+            </StackPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Description" Value="">
+              <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="GestureText" Value="">
+              <Setter TargetName="GestureText" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="Footer" Value="">
+              <Setter TargetName="FooterText" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="Preview" Value="{x:Null}">
+              <Setter TargetName="PreviewImage" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- ============================ Ribbon quick access ============================ -->
+  
+  <Style x:Key="CONCOST.RibbonQuickAccessToolBar.Base" TargetType="{x:Type ribbon:RibbonQuickAccessToolBar}">
+    <Setter Property="Height" Value="{DynamicResource CONCOST.Ribbon.QuickAccessHeight}" />
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonQuickAccessToolBar}">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent">
+            <ItemsPresenter VerticalAlignment="Center" />
+
+            <ToggleButton Style="{x:Null}" x:Name="Chevron" Width="20" Height="22" Margin="5,0,0,0" VerticalAlignment="Center" Focusable="False" Background="Transparent" BorderThickness="0" ToolTip="Customize Quick Access Toolbar" IsChecked="{Binding IsCustomizeOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+              <ToggleButton.Template>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                  <Border x:Name="Cb" Background="Transparent" CornerRadius="3">
+                    <Path Data="M0,0 L9,0 L4.5,4 Z" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                      <Setter TargetName="Cb" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                    </Trigger>
+                    <Trigger Property="IsChecked" Value="True">
+                      <Setter TargetName="Cb" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+                    </Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </ToggleButton.Template>
+            </ToggleButton>
+
+            <Popup x:Name="PART_Customize" IsOpen="{Binding IsCustomizeOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=Chevron}" HorizontalOffset="-8" VerticalOffset="4" StaysOpen="False" AllowsTransparency="True">
+              <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="6" MinWidth="278" SnapsToDevicePixels="True">
+                <Border.Effect>
+                  <DropShadowEffect BlurRadius="20" ShadowDepth="4" Direction="270" Opacity="0.22" Color="#101828" />
+                </Border.Effect>
+                <Grid>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                  </Grid.RowDefinitions>
+
+                  <TextBlock Grid.Row="0" Text="Customize Quick Access Toolbar" Margin="12,10,12,4" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+
+                  <ScrollViewer Grid.Row="1" MaxHeight="360" Padding="4,0,4,4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ContentPresenter Content="{Binding CustomizeMenu, RelativeSource={RelativeSource TemplatedParent}}" />
+                  </ScrollViewer>
+
+                  <Border Grid.Row="2" BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}" BorderThickness="0,1,0,0" Padding="6,4">
+                    <Button Command="{x:Static ribbon:RibbonQuickAccessToolBar.ClearPinsCommand}" Content="Remove all" HorizontalAlignment="Left" Padding="8,3" Background="Transparent" BorderThickness="0" FontSize="11" Cursor="Hand" />
+                  </Border>
+                </Grid>
+              </Border>
+            </Popup>
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <!-- An empty strip must not leave a lone chevron floating in the tab row. -->
+            <Trigger Property="HasItems" Value="False">
+              <Setter TargetName="Chevron" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- ============================ Ribbon application menu ============================ -->
+  <Style x:Key="CONCOST.RibbonApplicationMenu.Base" TargetType="{x:Type ribbon:RibbonApplicationMenu}">
+    <!-- A neutral block, not an accent slab. A solid primary rectangle is the loudest thing in the
+         whole ribbon and it competes with the accent, which belongs to the selected tab. Hosts that
+         want the coloured File block back set Background / Foreground on the control. -->
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Height" Value="{DynamicResource CONCOST.Ribbon.QuickAccessHeight}" />
+    <Setter Property="Padding" Value="16,0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonApplicationMenu}">
+          <Grid>
+            <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+              <TextBlock Text="{TemplateBinding Header}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" />
+            </Border>
+
+            <Popup x:Name="Panel" IsOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=Bd}" StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-5" VerticalOffset="2">
+              <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="8" MinWidth="420" SnapsToDevicePixels="True">
+                <Border.Effect>
+                  <DropShadowEffect BlurRadius="24" ShadowDepth="5" Direction="270" Opacity="0.22" Color="#101828" />
+                </Border.Effect>
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+
+                  <StackPanel Grid.Column="0" Margin="6,6,6,6">
+                    <ItemsControl x:Name="PrimaryItems" ItemsSource="{Binding Items, RelativeSource={RelativeSource TemplatedParent}}" />
+                    <Border x:Name="FooterDivider" Height="1" Margin="6,5" Background="{DynamicResource CONCOST.Brush.BorderSecondary}" />
+                    <ItemsControl x:Name="FooterCommands" ItemsSource="{TemplateBinding FooterItems}" />
+                  </StackPanel>
+
+                  <Border Grid.Column="1" MinWidth="210" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" CornerRadius="0,8,8,0" Padding="14,12">
+                    <StackPanel>
+                      <TextBlock Text="{TemplateBinding RecentHeader}" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" Margin="0,0,0,6" />
+                      <ItemsControl x:Name="RecentList" ItemsSource="{TemplateBinding RecentItems}" />
+                    </StackPanel>
+                  </Border>
+                </Grid>
+              </Border>
+            </Popup>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsOpen" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+            </Trigger>
+            <Trigger Property="RecentItems" Value="{x:Null}">
+              <Setter TargetName="RecentList" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="FooterItems" Value="{x:Null}">
+              <Setter TargetName="FooterDivider" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="FooterCommands" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- The contextual group is a logical container only; the strip panel paints its band. -->
+  <Style x:Key="CONCOST.RibbonContextualTabGroup.Base" TargetType="{x:Type ribbon:RibbonContextualTabGroup}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonContextualTabGroup}">
+          <ContentPresenter />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type ribbon:RibbonToolTip}" BasedOn="{StaticResource CONCOST.RibbonToolTip.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonQuickAccessToolBar}" BasedOn="{StaticResource CONCOST.RibbonQuickAccessToolBar.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonApplicationMenu}" BasedOn="{StaticResource CONCOST.RibbonApplicationMenu.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonContextualTabGroup}" BasedOn="{StaticResource CONCOST.RibbonContextualTabGroup.Base}" />
+
+  <Style x:Key="CONCOST.RibbonButton.Base" TargetType="{x:Type ribbon:RibbonButton}">
+    <Setter Property="FocusVisualStyle" Value="{StaticResource CONCOST.RibbonItem.FocusVisual}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonButton}">
+          <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <Grid>
+              <StackPanel x:Name="LargePanel" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                <Image Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                <TextBlock Text="{TemplateBinding Header}" FontSize="11" TextAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+              </StackPanel>
+              <Grid x:Name="SmallPanel" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Height="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                <TextBlock Grid.Column="1" Text="{TemplateBinding Header}" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+              </Grid>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="EffectiveSize" Value="Large">
+              <Setter TargetName="LargePanel" Property="Visibility" Value="Visible" />
+              <Setter TargetName="SmallPanel" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonToggleButton.Base" TargetType="{x:Type ribbon:RibbonToggleButton}">
+    <Setter Property="FocusVisualStyle" Value="{StaticResource CONCOST.RibbonItem.FocusVisual}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonToggleButton}">
+          <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <Grid>
+              <StackPanel x:Name="LargePanel" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                <Image Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                <TextBlock Text="{TemplateBinding Header}" FontSize="11" TextAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+              </StackPanel>
+              <Grid x:Name="SmallPanel" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Height="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                <TextBlock Grid.Column="1" Text="{TemplateBinding Header}" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+              </Grid>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="EffectiveSize" Value="Large">
+              <Setter TargetName="LargePanel" Property="Visibility" Value="Visible" />
+              <Setter TargetName="SmallPanel" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <!-- Checked is a fill, not a ring. Three toggles in a row (B / I / U) each drawing a
+                 primary-coloured border turns the group into what looks like one segmented control,
+                 and a checked button is not the selection the accent colour is reserved for. -->
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.BorderSecondary}" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+            <!-- Keep a hover cue on a button that is already checked; the fill alone would hide it. -->
+            <MultiTrigger>
+              <MultiTrigger.Conditions>
+                <Condition Property="IsChecked" Value="True" />
+                <Condition Property="IsMouseOver" Value="True" />
+              </MultiTrigger.Conditions>
+              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+            </MultiTrigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type ribbon:RibbonQuickAccessButton}" BasedOn="{StaticResource CONCOST.RibbonButton.Base}">
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="Padding" Value="5,3" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonQuickAccessButton}">
+          <Border x:Name="Bd" Background="Transparent" CornerRadius="3" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <Grid>
+              <Image x:Name="IconOnly" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Height="{DynamicResource CONCOST.Ribbon.SmallIconSize}" RenderOptions.BitmapScalingMode="HighQuality" />
+              <StackPanel x:Name="Labelled" Orientation="Horizontal" Visibility="Collapsed">
+                <Image Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Height="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Margin="0,0,5,0" RenderOptions.BitmapScalingMode="HighQuality" />
+                <TextBlock Text="{TemplateBinding Header}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
+              </StackPanel>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding ShowLabels, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonQuickAccessToolBar}}}" Value="True">
+              <Setter TargetName="IconOnly" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="Labelled" Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- The group's dialog-launcher arrow: a small corner glyph in the label row, the way a ribbon
+       marks "this group has a dialog behind it". -->
+  <Style x:Key="CONCOST.RibbonGroupLauncher.Base" TargetType="{x:Type ribbon:RibbonGroupLauncher}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonGroupLauncher}">
+          <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="2" SnapsToDevicePixels="True">
+            <Path x:Name="Glyph" Data="M1,1 L8,8 M8,3 L8,8 L3,8" Width="9" Height="9" HorizontalAlignment="Center" VerticalAlignment="Center" Stroke="{DynamicResource CONCOST.Brush.TextTertiary}" StrokeThickness="1.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+              <Setter TargetName="Glyph" Property="Stroke" Value="{DynamicResource CONCOST.Brush.Primary}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Glyph" Property="Stroke" Value="{DynamicResource CONCOST.Brush.Primary}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.4" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type ribbon:RibbonGroupLauncher}" BasedOn="{StaticResource CONCOST.RibbonGroupLauncher.Base}" />
+
+<Style x:Key="CONCOST.RibbonGroup.Base" TargetType="{x:Type ribbon:RibbonGroup}">
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.GroupPadding}" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <ribbon:RibbonGroupPanel ColumnWidth="{DynamicResource CONCOST.Ribbon.ColumnWidth}" RowHeight="{DynamicResource CONCOST.Ribbon.RowHeight}" RowGap="{DynamicResource CONCOST.Ribbon.RowGap}" SeparatorWidth="{DynamicResource CONCOST.Ribbon.SeparatorWidth}" />
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonGroup}">
+          <Border x:Name="GroupBd" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,1,0" Padding="{TemplateBinding Padding}">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="21" />
+              </Grid.RowDefinitions>
+              <ItemsPresenter x:Name="ItemsHost" Grid.Row="0" VerticalAlignment="Top" />
+              <Grid x:Name="HeaderHost" Grid.Row="1" Margin="0,4,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                  <TextBlock x:Name="HeaderText" Text="{TemplateBinding Header}" FontSize="10.5" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+
+                  <!-- Faded out at rest: a permanent triangle next to every label makes the group read
+                       as a drop-down button. It fades in when the pointer enters the group, and stays
+                       while its menu is open. Opacity, not Visibility, so the label never shifts. -->
+                  <ToggleButton Style="{x:Null}" x:Name="CollapseToggle" Opacity="0" Width="13" Height="13" Margin="2,0,0,0" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Focusable="False" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ToolTip="{TemplateBinding Header}">
+                    <ToggleButton.Template>
+                      <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border x:Name="Hb" Background="Transparent" CornerRadius="2">
+                          <Path x:Name="Tri" Data="M0,0 L8,0 L4,4 Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonGroup}}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                          <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Hb" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                          </Trigger>
+                        </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                    </ToggleButton.Template>
+                  </ToggleButton>
+                </StackPanel>
+
+                <!-- Hidden until the group is hovered: a lone arrow parked at the far right of a wide
+                     group reads as a stray mark rather than as a way into the dialog. -->
+                <ribbon:RibbonGroupLauncher x:Name="Launcher" Opacity="0" Width="{DynamicResource CONCOST.Ribbon.LauncherSize}" Height="{DynamicResource CONCOST.Ribbon.LauncherSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Command="{TemplateBinding DialogLauncherCommand}" ToolTip="Group settings" />
+              </Grid>
+
+              <ToggleButton Style="{x:Null}" x:Name="CollapsedButton" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ToolTip="{TemplateBinding Header}">
+                <ToggleButton.Template>
+                  <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="Cb" Background="Transparent" CornerRadius="5" Padding="8,6">
+                      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonGroup}}}" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                        <Path Data="M0,0 L4,4 L8,0" Stroke="{DynamicResource CONCOST.Brush.TextSecondary}" StrokeThickness="1.4" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                      </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="Cb" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                      </Trigger>
+                      <Trigger Property="IsChecked" Value="True">
+                        <Setter TargetName="Cb" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </ToggleButton.Template>
+              </ToggleButton>
+
+              <Popup x:Name="CollapsedPopup" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" StaysOpen="False" AllowsTransparency="True">
+                <ContentControl Content="{Binding CollapsedMenu, RelativeSource={RelativeSource TemplatedParent}}" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalAlignment="Top" Margin="0,2,0,0" />
+              </Popup>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="DialogLauncherCommand" Value="{x:Null}">
+              <Setter TargetName="Launcher" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <!-- The overflow chevron only shows up when the group is hovered or its menu is open. -->
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="CollapseToggle" Property="Opacity" Value="1" />
+              <Setter TargetName="Launcher" Property="Opacity" Value="1" />
+            </Trigger>
+            <Trigger Property="IsDropDownOpen" Value="True">
+              <Setter TargetName="CollapseToggle" Property="Opacity" Value="1" />
+            </Trigger>
+            <!-- The right-most group must not trail a divider into the empty part of the strip. -->
+            <Trigger Property="IsLastInStrip" Value="True">
+              <Setter TargetName="GroupBd" Property="BorderThickness" Value="0" />
+            </Trigger>
+            <Trigger Property="CollapsePriority" Value="0">
+              <Setter TargetName="CollapseToggle" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="IsCollapsed" Value="True">
+              <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="HeaderHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="CollapsedButton" Property="Visibility" Value="Visible" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <DataTemplate x:Key="CONCOST.Ribbon.TabContentTemplate">
+    <ItemsControl ItemsSource="{Binding}" Margin="0,0,-1,0">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <ribbon:RibbonGroupStrip />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+    </ItemsControl>
+  </DataTemplate>
+
+  <Style x:Key="CONCOST.Ribbon.Base" TargetType="{x:Type ribbon:Ribbon}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:Ribbon}">
+          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource CONCOST.Ribbon.ShellCornerRadius}" SnapsToDevicePixels="True">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+
+              <!-- Quick access, "above the ribbon" slot. Empty — and therefore zero-height — unless
+                   QuickAccessPlacement puts the strip here. -->
+              <ContentControl x:Name="PART_QatAbove" Grid.Row="0" Margin="8,4,8,0" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+
+              <!-- MenuBar slot above the tab strip. Sits between the QAT (when above) and the tabs. -->
+              <ContentControl x:Name="PART_MenuBarAbove" Grid.Row="1" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+
+              <!-- One compact top row: File block, tab strip, quick-access commands. Everything sits
+                   on the same baseline as the tabs, so there is no empty band above them. -->
+              <Grid x:Name="HeaderStrip" Grid.Row="2">
+                <Border x:Name="HeaderDivider" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" />
+
+                <Grid Margin="4,4,4,0">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+
+                  <ContentControl x:Name="AppMenuHost" Grid.Column="0" Margin="1,0,6,4" Content="{TemplateBinding ApplicationMenu}" VerticalAlignment="Bottom" Focusable="False" />
+
+                  <ListBox Grid.Column="1" x:Name="PART_Tabs" ItemsSource="{TemplateBinding VisibleTabs}" SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="Transparent" BorderThickness="0" Padding="4,3,4,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+                <ListBox.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <ribbon:RibbonTabStripPanel HorizontalAlignment="Left" BandHeight="{DynamicResource CONCOST.Ribbon.ContextualBandHeight}" FontFamily="{DynamicResource CONCOST.FontFamily.Default}" FontSize="{DynamicResource CONCOST.Ribbon.ContextualBandFontSize}" />
+                  </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                  <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Padding" Value="13,5" />
+                    <Setter Property="MinHeight" Value="{DynamicResource CONCOST.Ribbon.TabHeight}" />
+                    <Setter Property="Margin" Value="0,0,1,0" />
+                    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                          <Grid>
+                            <Border x:Name="TabBd" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" CornerRadius="4,4,0,0" Padding="{TemplateBinding Padding}">
+                              <ContentPresenter />
+                            </Border>
+                            <Border x:Name="Underline" Height="2" Margin="7,0,7,0" VerticalAlignment="Bottom" CornerRadius="1" Background="{DynamicResource CONCOST.Brush.Primary}" Visibility="Collapsed" />
+                          </Grid>
+                          <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                              <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                              <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+                              <Setter TargetName="Underline" Property="Visibility" Value="Visible" />
+                              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.Primary}" />
+                            </Trigger>
+                          </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <Image Source="{Binding Icon}" Width="14" Height="14" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality" />
+                      <!-- The implicit TextBlock style pins Foreground, so it has to be bound, not inherited. -->
+                      <TextBlock Text="{Binding Header}" FontSize="12" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+                  </ListBox>
+
+                  <ContentControl x:Name="PART_QatInline" Grid.Column="2" Margin="8,0,4,4" VerticalAlignment="Bottom" Focusable="False">
+                    <ribbon:RibbonQuickAccessToolBar x:Name="PART_QAT" />
+                  </ContentControl>
+                </Grid>
+              </Grid>
+
+              <Border x:Name="PART_Content" Grid.Row="3" Background="{DynamicResource CONCOST.Brush.Surface}" BorderThickness="0" Padding="0" ClipToBounds="True">
+                <ContentControl Content="{Binding SelectedItem.Content, RelativeSource={RelativeSource TemplatedParent}}" ContentTemplate="{StaticResource CONCOST.Ribbon.TabContentTemplate}" />
+              </Border>
+
+              <!-- MenuBar slot below the ribbon body. -->
+              <ContentControl x:Name="PART_MenuBarBelow" Grid.Row="4" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+
+              <!-- Quick access, "below the ribbon" slot. -->
+              <ContentControl x:Name="PART_QatBelow" Grid.Row="5" Margin="8,3,8,3" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+
+              <!-- Alt key tips are drawn here, in the ribbon's own coordinate space, so they follow
+                   the tab strip and the groups without an AdornerLayer. -->
+              <Canvas x:Name="PART_KeyTipLayer" Grid.RowSpan="6" IsHitTestVisible="False" ClipToBounds="True" />
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMinimized" Value="True">
+              <Setter TargetName="PART_Content" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <!-- A strip of its own needs a rule above it, otherwise the commands float between rows. -->
+            <Trigger Property="QuickAccessPlacement" Value="AboveRibbon">
+              <Setter TargetName="PART_QatAbove" Property="Visibility" Value="Visible" />
+              <Setter TargetName="HeaderDivider" Property="BorderThickness" Value="0,1,0,1" />
+            </Trigger>
+            <Trigger Property="QuickAccessPlacement" Value="BelowRibbon">
+              <Setter TargetName="PART_QatBelow" Property="Visibility" Value="Visible" />
+              <Setter TargetName="PART_Content" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+              <Setter TargetName="PART_Content" Property="BorderThickness" Value="0,0,0,1" />
+            </Trigger>
+            <!-- MenuBar placement: above the tab strip or below the ribbon body. -->
+            <Trigger Property="MenuBarPlacement" Value="AboveRibbon">
+              <Setter TargetName="PART_MenuBarAbove" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="MenuBarPlacement" Value="BelowRibbon">
+              <Setter TargetName="PART_MenuBarBelow" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <!-- Hiding the menu bar collapses both slots. -->
+            <Trigger Property="ShowMenuBar" Value="False">
+              <Setter TargetName="PART_MenuBarAbove" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="PART_MenuBarBelow" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <!-- Hiding the strip hides its slot too: an empty slot still costs its margin. -->
+            <Trigger Property="ShowQuickAccessToolBar" Value="False">
+              <Setter TargetName="PART_QatAbove" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="PART_QatInline" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="PART_QatBelow" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <!-- No File block: drop the column entirely instead of leaving a 7 px hole before the tabs. -->
+            <Trigger Property="ApplicationMenu" Value="{x:Null}">
+              <Setter TargetName="AppMenuHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="AppMenuHost" Property="Margin" Value="0" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- The Alt badge: one small pill per reachable element, drawn by the ribbon itself. -->
+  <Style x:Key="CONCOST.RibbonKeyTip.Base" TargetType="{x:Type ribbon:RibbonKeyTip}">
+    <Setter Property="FontSize" Value="10.5" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.Primary}" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonKeyTip}">
+          <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Primary}" BorderThickness="1" CornerRadius="3" Padding="4,1" SnapsToDevicePixels="True">
+            <Border.Effect>
+              <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.22" Color="#000000" />
+            </Border.Effect>
+            <TextBlock Text="{TemplateBinding Content}" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type ribbon:RibbonKeyTip}" BasedOn="{StaticResource CONCOST.RibbonKeyTip.Base}" />
+
+  <Style TargetType="{x:Type ribbon:Ribbon}" BasedOn="{StaticResource CONCOST.Ribbon.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonTabItem}" BasedOn="{StaticResource CONCOST.RibbonTabItem.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonGroup}" BasedOn="{StaticResource CONCOST.RibbonGroup.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonButton}" BasedOn="{StaticResource CONCOST.RibbonButton.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonToggleButton}" BasedOn="{StaticResource CONCOST.RibbonToggleButton.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonSeparator}" BasedOn="{StaticResource CONCOST.RibbonSeparator.Base}" />
+
+  <!-- ============================ Ribbon menu & command family ============================ -->
+  <Style x:Key="CONCOST.RibbonMenu.Base" TargetType="{x:Type ribbon:RibbonMenu}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonMenu}">
+          <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="6" Padding="4" SnapsToDevicePixels="True">
+            <Border.Effect>
+              <DropShadowEffect BlurRadius="18" ShadowDepth="4" Direction="270" Opacity="0.22" Color="#101828" />
+            </Border.Effect>
+            <ItemsPresenter />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonMenuSeparator.Base" TargetType="{x:Type ribbon:RibbonMenuSeparator}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonMenuSeparator}">
+          <Border Height="1" Margin="6,5" Background="{DynamicResource CONCOST.Brush.BorderSecondary}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- ============================ RibbonMenuBar ============================ -->
+
+  <Style x:Key="CONCOST.RibbonMenuBar.Base" TargetType="{x:Type ribbon:RibbonMenuBar}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="6,0" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonMenuBar}">
+          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <ItemsPresenter />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonMenuBarItem.Base" TargetType="{x:Type ribbon:RibbonMenuBarItem}">
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="14,6" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonMenuBarItem}">
+          <Grid>
+            <Border x:Name="Bd" Background="Transparent" CornerRadius="4" Margin="1,2" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+              <TextBlock Text="{TemplateBinding Header}" VerticalAlignment="Center" FontSize="12" Foreground="{TemplateBinding Foreground}" />
+            </Border>
+            <Popup x:Name="PART_Popup" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=Bd}" StaysOpen="False" AllowsTransparency="True">
+              <ribbon:RibbonMenu ItemsSource="{Binding Items, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,2,0,0" />
+            </Popup>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsSubmenuOpen" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+              <Setter TargetName="Bd" Property="CornerRadius" Value="4" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonMenuItem.Base" TargetType="{x:Type ribbon:RibbonMenuItem}">
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonMenuItem}">
+          <Grid>
+            <Border x:Name="Bd" Background="Transparent" CornerRadius="4" Padding="8,5">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Path x:Name="Tick" Grid.Column="0" Width="12" Height="12" Margin="0,0,8,0" VerticalAlignment="Center" Visibility="Collapsed" Stretch="Uniform" Data="M1,6.2 L4.4,9.6 L11,1.6" Stroke="{DynamicResource CONCOST.Brush.Primary}" StrokeThickness="1.7" StrokeEndLineCap="Round" StrokeStartLineCap="Round" />
+                <Image Grid.Column="1" Source="{TemplateBinding Icon}" Width="14" Height="14" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality" />
+                <TextBlock Grid.Column="2" Text="{TemplateBinding Header}" VerticalAlignment="Center" FontSize="12" Foreground="{TemplateBinding Foreground}" />
+                <TextBlock Grid.Column="3" Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center" Margin="18,0,0,0" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+                <Path x:Name="Chevron" Grid.Column="4" Data="M0,0 L4,4 L0,8" Stroke="{DynamicResource CONCOST.Brush.TextSecondary}" StrokeThickness="1.4" Margin="10,0,0,0" VerticalAlignment="Center" Visibility="Collapsed" />
+              </Grid>
+            </Border>
+            <Popup x:Name="Submenu" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Right" PlacementTarget="{Binding ElementName=Bd}" StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-4">
+              <ribbon:RibbonMenu ItemsSource="{Binding Items, RelativeSource={RelativeSource TemplatedParent}}" Margin="4,0,0,0" />
+            </Popup>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsCheckable" Value="True">
+              <Setter TargetName="Tick" Property="Visibility" Value="Visible" />
+              <Setter TargetName="Tick" Property="Opacity" Value="0" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="Tick" Property="Opacity" Value="1" />
+            </Trigger>
+            <Trigger Property="HasItems" Value="True">
+              <Setter TargetName="Chevron" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonDropDownButton.Base" TargetType="{x:Type ribbon:RibbonDropDownButton}">
+    <Setter Property="FocusVisualStyle" Value="{StaticResource CONCOST.RibbonItem.FocusVisual}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonDropDownButton}">
+          <Grid>
+            <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+              <Grid>
+                <StackPanel x:Name="LargePanel" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                  <Image Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                  <TextBlock Text="{TemplateBinding Header}" FontSize="11" TextAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+                  <Path x:Name="ChevronLarge" Data="M0,0 L9,0 L4.5,4.6 Z" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" Margin="0,3,0,0" />
+                </StackPanel>
+                <Grid x:Name="SmallPanel" Margin="0,0,12,0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <Image Grid.Column="0" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Height="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                  <TextBlock Grid.Column="1" Text="{TemplateBinding Header}" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+                </Grid>
+                <Path x:Name="ChevronSmall" Data="M0,0 L9,0 L4.5,4.6 Z" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0" Visibility="Collapsed" />
+              </Grid>
+            </Border>
+            <Popup x:Name="PART_Popup" IsOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=Bd}" StaysOpen="False" AllowsTransparency="True">
+              <ribbon:RibbonMenu ItemsSource="{Binding Items, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,3,0,0" />
+            </Popup>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="EffectiveSize" Value="Large">
+              <Setter TargetName="LargePanel" Property="Visibility" Value="Visible" />
+              <Setter TargetName="SmallPanel" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="EffectiveSize" Value="Small">
+              <Setter TargetName="ChevronSmall" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="EffectiveSize" Value="Medium">
+              <Setter TargetName="ChevronSmall" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsOpen" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonSplitButton.Base" TargetType="{x:Type ribbon:RibbonSplitButton}">
+    <Setter Property="FocusVisualStyle" Value="{StaticResource CONCOST.RibbonItem.FocusVisual}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonSplitButton}">
+          <Grid>
+            <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+              <Grid>
+                <StackPanel x:Name="LargePanel" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                  <Image Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                  <TextBlock Text="{TemplateBinding Header}" FontSize="11" TextAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+                  <Path x:Name="ChevronLarge" Data="M0,0 L9,0 L4.5,4.6 Z" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" Margin="0,3,0,0" />
+                </StackPanel>
+                <Grid x:Name="SmallPanel" Margin="0,0,12,0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <Image Grid.Column="0" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Height="{DynamicResource CONCOST.Ribbon.SmallIconSize}" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                  <TextBlock Grid.Column="1" Text="{TemplateBinding Header}" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+                </Grid>
+                <Path x:Name="ChevronSmall" Data="M0,0 L9,0 L4.5,4.6 Z" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0" Visibility="Collapsed" />
+              </Grid>
+            </Border>
+
+            <Popup x:Name="PART_Popup" IsOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=Bd}" StaysOpen="False" AllowsTransparency="True">
+              <ribbon:RibbonMenu ItemsSource="{Binding Items, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,3,0,0" />
+            </Popup>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="EffectiveSize" Value="Large">
+              <Setter TargetName="LargePanel" Property="Visibility" Value="Visible" />
+              <Setter TargetName="SmallPanel" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="EffectiveSize" Value="Small">
+              <Setter TargetName="ChevronSmall" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="EffectiveSize" Value="Medium">
+              <Setter TargetName="ChevronSmall" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsOpen" Value="True">
+              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type ribbon:RibbonMenu}" BasedOn="{StaticResource CONCOST.RibbonMenu.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonMenuItem}" BasedOn="{StaticResource CONCOST.RibbonMenuItem.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonMenuSeparator}" BasedOn="{StaticResource CONCOST.RibbonMenuSeparator.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonMenuBar}" BasedOn="{StaticResource CONCOST.RibbonMenuBar.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonMenuBarItem}" BasedOn="{StaticResource CONCOST.RibbonMenuBarItem.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonDropDownButton}" BasedOn="{StaticResource CONCOST.RibbonDropDownButton.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonSplitButton}" BasedOn="{StaticResource CONCOST.RibbonSplitButton.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonRadioButton}" BasedOn="{StaticResource CONCOST.RibbonToggleButton.Base}" />
+
+  <!-- ============================ Ribbon input & gallery family ============================ -->
+
+  <Style x:Key="CONCOST.RibbonCheckBox.Base" TargetType="{x:Type ribbon:RibbonCheckBox}" BasedOn="{StaticResource CONCOST.RibbonToggleButton.Base}">
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonCheckBox}">
+          <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <Grid>
+              <StackPanel x:Name="Row" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Border x:Name="Box" Width="13" Height="13" VerticalAlignment="Center" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource CONCOST.Brush.InputBorder}" Background="{DynamicResource CONCOST.Brush.InputBackground}">
+                  <Path x:Name="Tick" Data="M2.4,6.2 L4.9,8.7 L10.2,3.2" Stroke="{DynamicResource CONCOST.Brush.TextInverse}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Visibility="Collapsed" />
+                </Border>
+                <TextBlock Text="{TemplateBinding Header}" Margin="6,0,0,0" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+              </StackPanel>
+
+              <StackPanel x:Name="Stack" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                <Border x:Name="BoxLarge" Width="20" Height="20" HorizontalAlignment="Center" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource CONCOST.Brush.InputBorder}" Background="{DynamicResource CONCOST.Brush.InputBackground}">
+                  <Path x:Name="TickLarge" Data="M3.4,9.6 L7.2,13.4 L15.4,4.8" Stroke="{DynamicResource CONCOST.Brush.TextInverse}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Visibility="Collapsed" />
+                </Border>
+                <TextBlock Text="{TemplateBinding Header}" Margin="0,3,0,0" FontSize="11" TextAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+              </StackPanel>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="EffectiveSize" Value="Large">
+              <Setter TargetName="Row" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="Stack" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="Box" Property="Background" Value="{DynamicResource CONCOST.Brush.Primary}" />
+              <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Primary}" />
+              <Setter TargetName="Tick" Property="Visibility" Value="Visible" />
+              <Setter TargetName="BoxLarge" Property="Background" Value="{DynamicResource CONCOST.Brush.Primary}" />
+              <Setter TargetName="BoxLarge" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Primary}" />
+              <Setter TargetName="TickLarge" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonTextBox.Base" TargetType="{x:Type ribbon:RibbonTextBox}">
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonTextBox}">
+          <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+
+              <TextBlock x:Name="Label" Grid.Column="0" Text="{TemplateBinding Header}" Margin="0,0,5,0" FontSize="10.5" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+
+              <Border x:Name="Field" Grid.Column="1" VerticalAlignment="Center" Background="{DynamicResource CONCOST.Brush.InputBackground}" BorderBrush="{DynamicResource CONCOST.Brush.InputBorder}" BorderThickness="1" CornerRadius="3" SnapsToDevicePixels="True">
+                <Grid>
+                  <TextBox x:Name="Editor" Style="{StaticResource CONCOST.TextBox.Small}" MinHeight="18" Padding="5,0" FontSize="11.5" Background="Transparent" BorderThickness="0"
+                           Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           IsReadOnly="{TemplateBinding IsReadOnly}"
+                           MaxLength="{TemplateBinding MaxLength}"
+                           TextAlignment="{TemplateBinding TextAlignment}" />
+                  <TextBlock x:Name="Placeholder" Text="{TemplateBinding PlaceholderText}" Margin="6,0,0,0" FontSize="11" VerticalAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+                </Grid>
+              </Border>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Header" Value="">
+              <Setter TargetName="Label" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="Text" Value="">
+              <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="PlaceholderText" Value="">
+              <Setter TargetName="Placeholder" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonComboBox.Base" TargetType="{x:Type ribbon:RibbonComboBox}">
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonComboBox}">
+          <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+
+              <TextBlock x:Name="Label" Grid.Column="0" Text="{TemplateBinding Header}" Margin="0,0,5,0" FontSize="10.5" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+
+              <Border x:Name="Field" Grid.Column="1" VerticalAlignment="Center" Background="{DynamicResource CONCOST.Brush.InputBackground}" BorderBrush="{DynamicResource CONCOST.Brush.InputBorder}" BorderThickness="1" CornerRadius="3" SnapsToDevicePixels="True">
+                <ComboBox x:Name="Editor" MinHeight="18" Padding="5,0,22,0" FontSize="11.5" Background="Transparent" BorderThickness="0"
+                          Style="{StaticResource CONCOST.ComboBox.Small}"
+                          ItemsSource="{TemplateBinding ItemsSource}"
+                          ItemTemplate="{TemplateBinding ItemTemplate}"
+                          DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+                          IsEditable="{TemplateBinding IsEditable}"
+                          MaxDropDownHeight="{TemplateBinding MaxDropDownHeight}"
+                          SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+              </Border>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Header" Value="">
+              <Setter TargetName="Label" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- One gallery tile: the gallery owns the size, the tile only paints the selection. -->
+  <Style x:Key="CONCOST.RibbonGallery.Item" TargetType="{x:Type ListBoxItem}">
+    <Setter Property="Margin" Value="1" />
+    <Setter Property="Padding" Value="2" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+          <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="4" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Primary}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- The tiles on the ribbon grid stretch to the cell so the swatch is as big as the grid allows. -->
+  <Style x:Key="CONCOST.RibbonGallery.SwatchItem" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource CONCOST.RibbonGallery.Item}">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonGallery.ListBox" TargetType="{x:Type ListBox}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    <Setter Property="ItemContainerStyle" Value="{StaticResource CONCOST.RibbonGallery.Item}" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListBox}">
+          <ScrollViewer Focusable="False" Padding="{TemplateBinding Padding}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+            <ItemsPresenter />
+          </ScrollViewer>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Grid tile: swatch only. A caption inside a ~32 px cell either spills into the next row or
+       trims to "Gr…", so the ribbon grid stays a clean field of colours and the pop-up carries
+       the names. -->
+  <DataTemplate x:Key="CONCOST.RibbonGallery.SwatchTemplate">
+    <Image Source="{Binding Icon}" Stretch="Uniform" Margin="3" RenderOptions.BitmapScalingMode="HighQuality" />
+  </DataTemplate>
+
+  <!-- Pop-up tile: the swatch with its name underneath, in a cell tall enough for both. -->
+  <DataTemplate x:Key="CONCOST.RibbonGallery.ItemTemplate">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+      <Image Source="{Binding Icon}" Width="26" Height="26" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
+      <TextBlock Text="{Binding Header}" Margin="0,3,0,0" FontSize="10" TextAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    </StackPanel>
+  </DataTemplate>
+
+  <Style x:Key="CONCOST.RibbonGallery.Base" TargetType="{x:Type ribbon:RibbonGallery}">
+    <Setter Property="Size" Value="Large" />
+    <Setter Property="ColumnSpan" Value="2" />
+    <!-- A one-row gallery would slice its tiles, so it keeps its height when the ribbon compacts. -->
+    <Setter Property="IsFixedSize" Value="True" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="ItemTemplate" Value="{StaticResource CONCOST.RibbonGallery.SwatchTemplate}" />
+    <Setter Property="ExpandedItemTemplate" Value="{StaticResource CONCOST.RibbonGallery.ItemTemplate}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonGallery}">
+          <Grid>
+            <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ListBox x:Name="Inline" Grid.Column="0" Style="{StaticResource CONCOST.RibbonGallery.ListBox}"
+                         Tag="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                         ItemContainerStyle="{StaticResource CONCOST.RibbonGallery.SwatchItem}"
+                         ItemsSource="{TemplateBinding ItemsSource}"
+                         ItemTemplate="{TemplateBinding ItemTemplate}"
+                         SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                  <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <WrapPanel ItemWidth="{Binding Tag.ItemWidth, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" ItemHeight="{Binding Tag.ItemHeight, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" />
+                    </ItemsPanelTemplate>
+                  </ListBox.ItemsPanel>
+                </ListBox>
+
+                <ToggleButton Style="{x:Null}" x:Name="Expand" Grid.Column="1" Width="12" Margin="1,0,0,0" Focusable="False" Background="Transparent" BorderThickness="0" ToolTip="Show all"
+                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                  <ToggleButton.Template>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                      <Border x:Name="Eb" Background="Transparent" CornerRadius="3">
+                        <Path Data="M0,0 L4,4 L8,0" Stroke="{DynamicResource CONCOST.Brush.TextSecondary}" StrokeThickness="1.3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                      </Border>
+                      <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                          <Setter TargetName="Eb" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                          <Setter TargetName="Eb" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+                        </Trigger>
+                      </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                  </ToggleButton.Template>
+                </ToggleButton>
+              </Grid>
+            </Border>
+
+            <Popup x:Name="PART_Popup" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=Bd}" StaysOpen="False" AllowsTransparency="True" VerticalOffset="2">
+              <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="8" Padding="4" SnapsToDevicePixels="True"
+                      MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" MaxWidth="{TemplateBinding MaxDropDownWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                <Border.Effect>
+                  <DropShadowEffect BlurRadius="18" ShadowDepth="4" Direction="270" Opacity="0.22" Color="#101828" />
+                </Border.Effect>
+                <ListBox x:Name="Expanded" Style="{StaticResource CONCOST.RibbonGallery.ListBox}"
+                         Tag="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                         ItemsSource="{TemplateBinding ItemsSource}"
+                         ItemTemplate="{TemplateBinding ExpandedItemTemplate}"
+                         SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                  <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <!-- Roomier than the grid: the pop-up has space for the caption under each swatch. -->
+                      <WrapPanel ItemWidth="72" ItemHeight="56" />
+                    </ItemsPanelTemplate>
+                  </ListBox.ItemsPanel>
+                </ListBox>
+              </Border>
+            </Popup>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="ShowExpandButton" Value="False">
+              <Setter TargetName="Expand" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <!-- A host that only sets ItemTemplate still gets named tiles in the pop-up. -->
+            <Trigger Property="ExpandedItemTemplate" Value="{x:Null}">
+              <Setter TargetName="Expanded" Property="ItemTemplate" Value="{Binding ItemTemplate, RelativeSource={RelativeSource TemplatedParent}}" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsDropDownOpen" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Colour button: the swatch is the whole point, so the item is a fixed large tile that never
+       compacts into a size where a 26 px chip would not fit. -->
+  <Style x:Key="CONCOST.RibbonColorPicker.Base" TargetType="{x:Type ribbon:RibbonColorPicker}">
+    <Setter Property="Size" Value="Large" />
+    <Setter Property="IsFixedSize" Value="True" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonColorPicker}">
+          <Grid>
+            <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+              <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <!-- One chip with a hairline outline, not a frame around a chip: the double border made
+                     the swatch read smaller and lighter than the 24 px icons beside it. -->
+                <Border Width="24" Height="24" HorizontalAlignment="Center" CornerRadius="4" Background="{TemplateBinding SwatchBrush}" BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}" BorderThickness="1" SnapsToDevicePixels="True" />
+                <TextBlock Text="{TemplateBinding Header}" Margin="0,3,0,0" FontSize="10.5" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+            </Border>
+
+            <Popup x:Name="PART_Popup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade" VerticalOffset="3" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+              <controls:ColorPicker x:Name="Editor" Margin="0,0,10,10" ShowAlpha="{TemplateBinding ShowAlpha}" SelectedColor="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                <controls:ColorPicker.Effect>
+                  <DropShadowEffect BlurRadius="18" ShadowDepth="3" Opacity="0.2" Color="#000000" />
+                </controls:ColorPicker.Effect>
+              </controls:ColorPicker>
+            </Popup>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="IsDropDownOpen" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.RibbonSearchBox.Base" TargetType="{x:Type ribbon:RibbonSearchBox}">
+    <Setter Property="Size" Value="Small" />
+    <Setter Property="ColumnSpan" Value="2" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Padding" Value="{DynamicResource CONCOST.Ribbon.ItemPadding}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ribbon:RibbonSearchBox}">
+          <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+
+              <TextBlock x:Name="Label" Grid.Column="0" Text="{TemplateBinding Header}" Margin="0,0,5,0" FontSize="10.5" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+
+              <Border Grid.Column="1" VerticalAlignment="Center" Background="{DynamicResource CONCOST.Brush.InputBackground}" BorderBrush="{DynamicResource CONCOST.Brush.InputBorder}" BorderThickness="1" CornerRadius="3" SnapsToDevicePixels="True">
+                <controls:SearchBox x:Name="Editor" Height="20" FontSize="11.5" Background="Transparent" BorderThickness="0"
+                                    Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                    Placeholder="{TemplateBinding Placeholder}"
+                                    IsInstantSearch="{TemplateBinding IsInstantSearch}"
+                                    SearchCommand="{TemplateBinding SearchCommand}" />
+              </Border>
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Header" Value="">
+              <Setter TargetName="Label" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type ribbon:RibbonCheckBox}" BasedOn="{StaticResource CONCOST.RibbonCheckBox.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonTextBox}" BasedOn="{StaticResource CONCOST.RibbonTextBox.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonComboBox}" BasedOn="{StaticResource CONCOST.RibbonComboBox.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonGallery}" BasedOn="{StaticResource CONCOST.RibbonGallery.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonColorPicker}" BasedOn="{StaticResource CONCOST.RibbonColorPicker.Base}" />
+  <Style TargetType="{x:Type ribbon:RibbonSearchBox}" BasedOn="{StaticResource CONCOST.RibbonSearchBox.Base}" />
 
 </ResourceDictionary>

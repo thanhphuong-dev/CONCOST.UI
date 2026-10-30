@@ -22,6 +22,7 @@
     <Page Include="Themes\ThemeResources.xaml" />
     <Page Include="Themes\Tokens\Colors.xaml" />
     <Page Include="Themes\Tokens\CornerRadius.xaml" />
+    <Page Include="Themes\Tokens\Ribbon.xaml" />
     <Page Include="Themes\Tokens\Spacing.xaml" />
     <Page Include="Themes\Tokens\Typography.xaml" />
   </ItemGroup>

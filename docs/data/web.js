@@ -1,4 +1,4 @@
-// Controls ported from modern web UI patterns (spotlight card, number ticker,
+﻿// Controls ported from modern web UI patterns (spotlight card, number ticker,
 // sparkline, avatar stack).
 const DOCS_WEB = {
     spotlightcard: {
@@ -836,6 +836,409 @@ layer.Target = PageScroll;`
             }
         ],
         related: ["typewritertext", "textblock", "scrollreveal"]
+    },
+
+    ribbon: {
+        title: "Ribbon — thanh lệnh nhiều tab",
+        badge: "Layout & Shell",
+        desc: "Ribbon kiểu Office / AutoCAD: dải tab ở trên, mỗi tab chứa các group, mỗi group xếp lệnh trên lưới 3 hàng. Khi hẹp, ribbon tự hạ kích thước lệnh rồi gộp group thành một nút — không bao giờ cắt mất lệnh.",
+        keywords: ["ribbon", "tab", "group", "toolbar", "office", "autocad", "thanh lệnh"],
+        sections: [
+            {
+                title: "Khai báo ribbon",
+                desc: "Control nằm trong namespace <code>CONCOST.UI.Controls.Ribbon</code>. <code>ItemsSource</code> là danh sách <code>RibbonTabItem</code>; <code>Content</code> của mỗi tab là danh sách <code>RibbonGroup</code>.",
+                xaml: `<Window xmlns:ribbon="clr-namespace:CONCOST.UI.Controls.Ribbon;assembly=CONCOST.UI">
+
+    <ribbon:Ribbon>
+        <ribbon:RibbonTabItem Header="Home">
+            <ribbon:RibbonGroup Header="Clipboard">
+                <ribbon:RibbonButton Header="Save" Size="Large" />
+                <ribbon:RibbonSeparator />
+                <ribbon:RibbonButton Header="Copy" Size="Small" />
+                <ribbon:RibbonButton Header="Paste" Size="Small" />
+            </ribbon:RibbonGroup>
+
+            <ribbon:RibbonGroup Header="Paragraph">
+                <ribbon:RibbonButton Header="Align" Size="Medium" />
+                <ribbon:RibbonButton Header="Grid" Size="Small" />
+            </ribbon:RibbonGroup>
+        </ribbon:RibbonTabItem>
+
+        <ribbon:RibbonTabItem Header="Insert">
+            <ribbon:RibbonGroup Header="Tables">
+                <ribbon:RibbonButton Header="Table" Size="Large" />
+            </ribbon:RibbonGroup>
+        </ribbon:RibbonTabItem>
+    </ribbon:Ribbon>
+</Window>`,
+                csharp: `var ribbon = new Ribbon();
+
+var clipboard = new RibbonGroup { Header = "Clipboard" };
+clipboard.Items.Add(new RibbonButton { Header = "Save", Size = RibbonItemSize.Large });
+clipboard.Items.Add(new RibbonSeparator());
+clipboard.Items.Add(new RibbonButton { Header = "Copy", Size = RibbonItemSize.Small });
+
+var home = new RibbonTabItem { Header = "Home" };
+home.Content = new List<RibbonGroup> { clipboard };
+
+ribbon.ItemsSource = new List<RibbonTabItem> { home };`,
+                callout: {
+                    type: "tip",
+                    body: "Icon là <code>ImageSource</code> nên <b>không</b> tự đổi màu theo theme. Nếu app cho đổi theme lúc chạy, hãy dùng chung một <code>SolidColorBrush</code> <b>không freeze</b> cho mọi icon rồi đổi <code>Color</code> khi theme đổi — đúng cách Showcase đang làm, nếu không icon sẽ tối om trên nền tối."
+                }
+            },
+            {
+                title: "Ba kích thước lệnh",
+                desc: "<code>Size</code> quyết định lệnh chiếm bao nhiêu hàng: <code>Large</code> = cả 3 hàng (icon 28 trên, nhãn dưới), <code>Medium</code> = 2 hàng, <code>Small</code> = 1 hàng (icon 16 bên trái). Một cột chứa được 1 Medium + 1 Small, hoặc 3 Small.",
+                xaml: `<ribbon:RibbonGroup Header="Mixed">
+    <ribbon:RibbonButton Header="Large" Size="Large" />
+    <ribbon:RibbonButton Header="Medium" Size="Medium" />
+    <ribbon:RibbonButton Header="Small" Size="Small" />
+</ribbon:RibbonGroup>`,
+                callout: {
+                    type: "tip",
+                    body: "Để cột không bị hở, hãy xếp theo nhịp <code>Large</code> · <code>Medium + Small</code> · <code>3 × Small</code>. Nếu hai <code>Medium</code> đứng cạnh nhau, nút thứ hai sẽ mở cột mới và để trống hàng cuối."
+                }
+            },
+            {
+                title: "Tự thu gọn khi hẹp",
+                desc: "Ribbon đo tổng bề rộng của tab đang chọn rồi leo thang: hạ toàn bộ <code>Large</code> xuống Medium → hạ tiếp xuống Small → gộp từng group thành một nút. Group bị gộp vẫn giữ đủ lệnh trong flyout của nó.",
+                csharp: `// Group quan trọng: không bao giờ bị gộp
+var review = new RibbonGroup { Header = "Review", CollapsePriority = 0 };
+
+// Group phụ: bị gộp trước tiên (số càng nhỏ càng gộp sớm)
+var utilities = new RibbonGroup { Header = "Utilities", CollapsePriority = 10 };
+
+// Thu gọn cả ribbon xuống chỉ còn dải tab
+ribbon.IsMinimized = true;`,
+                callout: {
+                    type: "warn",
+                    body: "<code>CollapsePriority = 0</code> nghĩa là <b>ghim</b>: group đó không bao giờ bị gộp, kể cả khi ribbon rất hẹp. Dùng cho các lệnh không được phép biến mất."
+                }
+            },
+            {
+                title: "Flyout của group",
+                desc: "Mũi tên cạnh tên group mở flyout chứa toàn bộ lệnh của group đó — giống panel flyout của AutoCAD. Flyout rộng tối thiểu bằng group và đóng khi bấm ra ngoài hoặc chọn một lệnh.",
+                csharp: `// Mở/đóng flyout bằng code
+group.IsDropDownOpen = true;
+
+// Nội dung flyout là menu dựng từ item của group
+RibbonMenu flyout = group.CollapsedMenu;`,
+                callout: {
+                    type: "warn",
+                    body: "Flyout hiện là <b>menu lệnh</b> (icon + tên), chưa phải bản panel mở rộng như AutoCAD — một control WPF chỉ có một cha trong visual tree nên không thể bê nguyên control đang hiển thị vào popup."
+                }
+            },
+            {
+                title: "Quick Access — thanh lệnh luôn hiện",
+                desc: "Dải lệnh luôn hiện: mặc định nằm <b>cùng hàng với tab</b>, sát mép phải (`QuickAccessPlacement.HeaderRight`); đổi sang `AboveRibbon` hoặc `BelowRibbon` nếu muốn nó thành dải riêng. Lệnh ghim vào đây luôn bấm được dù đang ở tab nào. Mũi tên bên phải mở panel tùy biến: mọi lệnh trong ribbon, nhóm theo tab, có icon và dấu tích ở lệnh đã ghim. Panel giới hạn chiều cao và cuộn được, bấm nhiều lệnh liên tiếp mà không bị đóng.",
+                csharp: `// Ghim / bỏ ghim
+ribbon.PinToQuickAccess(saveButton);
+ribbon.UnpinFromQuickAccess(saveButton);
+
+// Hiện cả nhãn chữ, không chỉ icon
+ribbon.QuickAccess.ShowLabels = true;
+
+// Mở menu tùy biến bằng code
+ribbon.QuickAccess.IsCustomizeOpen = true;
+
+// Đổi vị trí QAT: inline (mặc định), trên dải tab, hoặc dưới vùng nội dung
+ribbon.QuickAccessPlacement = RibbonQuickAccessPlacement.AboveRibbon;
+
+// Tự dựng danh sách ghim của riêng bạn
+var bar = new RibbonQuickAccessToolBar { PinnableItems = ribbon.AllItems };
+bar.Pin(ribbon.AllItems[0]);`,
+                callout: {
+                    type: "tip",
+                    body: "Một control WPF chỉ có một cha trong visual tree, nên QAT không chứa chính <code>RibbonItem</code> gốc mà chứa bản sao nhẹ (<code>RibbonQuickAccessButton</code>) dùng chung <code>Command</code>, icon và tooltip. Nhờ vậy ghim lệnh không nhân đôi logic."
+                }
+            },
+            {
+                title: "File menu — ApplicationMenu",
+                desc: "<code>RibbonApplicationMenu</code> là khối nổi ở góc trái trên, tách khỏi dải tab. Bấm vào mở panel hai cột: lệnh chính bên trái, tài liệu gần đây bên phải, và một nhóm lệnh chân trang (Options, Exit). Khối này mặc định <b>trung tính</b> (nền xám, chữ đậm) để không tranh chấp với màu nhấn — màu nhấn đã dành cho tab đang chọn; muốn khối màu như Office 2010 thì đặt <code>Background</code> / <code>Foreground</code> cho control.",
+                xaml: `<ribbon:Ribbon.ApplicationMenu>
+    <ribbon:RibbonApplicationMenu Header="File" RecentHeader="Mở gần đây">
+        <ribbon:RibbonMenuItem Header="New" InputGestureText="Ctrl+N" />
+        <ribbon:RibbonMenuItem Header="Open" InputGestureText="Ctrl+O" />
+        <ribbon:RibbonMenuSeparator />
+        <ribbon:RibbonMenuItem Header="Print" InputGestureText="Ctrl+P" />
+    </ribbon:RibbonApplicationMenu>
+</ribbon:Ribbon.ApplicationMenu>`,
+                csharp: `var file = new RibbonApplicationMenu { Header = "File", RecentHeader = "Mở gần đây" };
+file.Items.Add(new RibbonMenuItem { Header = "New", InputGestureText = "Ctrl+N" });
+file.FooterItems = new object[] { new RibbonMenuItem { Header = "Exit" } };
+file.RecentItems = new object[] { "Tower-A.dwg", "Site-plan.dwg" };
+
+ribbon.ApplicationMenu = file;`,
+                callout: {
+                    type: "warn",
+                    body: "Đây là <b>menu panel</b> kiểu Office 2010, không phải backstage toàn màn hình kiểu 2013+. Muốn backstage thì dựng một <code>Grid</code> riêng và hoán đổi nội dung cửa sổ."
+                }
+            },
+            {
+                title: "Tab ngữ cảnh",
+                desc: "<code>RibbonContextualTabGroup</code> gói các tab chỉ tồn tại trong một chế độ (Sketch, Table, Modify). Đặt thẳng vào <code>ItemsSource</code>; ribbon tự bung thành các tab con và vẽ dải màu phía trên, gộp các tab liền nhau cùng nhóm vào một dải.",
+                xaml: `<ribbon:Ribbon>
+    <ribbon:RibbonTabItem Header="Home" />
+
+    <ribbon:RibbonContextualTabGroup Header="Công cụ vẽ" Accent="#D93B3B">
+        <ribbon:RibbonTabItem Header="Sketch" />
+    </ribbon:RibbonContextualTabGroup>
+</ribbon:Ribbon>`,
+                csharp: `var sketch = new RibbonContextualTabGroup
+{
+    Header = "Công cụ vẽ",
+    Accent = Brushes.Crimson
+};
+sketch.Items.Add(new RibbonTabItem { Header = "Sketch" });
+
+ribbon.ItemsSource = new object[] { homeTab, sketch };
+
+// Bật/tắt cả nhóm theo chế độ đang làm việc
+sketch.Visibility = Visibility.Visible;   // hoặc Collapsed`,
+                callout: {
+                    type: "tip",
+                    body: "Dùng <code>Visibility</code> chứ không phải thêm/xóa tab: tab bị ẩn vẫn giữ nguyên trạng thái, và <code>SelectedIndex</code> tự nhảy về tab hợp lệ gần nhất. Đặt <code>IsAvailable</code> trên từng tab nếu cần ẩn lẻ."
+                }
+            },
+            {
+                title: "Screen tip",
+                desc: "Mỗi lệnh tự có screen tip dựng từ <code>Header</code>, <code>ScreenTip</code> và <code>GestureText</code> — không cần viết thêm gì. Cần hình ảnh hay chân trang thì gán <code>RibbonToolTip</code> trực tiếp.",
+                xaml: `<ribbon:RibbonButton Header="Save"
+                     ScreenTip="Ghi bản vẽ hiện tại"
+                     GestureText="Ctrl+S" />
+
+<ribbon:RibbonButton Header="Print">
+    <ribbon:RibbonButton.ToolTip>
+        <ribbon:RibbonToolTip Title="Print"
+                              Description="Gửi bản vẽ tới máy in hoặc xuất PDF."
+                              GestureText="Ctrl+P"
+                              Footer="Nhấn F1 để xem trợ giúp" />
+    </ribbon:RibbonButton.ToolTip>
+</ribbon:RibbonButton>`,
+                csharp: `// Tự sinh từ Header + ScreenTip + GestureText
+save.GestureText = "Ctrl+S";
+
+// Hoặc tự dựng
+var tip = new RibbonToolTip
+{
+    Title = "Print",
+    Description = "Gửi bản vẽ tới máy in hoặc xuất PDF.",
+    GestureText = "Ctrl+P",
+    Footer = "Nhấn F1 để xem trợ giúp",
+    Preview = screenshot
+};
+print.ToolTip = tip;`,
+                callout: {
+                    type: "tip",
+                    body: "Tooltip vẫn hiện khi lệnh bị vô hiệu hóa (<code>ToolTipService.ShowOnDisabled</code>), vì lý do lệnh bị mờ thường chính là thứ người dùng cần biết. Gán <code>ToolTip</code> của riêng bạn thì ribbon không ghi đè nữa."
+                }
+            },
+            {
+                title: "Ô nhập liệu trên lưới",
+                desc: "<code>RibbonComboBox</code>, <code>RibbonTextBox</code> và <code>RibbonCheckBox</code> sống ngay trên lưới 3 hàng. Cả ba thừa hưởng <code>RibbonItem</code> nên vẫn có <code>Command</code>, <code>ScreenTip</code>, <code>Size</code> và <b><code>ColumnSpan</code></b> — số cột mà control chiếm, mặc định 1.",
+                xaml: `<ribbon:RibbonGroup Header="Text">
+    <ribbon:RibbonComboBox Header="Font" ColumnSpan="2"
+                           ItemsSource="{Binding Fonts}" SelectedItem="{Binding Font}" />
+    <ribbon:RibbonComboBox Header="Size" ColumnSpan="2"
+                           ItemsSource="{Binding Sizes}" SelectedItem="{Binding Size}" />
+
+    <ribbon:RibbonSeparator />
+
+    <ribbon:RibbonCheckBox Header="Snap" IsChecked="{Binding Snap}" />
+    <ribbon:RibbonTextBox Header="Step" ColumnSpan="2" Text="{Binding Step}" />
+</ribbon:RibbonGroup>`,
+                csharp: `var font = new RibbonComboBox
+{
+    Header = "Font",          // nhãn bên trái, bỏ trống nếu không cần
+    ColumnSpan = 2,           // rộng 2 cột = 140 px
+    ItemsSource = fonts,
+    DisplayMemberPath = "Name"
+};
+
+font.SelectedItem = "Calibri";    // hoặc font.SelectedIndex = 0
+
+var step = new RibbonTextBox { Header = "Step", Text = "10", ColumnSpan = 2 };
+var snap = new RibbonCheckBox { Header = "Snap", IsChecked = true };`,
+                callout: {
+                    type: "tip",
+                    body: "Một cột chỉ rộng 70 px, nên <code>RibbonComboBox</code> và <code>RibbonTextBox</code> gần như luôn cần <code>ColumnSpan=\"2\"</code> — nếu không nhãn sẽ ăn hết chỗ của ô nhập. Hai control cùng <code>ColumnSpan</code> đứng liền nhau sẽ xếp <b>chồng theo hàng</b> trong cùng một dải cột, nhờ vậy nhóm không bị phình ngang."
+                }
+            },
+            {
+                title: "Gallery",
+                desc: "<code>RibbonGallery</code> là lưới ảnh có chọn, dùng cho bảng màu hay thư viện kiểu. Trên ribbon lưới chỉ vẽ <b>ô màu</b>; nút mũi tên mở bản đầy đủ trong popup, nơi mỗi ô có thêm tên dưới hình. Hai chế độ xem dùng chung một <code>SelectedItem</code>, nên chọn ở đâu cũng như nhau.",
+                xaml: `<ribbon:RibbonGroup Header="Styles">
+    <ribbon:RibbonGallery ColumnSpan="3"
+                          ItemWidth="34" ItemHeight="32"
+                          ItemsSource="{Binding Swatches}"
+                          SelectedItem="{Binding Material}" />
+</ribbon:RibbonGroup>`,
+                csharp: `var gallery = new RibbonGallery
+{
+    ColumnSpan = 3,
+    ItemWidth = 34,           // ô trên ribbon: chỉ đủ cho ô màu
+    ItemHeight = 32,
+    ItemsSource = new[]
+    {
+        new RibbonGalleryItem("Steel", steelIcon),
+        new RibbonGalleryItem("Sand", sandIcon)
     }
+};
+
+gallery.SelectedItem = gallery.ItemsSource.First();
+gallery.SelectionChanged += (_, _) => Apply(gallery.SelectedItem);
+
+// Popup rộng rãi hơn nên hiện được tên dưới mỗi ô
+gallery.ExpandedItemTemplate = (DataTemplate)FindResource("MyNamedTile");
+
+// Ẩn mũi tên mở rộng khi lưới đã đủ chỗ
+gallery.ShowExpandButton = false;`,
+                callout: {
+                    type: "warn",
+                    body: "<code>RibbonGalleryItem</code> là object thuần (Header / Icon / ToolTip / Tag), không phải control — nhờ vậy cùng một item hiện được ở cả lưới trên ribbon lẫn popup. Lưới trên ribbon mặc định chỉ vẽ hình (<code>ItemTemplate</code>), popup vẽ hình + tên (<code>ExpandedItemTemplate</code>): ô 32 px không đủ chỗ cho chữ nên nhãn sẽ bị cắt hoặc tràn sang hàng dưới. Gallery tự bật <code>IsFixedSize</code> nên <b>không</b> bị ép xuống một hàng khi ribbon thu gọn."
+                }
+            },
+            {
+                title: "Key tip (Alt)",
+                desc: "Nhấn <b>Alt</b> khi ribbon đang mở: mỗi tab, mỗi lệnh và mỗi nút mở hộp thoại của group hiện một badge chữ cái. Gõ chữ cái là lệnh chạy; gõ chữ cái của tab khác là đổi tab rồi hiện badge của tab đó; <b>Esc</b> để thoát. Không cần khai báo gì thêm — bỏ trống <code>KeyTip</code> thì ribbon tự lấy chữ cái đầu của <code>Header</code> và tự tránh trùng.",
+                xaml: `<ribbon:RibbonTabItem Header="Home" KeyTip="H">
+    <ribbon:RibbonGroup Header="Font" KeyTip="F"
+                        DialogLauncherCommand="{Binding OpenFontDialog}">
+        <ribbon:RibbonToggleButton Header="Bold" KeyTip="B" />
+        <ribbon:RibbonToggleButton Header="Italic" />      <!-- tự thành "I" -->
+    </ribbon:RibbonGroup>
+</ribbon:RibbonTabItem>`,
+                csharp: `// Alt do ribbon tự bắt ở window chứa nó, không cần khai báo InputBinding
+ribbon.ShowKeyTips();      // mở bằng tay, ví dụ từ một nút trên toolbar
+ribbon.HideKeyTips();
+
+bool showing = ribbon.IsShowingKeyTips;
+
+// Tắt hẳn phím Alt nếu ứng dụng đã dùng Alt cho việc khác
+KeyTipService.SetIsEnabled(ribbon, false);
+
+// Nơi tự xử lý bàn phím (remote, gamepad) thì đẩy phím vào thẳng
+bool handled = ribbon.ProcessKeyTipKey(Key.B);`,
+                callout: {
+                    type: "tip",
+                    body: "Badge được vẽ trong chính ribbon (<code>PART_KeyTipLayer</code>), không dùng <code>AdornerLayer</code>, nên nó vẫn đúng chỗ khi ribbon nằm trong popup hay trong một panel cuộn. Lệnh không nhìn thấy (group đã gộp, tab đang ẩn) thì không có badge — và <b>không</b> bấm được bằng key tip. Bộ badge hiện cả lệnh của tab đang mở, nên lệnh đang thấy trước mắt chỉ cách một chữ cái."
+                }
+            },
+            {
+                title: "Màu, tìm kiếm và lưu trạng thái",
+                desc: "<code>RibbonColorPicker</code> là ô màu lớn có swatch và popup chứa <code>ColorPicker</code> đầy đủ. <code>RibbonSearchBox</code> bọc <code>SearchBox</code> thành một ô trên lưới. Còn <code>RibbonStateStore</code> lo phần người dùng mong đợi nhất: mở lại app thì tab, trạng thái thu gọn, lệnh đã ghim và group đã gấp vẫn y như cũ.",
+                xaml: `<ribbon:RibbonGroup Header="Paint">
+    <ribbon:RibbonColorPicker Header="Colour" KeyTip="C"
+                              SelectedColor="#DC2626" ShowAlpha="True" />
+</ribbon:RibbonGroup>
+
+<ribbon:RibbonGroup Header="Find">
+    <ribbon:RibbonSearchBox Header="Find" ColumnSpan="3"
+                            Placeholder="Tìm lệnh, màu…"
+                            SearchCommand="{Binding SearchCommand}" />
+</ribbon:RibbonGroup>`,
+                csharp: `var colour = new RibbonColorPicker { Header = "Colour", ShowAlpha = true };
+colour.SelectedColorChanged += (_, _) => Apply(colour.SelectedColor);
+
+var search = new RibbonSearchBox
+{
+    ColumnSpan = 3,
+    Placeholder = "Tìm lệnh, màu…",
+    IsInstantSearch = true,       // chạy khi gõ, không cần Enter
+    SearchCommand = SearchCommand
+};
+
+// Lưu / khôi phục trạng thái người dùng
+RibbonStateStore.Save(ribbon.CaptureState(), "ribbon.json");
+ribbon.ApplyState(RibbonStateStore.Load("ribbon.json"));
+
+// Hoặc tự quản lý chuỗi JSON
+string json = RibbonStateStore.ToJson(ribbon.CaptureState());
+RibbonState? state = RibbonStateStore.FromJson(json);`,
+                callout: {
+                    type: "warn",
+                    body: "Trạng thái được nhận diện bằng <code>Id</code>: tab dùng <code>Id</code> rồi mới đến <code>Header</code>, lệnh dùng <code>Id</code>, group dùng <code>tab:Header</code>. Thiếu <code>Id</code> thì lệnh <b>không</b> được ghim lại sau khi khởi động. Id lạ trong file cũ bị bỏ qua, nên bản lưu cũ không làm hỏng ribbon mới."
+                }
+            },
+            {
+                title: "MenuBar phía trên ribbon",
+                desc: "<code>RibbonMenuBar</code> là dải menu ngang đặt trên ribbon (hoặc dùng một mình trong app đơn giản). Mỗi <code>RibbonMenuBarItem</code> mở dropdown chứa <code>RibbonMenuItem</code> và <code>RibbonMenuSeparator</code>, tận dụng toàn bộ hệ thống menu đã có. Click mở dropdown, hover chuyển đổi khi menu đang mở, Left/Right di chuyển, Escape đóng.",
+                xaml: `<ribbon:RibbonMenuBar>
+    <ribbon:RibbonMenuBarItem Header="File">
+        <ribbon:RibbonMenuItem Header="New" InputGestureText="Ctrl+N" />
+        <ribbon:RibbonMenuItem Header="Open…" InputGestureText="Ctrl+O" />
+        <ribbon:RibbonMenuSeparator />
+        <ribbon:RibbonMenuItem Header="Exit" />
+    </ribbon:RibbonMenuBarItem>
+    <ribbon:RibbonMenuBarItem Header="Edit">
+        <ribbon:RibbonMenuItem Header="Undo" InputGestureText="Ctrl+Z" />
+        <ribbon:RibbonMenuItem Header="Redo" InputGestureText="Ctrl+Y" />
+    </ribbon:RibbonMenuBarItem>
+</ribbon:RibbonMenuBar>`,
+                csharp: `var file = new RibbonMenuBarItem { Header = "File" };
+file.Items.Add(new RibbonMenuItem { Header = "New" });
+
+var bar = new RibbonMenuBar();
+bar.Items.Add(file);
+bar.Items.Add(new RibbonMenuBarItem { Header = "Edit" });`
+            }
+        ],
+        related: ["ribboncommands", "splitbutton", "concostwindow"]
+    },
+
+    ribboncommands: {
+        title: "Ribbon commands — nút, split, menu",
+        badge: "Layout & Shell",
+        desc: "Bộ lệnh đặt trong ribbon: nút thường, toggle, radio, split button hai vùng, dropdown và menu lồng nhau. Tất cả đều theo <code>ICommand</code>: <code>IsEnabled</code> tự bám <code>CanExecute</code>.",
+        keywords: ["ribbon button", "split button", "dropdown", "menu", "command", "radio"],
+        sections: [
+            {
+                title: "Nút, toggle và radio",
+                desc: "<code>RibbonToggleButton</code> giữ trạng thái bật/tắt. Đặt cùng <code>GroupName</code> thì chúng loại trừ nhau như radio — dùng <code>RibbonRadioButton</code> để không thể bỏ chọn bằng cách bấm lại.",
+                xaml: `<ribbon:RibbonGroup Header="Units">
+    <ribbon:RibbonRadioButton Header="mm" Size="Small" GroupName="unit" IsChecked="True" />
+    <ribbon:RibbonRadioButton Header="cm" Size="Small" GroupName="unit" />
+    <ribbon:RibbonRadioButton Header="m"  Size="Small" GroupName="unit" />
+</ribbon:RibbonGroup>`,
+                csharp: `var bold = new RibbonToggleButton { Header = "Bold", Size = RibbonItemSize.Small };
+bold.Command = EditingCommands.ToggleBold;   // IsEnabled bám CanExecute
+
+// Radio: bấm lại không bỏ chọn
+var mm = new RibbonRadioButton { Header = "mm", GroupName = "unit", IsChecked = true };`
+            },
+            {
+                title: "Split button — hai vùng bấm",
+                desc: "Thân nút chạy <code>Command</code>, mũi tên mở menu. Hai vùng hit-test tách rời: nút lớn thì vùng mũi tên là dải đáy (nơi tam giác nằm), nút nhỏ thì là dải phải.",
+                xaml: `<ribbon:RibbonSplitButton Header="Export" Size="Large">
+    <ribbon:RibbonMenuItem Header="PDF" />
+    <ribbon:RibbonMenuSeparator />
+    <ribbon:RibbonMenuItem Header="CSV" />
+</ribbon:RibbonSplitButton>`,
+                csharp: `var export = new RibbonSplitButton { Header = "Export", Size = RibbonItemSize.Large };
+export.Command = ExportCommand;                       // vùng trái
+export.Items.Add(new RibbonMenuItem { Header = "PDF" });  // vùng mũi tên
+export.ArrowWidth = 20;                               // bề rộng vùng mũi tên`
+            },
+            {
+                title: "Menu lồng nhau",
+                desc: "<code>RibbonMenu</code> là danh sách dọc; <code>RibbonMenuItem</code> chạy lệnh hoặc mở submenu nếu có item con. <code>InputGestureText</code> chỉ hiển thị phím tắt, không tự đăng ký.",
+                xaml: `<ribbon:RibbonDropDownButton Header="Insert" Size="Large">
+    <ribbon:RibbonMenuItem Header="Table" />
+    <ribbon:RibbonMenuItem Header="Chart">
+        <ribbon:RibbonMenuItem Header="Bar" />
+        <ribbon:RibbonMenuItem Header="Line" />
+    </ribbon:RibbonMenuItem>
+    <ribbon:RibbonMenuSeparator />
+    <ribbon:RibbonMenuItem Header="Link" InputGestureText="Ctrl+K" />
+</ribbon:RibbonDropDownButton>`,
+                callout: {
+                    type: "tip",
+                    body: "Submenu mở khi rê chuột hoặc bấm phím <code>→</code>, đóng bằng <code>Esc</code>. Chọn một lệnh sẽ tự đóng cả popup cha."
+                }
+            }
+        ],
+        related: ["ribbon", "splitbutton", "badge"]
+    },
 
 };

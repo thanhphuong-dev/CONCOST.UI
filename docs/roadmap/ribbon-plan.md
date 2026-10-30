@@ -1,6 +1,6 @@
-# Kế hoạch triển khai `Ribbon`
+﻿# Kế hoạch triển khai `Ribbon`
 
-> Trạng thái: **đề xuất**, chưa code. Bản này map 1-1 với 2 tài liệu bạn gửi:
+> Trạng thái: **R0–R6 đã xong và đã commit**; còn lại là bản release (tag + nupkg + zip demo) chờ bạn bật đèn. Bản này map 1-1 với 2 tài liệu bạn gửi:
 > checklist hành vi A–F và danh sách **22 control** kèm ưu tiên P0/P1/P2.
 > Tên class dùng đúng như bảng của bạn (`RibbonTabItem`, `RibbonKeyTip`, `RibbonGroupLauncher`…).
 
@@ -13,6 +13,44 @@
 | **1.1.0** | Toàn bộ **P0** (8 control) + layout engine + theme + command | Dựng được ribbon thật cho app CAD/BIM |
 | **1.2.0** | Toàn bộ **P1** (11 control) | Ngang tầm ribbon của Office ở mức thường dùng |
 | **1.3.0** | Toàn bộ **P2** (5 control) | Hoàn thiện: tìm lệnh, KeyTip, color picker |
+
+---
+
+## 0b. Tiến độ
+
+| Phase | Nội dung | Trạng thái |
+| --- | --- | --- |
+| R0 | Khung: `Ribbon`, `RibbonTabItem`, `RibbonGroup`, `RibbonButton`, `RibbonSeparator`, `RibbonGroupPanel`, token, style | ✅ |
+| R1 | Thang thu gọn Full → Medium → Small → gộp group, flyout group, tự mở lại khi rộng ra | ✅ |
+| R2 | `RibbonToggleButton`, `RibbonRadioButton`, `RibbonSplitButton`, `RibbonDropDownButton`, `RibbonMenu`, `RibbonMenuItem`, `RibbonMenuSeparator` | ✅ |
+| R3 | Dark theme, DPI 150 %, tài liệu 2 trang VI/EN + bảng thuộc tính | ✅ |
+| R4 | `RibbonQuickAccessToolBar` (+`RibbonQuickAccessButton`), `RibbonApplicationMenu`, `RibbonContextualTabGroup` (+`RibbonTabStripPanel`), `RibbonToolTip` | ✅ |
+| Release | tag + release + nupkg + zip demo | ⏳ chờ bạn cho phép tag/push |
+| R5 | `RibbonCheckBox`, `RibbonTextBox`, `RibbonComboBox`, `RibbonGallery` (+`RibbonGalleryItem`), `ColumnSpan`, `IsFixedSize` | ✅ |
+| R6 | `RibbonKeyTip` (+`KeyTipService`), `RibbonColorPicker`, `RibbonSearchBox`, `RibbonGroupLauncher`, `RibbonState`/`RibbonStateStore`, automation peer | ✅ |
+
+Ghi chú kỹ thuật đã gặp (để lần sau không lặp lại):
+- `RibbonGroupPanel` là `ItemsPanel` nên `TemplatedParent` là ItemsControl — phải tìm group bằng cách đi ngược visual tree.
+- Đổi `SizeMode` phải `InvalidateMeasure()` **panel**, không chỉ group.
+- Template phải trigger theo `EffectiveSize` (không phải `Size`), nếu không nút Large bị hạ size vẫn vẽ kiểu Large.
+- Key tip vẽ trong overlay `PART_KeyTipLayer` của chính ribbon, **không** dùng `AdornerLayer` — ribbon lồng trong popup hoặc panel cuộn vẫn đúng chỗ, và không cần `AdornerDecorator` ở host.
+- Định vị badge phải dùng `TransformToVisual(layer)`, **không** `TransformToAncestor(layer)`: layer là *anh em* của tab strip và các group, không phải tổ tiên của chúng — dùng sai thì mọi badge dồn về (0,0) và trông như "chỉ có một badge".
+- `UIElement.IsVisible` là `false` khi control chưa có presentation source, nên test cho key tip phải host ribbon trong `Window` thật; nếu chỉ đo trong `Border` thì session không tạo badge nào.
+- Đổi tab bằng key tip phải build lại badge **hai lần**: ngay lập tức cho dải tab, và một lần nữa ở `DispatcherPriority.Loaded` vì nội dung tab mới chỉ được tạo trong lượt layout kế tiếp.
+- Badge cho nút mở hộp thoại của group neo ở góc **dưới-phải** (chỗ mũi tên), nếu không nó đè lên badge của item đầu tiên trong group.
+- `KeyTip` là attached property của `KeyTipService`, mỗi control phơi lại bằng `public static readonly DependencyProperty KeyTipProperty = KeyTipService.KeyTipProperty;` — `build-props.py` phải hiểu dạng alias này thì bảng thuộc tính mới có `KeyTip`.
+- Không thể đo lại con trong cùng một pass: mỗi pass chỉ leo **một bậc**, và phải đẩy pass kế tiếp qua `Dispatcher.BeginInvoke`.
+- Flyout dùng `MinWidth` = bề rộng group để khớp panel.
+- **Resource có key trong `Generic.xaml` KHÔNG tra được bằng `SetResourceReference`/`FindResource`** — chỉ style ngầm định (theo `DefaultStyleKey`) mới áp tự động. Muốn có style riêng thì tạo class riêng: `RibbonQuickAccessButton`.
+- Trong `Generic.xaml`, `BasedOn="{StaticResource …}"` chỉ thấy key khai báo **phía trên** nó — chèn style mới ở sai chỗ sẽ ném `Cannot find resource named …` lúc chạy, không phải lúc build.
+- `ItemsPanel` mặc định là `StackPanel` **dọc** — QAT phải khai báo `ItemsPanel` ngang, nếu không các nút xếp chồng và bị cắt.
+- `ItemsPresenter` đặt panel con theo `HorizontalAlignment` của chính panel; để `Stretch` thì ListBox căn giữa dải tab → phải đặt `HorizontalAlignment="Left"`.
+- `ToolTip` không nhận cha logic/visual → muốn render nó ra ảnh phải mở bằng `IsOpen = true` rồi mới `RenderTargetBitmap.Render`.
+- Dải tab ngữ cảnh vẽ bằng `OnRender` (không phải child) vì `ItemsPanel` chỉ được chứa item container.
+- `Generic.xaml` có **style ngầm định cho `TextBlock`** đặt `Foreground = TextPrimary`. Setter của style thắng kế thừa, nên mọi `TextBlock` trong `DataTemplate` **không nhận** màu chữ từ `ListBoxItem`/`Button` cha — phải bind tường minh.
+- Style ngầm định **áp cả vào control sinh ra trong `ControlTemplate`**. `ComboBox` dựng `ToggleButton` bên trong nên nó hưởng `CONCOST.ToggleButton.Base` (`MinHeight` 34, `Padding` 14,6): hộp combo cao 20 px bị toggle 34 px đè, mất viền trên/dưới và mũi tên tụt xuống đáy. Mọi toggle trong template phải đặt `Style="{x:Null}"`.
+- `WrapPanel.ItemWidth` trong `ItemsPanelTemplate` **không** bind được `AncestorType` tới control cha khi list nằm trong `Popup` (visual tree của popup tách rời). Cách chắc ăn: đặt `Tag` của `ListBox` = gallery rồi bind `Tag.ItemWidth` qua `AncestorType=ListBox`.
+- Một `RibbonItem` rộng hơn 1 cột mà đứng sau một cột đang dở sẽ tự tìm dải cột trống kế tiếp; item sau nó vẫn ở lại cột đó nên hai ô nhập xếp chồng, nhóm không phình ngang.
 
 ---
 
@@ -181,8 +219,8 @@ public sealed class RibbonState
 | **R2 — Command** | Toggle, Radio, DropDown, Split (2 vùng), menu lồng; CanExecute → IsEnabled | C1–C8 | 4 control + test command sync | 2,5 ngày |
 | **R3 — Theme + release 1.1.0** | 6 trạng thái, DPI 100–200%, đổi theme runtime, 8 preset; docs 6 trang; release | **D1–D8**, A7, F2 | ảnh 2 theme × 3 DPI + docs + **1.1.0** | 2 ngày |
 | **R4 — P1 nhóm 1** | QAT (ghim/bỏ ghim, context menu), `RibbonApplicationMenu`, `RibbonToolTip`, `RibbonContextualTabGroup` | E3–E5, A6, E2 | 4 control + demo | 2,5 ngày |
-| **R5 — P1 nhóm 2** | `RibbonCheckBox`, `RibbonRadioButton`, `RibbonComboBox`, `RibbonTextBox`, `RibbonGallery`, `RibbonMenuItem` | C6, C7 | 6 control (5 là wrapper) | 2,5 ngày |
-| **R6 — P2 + bền hoá** | `RibbonKeyTip`, `RibbonColorPicker`, `RibbonSearchBox`, `RibbonGroupLauncher`, `RibbonState`; memory/perf/a11y | **E1, E6–E8**, **F1–F8** | 4 control + test suite + docs + **1.3.0** | 3 ngày |
+| **R5 — P1 nhóm 2** ✅ | `RibbonCheckBox`, `RibbonRadioButton`, `RibbonComboBox`, `RibbonTextBox`, `RibbonGallery`, `RibbonMenuItem` | C6, C7 | 6 control (5 là wrapper) | 2,5 ngày |
+| **R6 — P2 + bền hoá** ✅ | `RibbonKeyTip`, `RibbonColorPicker`, `RibbonSearchBox`, `RibbonGroupLauncher`, `RibbonState`; memory/perf/a11y | **E1, E6–E8**, **F1–F8** | 4 control + test suite + docs + **1.3.0** | 3 ngày |
 
 **Tổng ≈ 17 ngày công** (~3,5 tuần làm thật). Mốc dùng được: **sau R3 → 1.1.0**.
 

@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**106 pages · 627 documented properties · 80 controls mapped to source · 2 languages (VI / EN).**
+**108 pages · 723 documented properties · 82 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -119,6 +119,8 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Divider](index.html#divider) | Đường kẻ phân chia khu vực bố cục với tiêu đề nhãn văn bản ở giữa. |
 | [AdaptivePanel](index.html#adaptivepanel) | ContentControl tự chọn layout theo bề rộng khả dụng qua danh sách Breakpoint — dùng để chuyển 3 cấp Compact / Normal / Wide mà không cần code-behind. |
 | [CONCOSTWindow](index.html#concostwindow) | Cửa sổ WPF với chrome tuỳ biến (title bar, nút min/max/close trong template) — kéo cửa sổ, double-click để maximize đều xử lý sẵn. |
+| [Ribbon](index.html#ribbon) | Ribbon kiểu Office / AutoCAD: dải tab ở trên, mỗi tab chứa các group, mỗi group xếp lệnh trên lưới 3 hàng. Khi hẹp, ribbon tự hạ kích thước lệnh rồi g |
+| [Ribbon commands](index.html#ribboncommands) | Bộ lệnh đặt trong ribbon: nút thường, toggle, radio, split button hai vùng, dropdown và menu lồng nhau. Tất cả đều theo ICommand: IsEnabled tự bám Can |
 
 ### Effects & Decoration
 

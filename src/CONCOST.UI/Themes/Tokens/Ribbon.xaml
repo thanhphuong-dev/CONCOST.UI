@@ -1,0 +1,25 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Ribbon metrics. Sizes are in device-independent pixels; no control hard-codes them. -->
+    <sys:Double x:Key="CONCOST.Ribbon.RowHeight">24</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.RowGap">1</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.ColumnWidth">70</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.GroupHeight">74</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.TabHeight">30</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.SeparatorWidth">9</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.LargeIconSize">28</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.MediumIconSize">18</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.SmallIconSize">16</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.LauncherSize">14</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.ContextualBandHeight">15</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.QuickAccessHeight">26</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.ContextualBandFontSize">9.5</sys:Double>
+
+    <Thickness x:Key="CONCOST.Ribbon.ItemPadding">3,2</Thickness>
+    <Thickness x:Key="CONCOST.Ribbon.GroupPadding">4,2,4,3</Thickness>
+    <CornerRadius x:Key="CONCOST.Ribbon.ItemCornerRadius">3</CornerRadius>
+    <CornerRadius x:Key="CONCOST.Ribbon.ShellCornerRadius">8</CornerRadius>
+
+</ResourceDictionary>

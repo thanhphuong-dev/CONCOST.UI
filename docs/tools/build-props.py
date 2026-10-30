@@ -1,4 +1,4 @@
-"""
+﻿"""
 build-props.py — generate docs/data/auto.generated.js for the CONCOST.UI wiki.
 
 Why: hand-written property tables drift away from the library. This script reads the
@@ -32,6 +32,13 @@ DP_RE = re.compile(
     re.S,
 )
 EV_RE = re.compile(r"public\s+event\s+[A-Za-z0-9_.<>]+\s+([A-Za-z0-9_]+)")
+# A class may expose an existing attached property under its own name, e.g.
+#     public static readonly DependencyProperty KeyTipProperty = KeyTipService.KeyTipProperty;
+# so XAML can write KeyTip="B" on the control instead of the full attached syntax.
+DP_ALIAS_RE = re.compile(
+    r"public\s+static\s+readonly\s+DependencyProperty\s+([A-Za-z0-9_]+)\s*=\s*"
+    r"([A-Za-z0-9_]+)\.([A-Za-z0-9_]+)\s*;"
+)
 NS_RE = re.compile(r"^\s*namespace\s+([A-Za-z0-9_.]+)", re.M)
 ENUM_RE = re.compile(r"public\s+enum\s+([A-Za-z0-9_]+)\s*\{", re.S)
 
@@ -100,6 +107,7 @@ def default_value(body, start):
 def extract():
     classes = OrderedDict()
     enums = OrderedDict()
+    aliases = []
     for dirpath, dirnames, files in os.walk(SRC):
         dirnames[:] = [d for d in dirnames if d not in ("obj", "bin")]
         for f in sorted(files):
@@ -142,6 +150,9 @@ def extract():
                         "readonly": bool(readonly),
                         "attached": bool(attached),
                     })
+                for m in DP_ALIAS_RE.finditer(body):
+                    aliases.append((name, m.group(1), m.group(2), m.group(3)))
+
                 events = sorted(set(EV_RE.findall(body)))
                 if not props and not events:
                     continue
@@ -152,6 +163,29 @@ def extract():
                     if p["name"] not in known:
                         entry["props"].append(p)
                 entry["events"] = sorted(set(entry["events"]) | set(events))
+
+    # Resolve the aliases now that every registration has been seen. Field names carry a
+    # "Property" suffix that the extracted names do not, so both spellings are tried.
+    def bare(field):
+        return field[:-8] if field.endswith("Property") else field
+
+    for owner, alias, target_class, target_prop in aliases:
+        source = classes.get(target_class)
+        if source is None:
+            continue
+
+        original = next(
+            (p for p in source["props"] if p["name"] in (target_prop, bare(target_prop))), None)
+        if original is None:
+            continue
+
+        entry = classes.setdefault(owner, {"namespace": "", "file": "", "props": [], "events": []})
+        name = bare(alias)
+        if any(p["name"] == name for p in entry["props"]):
+            continue
+
+        entry["props"].append(dict(original, name=name))
+
     return classes, enums
 
 
@@ -1099,6 +1133,15 @@ PAGE_CLASS = {
     "emptystate": ["EmptyState"],
     "watermark": ["Watermark"],
     # web-inspired
+    # ribbon
+    "ribbon": ["Ribbon", "RibbonTabItem", "RibbonGroup", "RibbonQuickAccessToolBar",
+               "RibbonQuickAccessButton", "RibbonApplicationMenu", "RibbonContextualTabGroup",
+               "RibbonTabStripPanel", "RibbonToolTip", "RibbonKeyTip", "RibbonGroupLauncher",
+               "RibbonMenuBar", "RibbonMenuBarItem", "RibbonState"],
+    "ribboncommands": ["RibbonItem", "RibbonButton", "RibbonToggleButton", "RibbonRadioButton",
+                       "RibbonSplitButton", "RibbonDropDownButton", "RibbonMenu", "RibbonMenuItem",
+                       "RibbonSeparator", "RibbonCheckBox", "RibbonTextBox", "RibbonComboBox",
+                       "RibbonGallery", "RibbonGalleryItem", "RibbonColorPicker", "RibbonSearchBox"],
     "spotlightcard": ["SpotlightCard"],
     "odometernumber": ["OdometerNumber"],
     "sparkline": ["Sparkline"],

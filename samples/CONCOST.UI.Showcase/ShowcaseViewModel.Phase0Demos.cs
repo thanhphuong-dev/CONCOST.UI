@@ -33,7 +33,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "CursorGlow — quầng sáng bám con trỏ",
+            "Mặc định",
             host,
             xaml: "<Grid Height=\"170\" ClipToBounds=\"True\" Background=\"#101828\">\n" +
                   "    <TextBlock Text=\"Di chuột trong khung này\" Foreground=\"White\"\n" +
@@ -66,7 +66,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "GridPattern — nền lưới chấm / kẻ / chữ thập",
+            "Chấm · Kẻ · Chữ thập",
             grid,
             xaml: "<ui:GridPattern Pattern=\"Dots\" CellSize=\"18\" PatternOpacity=\"0.55\" />\n" +
                   "<!-- Pattern: Dots | Lines | Cross -->",
@@ -113,7 +113,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "ShakeElement — rung khi dữ liệu không hợp lệ",
+            "Dữ liệu không hợp lệ",
             content,
             xaml: "<Border x:Name=\"LengthField\" attached:ShakeElement.Amplitude=\"8\">\n" +
                   "    <!-- ô nhập -->\n" +
@@ -158,7 +158,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "ThemePreset.Brutal — preset neo-brutalism",
+            "Preset Brutal",
             content,
             xaml: "<!-- Trong App.xaml.cs -->",
             csharp: "ThemeManager.Current.Preset = ThemePreset.Brutal;\n\n" +
@@ -197,7 +197,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Reduced motion — tôn trọng cài đặt hệ thống",
+            "Tắt animation hệ thống",
             content,
             xaml: "<!-- Không cần làm gì: mọi hiệu ứng tự đọc MotionSettings -->",
             csharp: "// Tắt toàn bộ hiệu ứng trong app (ví dụ theo setting của người dùng)\n" +

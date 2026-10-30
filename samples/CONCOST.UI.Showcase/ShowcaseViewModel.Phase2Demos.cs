@@ -42,7 +42,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "ScrollReveal — hiện dần khi vào khung nhìn",
+            "Mặc định",
             scroller,
             xaml: "<ScrollViewer Height=\"200\">\n" +
                   "    <StackPanel>\n" +
@@ -87,7 +87,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "ParallaxPanel — lớp nền trôi chậm hơn",
+            "Mặc định",
             scroller,
             xaml: "<Grid Height=\"320\">\n" +
                   "    <ui:ParallaxPanel Speed=\"0.45\" Height=\"120\" VerticalAlignment=\"Top\">\n" +
@@ -127,7 +127,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "TypewriterText — gõ từng ký tự",
+            "Mặc định",
             content,
             xaml: "<ui:TypewriterText Text=\"Bóc tách khối lượng tự động...\"\n" +
                   "                   CharsPerSecond=\"26\" ShowCaret=\"True\" />",
@@ -167,7 +167,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "TextReveal — từng từ hiện dần",
+            "Mặc định",
             content,
             xaml: "<ui:TextReveal Text=\"Kết cấu chính xác, thi công an toàn\"\n" +
                   "                FontSize=\"26\" WordDelay=\"0.08\" />",

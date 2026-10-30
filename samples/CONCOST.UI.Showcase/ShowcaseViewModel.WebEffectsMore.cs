@@ -33,7 +33,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "SheenSweep — vệt sáng quét qua bề mặt",
+            "Mặc định",
             host,
             xaml: "<Grid Width=\"320\" Height=\"52\">\n" +
                   "    <Border CornerRadius=\"10\" Background=\"#101828\" />\n" +
@@ -71,7 +71,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "PulseRing — vòng lan toả báo hiệu trạng thái live",
+            "Mặc định",
             badge,
             xaml: "<ui:PulseRing MaxRadius=\"46\" Width=\"110\" Height=\"110\"\n" +
                   "              RingCount=\"3\" Duration=\"2.2\" DotRadius=\"6\" />",
@@ -113,7 +113,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "WaveDivider — dải sóng động làm đường phân cách",
+            "Mặc định",
             host,
             xaml: "<Grid Height=\"120\" ClipToBounds=\"True\">\n" +
                   "    <Border Background=\"{DynamicResource CONCOST.Brush.SurfaceSecondary}\" />\n" +
@@ -149,7 +149,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "GradientText — chữ gradient chuyển động",
+            "Mặc định",
             content,
             xaml: "<ui:GradientText Text=\"CONCOST UI\" FontSize=\"34\"\n" +
                   "                 StartColor=\"#FF7900\" EndColor=\"#0284C7\" Speed=\"0.35\" />",

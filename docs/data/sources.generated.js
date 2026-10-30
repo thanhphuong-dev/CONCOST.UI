@@ -83,6 +83,8 @@ const DOCS_SOURCES = {
   "parallaxpanel": "data/web.js",
   "typewritertext": "data/web.js",
   "textreveal": "data/web.js",
+  "ribbon": "data/web.js",
+  "ribboncommands": "data/web.js",
   "badge": "data/custom.js",
   "expander": "data/custom.js",
   "splitbutton": "data/custom.js",

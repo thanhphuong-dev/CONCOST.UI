@@ -43,7 +43,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "AuroraBackground — nền gradient động",
+            "Mặc định",
             host,
             xaml: "<Grid Height=\"170\" ClipToBounds=\"True\" Background=\"#0B0F17\">\n" +
                   "    <ui:AuroraBackground BlobCount=\"5\" BlobOpacity=\"0.45\" />\n" +
@@ -85,7 +85,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "BorderBeam — vệt sáng chạy quanh viền",
+            "Mặc định",
             beam,
             xaml: "<ui:BorderBeam CornerRadius=\"12\" Padding=\"18\"\n" +
                   "               BeamThickness=\"1.8\" BeamLength=\"0.30\" RevolutionSeconds=\"3.5\">\n" +
@@ -140,7 +140,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "ConfettiBurst — hiệu ứng ăn mừng",
+            "Mặc định",
             host,
             xaml: "<Grid Height=\"170\" ClipToBounds=\"True\">\n" +
                   "    <Button Content=\"Duyệt hồ sơ\" Click=\"OnApproveClick\" />\n" +
