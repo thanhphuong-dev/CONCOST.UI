@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/.NET-4.8%20%7C%208%20%7C%2010-512BD4" alt=".NET Framework 4.8, .NET 8, .NET 10">
     <img src="https://img.shields.io/badge/platform-Windows%20%C2%B7%20WPF-0078D4" alt="Windows and WPF">
     <img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="MIT license">
-    <img src="https://img.shields.io/badge/docs-106%20pages-ff7900" alt="106 documentation pages">
+    <img src="https://img.shields.io/badge/docs-108%20pages-ff7900" alt="108 documentation pages">
   </p>
 
   <p>
@@ -37,6 +37,7 @@
 | **Data & dashboards** | `StatisticCard`, `OdometerNumber`, `Sparkline`, `HeatmapCalendar`, `AvatarStack`, `Timeline`, `CardCarousel`, `DataPager`, `PropertyGrid` |
 | **Input & forms** | 15 controls — `UnitBox` (value + unit + decimals), `NumericUpDown`, `OtpInput`, `PinBox`, `CheckComboBox`, `AutoCompleteTextBox`, `ColorPicker`, `RangeSlider`, `Rating`, `ToggleSwitch` |
 | **Navigation & shell** | `NavigationView`, `SideMenu`, `DrawerMenu`, `Breadcrumb`, `StepBar`, `Pagination`, `Transfer`, `TabControl`, `SplitButton`, `CONCOSTWindow` |
+| **Ribbon** | Office / AutoCAD-style `Ribbon` on a three-row group grid with a collapse ladder, `RibbonApplicationMenu`, quick-access toolbar, contextual tabs, Alt key tips, gallery, colour picker, `RibbonMenuBar` and JSON state persistence |
 | **Feedback & status** | `Dialog`, `Drawer`, `Growl` toast, loading indicators and overlays, `Skeleton` shimmer, `EmptyState`, `Watermark` |
 | **Visual effects** | `SpotlightCard`, `TiltCard`, `MagneticHover`, `AuroraBackground`, `BorderBeam`, `ConfettiBurst`, `TypewriterText`, `ScrollReveal`, `ParallaxPanel`, `PulseRing`, `GradientText` and more |
 | **Theming** | Light / dark, 8 presets, 5 accent colours, shared design tokens, three surface styles |
@@ -184,7 +185,7 @@ All of these are drawn directly, so they cost almost nothing and stay crisp at a
 
 [![Documentation preview](docs/assets/docs-preview.png)](https://thanhphuong-dev.github.io/CONCOST.UI/)
 
-The reference is a static wiki — **106 pages**, bilingual **Vietnamese / English**, searchable with `Ctrl K`, with an XAML ↔ C# code inspector on every page. It is fully offline-capable: fonts, icons and syntax highlighting are self-hosted, no CDN.
+The reference is a static wiki — **108 pages**, bilingual **Vietnamese / English**, searchable with `Ctrl K`, with an XAML ↔ C# code inspector on every page. It is fully offline-capable: fonts, icons and syntax highlighting are self-hosted, no CDN.
 
 - **Online:** <https://thanhphuong-dev.github.io/CONCOST.UI/> (`?lang=en` for English)
 - [Documentation index](docs/README.md) — page map and maintenance workflow

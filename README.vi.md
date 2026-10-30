@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/.NET-4.8%20%7C%208%20%7C%2010-512BD4" alt=".NET Framework 4.8, .NET 8, .NET 10">
     <img src="https://img.shields.io/badge/platform-Windows%20%C2%B7%20WPF-0078D4" alt="Windows và WPF">
     <img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="Giấy phép MIT">
-    <img src="https://img.shields.io/badge/docs-106%20trang-ff7900" alt="106 trang tài liệu">
+    <img src="https://img.shields.io/badge/docs-108%20trang-ff7900" alt="108 trang tài liệu">
   </p>
 
   <p>
@@ -37,6 +37,7 @@
 | **Dữ liệu & dashboard** | `StatisticCard`, `OdometerNumber`, `Sparkline`, `HeatmapCalendar`, `AvatarStack`, `Timeline`, `CardCarousel`, `DataPager`, `PropertyGrid` |
 | **Nhập liệu & form** | 15 control — `UnitBox` (giá trị + đơn vị + số lẻ), `NumericUpDown`, `OtpInput`, `PinBox`, `CheckComboBox`, `AutoCompleteTextBox`, `ColorPicker`, `RangeSlider`, `Rating`, `ToggleSwitch` |
 | **Điều hướng & khung** | `NavigationView`, `SideMenu`, `DrawerMenu`, `Breadcrumb`, `StepBar`, `Pagination`, `Transfer`, `TabControl`, `SplitButton`, `CONCOSTWindow` |
+| **Ribbon** | `Ribbon` kiểu Office / AutoCAD trên lưới group 3 hàng với thang thu gọn, `RibbonApplicationMenu`, thanh Quick Access, tab ngữ cảnh, key tip (Alt), gallery, bảng màu, `RibbonMenuBar` và lưu trạng thái bằng JSON |
 | **Phản hồi & trạng thái** | `Dialog`, `Drawer`, toast `Growl`, loading indicator và overlay, `Skeleton` shimmer, `EmptyState`, `Watermark` |
 | **Hiệu ứng thị giác** | `SpotlightCard`, `TiltCard`, `MagneticHover`, `AuroraBackground`, `BorderBeam`, `ConfettiBurst`, `TypewriterText`, `ScrollReveal`, `ParallaxPanel`, `PulseRing`, `GradientText`… |
 | **Theme** | Light / dark, 8 preset, 5 màu accent, design token dùng chung, 3 kiểu surface |
@@ -184,7 +185,7 @@ Tất cả đều vẽ trực tiếp nên gần như không tốn tài nguyên v
 
 [![Xem trước tài liệu](docs/assets/docs-preview.png)](https://thanhphuong-dev.github.io/CONCOST.UI/)
 
-Tài liệu là một wiki tĩnh — **106 trang**, song ngữ **Việt / Anh**, tìm kiếm bằng `Ctrl K`, mỗi trang có code inspector XAML ↔ C#. Chạy **offline hoàn toàn**: font, icon và syntax highlight đều tự host, không CDN.
+Tài liệu là một wiki tĩnh — **108 trang**, song ngữ **Việt / Anh**, tìm kiếm bằng `Ctrl K`, mỗi trang có code inspector XAML ↔ C#. Chạy **offline hoàn toàn**: font, icon và syntax highlight đều tự host, không CDN.
 
 - **Bản online:** <https://thanhphuong-dev.github.io/CONCOST.UI/>
 - [Mục lục tài liệu](docs/README.md) — bản đồ trang và quy trình bảo trì
