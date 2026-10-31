@@ -9,29 +9,7 @@ namespace CONCOST.UI.Tests;
 
 public class ScrollViewerTests
 {
-    private static void RunOnSTA(Action action)
-    {
-        Exception? exception = null;
-        var thread = new Thread(() =>
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-
-        if (exception != null)
-        {
-            throw new AggregateException("STA test failed", exception);
-        }
-    }
+    private static void RunOnSTA(Action action) => WpfApplicationHost.Run(action);
 
     [Fact]
     public void ScrollViewerHelper_DefaultProperties_MatchSpecifications()

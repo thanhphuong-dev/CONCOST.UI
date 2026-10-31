@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Runtime.CompilerServices;
 using CONCOST.UI.Core.Helpers;
@@ -13,7 +14,16 @@ public enum AppTheme
 {
     Light,
     Dark,
-    System
+
+    /// <summary>Follow the operating system's light/dark setting.</summary>
+    System,
+
+    /// <summary>
+    /// Follow the window the controls live in. This is the mode for a plugin hosted by another
+    /// application (Revit, AutoCAD, …): there is no <c>Application.Current</c> of our own, and the
+    /// host window already decides whether the UI around the plugin is light or dark.
+    /// </summary>
+    Auto
 }
 
 public enum ThemePreset
@@ -133,6 +143,16 @@ public class ThemeManager : ObservableObject
     /// Neo-brutalist preset: flat cream surfaces with ink-black outlines. The theme brushes
     /// are snapshotted the first time so switching back to another preset restores them.
     /// </summary>
+    private static bool OwnsKey(ResourceDictionary dictionary, string key)
+    {
+        foreach (var existing in dictionary.Keys)
+        {
+            if (Equals(existing, key)) return true;
+        }
+
+        return false;
+    }
+
     private static void ApplyBrutalOverrides(bool enabled)
     {
         var app = Application.Current;
@@ -144,7 +164,13 @@ public class ThemeManager : ObservableObject
             {
                 BrutalSnapshot.Clear();
                 foreach (var (key, _) in BrutalBrushes)
-                    BrutalSnapshot[key] = app.Resources.Contains(key) ? app.Resources[key] : null;
+                {
+                    // Only a value the application itself owns may be snapshotted. Reading it from
+                    // the theme dictionary and writing it back later would pin the brush at app
+                    // level, and the next Light/Dark switch would never be able to replace it.
+                    BrutalSnapshot[key] = OwnsKey(app.Resources, key) ? app.Resources[key] : null;
+                }
+
                 _brutalApplied = true;
             }
 
@@ -189,11 +215,7 @@ public class ThemeManager : ObservableObject
         var app = Application.Current;
         if (app == null) return;
 
-        var effectiveTheme = theme;
-        if (effectiveTheme == AppTheme.System)
-        {
-            effectiveTheme = GetSystemTheme();
-        }
+        var effectiveTheme = ResolveTheme(theme, Application.Current?.MainWindow);
 
         string themeUri = effectiveTheme == AppTheme.Dark
             ? "pack://application:,,,/CONCOST.UI;component/Themes/Dark.xaml"
@@ -226,8 +248,9 @@ public class ThemeManager : ObservableObject
         if (!rootElement.Dispatcher.CheckAccess())
             throw new InvalidOperationException("Apply the CONCOST.UI theme on the root element's dispatcher thread.");
 
-        var effectiveTheme = theme == AppTheme.System ? GetSystemTheme() : theme;
+        var effectiveTheme = ResolveTheme(theme, rootElement);
         var scope = ScopedResources.GetValue(rootElement, CreateScopedResources);
+        scope.RequestedTheme = theme;
         EnsureScopedResources(rootElement, scope);
         ReplaceThemeDictionary(scope.ThemeResources, effectiveTheme);
         RefreshScopedResources(rootElement, scope);
@@ -254,6 +277,9 @@ public class ThemeManager : ObservableObject
 
     private sealed class ScopedThemeResources
     {
+        /// <summary>What the host asked for, so <see cref="RefreshAutoTheme"/> knows to re-probe.</summary>
+        public AppTheme RequestedTheme { get; set; } = AppTheme.Light;
+
         public ResourceDictionary Container { get; } = new();
         public ResourceDictionary ThemeResources { get; } = new()
         {
@@ -354,6 +380,103 @@ public class ThemeManager : ObservableObject
         app.Resources["CONCOST.Brush.PrimaryDark"] = ColorHelper.CreateBrush(palette.PrimaryDark);
         app.Resources["CONCOST.Brush.BorderFocused"] = ColorHelper.CreateBrush(palette.Primary);
     }
+
+    /// <summary>
+    /// Works out which theme the window around <paramref name="probe"/> is showing right now.
+    /// </summary>
+    /// <remarks>
+    /// The probe walks up to the first element that actually paints a background — a plugin's own
+    /// panel is usually transparent, the host's dockable window is not — and reads that colour's
+    /// brightness. When nothing paints a background the operating system setting is used instead.
+    /// </remarks>
+    public static AppTheme DetectTheme(FrameworkElement? probe)
+    {
+        var color = FindBackgroundColor(probe);
+
+        if (color is null) return GetSystemTheme();
+
+        return IsDark(color.Value) ? AppTheme.Dark : AppTheme.Light;
+    }
+
+    /// <summary>
+    /// Re-applies a root that was set up with <see cref="AppTheme.Auto"/> after the host switched
+    /// its own theme. Roots given an explicit theme are left alone.
+    /// </summary>
+    public void RefreshAutoTheme(FrameworkElement rootElement)
+    {
+        if (rootElement is null) return;
+
+        if (!rootElement.Dispatcher.CheckAccess())
+            throw new InvalidOperationException("Apply the CONCOST.UI theme on the root element's dispatcher thread.");
+
+        if (!ScopedResources.TryGetValue(rootElement, out var scope) || scope.RequestedTheme != AppTheme.Auto)
+            return;
+
+        ApplyTheme(rootElement, AppTheme.Auto);
+    }
+
+    private static AppTheme ResolveTheme(AppTheme requested, FrameworkElement? probe) => requested switch
+    {
+        AppTheme.Dark => AppTheme.Dark,
+        AppTheme.Light => AppTheme.Light,
+        AppTheme.Auto => DetectTheme(probe),
+        _ => GetSystemTheme()
+    };
+
+    private static Color? FindBackgroundColor(DependencyObject? element)
+    {
+        var current = element;
+
+        while (current is not null)
+        {
+            Brush? background = current switch
+            {
+                Window window => window.Background,
+                Border border => border.Background,
+                Panel panel => panel.Background,
+                Control control => control.Background,
+                _ => null
+            };
+
+            if (TryGetColor(background, out var color) && color.A > 0) return color;
+
+            current = current is Visual
+                ? VisualTreeHelper.GetParent(current)
+                : LogicalTreeHelper.GetParent(current);
+        }
+
+        return null;
+    }
+
+    private static bool TryGetColor(Brush? brush, out Color color)
+    {
+        switch (brush)
+        {
+            case SolidColorBrush solid:
+                color = solid.Color;
+                return true;
+
+            case GradientBrush gradient when gradient.GradientStops.Count > 0:
+                // A gradient is judged by its average stop: that is what the eye reads as its tone.
+                double red = 0, green = 0, blue = 0;
+                foreach (var stop in gradient.GradientStops)
+                {
+                    red += stop.Color.R;
+                    green += stop.Color.G;
+                    blue += stop.Color.B;
+                }
+
+                var count = gradient.GradientStops.Count;
+                color = Color.FromRgb((byte)(red / count), (byte)(green / count), (byte)(blue / count));
+                return true;
+
+            default:
+                color = Colors.Transparent;
+                return false;
+        }
+    }
+
+    private static bool IsDark(Color color) => (0.2126 * color.R) + (0.7152 * color.G) + (0.0722 * color.B) < 128;
 
     private static AppTheme GetSystemTheme()
     {

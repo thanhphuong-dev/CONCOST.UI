@@ -1383,16 +1383,18 @@ public class Spreadsheet : Control
         if (!_isEditing || _inPlaceEditor == null) return;
 
         var cell = ActiveSheet?.GetCell(ActiveRow, ActiveColumn);
-        Brush? background = !string.IsNullOrEmpty(cell?.BackgroundResourceKey)
-            ? TryFindResource(cell.BackgroundResourceKey) as Brush
+        string? backgroundKey = cell?.BackgroundResourceKey;
+        Brush? background = backgroundKey is { Length: > 0 }
+            ? TryFindResource(backgroundKey) as Brush
             : cell?.Background;
         background ??= (Brush?)TryFindResource("CONCOST.Brush.InputBackground")
                        ?? Background
                        ?? Brushes.White;
         _inPlaceEditor.Background = background;
 
-        Brush? foreground = !string.IsNullOrEmpty(cell?.ForegroundResourceKey)
-            ? TryFindResource(cell.ForegroundResourceKey) as Brush
+        string? foregroundKey = cell?.ForegroundResourceKey;
+        Brush? foreground = foregroundKey is { Length: > 0 }
+            ? TryFindResource(foregroundKey) as Brush
             : cell?.Foreground;
         if (foreground == null && background is SolidColorBrush solid && solid.Color.A > 40)
         {
@@ -1883,9 +1885,10 @@ public class Spreadsheet : Control
 
                 // Resolve cell background dynamically if ResourceKey is specified
                 Brush? cellBg = null;
-                if (!string.IsNullOrEmpty(cell?.BackgroundResourceKey))
+                string? cellBgKey = cell?.BackgroundResourceKey;
+                if (cellBgKey is { Length: > 0 })
                 {
-                    cellBg = (Brush?)TryFindResource(cell.BackgroundResourceKey);
+                    cellBg = (Brush?)TryFindResource(cellBgKey);
                 }
                 if (cellBg == null)
                 {

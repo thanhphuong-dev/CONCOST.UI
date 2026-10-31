@@ -1,6 +1,6 @@
 ﻿# Kế hoạch triển khai `Ribbon`
 
-> Trạng thái: **R0–R6 đã xong và đã commit**; còn lại là bản release (tag + nupkg + zip demo) chờ bạn bật đèn. Bản này map 1-1 với 2 tài liệu bạn gửi:
+> Trạng thái: **R0–R6 đã xong — toàn bộ 22/22 control đã ship trong 1.1.0**, sớm hơn kế hoạch chia 3 bản (1.1/1.2/1.3) bên dưới. Bản này map 1-1 với 2 tài liệu bạn gửi:
 > checklist hành vi A–F và danh sách **22 control** kèm ưu tiên P0/P1/P2.
 > Tên class dùng đúng như bảng của bạn (`RibbonTabItem`, `RibbonKeyTip`, `RibbonGroupLauncher`…).
 
@@ -14,6 +14,8 @@
 | **1.2.0** | Toàn bộ **P1** (11 control) | Ngang tầm ribbon của Office ở mức thường dùng |
 | **1.3.0** | Toàn bộ **P2** (5 control) | Hoàn thiện: tìm lệnh, KeyTip, color picker |
 
+> ⚠️ **Thực tế đã lệch kế hoạch này:** R4–R6 làm liền mạch nên cả **22/22 control** (P0+P1+P2) đều có mặt trong **1.1.0**. Không còn bản 1.2.0/1.3.0 riêng cho ribbon — hai số đó giữ lại cho các hạng mục khác của `roadmap-v3.md`.
+
 ---
 
 ## 0b. Tiến độ
@@ -25,9 +27,9 @@
 | R2 | `RibbonToggleButton`, `RibbonRadioButton`, `RibbonSplitButton`, `RibbonDropDownButton`, `RibbonMenu`, `RibbonMenuItem`, `RibbonMenuSeparator` | ✅ |
 | R3 | Dark theme, DPI 150 %, tài liệu 2 trang VI/EN + bảng thuộc tính | ✅ |
 | R4 | `RibbonQuickAccessToolBar` (+`RibbonQuickAccessButton`), `RibbonApplicationMenu`, `RibbonContextualTabGroup` (+`RibbonTabStripPanel`), `RibbonToolTip` | ✅ |
-| Release | tag + release + nupkg + zip demo | ⏳ chờ bạn cho phép tag/push |
 | R5 | `RibbonCheckBox`, `RibbonTextBox`, `RibbonComboBox`, `RibbonGallery` (+`RibbonGalleryItem`), `ColumnSpan`, `IsFixedSize` | ✅ |
 | R6 | `RibbonKeyTip` (+`KeyTipService`), `RibbonColorPicker`, `RibbonSearchBox`, `RibbonGroupLauncher`, `RibbonState`/`RibbonStateStore`, automation peer | ✅ |
+| Release | tag + release + nupkg + zip demo | ✅ **1.1.0** (22/22 control, 291 test xanh) |
 
 Ghi chú kỹ thuật đã gặp (để lần sau không lặp lại):
 - `RibbonGroupPanel` là `ItemsPanel` nên `TemplatedParent` là ItemsControl — phải tìm group bằng cách đi ngược visual tree.

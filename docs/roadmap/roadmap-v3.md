@@ -1920,6 +1920,21 @@ NuGet package
 Các control chính ổn định
 ```
 
+## v1.1.0 — ✅ ĐÃ PHÁT HÀNH (2026-10-31)
+
+Bản này gộp toàn bộ phần còn treo của kế hoạch, không còn hạng mục "phase sau":
+
+```text
++ Ribbon trọn bộ 22/22 control (P0+P1+P2, gồm KeyTip, ColorPicker, SearchBox, Gallery)
+  — kế hoạch cũ chia 1.1/1.2/1.3, thực tế làm liền mạch nên gộp vào 1.1.0
++ Phase 3 effects: CommandPalette, ParticleField, RadialGauge, PageTransitionHost
++ §96 Visual regression (smoke coverage + kiểm tra style key)
++ §97 Automated UI test (gõ phím thật qua Window đã Show)
++ §100 Strong-name signing + CI publish NuGet theo tag
+```
+
+Kết quả kiểm chứng: **291 test xanh**, build 3 TFM 0 warning, Showcase publish `win-x64` chạy được, `.nupkg` ký strong-name.
+
 ---
 
 # 76. Nguyên tắc phát triển
@@ -2536,6 +2551,12 @@ Quy trình:
 4. Khi thay đổi có chủ đích -> cập nhật baseline kèm review
 ```
 
+> ✅ **Đã làm trong 1.1.0** — `tests/CONCOST.UI.Tests/RenderSmokeTests.cs`, không cần project riêng:
+> - `RenderedCoverage(control)` render control ra `RenderTargetBitmap` rồi `CopyPixels`, đếm tỉ lệ pixel không trong suốt.
+> - Mỗi control có **sàn coverage riêng** (ví dụ TextBox thấp hơn Card, `SnowCanvas` cần brush khác trắng mới thấy). Sàn chung một số là sai — lần đầu đặt 0.8 làm đỏ 6 test.
+> - `ThemeDictionary_ContainsTheStyleKeys` kiểm tra mọi key `CONCOST.*` mới có mặt trong `Generic.xaml` (dictionary nạp thẳng, vì `Application.TryFindResource` trong test không có theme).
+> - Đây là **smoke test chống "render ra trắng trơn"**, chưa phải pixel-diff baseline. Việc còn lại: lưu ảnh baseline + so sánh ngưỡng như bước 2–4 ở trên.
+
 ---
 
 # 97. Automated UI Testing
@@ -2554,6 +2575,12 @@ Kịch bản test tối thiểu:
 - Nhập giá trị vào NumericUpDown, kiểm tra Min/Max clamp
 - Chuyển Light/Dark, kiểm tra không exception
 ```
+
+> ✅ **Đã làm trong 1.1.0** — `tests/CONCOST.UI.Tests/KeyboardInputTests.cs`, chạy **in-process** thay vì FlaUI/WinAppDriver (không cần driver ngoài, chạy được trên CI Linux/Windows headless):
+> - Host control trong `Window` thật rồi `Show()` — bắt buộc, vì `IsVisible` là `false` khi chưa có presentation source nên key tip / focus không hoạt động.
+> - Gửi phím thật qua `RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, key){ RoutedEvent = Keyboard.PreviewKeyDownEvent })`: mũi tên di chuyển highlight, `Enter` chạy lệnh, `Esc` đóng palette, focus nhảy vào ô tìm kiếm.
+> - Phần "click Button / NumericUpDown clamp / đổi theme" đã có sẵn trong unit test thường (không cần UI host) nên không lặp lại ở đây.
+> - Việc còn lại: kịch bản "mở Showcase, điều hướng qua từng trang không crash" cần FlaUI hoặc một vòng lặp `SelectedItem` trên `ShowcaseViewModel` — chưa làm.
 
 ---
 
@@ -2613,29 +2640,38 @@ Bổ sung cho mục 71/72 khi phân phối nội bộ hoặc cho đối tác.
 - LICENSE riêng rõ ràng: nội bộ CONCOST hay public (MIT/Apache/Proprietary)
 ```
 
+> ✅ **Đã làm trong 1.1.0:**
+> - **Strong-name**: `build/CONCOST.UI.snk` (1.172 byte, CSP blob) sinh bằng `RSACryptoServiceProvider`; `SignAssembly` + `AssemblyOriginatorKeyFile` khai trong `Directory.Build.props` nên áp cho mọi TFM. Public key token: `5aec1392da75741c`.
+> - **CI publish NuGet**: job pack ra `artifacts/packages`, `upload-artifact@v4`, và bước `Publish to nuget.org` chỉ chạy khi `refs/tags/v*` **và** có secret `NUGET_API_KEY`.
+> - **License**: `LICENSE` (MIT) đã có ở gốc repo, khớp với giấy phép khai trong `.nuspec`.
+>
+> ⚠️ **Chưa làm:** Authenticode signing (cần chứng chỉ code-signing mua ngoài — quyết định của bạn, không phải việc code). Strong-name **không** thay thế được Authenticode: SmartScreen vẫn cảnh báo cho tới khi có cert.
+
 ---
 
 # 101. Cập nhật Bảng Roadmap Tổng Thể
 
 Bổ sung các milestone hạ tầng và control mới vào bảng ở mục 74:
 
-| Milestone | Nội dung | Output |
-|---|---|---|
-| M0 | Solution + architecture + CI/CD | Project chạy được, pipeline build/test tự động |
-| M1 | Design Tokens | Color / Brush / Spacing / Typography |
-| M2 | Theme Engine + Settings Persistence | Light / Dark / System, lưu lựa chọn người dùng |
-| M3 | Basic Controls | Button / Icon / Card / Divider / Expander |
-| M4 | Input Controls | TextBox / ComboBox / Checkbox / Toggle / FilePicker |
-| M5 | Numeric & Engineering Controls | NumericUpDown / UnitBox / LengthBox... |
-| M6 | Data Controls | DataGrid / List / Tree / GridSplitter |
-| M7 | Feedback | Dialog / Toast / Loading |
-| M8 | Navigation | Tabs / Menu / Breadcrumb |
-| M9 | Window | CONCOSTWindow / TitleBar / Hotkey Manager |
-| M10 | Canvas & Chart | ZoomableCanvas / DiagramChart / Print-Export |
-| M11 | Localization | i18n, culture-aware numeric formatting |
-| M12 | Demo + Docs | Full showcase |
-| M13 | Tests + Visual Regression + optimization | Stable, có test tự động UI |
-| M14 | NuGet v1.0 (signed) | Release chính thức |
+| Milestone | Nội dung | Output | Trạng thái |
+|---|---|---|---|
+| M0 | Solution + architecture + CI/CD | Project chạy được, pipeline build/test tự động | ✅ |
+| M1 | Design Tokens | Color / Brush / Spacing / Typography | ✅ |
+| M2 | Theme Engine + Settings Persistence | Light / Dark / System, lưu lựa chọn người dùng | ✅ |
+| M3 | Basic Controls | Button / Icon / Card / Divider / Expander | ✅ |
+| M4 | Input Controls | TextBox / ComboBox / Checkbox / Toggle / FilePicker | ✅ |
+| M5 | Numeric & Engineering Controls | NumericUpDown / UnitBox / LengthBox... | ✅ |
+| M6 | Data Controls | DataGrid / List / Tree / GridSplitter | ✅ |
+| M7 | Feedback | Dialog / Toast / Loading | ✅ |
+| M8 | Navigation | Tabs / Menu / Breadcrumb | ✅ |
+| M9 | Window | CONCOSTWindow / TitleBar / Hotkey Manager | ✅ |
+| M10 | Canvas & Chart | ZoomableCanvas / DiagramChart / Print-Export | ✅ |
+| M11 | Localization | i18n, culture-aware numeric formatting | ✅ |
+| M12 | Demo + Docs | Full showcase | ✅ |
+| M13 | Tests + Visual Regression + optimization | Stable, có test tự động UI | ✅ (smoke coverage + keyboard UI test; **chưa** có pixel-diff baseline) |
+| M14 | NuGet v1.0 (signed) | Release chính thức | ✅ strong-name `5aec1392da75741c`; ⚠️ Authenticode chưa có |
+
+> **Đối chiếu 1.1.0:** 167 class control công khai, 352 style key `CONCOST.*`, 8 theme preset, **291 test xanh**, build 3 TFM (`net48`, `net8.0-windows`, `net10.0-windows`) 0 warning. Ribbon xong sớm (22/22 control) và Phase 3 của `effects-roadmap.md` cũng xong — xem 2 tài liệu đó.
 
 ---
 
@@ -2905,15 +2941,21 @@ So sánh hai phương án thiết kế / trước-sau chỉnh sửa.
     SuggestionsSource="{Binding AvailableTags}"/>
 ```
 
-## 107.13 Command Palette (Ctrl+K)
+## 107.13 Command Palette (Ctrl+K) — ✅ ĐÃ XONG trong 1.1.0
 
 ```xml
 <ui:CommandPalette
-    Commands="{Binding AvailableCommands}"
-    Hotkey="Ctrl+K"/>
+    IsOpen="{Binding IsPaletteOpen, Mode=TwoWay}"
+    ItemsSource="{Binding AvailableCommands}"/>
 ```
 
 Tìm nhanh lệnh/điều hướng bằng bàn phím — nâng trải nghiệm cho ứng dụng nhiều tính năng.
+
+> **API thực tế khác bản phác ở trên:** dùng `ItemsSource` (không phải `Commands`) và **không có DP `Hotkey`** — phím tắt do app tự đăng ký (trong Showcase là `InputBinding` `Ctrl+K` gọi `IsOpen = true`), vì control không được phép chiếm phím toàn cục khi chưa nằm trong cây visual.
+> - Item: `CommandPaletteItem` (`Title`, `Subtitle`, `Shortcut`, `Category`, `Icon`, `Command`, `CommandParameter`, `Keywords`, `IsEnabled`).
+> - Tìm kiếm **không dấu tiếng Việt**: `CommandPaletteText.Normalize` chuẩn hoá `FormD` rồi bỏ dấu, `đ`→`d` (FormD không tách được `đ`). Gõ `hoa don` vẫn ra "Hoá đơn".
+> - Bàn phím: ↑/↓ di chuyển, `Enter` chạy, `Esc` đóng; highlight luôn nằm trong danh sách nhìn thấy.
+> - Sự kiện `ItemInvoked`, `Opened`, `Closed`; `CloseOnInvoke` để giữ palette mở khi chạy nhiều lệnh liên tiếp.
 
 ## 107.14 Onboarding Tour / Coach Mark
 
@@ -3039,6 +3081,12 @@ Tích hợp vào CI (mục 82): fail build nếu theme mới không đạt ngư�
 # 110. Checklist Công Việc Theo Phase
 
 Checklist thực thi, tách theo từng phase để team theo dõi tiến độ. Đánh dấu `[x]` khi hoàn thành.
+
+> ⚠️ **Đọc kèm ghi chú này trước:** các ô `[ ]` bên dưới là **kế hoạch gốc**, không phải trạng thái hiện tại — chúng chưa được tick lại sau khi làm xong. Trạng thái thật lấy theo **§101** (bảng M0–M14 đã có cột trạng thái).
+> Thực tế đã gộp/đổi so với kế hoạch gốc:
+> - **Không** tách `CONCOST.UI.Core` và `CONCOST.UI.Themes` — token + theme nằm chung trong `src/CONCOST.UI` (`Themes/`, `Tokens/`), ít project hơn thì build nhanh hơn và tránh vòng tham chiếu.
+> - `samples/CONCOST.UI.Demo` đổi tên thành **`samples/CONCOST.UI.Showcase`**.
+> - Solution có đúng **3 project**: `CONCOST.UI` (multi-target `net48`/`net8.0-windows`/`net10.0-windows`), `CONCOST.UI.Showcase`, `CONCOST.UI.Tests`.
 
 ## Phase 0 — Khởi tạo & Hạ tầng
 

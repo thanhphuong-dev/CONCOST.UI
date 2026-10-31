@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/.NET-4.8%20%7C%208%20%7C%2010-512BD4" alt=".NET Framework 4.8, .NET 8, .NET 10">
     <img src="https://img.shields.io/badge/platform-Windows%20%C2%B7%20WPF-0078D4" alt="Windows và WPF">
     <img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="Giấy phép MIT">
-    <img src="https://img.shields.io/badge/docs-108%20trang-ff7900" alt="108 trang tài liệu">
+    <img src="https://img.shields.io/badge/docs-113%20trang-ff7900" alt="113 trang tài liệu">
   </p>
 
   <p>
@@ -56,11 +56,11 @@ Yêu cầu runtime của Revit và AutoCAD khác nhau theo phiên bản. Kiểm 
 
 ### A. Gói NuGet từ bản phát hành
 
-Tải `CONCOST.UI.1.0.1.nupkg` ở [bản mới nhất](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), sau đó:
+Tải `CONCOST.UI.1.1.0.nupkg` ở [bản mới nhất](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), sau đó:
 
 ```powershell
 dotnet nuget add source "C:\duong\dan\tai\ve" --name concost-local
-dotnet add package CONCOST.UI --version 1.0.1
+dotnet add package CONCOST.UI --version 1.1.0
 ```
 
 ### B. Tham chiếu project
@@ -185,7 +185,7 @@ Tất cả đều vẽ trực tiếp nên gần như không tốn tài nguyên v
 
 [![Xem trước tài liệu](docs/assets/docs-preview.png)](https://thanhphuong-dev.github.io/CONCOST.UI/)
 
-Tài liệu là một wiki tĩnh — **108 trang**, song ngữ **Việt / Anh**, tìm kiếm bằng `Ctrl K`, mỗi trang có code inspector XAML ↔ C#. Chạy **offline hoàn toàn**: font, icon và syntax highlight đều tự host, không CDN.
+Tài liệu là một wiki tĩnh — **113 trang**, song ngữ **Việt / Anh**, tìm kiếm bằng `Ctrl K`, mỗi trang có code inspector XAML ↔ C#. Chạy **offline hoàn toàn**: font, icon và syntax highlight đều tự host, không CDN.
 
 - **Bản online:** <https://thanhphuong-dev.github.io/CONCOST.UI/>
 - [Mục lục tài liệu](docs/README.md) — bản đồ trang và quy trình bảo trì

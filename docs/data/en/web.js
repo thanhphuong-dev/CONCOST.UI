@@ -664,7 +664,7 @@ ribbon.ItemsSource = new List<RibbonTabItem> { home };`,
             },
             {
                 title: "Automatic collapsing",
-                desc: "The ribbon measures the active tab and steps down: demote every Large to Medium, then everything to Small, then collapse groups into a single button one at a time. A collapsed group keeps all its commands in its flyout.",
+                desc: "The ribbon measures the active tab and steps down: demote every Large to Medium, then everything to Small, then collapse groups into a single button one at a time. A collapsed group keeps all its commands in its flyout. When the window gets narrow enough that even the tabs stop fitting, the strip clips and a <b>»</b> button appears listing every tab — nothing becomes unreachable.",
                 csharp: `// Critical group: never collapses
 var review = new RibbonGroup { Header = "Review", CollapsePriority = 0 };
 
@@ -925,13 +925,48 @@ RibbonState? state = RibbonStateStore.FromJson(json);`,
             },
             {
                 title: "MenuBar above the ribbon",
-                desc: "<code>RibbonMenuBar</code> is a horizontal strip placed above a ribbon (or used alone in a simpler app). Each <code>RibbonMenuBarItem</code> opens a dropdown of <code>RibbonMenuItem</code> and <code>RibbonMenuSeparator</code> instances, reusing the existing menu system outright. Click to open, hover to switch while a menu is open, Left/Right arrows to navigate, Escape to close.",
+                desc: "<code>RibbonMenuBar</code> is a horizontal strip placed above a ribbon (or used alone in a simpler app). Each <code>RibbonMenuBarItem</code> opens a dropdown of <code>RibbonMenuItem</code> and <code>RibbonMenuSeparator</code> instances, reusing the existing menu system outright. Click to open, hover to switch while a menu is open, Left/Right arrows to navigate, Escape to close. The bar always spans the full ribbon width; set <code>ShowDivider=\"False\"</code> when you want it to blend into the surface.",
                 csharp: `var file = new RibbonMenuBarItem { Header = "File" };
 file.Items.Add(new RibbonMenuItem { Header = "New" });
 
 var bar = new RibbonMenuBar();
 bar.Items.Add(file);
 bar.Items.Add(new RibbonMenuBarItem { Header = "Edit" });`
+            },
+            {
+                title: "Host tuning properties",
+                desc: "Six switches for bolting the ribbon into a specific shell: pick a tab by <code>Id</code>, drop the last rung of the collapse ladder, lock the quick-access strip, hand <code>Alt</code> back to the host, remove the outline and the group captions, and supply an empty state.",
+                xaml: `<ribbon:Ribbon ShowBorder="False"
+               IsGroupCollapseEnabled="False"
+               IsQuickAccessCustomizable="False"
+               IsKeyTipEnabled="False"
+               SelectedTabId="{Binding ActiveTabId}"
+               EmptyContent="No workspace open." />
+
+<!-- Group captions are an attached property: set it on the ribbon, every group follows -->
+<ribbon:Ribbon ShowGroupLabels="False" />`,
+                csharp: `// Select by id: reordering tabs cannot point at the wrong one
+ribbon.SelectedTabId = "insert";
+
+// No last rung: groups shrink, but never become a single drop-down button
+ribbon.IsGroupCollapseEnabled = false;
+
+// Lock the strip: pinned commands still run, the customise button is gone
+ribbon.IsQuickAccessCustomizable = false;
+
+// Hand Alt back to Revit / AutoCAD
+ribbon.IsKeyTipEnabled = false;
+
+// Docked into a panel of its own
+ribbon.ShowBorder = false;
+Ribbon.SetShowGroupLabels(ribbon, false);
+
+// Empty state
+ribbon.EmptyContent = "No workspace open.";   // IsEmpty is true with no tabs`,
+                callout: {
+                    type: "tip",
+                    body: "<code>SelectedTabId</code> and <code>SelectedIndex</code> stay in sync both ways: selecting a tab publishes its <code>Id</code>, setting an <code>Id</code> selects the tab. Turning <code>IsGroupCollapseEnabled</code> off also re-opens the groups that were just folded, so flipping it at runtime behaves."
+                }
             }
         ],
         related: ["ribboncommands", "splitbutton", "concostwindow"]
@@ -990,5 +1025,566 @@ export.ArrowWidth = 20;                                    // arrow zone size`
         ],
         related: ["ribbon", "splitbutton", "badge"]
     },
+    datagridpanels: {
+        title: "DataGrid panels — filter, search, column chooser, summary",
+        badge: "Basic Controls",
+        desc: "Four standalone controls that attach to an existing <code>DataGrid</code> and turn a read-only table into a data tool: a per-column filter row, a table-wide search box, a drop-down for column visibility and a summary row under the grid. None of them replaces the grid — point <code>TargetGrid</code> at it and they follow.",
+        keywords: ["datagrid", "filter", "search", "column chooser", "summary", "aggregate"],
+        sections: [
+            {
+                title: "Per-column filter row",
+                desc: "One box per column; typing filters live with a case-insensitive <code>Contains</code> on the text that column shows. Each box is <b>as wide as its column</b>, so it stays under the column it filters even after a resize or a sideways scroll. Multi-level binding paths such as <code>Material.Grade</code> are read correctly.",
+                xaml: `<StackPanel>
+    <controls:DataGridFilterPanel TargetGrid="{Binding ElementName=beamGrid}" />
+
+    <DataGrid x:Name="beamGrid"
+              ItemsSource="{Binding Beams}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="False">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Element" Binding="{Binding Name}" Width="2*" />
+            <DataGridTextColumn Header="Grade" Binding="{Binding Material.Grade}" Width="*" />
+        </DataGrid.Columns>
+    </DataGrid>
+</StackPanel>`,
+                csharp: `var panel = new DataGridFilterPanel { TargetGrid = beamGrid };
+
+// Pre-filter a column before the user types anything
+panel.Filters.Single(f => f.Header == "Grade").FilterText = "C30";
+
+// Clear everything (or bind a button to ClearFiltersCommand)
+panel.ClearFilters();
+
+// Know when the grid has been re-filtered
+panel.FiltersApplied += (_, __) => status.Text = $"{beamGrid.Items.Count} rows";`,
+                callout: {
+                    type: "tip",
+                    body: "The filter row and the search box <b>compose</b> instead of replacing each other: a row has to satisfy both. Clearing the search leaves the column filters in place."
+                }
+            },
+            {
+                title: "Table-wide search",
+                desc: "A single box that scans every visible column. Columns hidden through <code>Visibility</code> are skipped, so a table that hides internal columns does not leak them through the search box.",
+                xaml: `<StackPanel>
+    <controls:DataGridSearchPanel TargetGrid="{Binding ElementName=beamGrid}"
+                                  PlaceholderText="Search element, concrete grade…" />
+    <DataGrid x:Name="beamGrid" ItemsSource="{Binding Beams}" AutoGenerateColumns="False" />
+</StackPanel>`,
+                csharp: `var search = new DataGridSearchPanel { TargetGrid = beamGrid };
+
+search.SearchText = "C30";      // filters immediately, two-way
+search.ClearSearch();           // brings every row back
+
+// IsSearching drives a "searching" hint in the toolbar
+if (search.IsSearching) hint.Visibility = Visibility.Visible;`,
+                callout: {
+                    type: "tip",
+                    body: "The box uses the <code>TextBox</code> clear button (<code>InfoElement.ShowClearButton</code>), so there is no separate Clear button to lay out."
+                }
+            },
+            {
+                title: "Column chooser",
+                desc: "A drop-down listing every column of the grid; clearing a tick hides that column at once. The list rebuilds when columns are added or removed and every time the drop-down opens, so a column hidden from the host's own menu still shows the right state.",
+                xaml: `<StackPanel>
+    <controls:DataGridColumnChooser TargetGrid="{Binding ElementName=beamGrid}"
+                                    HeaderText="Visible columns"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,8" />
+    <DataGrid x:Name="beamGrid" ItemsSource="{Binding Beams}" AutoGenerateColumns="False" />
+</StackPanel>`,
+                csharp: `var chooser = new DataGridColumnChooser
+{
+    TargetGrid = beamGrid,
+    HeaderText = "Visible columns"
+};
+
+// Hide the second column, then bring everything back
+chooser.Columns[1].IsVisible = false;
+chooser.ShowAll();
+
+// Open or close it from code (it closes itself on an outside click)
+chooser.IsOpen = true;`,
+                callout: {
+                    type: "tip",
+                    body: "Columns are matched by <b>reference</b>, not by header text, so two columns that share a caption still hide the right one. Hide the button itself when a print view must not allow it."
+                }
+            },
+            {
+                title: "Summary row",
+                desc: "One cell per column under the grid: numbers show <code>Sum</code>, text columns show the row count. The row <b>mirrors the grid's geometry</b> — column widths, display order, the row-header width and the horizontal scroll offset — so a value always sits under its column.",
+                xaml: `<StackPanel>
+    <DataGrid x:Name="beamGrid" ItemsSource="{Binding Beams}" AutoGenerateColumns="False" />
+    <controls:DataGridSummary TargetGrid="{Binding ElementName=beamGrid}" DisplayFormat="N0" />
+</StackPanel>`,
+                csharp: `var summary = new DataGridSummary
+{
+    TargetGrid = beamGrid,
+    Aggregate = DataGridSummaryAggregate.Auto,   // numbers → Sum, text → Count
+    DisplayFormat = "N0"
+};
+
+// Override the aggregate for one column
+DataGridSummary.SetAggregateOnColumn(lengthColumn, DataGridSummaryAggregate.Average);
+
+// Recompute when the data changes outside the binding
+summary.RefreshSummaries();`,
+                callout: {
+                    type: "tip",
+                    body: "Aggregates run on the <b>filtered</b> view: if the filter leaves five rows, the sum is those five rows. Numbers are read in the current culture first and the invariant culture second, so Vietnamese <code>\"1,5\"</code> data still adds up."
+                }
+            }
+        ],
+        related: ["datagrid", "datapager", "stackedheaderdatagrid"]
+    },
+
+    commandpalette: {
+        title: "CommandPalette — the Ctrl+K command bar",
+        desc: "A search box over the whole screen that filters your commands as you type and runs them on <code>Enter</code>. Search <b>ignores Vietnamese diacritics</b>, the arrow keys move the highlight, and the control paints its own scrim — no popup to manage, no focus dance.",
+        variants: [
+            { desc: "Dark scrim <code>#8C0F172A</code>, card up to 600px wide, 44px rows, footer with the key hints." }
+        ],
+        sections: [
+            {
+                title: "Opening the palette with Ctrl+K",
+                desc: "Put the palette in the same <code>Grid</code> as the page content and bind <code>IsOpen</code>. The shortcut belongs to the app — the control never grabs a global key while it is not in the visual tree.",
+                callout: {
+                    type: "tip",
+                    body: "To keep the palette open for a run of commands set <code>CloseOnInvoke=\"False\"</code>; by default it closes itself after invoking."
+                }
+            },
+            {
+                title: "Diacritic-insensitive search, one token at a time",
+                desc: "The query is normalised to <code>FormD</code> and stripped of marks, with <code>đ</code> mapped to <code>d</code> because <code>FormD</code> does not decompose it. Each token then matches independently across title, subtitle, category, shortcut and <code>Keywords</code>.",
+                callout: {
+                    type: "note",
+                    body: "The list height snaps to <b>whole rows</b> (44px each, <code>MaxListHeight</code> defaults to 276 = six rows) so a half command never appears at the bottom edge. The highlight always follows the filtered list, so it cannot point at a row that was just filtered away."
+                }
+            }
+        ]
+    },
+
+    radialgauge: {
+        title: "RadialGauge — circular KPI readout",
+        desc: "A track arc, a value arc, optional tick marks and a formatted number in the middle, drawn in <code>OnRender</code> with <code>StreamGeometry</code> and round caps, so it stays crisp at any size and any DPI. <code>Value</code> clamps to <code>Minimum</code>–<code>Maximum</code> and eases into place.",
+        sections: [
+            {
+                title: "A percentage gauge",
+                desc: "The ring opens at the bottom by default (starts at 135°, sweeps 270°). <code>ValueFormat</code> takes a standard numeric format; <code>Suffix</code> and <code>Label</code> are the text around the number.",
+                callout: {
+                    type: "tip",
+                    body: "The value arc takes <code>ValueBrush</code>, the track takes <code>TrackBrush</code> — leave them empty and they come from the theme, so a Light/Dark switch recolours the gauge for free. Ticks use <code>TextTertiary</code>: the track colour makes them almost invisible."
+                }
+            },
+            {
+                title: "A reversed scale, e.g. depth",
+                desc: "Set <code>Minimum</code> above <code>Maximum</code> for a reversed scale, or change <code>StartAngle</code>/<code>SweepAngle</code> to open the ring along the top for a short dashboard strip.",
+                callout: {
+                    type: "note",
+                    body: "Each gauge is only a handful of primitives, but <b>do not</b> animate hundreds of gauges that update every second — every value change starts a <code>DoubleAnimation</code>."
+                }
+            }
+        ]
+    },
+
+    particlefield: {
+        title: "ParticleField — ambient particle backdrop",
+        desc: "Slowly drifting particles for hero panels, splash screens and empty states. Particles wrap around the edges so the field never empties, <code>Seed</code> makes the layout reproducible, and the field rebuilds itself when its host is resized. Set <code>ConnectDistance</code> for the constellation look.",
+        sections: [
+            {
+                title: "A particle backdrop for a hero card",
+                desc: "Place it as the first child of a <code>Grid</code> so it sits behind the content. <code>IsHitTestVisible</code> is already off, so it never swallows clicks.",
+                callout: {
+                    type: "note",
+                    body: "The field rebuilds its particles when the real size differs from the size it was built for — otherwise the particles only fill the top third of the box."
+                }
+            },
+            {
+                title: "Constellation: connecting nearby particles",
+                desc: "Set <code>ConnectDistance</code> above 0 to draw lines between particles that are close. The distance is in pixels; larger values mean more lines and more CPU.",
+                callout: {
+                    type: "tip",
+                    body: "Budget: about 60 unconnected particles are comfortable; with <code>ConnectDistance</code> the cost grows <b>quadratically</b> with the particle count — 48 is a safe ceiling for a full-window backdrop."
+                }
+            }
+        ]
+    },
+
+    pagetransitionhost: {
+        title: "PageTransitionHost — animated page swap",
+        desc: "Change <code>Content</code> and the new page animates in: fade, slide from any side, or scale. The animation lives on the host, so it works with any content and needs no storyboard per page.",
+        variants: [
+            { desc: "Minimal template: a <code>ContentPresenter</code> wrapped in a <code>TransformGroup</code> (scale + translate)." }
+        ],
+        sections: [
+            {
+                title: "Sliding horizontally when the screen changes",
+                desc: "<code>Transition</code> accepts <code>Fade</code>, <code>SlideLeft</code>, <code>SlideRight</code>, <code>SlideUp</code>, <code>SlideDown</code> or <code>Scale</code>. <code>Offset</code> is the travel distance, <code>Duration</code> the run time.",
+                callout: {
+                    type: "tip",
+                    body: "The animation is <b>skipped entirely</b> when the control is not loaded, when <code>IsTransitionEnabled=\"False\"</code>, or when Windows animations are off — the content still swaps instantly and never gets stuck transparent."
+                }
+            },
+            {
+                title: "Picking a direction that matches the navigation",
+                desc: "Going forward usually slides left, going back slides right. Bind <code>Transition</code> to the navigation direction and the motion reads correctly.",
+                callout: {
+                    type: "note",
+                    body: "The host animates only the <b>incoming</b> content, never the outgoing one — one animation per swap, and no need to keep two views alive at once."
+                }
+            }
+        ]
+    },
+
+    treedatagrid: {
+        title: "TreeDataGrid — a grid that shows a hierarchy",
+        desc: "A <code>DataGrid</code> for trees: bind <code>RootItems</code> and the grid flattens the tree into rows. Each row is <b>the item itself</b>, not a wrapper, so every column keeps binding straight to the item's properties.",
+        sections: [
+            {
+                title: "A basic data tree",
+                desc: "The first column is generated: it draws the indent and the expander. <code>HierarchyPath</code> names the property to show — the same idea as <code>DisplayMemberPath</code>. For anything richer, use <code>HierarchyContentTemplate</code>.",
+                callout: {
+                    type: "note",
+                    body: "Set both and the template wins. Expansion state is keyed by <b>object reference</b>, not by id or index — two nodes with equal values are still two different branches, which is why the state survives every rebuild of the flat list."
+                }
+            },
+            {
+                title: "The generated column and the visible count",
+                desc: "Set <code>ShowHierarchyColumn=\"False\"</code> to use it as a flat table; <code>VisibleItemCount</code> reports how many rows are on screen (expanded branches only), which is what a status strip wants.",
+                callout: {
+                    type: "tip",
+                    body: "<code>CONCOST.TreeDataGrid.Base</code> is BasedOn <code>CONCOST.DataGrid.Base</code>, so the template, row style, grid lines and virtualization are shared — there is no second template copy to drift later."
+                }
+            }
+        ]
+    },
+
+    multiselectdatagrid: {
+        title: "MultiSelectDataGrid — checkbox multi-selection",
+        desc: "A DataGrid with a checkbox column and a tri-state header checkbox. Clicking a checkbox cell <b>toggles that row</b> instead of replacing the selection, so picking twenty rows does not need the Ctrl key.",
+        sections: [
+            {
+                title: "Select many, read the list",
+                desc: "<code>SelectedItemsList</code> raises change notifications (unlike the DataGrid's own <code>SelectedItems</code>), so a command can bind to it and a button can enable itself.",
+                callout: {
+                    type: "note",
+                    body: "<code>IsAllSelected</code> is tri-state: <code>true</code> when everything is selected, <code>false</code> when nothing is, <code>null</code> when only some are — the header draws the indeterminate bar you expect."
+                }
+            },
+            {
+                title: "A plain click stays a plain click",
+                desc: "Only the checkbox cell toggles. Clicking anywhere else in the row behaves like a normal DataGrid: a plain click selects, Ctrl and Shift extend.",
+                callout: {
+                    type: "tip",
+                    body: "The cell checkbox has <code>IsHitTestVisible=\"False\"</code> — the click lands on the row, which is exactly what makes a plain click toggle instead of replace."
+                }
+            }
+        ]
+    },
+
+    treemap: {
+        title: "TreeMap — area-proportional map",
+        desc: "Each rectangle's area is proportional to its value, packed <b>squarified</b> so cells stay close to square instead of becoming long strips. Good for quantity breakdowns, cost allocation and consumption by category.",
+        sections: [
+            {
+                title: "Quantity breakdown by element",
+                desc: "<code>ValuePath</code> is the weight, <code>LabelPath</code> the caption. Zero and negative values are dropped — a zero-area rectangle is only an invisible sliver.",
+                callout: {
+                    type: "note",
+                    body: "<code>Entries</code> returns the rectangles that were actually drawn (with <code>Bounds</code> and <code>Share</code>), so hit-testing, tooltips and your own labels always match the picture — no second layout pass."
+                }
+            },
+            {
+                title: "One colour, or no labels",
+                desc: "Leave <code>Palette</code> empty and every cell uses <code>Fill</code> (the theme accent by default). Turn labels off when the cells get too small to read.",
+                callout: {
+                    type: "tip",
+                    body: "The layout recomputes on resize. For dense data set <code>Gap=\"0\"</code> so no area is lost to the gutters."
+                }
+            }
+        ]
+    },
+
+    dockingmanager: {
+        title: "DockingManager — Visual Studio-style layout",
+        desc: "A panel that arranges <code>ToolWindow</code> panes on four edges plus a centre. Panes on the same edge become <b>tabs of one group</b>, sizes stay proportional when the window resizes, headers drag with five drop zones, and the layout can be saved and restored.",
+        sections: [
+            {
+                title: "Pane groups and tabs",
+                desc: "Every pane declared <code>Dock=\"Left\"</code> belongs to <b>one group</b> on the left edge. From two panes up, the group shows as tabs along the bottom — each pane does not get its own slice of the edge. The selected tab is <code>IsActive</code>, and a pane's own header hides because the tab already names it.",
+                callout: {
+                    type: "tip",
+                    body: "Sizes are synchronised inside a group: dragging a splitter or setting one pane's <code>DockSize</code> gives the other tabs the same size, so switching tab never makes the edge jump."
+                }
+            },
+            {
+                title: "Proportional sizing",
+                desc: "By default a pane keeps its <b>share</b> of the window when the window resizes, like a <code>*</code> column in a <code>Grid</code>. Set <code>IsProportional=\"False\"</code> to pin it to pixels instead.",
+                callout: {
+                    type: "note",
+                    body: "A splitter drag updates <code>DockSize</code> for the whole group; the next window resize takes the new ratio as its baseline."
+                }
+            },
+            {
+                title: "Drag to redock — five drop zones",
+                desc: "Hold and drag a header: the region the pointer is aiming at lights up as a dashed outline. The zone is computed <b>per pane</b> (25% on each side, the rest is the centre), so dragging into the left quarter of the document area docks left rather than following the window's own edge bands.",
+                callout: {
+                    type: "tip",
+                    body: "The outline shows the region the pane will actually occupy after the drop, not half of the hovered pane — the hint never lies."
+                }
+            },
+            {
+                title: "Nested groups — the layout is a tree",
+                desc: "<code>DockPaneGroup</code> divides its area between its children by <code>Proportion</code>, and a child may be another group. That is what makes “the left edge split into two rows, the top row tabbed” expressible — something four fixed slots could never do.",
+                callout: {
+                    type: "tip",
+                    body: "<code>Mode=\"Tabs\"</code> turns a group into tabs (only the child that is <code>IsActive</code> shows); <code>Mode=\"Split\"</code> divides the space. Each group draws and drags its own splitters, so nesting can go as deep as you like."
+                }
+            },
+            {
+                title: "Floating windows",
+                desc: "Drag a header **outside** the docking area and the panel tears out into its own window. Call <code>Float(pane)</code> to do it from code; closing that window docks the panel back to the same edge at the same size.",
+                callout: {
+                    type: "note",
+                    body: "A floating panel has <code>CanAutoHide</code> turned off — there is no edge to pin it to — and it is restored when the panel docks back."
+                }
+            },
+            {
+                title: "Dragging tabs",
+                desc: "Hold and drag a tab: drop it back on the strip and it **reorders**, drop it on another edge and the panel joins that group, drop it outside the window and it tears out into a floating window. All three are callable from code.",
+                callout: {
+                    type: "tip",
+                    body: "<code>DockAt</code> takes a point in the manager's coordinates: outside the bounds it floats the panel, inside it docks to the drop zone. That is what lets a custom tab strip reuse the whole gesture."
+                }
+            },
+            {
+                title: "Saving and restoring the layout",
+                desc: "Each pane saves its edge, size, auto-hide state and whether it is the selected tab. Restoring matches panes by <code>Header</code>, so an unknown pane in an old file is skipped instead of breaking the layout.",
+                callout: {
+                    type: "note",
+                    body: "The format is plain text with a version header (<code>CONCOST-DOCK-1</code>), so it can be read by eye and evolved without a JSON dependency."
+                }
+            }
+        ]
+    },
+
+    searchabletreepicker: {
+        title: "SearchableTreePicker — a tree with a search box",
+        badge: "New",
+        desc: "A search box in front of a tree: type to narrow it down to the matching nodes <b>and the branches that lead to them</b>, then pick one or several.",
+        sections: [
+            {
+                title: "Filter, but keep the path",
+                desc: "The filter keeps the ancestors of every match. Dropping every non-matching node would leave a flat list of leaves with no idea where they sit — keeping the path is what makes the result readable.",
+                callout: {
+                    type: "tip",
+                    body: "Matching goes through <code>CommandPaletteText.Normalize</code>: <code>dam d1</code> finds “Dầm D1”, <code>tang 1</code> finds “Tầng 1”. In a Vietnamese-first library that is the difference between usable and not."
+                }
+            },
+            {
+                title: "One or many",
+                desc: "<code>SelectionMode=\"Multiple\"</code> shows a checkbox per row. <code>SelectAllVisible()</code> takes only what is on screen — after a search, “select all” really means all the results.",
+                callout: {
+                    type: "note",
+                    body: "Switching from Multiple to Single trims the selection to the last pick instead of leaving an invalid state behind."
+                }
+            }
+        ]
+    },
+
+    meshgradient: {
+        title: "Mesh gradient & spotlight",
+        badge: "New",
+        desc: "Two backdrop effects: <code>AnimatedMeshGradient</code> makes four colour blobs breathe around fixed anchors, and <code>CursorSpotlight</code> dims everything except a circle around the pointer.",
+        sections: [
+            {
+                title: "A mesh, not an aurora",
+                desc: "Unlike <code>AuroraBackground</code>: aurora drifts its blobs across the surface and reads as weather; a mesh keeps them near fixed anchors and only lets them oscillate, so it looks like a still image that happens to move. The radius is based on the <b>longer</b> side — using the shorter one leaves gaps between the anchors on a wide panel.",
+                callout: {
+                    type: "note",
+                    body: "Drawn with radial gradients that fade to transparent, no <code>BlurEffect</code> — far cheaper at full window size."
+                }
+            },
+            {
+                title: "A spotlight that never steals a click",
+                desc: "<code>CursorSpotlight</code> is not hit-testable, yet it still follows the pointer because <code>Mouse.GetPosition</code> reads the current position rather than requiring events. Set <code>FollowCursor=\"False\"</code> and drive <code>SpotlightCenter</code> yourself to follow a tour script instead.",
+                callout: {
+                    type: "tip",
+                    body: "Paint <b>one</b> rectangle over the whole control with an absolute gradient and <code>SpreadMethod=Pad</code>. Drawing only an ellipse gives a dark ring in the middle — the exact opposite of what a spotlight means."
+                }
+            }
+        ]
+    },
+
+    glasscard: {
+        title: "Frosted glass & gradient ring",
+        badge: "New",
+        desc: "Two surfaces: <code>FrostedGlass</code> blurs exactly the region behind it, and <code>AnimatedGradientBorder</code> gives a card a gradient ring that rotates.",
+        sections: [
+            {
+                title: "Frosted glass without a backdrop filter",
+                desc: "WPF has no backdrop filter, so the blur is built: point <code>Source</code> at the element behind and the control paints a <code>VisualBrush</code> of it through a <code>BlurEffect</code>. The brush's viewbox is set to the panel's rectangle <b>in the source's coordinates</b>, so the blur lines up instead of stretching the whole backdrop into the panel.",
+                callout: {
+                    type: "warning",
+                    body: "That copy is re-rendered whenever the source changes, so this is a control for <b>a few panels over a hero</b> — not a backdrop for a long scrolling list."
+                }
+            },
+            {
+                title: "The ring rotates with an animation, not OnRender",
+                desc: "<code>AnimatedGradientBorder</code> rotates a <code>RotateTransform</code> attached to the brush with a <code>DoubleAnimation</code>. WPF runs it on the render thread, so a dozen of these cost the UI thread nothing and stay smooth while the window is busy.",
+                callout: {
+                    type: "note",
+                    body: "When <code>MotionSettings.AnimationsEnabled</code> is off the animation is cleared and the ring keeps its first frame — a reduced-motion user sees the same card, not an empty box."
+                }
+            }
+        ]
+    },
+
+    motion: {
+        title: "Stagger & shared element",
+        badge: "New",
+        desc: "Two kinds of motion: a list arriving item by item, and an element growing out of where it used to be.",
+        sections: [
+            {
+                title: "A list that arrives in a wave",
+                desc: "<code>StaggerAnimation</code> is an attached behaviour: the delay is derived from the item's position, so it works with any panel and any item template. Containers are tracked by <b>reference</b> — a virtualising panel reuses them, and without that an item would replay its entrance every time it scrolls back into view.",
+                callout: {
+                    type: "tip",
+                    body: "<code>MaxItems</code> caps the delay: a 200-row list does not take ten seconds to finish arriving."
+                }
+            },
+            {
+                title: "Shared element",
+                desc: "<code>SharedElementTransition</code> never animates layout — the element is already in its final place, and is scaled and shifted back to the old rectangle for the first frame, then eased to identity. No layout thrash, and the element stays interactive the whole time.",
+                callout: {
+                    type: "note",
+                    body: "Both rectangles must share a coordinate space — normally the element's parent. The transform is handed back at the end so hit-testing and clipping stay correct."
+                }
+            }
+        ]
+    },
+
+    dragdrop: {
+        title: "Drop zone, highlight & drag ghost",
+        badge: "New",
+        desc: "The three pieces of a drag gesture: <code>FileDropZone</code> takes files, <code>DropTargetHighlight</code> draws the hover outline around any element, and <code>DragGhost</code> carries a caption under the pointer.",
+        sections: [
+            {
+                title: "The file drop area",
+                desc: "<code>Filter</code> is checked <b>while the drag is still in the air</b>, so the zone only lights up for files it will take. Accepting every drag and then refusing the drop is what makes a drop area feel broken.",
+                callout: {
+                    type: "tip",
+                    body: "The library never opens a file dialog itself: which picker to show, and whether the host wants one at all, is not a control's decision."
+                }
+            },
+            {
+                title: "A hover outline for any element",
+                desc: "<code>DropTargetHighlight</code> is an attached property that draws a dashed outline with an <b>adorner</b>, so it sits above the content and never changes the layout — no extra border, no padding shift. It only reports the hover; accepting the drop stays the element's job through <code>DragDropEffects</code>.",
+                callout: {
+                    type: "note",
+                    body: "Keeping those apart is what lets a host highlight a whole card while only one row inside it accepts the data."
+                }
+            },
+            {
+                title: "The ghost under the pointer",
+                desc: "<code>DragGhost</code> is a transparent, topmost, hit-test-invisible window offset 14px from the pointer. There is one ghost per process — a user cannot drag two things at once.",
+                callout: {
+                    type: "tip",
+                    body: "Pass <code>Move</code> the visual the pointer belongs to; the DPI conversion happens inside, so the ghost lands where the pointer is."
+                }
+            }
+        ]
+    },
+
+    documenttabcontrol: {
+        title: "DocumentTabControl — document tabs",
+        desc: "A tab control for documents: each tab has an icon, an unsaved dot and a close button. Closing is a <b>request</b> — the host can veto it to ask about saving first.",
+        sections: [
+            {
+                title: "Tabs with a close button and a dirty dot",
+                desc: "<code>IsDirty</code> only shows the dot — the control never clears it, because saving belongs to the host. <code>CanClose=\"False\"</code> hides the close button on that one tab.",
+                callout: {
+                    type: "note",
+                    body: "<code>Close()</code> raises the bubbling <code>CloseRequested</code> routed event and <code>DocumentTabControl</code> catches it with a class handler, so the button, a context menu and a shortcut all take the same path."
+                }
+            },
+            {
+                title: "Turning the close buttons off",
+                desc: "When the window shows a single document, hide the buttons entirely — or hide them per tab.",
+                callout: {
+                    type: "tip",
+                    body: "<code>CONCOST.DocumentTabControl.Base</code> inherits <code>CONCOST.TabControl.Base</code> but swaps <code>ItemContainerStyle</code> for the document style — without that swap the tabs fall back to the plain TabItem template and lose the close button."
+                }
+            }
+        ]
+    },
+
+    statusbar: {
+        title: "StatusBar — the status strip",
+        desc: "The information strip along the bottom of a window. Each cell is a <code>StatusBarItem</code>; a cell marked <code>Alignment=\"Right\"</code> hugs the right edge and the gap in the middle absorbs the slack.",
+        sections: [
+            {
+                title: "Two sides, one gap in the middle",
+                desc: "<code>StatusBarPanel</code> lays left cells out from the left edge and right cells from the right edge, so you do not need a <code>Grid</code> with a <code>*</code> column to push the two groups apart.",
+                callout: {
+                    type: "tip",
+                    body: "Declaration order sets the order within each group, not the position on screen — a <code>Right</code> cell declared between two <code>Left</code> ones still sits on the right."
+                }
+            },
+            {
+                title: "Clickable cells",
+                desc: "Give a cell a <code>Command</code> to turn it into a button — opening a log panel or switching units, for instance. A cell with no command keeps the default cursor instead of pretending to be clickable.",
+                callout: {
+                    type: "note",
+                    body: "<code>Content</code> wins over <code>Text</code>: to put a control in a cell (a progress bar, a unit combo) drop <code>Text</code> rather than setting both."
+                }
+            }
+        ]
+    },
+
+    commandbar: {
+        title: "CommandBar — a command strip with a “more” menu",
+        desc: "A single-row toolbar of icon-and-label buttons that pushes whatever does not fit into a drop-down instead of clipping it.",
+        sections: [
+            {
+                title: "Declaring commands as data",
+                desc: "Each entry is a <code>CommandBarItem</code>. The control does not decide what fits — <code>OverflowPanel</code> measures during layout and reports back, so <code>OverflowItems</code> always matches what is actually hidden.",
+                callout: {
+                    type: "tip",
+                    body: "<code>ShowLabel=\"False\"</code> keeps the icon and drops the caption — use it on secondary commands to keep the strip short enough that it never needs to overflow."
+                }
+            },
+            {
+                title: "The overflow menu and its state",
+                desc: "<code>HasOverflow</code> and <code>OverflowItems</code> are read-only and refresh after every layout pass. <code>IsOverflowOpen</code> is two-way, so you can bind it and close the menu when the user switches tabs.",
+                callout: {
+                    type: "note",
+                    body: "When nothing is hidden any more the control sets <code>IsOverflowOpen = false</code> itself — the menu can never open empty."
+                }
+            }
+        ]
+    },
+
+    quickaccesstoolbar: {
+        title: "QuickAccessToolbar — the icon strip on top",
+        desc: "The standalone version of the ribbon's quick-access toolbar: icons only, 28px tall, usable in any window without a ribbon.",
+        sections: [
+            {
+                title: "Icon, tooltip, done",
+                desc: "Each entry is a <code>QuickAccessItem</code> — icon, tooltip, command. No captions, no groups: this is the place for the commands used every day.",
+                callout: {
+                    type: "tip",
+                    body: "<code>IsCustomizable=\"False\"</code> hides the chevron when nothing has overflowed — a good fit for a child window with three or four fixed commands."
+                }
+            },
+            {
+                title: "Overflowing into a menu",
+                desc: "Same mechanism as <code>CommandBar</code>: when the space runs out the extra items drop into a popup rather than being clipped.",
+                callout: {
+                    type: "note",
+                    body: "This is a standalone control, not a child of <code>Ribbon</code>. The ribbon keeps its own internal <code>RibbonQuickAccessToolBar</code> — same idea, different scope."
+                }
+            }
+        ]
+    }
 
 });

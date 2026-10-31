@@ -84,7 +84,7 @@ public class CoreAndIconTests
     public void ThemeManager_AppliesThemeAndTokensToPluginRootWithoutApplication()
     {
         Exception? exception = null;
-        var thread = new Thread(() =>
+        WpfApplicationHost.Run(() =>
         {
             try
             {
@@ -109,9 +109,6 @@ public class CoreAndIconTests
             }
             catch (Exception ex) { exception = ex; }
         });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
 
         if (exception != null) throw new AggregateException("STA test failed", exception);
     }
@@ -119,15 +116,12 @@ public class CoreAndIconTests
     [Fact]
     public void AdaptivePanel_HasDefaultBreakpoints()
     {
-        var thread = new Thread(() =>
+        WpfApplicationHost.Run(() =>
         {
             var panel = new AdaptivePanel();
             Assert.True(panel.Breakpoints.Count >= 3);
             Assert.Equal(LayoutMode.Normal, panel.CurrentLayout);
         });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
     }
 
     [Fact]

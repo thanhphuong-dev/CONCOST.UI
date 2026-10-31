@@ -307,6 +307,26 @@ ThemeManager.Current.AccentColor = ColorHelper.FromHex("#0284C7"); // Ocean Blue
 ThemeAnimationHelper.AnimateThemeChange(this, clickPoint, () => {
     ThemeManager.Current.Theme = AppTheme.Dark;
 });`
+            },
+            {
+                title: "2. Chế độ Auto — bám theo window chủ (plugin Revit / AutoCAD)",
+                desc: "<code>AppTheme.Auto</code> đọc màu nền của window chứa control rồi chọn Light hay Dark theo độ sáng của màu đó. Đây là chế độ dành cho add-in: plugin <b>không có <code>Application.Current</code></b> riêng, chỉ có window của Revit/AutoCAD, và window đó đã quyết định giao diện xung quanh là sáng hay tối. Việc dò đi ngược cây visual từ root của plugin tới phần tử đầu tiên có nền thật (panel của plugin thường trong suốt, panel của host thì không); không tìm thấy nền nào thì quay về thiết lập của Windows.",
+                xaml: `<!-- Root của add-in: để nền trong suốt để dò được panel của host -->
+<UserControl x:Name="PluginRoot" Background="Transparent">
+    <!-- nội dung plugin -->
+</UserControl>`,
+                csharp: `// Áp theme một lần khi view của plugin được nạp
+ThemeManager.Current.ApplyTheme(PluginRoot, AppTheme.Auto);
+
+// Host vừa đổi theme (Revit/AutoCAD chuyển sáng-tối)
+ThemeManager.Current.RefreshAutoTheme(PluginRoot);
+
+// Hỏi trước khi cần biết host đang sáng hay tối
+var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
+                callout: {
+                    type: "tip",
+                    body: "Auto áp theme theo <b>phạm vi root</b> nên không đụng tới theme của cả ứng dụng: hai panel nằm trong hai window khác nhau có thể một sáng một tối cùng lúc. <code>AppTheme.System</code> thì ngược lại — nó theo thiết lập sáng/tối của Windows."
+                }
             }
         ]
     },
@@ -1119,6 +1139,28 @@ public ObservableCollection<DrawerMenuItem> MenuItemsList { get; } = new()
     <ComboBoxItem Content="Bê tông B30 (M400)" IsSelected="True"/>
     <ComboBoxItem Content="Bê tông B40 (M500)"/>
 </ComboBox>`
+            },
+            {
+                title: "Tìm kiếm trong danh sách (vẫn chỉ đọc)",
+                desc: "Bật <code>ComboBoxHelper.IsSearchEnabled</code> để hiện ô tìm kiếm trên đầu danh sách: gõ tới đâu lọc tới đó, nhưng ô chọn <b>không</b> cho sửa giá trị — người dùng chỉ chọn được mục có trong danh sách. Bộ lọc chỉ áp lên <code>Items</code> của chính ComboBox nên <code>ItemsSource</code> gốc không bị đụng, hai ComboBox dùng chung một nguồn vẫn lọc độc lập. Đóng danh sách thì từ khoá tự xoá.",
+                xaml: `<ComboBox Width="280"
+          ItemsSource="{Binding Grades}"
+          DisplayMemberPath="Name"
+          attached:ComboBoxHelper.IsSearchEnabled="True"
+          attached:ComboBoxHelper.SearchPlaceholder="Tìm mác bê tông…" />`,
+                csharp: `// Bật bằng code
+ComboBoxHelper.SetIsSearchEnabled(combo, true);
+ComboBoxHelper.SetSearchPlaceholder(combo, "Tìm mác bê tông…");
+
+// Lọc sẵn một từ khoá
+ComboBoxHelper.SetSearchText(combo, "C30");
+
+// Xoá từ khoá, trả lại đủ danh sách (đóng dropdown cũng tự gọi)
+ComboBoxHelper.ResetSearch(combo);`,
+                callout: {
+                    type: "tip",
+                    body: "Vì <code>IsEditable</code> vẫn là <code>false</code>, người dùng không thể gõ ra một giá trị nằm ngoài danh sách — đúng yêu cầu cho các trường chỉ được chọn (mác bê tông, loại thép, cấp bậc…)."
+                }
             }
         ]
     },

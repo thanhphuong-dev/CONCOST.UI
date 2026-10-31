@@ -317,7 +317,9 @@ public class AutoCompleteTextBox : TextBox
                 if (p.PropertyType == typeof(string) && p.CanRead)
                 {
                     var val = p.GetValue(item) as string;
-                    if (!string.IsNullOrEmpty(val) && val.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                    // Pattern instead of string.IsNullOrEmpty: the .NET Framework reference
+                    // assemblies do not carry [NotNullWhen(false)], so net48 cannot narrow there.
+                    if (val is { Length: > 0 } && val.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         matches = true;
                         break;

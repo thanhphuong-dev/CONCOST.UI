@@ -38,6 +38,9 @@ const DOCS_NAV = [
             { id: "sparkline", name: "Sparkline", icon: "fa-chart-simple", badge: "Mới", badgeEn: "New" },
             { id: "avatarstack", name: "AvatarStack", icon: "fa-user-group", badge: "Mới", badgeEn: "New" },
             { id: "heatmapcalendar", name: "HeatmapCalendar", icon: "fa-calendar-days", badge: "Mới", badgeEn: "New" },
+            { id: "treedatagrid", name: "TreeDataGrid", icon: "fa-diagram-project", badge: "Mới", badgeEn: "New" },
+            { id: "multiselectdatagrid", name: "MultiSelectDataGrid", icon: "fa-square-check", badge: "Mới", badgeEn: "New" },
+            { id: "treemap", name: "TreeMap", icon: "fa-chart-treemap", badge: "Mới", badgeEn: "New" },
             { id: "propertygrid", name: "PropertyGrid", icon: "fa-sliders" }
         ]
     },
@@ -71,6 +74,8 @@ const DOCS_NAV = [
             { id: "pagination", name: "Pagination", icon: "fa-file-lines" },
             { id: "stepbar", name: "StepBar", icon: "fa-list-ol" },
             { id: "transfer", name: "Transfer", icon: "fa-right-left" },
+            { id: "commandpalette", name: "CommandPalette (Ctrl+K)", icon: "fa-magnifying-glass", badge: "Mới", badgeEn: "New" },
+            { id: "documenttabcontrol", name: "DocumentTabControl", icon: "fa-window-restore", badge: "Mới", badgeEn: "New" },
             { id: "tabcontrol", name: "TabControl", icon: "fa-folder" }
         ]
     },
@@ -91,6 +96,7 @@ const DOCS_NAV = [
         title: "Layout & Shell",
         items: [
             { id: "splitbutton", name: "SplitButton", icon: "fa-angles-right", badge: "Mới", badgeEn: "New" },
+            { id: "dockingmanager", name: "DockingManager", icon: "fa-table-columns", badge: "Mới", badgeEn: "New" },
             { id: "expander", name: "Expander", icon: "fa-angles-down", badge: "Mới", badgeEn: "New" },
             { id: "card", name: "Card & Border", icon: "fa-id-card" },
             { id: "badge", name: "Badge", icon: "fa-certificate", badge: "Mới", badgeEn: "New" },
@@ -98,7 +104,17 @@ const DOCS_NAV = [
             { id: "adaptivepanel", name: "AdaptivePanel", icon: "fa-table-cells-large", badge: "Mới", badgeEn: "New" },
             { id: "concostwindow", name: "CONCOSTWindow", icon: "fa-window-restore", badge: "Mới", badgeEn: "New" },
             { id: "ribbon", name: "Ribbon", icon: "fa-table-columns", badge: "Mới", badgeEn: "New" },
-            { id: "ribboncommands", name: "Ribbon commands", icon: "fa-rectangle-list", badge: "Mới", badgeEn: "New" }
+            { id: "ribboncommands", name: "Ribbon commands", icon: "fa-rectangle-list", badge: "Mới", badgeEn: "New" },
+            { id: "statusbar", name: "StatusBar", icon: "fa-window-minimize", badge: "Mới", badgeEn: "New" },
+            { id: "commandbar", name: "CommandBar", icon: "fa-bars", badge: "Mới", badgeEn: "New" },
+            { id: "quickaccesstoolbar", name: "QuickAccessToolbar", icon: "fa-bolt", badge: "Mới", badgeEn: "New" }
+        ]
+    },
+    {
+        title: "Nhập liệu & Kéo thả", titleEn: "Input & Drag",
+        items: [
+            { id: "searchabletreepicker", name: "SearchableTreePicker", icon: "fa-magnifying-glass", badge: "Mới", badgeEn: "New" },
+            { id: "dragdrop", name: "Drop zone & Drag", icon: "fa-folder-open", badge: "Mới", badgeEn: "New" }
         ]
     },
     {
@@ -107,6 +123,9 @@ const DOCS_NAV = [
             { id: "ripple", name: "Ripple", icon: "fa-water", badge: "Mới", badgeEn: "New" },
             { id: "spotlightcard", name: "SpotlightCard", icon: "fa-wand-sparkles", badge: "Mới", badgeEn: "New" },
             { id: "marqueeticker", name: "MarqueeTicker", icon: "fa-arrows-left-right-to-line", badge: "Mới", badgeEn: "New" },
+            { id: "meshgradient", name: "Mesh gradient & Spotlight", icon: "fa-palette", badge: "Mới", badgeEn: "New" },
+            { id: "glasscard", name: "Kính mờ & viền gradient", icon: "fa-square", badge: "Mới", badgeEn: "New" },
+            { id: "motion", name: "Stagger & Shared element", icon: "fa-wand-magic-sparkles", badge: "Mới", badgeEn: "New" },
             { id: "aurorabackground", name: "AuroraBackground", icon: "fa-sun", badge: "Mới", badgeEn: "New" },
             { id: "borderbeam", name: "BorderBeam", icon: "fa-border-all", badge: "Mới", badgeEn: "New" },
             { id: "confettiburst", name: "ConfettiBurst", icon: "fa-champagne-glasses", badge: "Mới", badgeEn: "New" },
@@ -126,6 +145,9 @@ const DOCS_NAV = [
             { id: "typewritertext", name: "TypewriterText", icon: "fa-keyboard", badge: "Mới", badgeEn: "New" },
             { id: "textreveal", name: "TextReveal", icon: "fa-heading", badge: "Mới", badgeEn: "New" },
             { id: "snowcanvas", name: "SnowCanvas", icon: "fa-snowflake" },
+            { id: "radialgauge", name: "RadialGauge", icon: "fa-gauge-high", badge: "Mới", badgeEn: "New" },
+            { id: "particlefield", name: "ParticleField", icon: "fa-sparkles", badge: "Mới", badgeEn: "New" },
+            { id: "pagetransitionhost", name: "PageTransitionHost", icon: "fa-shuffle", badge: "Mới", badgeEn: "New" },
             { id: "sprite", name: "Sprite", icon: "fa-circle-dot" },
             { id: "compareslider", name: "CompareSlider", icon: "fa-arrows-left-right" },
             { id: "magnifier", name: "Magnifier", icon: "fa-magnifying-glass-plus" },
@@ -145,6 +167,7 @@ const DOCS_NAV = [
             { id: "listbox", name: "ListBox", icon: "fa-rectangle-list", badge: "Mới", badgeEn: "New" },
             { id: "listview", name: "ListView", icon: "fa-list", badge: "Mới", badgeEn: "New" },
             { id: "datagrid", name: "DataGrid", icon: "fa-table" },
+            { id: "datagridpanels", name: "DataGrid Panels", icon: "fa-filter", badge: "Mới", badgeEn: "New" },
             { id: "treeview", name: "TreeView", icon: "fa-folder-tree" },
             { id: "groupbox", name: "GroupBox", icon: "fa-square", badge: "Mới", badgeEn: "New" },
             { id: "menu", name: "Menu & ContextMenu", icon: "fa-bars-staggered", badge: "Mới", badgeEn: "New" },

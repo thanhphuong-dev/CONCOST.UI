@@ -439,7 +439,10 @@ var heading = new TextBlock
             { name: "InfoElement.Placeholder", type: "string", default: "string.Empty", attached: true, desc: "Chữ gợi ý khi chưa chọn." },
             { name: "InfoElement.Title", type: "string", default: "null", attached: true, desc: "Nhãn phía trên." },
             { name: "InfoElement.Required", type: "bool", default: "false", attached: true, desc: "Đánh dấu trường bắt buộc." },
-            { name: "IconElement.Kind", type: "IconKind", default: "IconKind.None", attached: true, desc: "Icon mũi tên hoặc icon ngữ cảnh." }
+            { name: "IconElement.Kind", type: "IconKind", default: "IconKind.None", attached: true, desc: "Icon mũi tên hoặc icon ngữ cảnh." },
+            { name: "ComboBoxHelper.IsSearchEnabled", type: "bool", default: "false", attached: true, desc: "Hiện ô tìm kiếm trên đầu danh sách; ô chọn vẫn <b>không sửa được giá trị</b>." },
+            { name: "ComboBoxHelper.SearchText", type: "string", default: "string.Empty", attached: true, desc: "Từ khoá đang lọc (hai chiều)." },
+            { name: "ComboBoxHelper.SearchPlaceholder", type: "string", default: "\"Search…\"", attached: true, desc: "Chữ gợi ý trong ô tìm kiếm." }
         ],
         variants: [
             { key: "CONCOST.ComboBox.Base", desc: "Chuẩn, có viền và mũi tên." },

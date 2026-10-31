@@ -76,7 +76,9 @@ public class DataGridGroupPanel : Control
         else if (e.Data.GetDataPresent(typeof(string)))
             propName = e.Data.GetData(typeof(string)) as string;
 
-        if (!string.IsNullOrEmpty(propName))
+        // Pattern instead of string.IsNullOrEmpty: net48 has no [NotNullWhen] on the BCL helper,
+        // so the null-state would not flow into AddGroup/RemoveGroup and CS8604 would fire.
+        if (propName is { Length: > 0 })
         {
             AddGroup(propName);
             e.Handled = true;
@@ -102,7 +104,7 @@ public class DataGridGroupPanel : Control
     private ICommand? _removeGroupCommand;
     public ICommand RemoveGroupCommand => _removeGroupCommand ??= new RelayCommand<string>(prop =>
     {
-        if (!string.IsNullOrEmpty(prop))
+        if (prop is { Length: > 0 })
             RemoveGroup(prop);
     });
 

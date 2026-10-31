@@ -6,9 +6,23 @@ The current repository structure and supported setup are documented in the root 
 
 ## Active
 
-- [Roadmap revision 3](roadmap-v3.md) — current direction, control coverage and release themes.
-- [Effects roadmap](effects-roadmap.md) — planned visual effects (web 2026 trends), phases 0–2 shipped in 1.0.0, phase 3 planned for 1.1.0, definition of done.
-- [Ribbon plan](ribbon-plan.md) — 22 controls in P0/P1/P2, layout engine, keytips, persistence; 1.1.0 = P0, 1.2.0 = P1, 1.3.0 = P2.
+- [Roadmap revision 3](roadmap-v3.md) — current direction, control coverage and release themes. Sections 96, 97, 100, 101 and 107.13 are annotated with what actually shipped.
+- [Effects roadmap](effects-roadmap.md) — planned visual effects (web 2026 trends). Phases 0–2 shipped in 1.0.0, **phase 3 shipped in 1.1.0** (CommandPalette, ParticleField, RadialGauge, PageTransitionHost).
+- [Ribbon plan](ribbon-plan.md) — 22 controls in P0/P1/P2, layout engine, keytips, persistence. **All 22/22 shipped in 1.1.0**, earlier than the planned 1.1.0 = P0 / 1.2.0 = P1 / 1.3.0 = P2 split.
+
+## Release 1.1.0 at a glance
+
+| Item | State |
+| --- | --- |
+| Ribbon | 22/22 controls |
+| Phase 3 effects | 4/4 controls |
+| Public control classes | 167 |
+| `CONCOST.*` style keys | 352 |
+| Theme presets | 8 |
+| Tests | 291 green |
+| Target frameworks | `net48`, `net8.0-windows`, `net10.0-windows` — 0 warnings |
+| Assembly signing | strong-name, token `5aec1392da75741c` |
+| Authenticode | not done (needs an external code-signing certificate) |
 
 ## Archived
 

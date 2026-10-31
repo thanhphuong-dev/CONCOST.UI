@@ -1817,13 +1817,32 @@
                 <UIElement.Effect>
                   <DropShadowEffect BlurRadius="10" ShadowDepth="3" Direction="270" Color="#000000" Opacity="0.14" />
                 </UIElement.Effect>
-                <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
-                  <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
-                </ScrollViewer>
+                <Grid>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                  </Grid.RowDefinitions>
+                  <TextBox x:Name="PART_SearchBox"
+                           Grid.Row="0"
+                           Height="28"
+                           MinHeight="28"
+                           Margin="4,4,4,2"
+                           FontSize="12"
+                           Visibility="Collapsed"
+                           Text="{Binding Path=(attached:ComboBoxHelper.SearchText), RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           attached:InfoElement.Placeholder="{Binding Path=(attached:ComboBoxHelper.SearchPlaceholder), RelativeSource={RelativeSource TemplatedParent}}"
+                           attached:InfoElement.ShowClearButton="True" />
+                  <ScrollViewer Grid.Row="1" CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                  </ScrollViewer>
+                </Grid>
               </Border>
             </Popup>
           </Grid>
           <ControlTemplate.Triggers>
+            <Trigger Property="attached:ComboBoxHelper.IsSearchEnabled" Value="True">
+              <Setter TargetName="PART_SearchBox" Property="Visibility" Value="Visible" />
+            </Trigger>
             <Trigger Property="ItemsControl.HasItems" Value="False">
               <Setter TargetName="dropDownBorder" Property="Height" Value="60" />
             </Trigger>
@@ -5350,45 +5369,77 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:LoadingLine}">
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Ellipse Name="Dot1" Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0" RenderTransformOrigin="0.5,0.5">
-              <UIElement.RenderTransform>
+            <Ellipse Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0">
+              <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                  <BeginStoryboard>
+                    <Storyboard RepeatBehavior="Forever">
+                      <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.00" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </EventTrigger>
+              </Ellipse.Triggers>
+              <Ellipse.RenderTransform>
                 <TranslateTransform Y="0" />
-              </UIElement.RenderTransform>
+              </Ellipse.RenderTransform>
             </Ellipse>
-            <Ellipse Name="Dot2" Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0" RenderTransformOrigin="0.5,0.5">
-              <UIElement.RenderTransform>
+            <Ellipse Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0">
+              <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                  <BeginStoryboard>
+                    <Storyboard RepeatBehavior="Forever">
+                      <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.09" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </EventTrigger>
+              </Ellipse.Triggers>
+              <Ellipse.RenderTransform>
                 <TranslateTransform Y="0" />
-              </UIElement.RenderTransform>
+              </Ellipse.RenderTransform>
             </Ellipse>
-            <Ellipse Name="Dot3" Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0" RenderTransformOrigin="0.5,0.5">
-              <UIElement.RenderTransform>
+            <Ellipse Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0">
+              <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                  <BeginStoryboard>
+                    <Storyboard RepeatBehavior="Forever">
+                      <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.18" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </EventTrigger>
+              </Ellipse.Triggers>
+              <Ellipse.RenderTransform>
                 <TranslateTransform Y="0" />
-              </UIElement.RenderTransform>
+              </Ellipse.RenderTransform>
             </Ellipse>
-            <Ellipse Name="Dot4" Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0" RenderTransformOrigin="0.5,0.5">
-              <UIElement.RenderTransform>
+            <Ellipse Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0">
+              <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                  <BeginStoryboard>
+                    <Storyboard RepeatBehavior="Forever">
+                      <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.27" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </EventTrigger>
+              </Ellipse.Triggers>
+              <Ellipse.RenderTransform>
                 <TranslateTransform Y="0" />
-              </UIElement.RenderTransform>
+              </Ellipse.RenderTransform>
             </Ellipse>
-            <Ellipse Name="Dot5" Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0" RenderTransformOrigin="0.5,0.5">
-              <UIElement.RenderTransform>
+            <Ellipse Width="{TemplateBinding controls:LoadingLine.DotSize}" Height="{TemplateBinding controls:LoadingLine.DotSize}" Fill="{TemplateBinding Control.Foreground}" Margin="3,0">
+              <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                  <BeginStoryboard>
+                    <Storyboard RepeatBehavior="Forever">
+                      <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.36" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </EventTrigger>
+              </Ellipse.Triggers>
+              <Ellipse.RenderTransform>
                 <TranslateTransform Y="0" />
-              </UIElement.RenderTransform>
+              </Ellipse.RenderTransform>
             </Ellipse>
           </StackPanel>
-          <ControlTemplate.Triggers>
-            <EventTrigger RoutedEvent="Loaded">
-              <BeginStoryboard>
-                <Storyboard RepeatBehavior="Forever">
-                  <DoubleAnimation Storyboard.TargetName="Dot1" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.00" />
-                  <DoubleAnimation Storyboard.TargetName="Dot2" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.09" />
-                  <DoubleAnimation Storyboard.TargetName="Dot3" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.18" />
-                  <DoubleAnimation Storyboard.TargetName="Dot4" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.27" />
-                  <DoubleAnimation Storyboard.TargetName="Dot5" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="0" To="-10" Duration="0:0:0.35" AutoReverse="True" BeginTime="0:0:0.36" />
-                </Storyboard>
-              </BeginStoryboard>
-            </EventTrigger>
-          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -5531,19 +5582,17 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:RollLoading}">
+          <ControlTemplate.Resources>
+            <Storyboard x:Key="RollStoryboard" RepeatBehavior="Forever">
+              <DoubleAnimation Storyboard.TargetName="PART_Orb1" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.0" />
+              <DoubleAnimation Storyboard.TargetName="PART_Orb2" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.2" />
+              <DoubleAnimation Storyboard.TargetName="PART_Orb3" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.4" />
+              <DoubleAnimation Storyboard.TargetName="PART_Orb4" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.6" />
+              <DoubleAnimation Storyboard.TargetName="PART_Orb5" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.8" />
+              <DoubleAnimation Storyboard.TargetName="PART_Orb6" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="2.0" />
+            </Storyboard>
+          </ControlTemplate.Resources>
           <Grid Width="{TemplateBinding FrameworkElement.Width}" Height="{TemplateBinding FrameworkElement.Height}" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <FrameworkElement.Resources>
-              <ResourceDictionary>
-                <Storyboard x:Key="RollStoryboard" RepeatBehavior="Forever">
-                  <DoubleAnimation Storyboard.TargetName="PART_Orb1" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.0" />
-                  <DoubleAnimation Storyboard.TargetName="PART_Orb2" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.2" />
-                  <DoubleAnimation Storyboard.TargetName="PART_Orb3" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.4" />
-                  <DoubleAnimation Storyboard.TargetName="PART_Orb4" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.6" />
-                  <DoubleAnimation Storyboard.TargetName="PART_Orb5" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="1.8" />
-                  <DoubleAnimation Storyboard.TargetName="PART_Orb6" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.6" SpeedRatio="2.0" />
-                </Storyboard>
-              </ResourceDictionary>
-            </FrameworkElement.Resources>
             <Canvas Width="80" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center">
               <Grid Name="PART_Orb1" Width="80" Height="80" RenderTransformOrigin="0.5,0.5">
                 <UIElement.RenderTransform>
@@ -5600,14 +5649,12 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:CycleLoading}">
+          <ControlTemplate.Resources>
+            <Storyboard x:Key="CycleStoryboard" RepeatBehavior="Forever">
+              <DoubleAnimation Storyboard.TargetName="PART_RotateRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:2" />
+            </Storyboard>
+          </ControlTemplate.Resources>
           <Grid Width="{TemplateBinding FrameworkElement.Width}" Height="{TemplateBinding FrameworkElement.Height}" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <FrameworkElement.Resources>
-              <ResourceDictionary>
-                <Storyboard x:Key="CycleStoryboard" RepeatBehavior="Forever">
-                  <DoubleAnimation Storyboard.TargetName="PART_RotateRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:2" />
-                </Storyboard>
-              </ResourceDictionary>
-            </FrameworkElement.Resources>
             <Ellipse Stroke="{DynamicResource CONCOST.Brush.Border}" StrokeThickness="4" Width="90" Height="90" />
             <Grid Name="PART_RotateRing" Width="90" Height="90" RenderTransformOrigin="0.5,0.5">
               <UIElement.RenderTransform>
@@ -5639,11 +5686,11 @@
           <Grid>
             <ContentPresenter Content="{TemplateBinding ContentControl.Content}" />
             <Border Name="OverlayBorder" Background="#900F172A" Visibility="Collapsed" CornerRadius="{DynamicResource CONCOST.CornerRadius.Default}">
-              <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="12" Padding="28,20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="380">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                  <controls:LoadingLine Foreground="{DynamicResource CONCOST.Brush.Primary}" Margin="0,0,0,12" Style="{StaticResource CONCOST.LoadingLine.Base}" />
-                  <TextBlock Text="{TemplateBinding controls:LoadingOverlay.Message}" FontSize="13" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" HorizontalAlignment="Center" TextAlignment="Center" />
-                  <TextBlock Text="{TemplateBinding controls:LoadingOverlay.SubMessage}" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" Margin="0,4,0,0" TextAlignment="Center" />
+              <Border Name="ContentBorder" Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="12" Padding="32,24" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="420">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="200">
+                  <controls:LoadingLine Name="StandardSpinner" Foreground="{DynamicResource CONCOST.Brush.Primary}" Margin="0,0,0,16" Style="{StaticResource CONCOST.LoadingLine.Base}" />
+                  <TextBlock Text="{TemplateBinding controls:LoadingOverlay.Message}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+                  <TextBlock Text="{TemplateBinding controls:LoadingOverlay.SubMessage}" FontSize="12" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" Margin="0,6,0,0" TextAlignment="Center" TextWrapping="Wrap" />
                 </StackPanel>
               </Border>
             </Border>
@@ -5652,6 +5699,7 @@
             <Trigger Property="controls:LoadingOverlay.IsLoading" Value="True">
               <Setter TargetName="OverlayBorder" Property="Visibility" Value="Visible" />
             </Trigger>
+            <!-- Variant triggers removed - only Standard is supported -->
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -6395,6 +6443,239 @@
               <Run Text="{Binding TotalPages, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
             </TextBlock>
           </StackPanel>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:DataGridColumnChooser}" TargetType="{x:Type controls:DataGridColumnChooser}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="10" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:DataGridColumnChooser}">
+          <StackPanel>
+            <ToggleButton x:Name="PART_Toggle"
+                          IsChecked="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                          HorizontalAlignment="Left"
+                          Cursor="Hand">
+              <ToggleButton.Template>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                  <Border x:Name="Chrome"
+                          Background="{DynamicResource CONCOST.Brush.Surface}"
+                          BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                          BorderThickness="1"
+                          CornerRadius="6"
+                          Padding="10,5">
+                    <ContentPresenter />
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                      <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                    </Trigger>
+                    <Trigger Property="IsChecked" Value="True">
+                      <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+                      <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Primary}" />
+                    </Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </ToggleButton.Template>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{TemplateBinding HeaderText}"
+                           VerticalAlignment="Center"
+                           FontSize="{TemplateBinding FontSize}"
+                           Foreground="{TemplateBinding Foreground}" />
+                <Path Data="M0,0 L3.5,3.5 L7,0"
+                      Stroke="{DynamicResource CONCOST.Brush.TextSecondary}"
+                      StrokeThickness="1.4"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      Margin="8,2,0,0"
+                      VerticalAlignment="Center" />
+              </StackPanel>
+            </ToggleButton>
+
+            <Popup x:Name="PART_Popup"
+                   IsOpen="{Binding IsChecked, ElementName=PART_Toggle, Mode=TwoWay}"
+                   PlacementTarget="{Binding ElementName=PART_Toggle}"
+                   Placement="Bottom"
+                   VerticalOffset="4"
+                   StaysOpen="False"
+                   AllowsTransparency="True">
+              <Border Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      CornerRadius="{TemplateBinding CornerRadius}"
+                      Padding="{TemplateBinding Padding}"
+                      MinWidth="224"
+                      Effect="{DynamicResource CONCOST.Effect.Elevation2}">
+                <StackPanel>
+                  <TextBlock Text="{TemplateBinding HeaderText}"
+                             FontWeight="SemiBold"
+                             FontSize="11.5"
+                             Margin="0,0,0,8"
+                             Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+                  <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{TemplateBinding Columns}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type controls:ColumnChooserItem}">
+                          <CheckBox Content="{Binding Header}"
+                                    IsChecked="{Binding IsVisible, Mode=TwoWay}"
+                                    Margin="0,1"
+                                    FontSize="12.5"
+                                    Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </ScrollViewer>
+                  <Border Height="1" Background="{DynamicResource CONCOST.Brush.Border}" Margin="0,8" />
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Show all"
+                            Style="{DynamicResource CONCOST.Button.Secondary}"
+                            Padding="10,3"
+                            MinWidth="78"
+                            FontSize="12"
+                            Command="{x:Static controls:DataGridColumnChooser.ToggleColumnCommand}"
+                            CommandParameter="SHOW_ALL"
+                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
+                    <Button Content="Hide all"
+                            Style="{DynamicResource CONCOST.Button.Secondary}"
+                            Margin="6,0,0,0"
+                            Padding="10,3"
+                            MinWidth="78"
+                            FontSize="12"
+                            Command="{x:Static controls:DataGridColumnChooser.ToggleColumnCommand}"
+                            CommandParameter="HIDE_ALL"
+                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+            </Popup>
+          </StackPanel>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:DataGridFilterPanel}" TargetType="{x:Type controls:DataGridFilterPanel}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:DataGridFilterPanel}">
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  ClipToBounds="True">
+            <ItemsControl x:Name="PART_Items"
+                          ItemsSource="{TemplateBinding Filters}"
+                          ClipToBounds="True">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type controls:ColumnFilterItem}">
+                  <Border Width="{Binding Width}" Padding="4,5" ClipToBounds="True">
+                    <TextBox Height="26"
+                             MinHeight="26"
+                             Padding="8,0"
+                             FontSize="12"
+                             Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             attached:InfoElement.Placeholder="{Binding Placeholder}"
+                             attached:InfoElement.ShowClearButton="True" />
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:DataGridSearchPanel}" TargetType="{x:Type controls:DataGridSearchPanel}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:DataGridSearchPanel}">
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  Padding="6,5">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Grid Grid.Column="0" Width="14" Height="14" VerticalAlignment="Center" Margin="4,0,0,0">
+                <Ellipse Width="9"
+                         Height="9"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Stroke="{DynamicResource CONCOST.Brush.TextSecondary}"
+                         StrokeThickness="1.4" />
+                <Line X1="8" Y1="8" X2="12.5" Y2="12.5"
+                      Stroke="{DynamicResource CONCOST.Brush.TextSecondary}"
+                      StrokeThickness="1.4"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round" />
+              </Grid>
+              <TextBox Grid.Column="1"
+                       Height="30"
+                       MinHeight="30"
+                       Padding="8,0"
+                       FontSize="12.5"
+                       Margin="8,0,0,0"
+                       Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource TemplatedParent}}"
+                       attached:InfoElement.Placeholder="{TemplateBinding PlaceholderText}"
+                       attached:InfoElement.ShowClearButton="True" />
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:DataGridSummary}" TargetType="{x:Type controls:DataGridSummary}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="0,1,0,0" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:DataGridSummary}">
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  Height="{TemplateBinding RowHeight}"
+                  ClipToBounds="True">
+            <ItemsControl x:Name="PART_Items"
+                          ItemsSource="{TemplateBinding Summaries}"
+                          ClipToBounds="True">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type controls:ColumnSummaryItem}">
+                  <Border Width="{Binding Width}" Padding="8,0" ClipToBounds="True">
+                    <TextBlock Text="{Binding DisplayText}"
+                               FontSize="11.5"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource CONCOST.Brush.TextSecondary}"
+                               TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center" />
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Border>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -9051,6 +9332,9 @@
             <Trigger Property="HasItems" Value="False">
               <Setter TargetName="Chevron" Property="Visibility" Value="Collapsed" />
             </Trigger>
+            <Trigger Property="IsCustomizable" Value="False">
+              <Setter TargetName="Chevron" Property="Visibility" Value="Collapsed" />
+            </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -9330,7 +9614,7 @@
             <Grid>
               <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="21" />
+                <RowDefinition x:Name="HeaderRow" Height="21" />
               </Grid.RowDefinitions>
               <ItemsPresenter x:Name="ItemsHost" Grid.Row="0" VerticalAlignment="Top" />
               <Grid x:Name="HeaderHost" Grid.Row="1" Margin="0,4,0,0">
@@ -9434,7 +9718,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ribbon:Ribbon}">
-          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource CONCOST.Ribbon.ShellCornerRadius}" SnapsToDevicePixels="True">
+          <Border x:Name="ShellBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource CONCOST.Ribbon.ShellCornerRadius}" SnapsToDevicePixels="True">
             <Grid>
               <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -9450,7 +9734,7 @@
               <ContentControl x:Name="PART_QatAbove" Grid.Row="0" Margin="8,4,8,0" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
 
               <!-- MenuBar slot above the tab strip. Sits between the QAT (when above) and the tabs. -->
-              <ContentControl x:Name="PART_MenuBarAbove" Grid.Row="1" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+              <ContentControl x:Name="PART_MenuBarAbove" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Visibility="Collapsed" Focusable="False" />
 
               <!-- One compact top row: File block, tab strip, quick-access commands. Everything sits
                    on the same baseline as the tabs, so there is no empty band above them. -->
@@ -9462,11 +9746,16 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                   </Grid.ColumnDefinitions>
 
                   <ContentControl x:Name="AppMenuHost" Grid.Column="0" Margin="1,0,6,4" Content="{TemplateBinding ApplicationMenu}" VerticalAlignment="Bottom" Focusable="False" />
 
-                  <ListBox Grid.Column="1" x:Name="PART_Tabs" ItemsSource="{TemplateBinding VisibleTabs}" SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="Transparent" BorderThickness="0" Padding="4,3,4,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+                  <!-- The strip gets its own clipping viewport: without it the tab panel paints over
+                       the quick-access strip as soon as the tabs no longer fit. -->
+                  <ScrollViewer Grid.Column="1" x:Name="PART_TabScroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" CanContentScroll="False" ClipToBounds="True" Focusable="False">
+
+                  <ListBox x:Name="PART_Tabs" ItemsSource="{TemplateBinding VisibleTabs}" SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="Transparent" BorderThickness="0" Padding="4,3,4,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
                 <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
                     <ribbon:RibbonTabStripPanel HorizontalAlignment="Left" BandHeight="{DynamicResource CONCOST.Ribbon.ContextualBandHeight}" FontFamily="{DynamicResource CONCOST.FontFamily.Default}" FontSize="{DynamicResource CONCOST.Ribbon.ContextualBandFontSize}" />
@@ -9512,19 +9801,43 @@
                   </DataTemplate>
                 </ListBox.ItemTemplate>
                   </ListBox>
+                  </ScrollViewer>
 
-                  <ContentControl x:Name="PART_QatInline" Grid.Column="2" Margin="8,0,4,4" VerticalAlignment="Bottom" Focusable="False">
+                  <!-- "»" appears only when the tabs no longer fit; it lists every tab. -->
+                  <Button x:Name="TabOverflowButton" Grid.Column="2" Width="24" Height="24" Margin="2,0,0,4" Padding="0" VerticalAlignment="Bottom" Background="Transparent" BorderThickness="0" Cursor="Hand" Visibility="Collapsed" Focusable="False" ToolTip="All tabs" Command="{x:Static ribbon:Ribbon.ShowTabListCommand}">
+                    <Button.Template>
+                      <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Ob" Background="Transparent" CornerRadius="3">
+                          <Path Data="M0,0 L4,4 L0,8 M5,0 L9,4 L5,8" Stroke="{DynamicResource CONCOST.Brush.TextSecondary}" StrokeThickness="1.4" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                          <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Ob" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                          </Trigger>
+                        </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                    </Button.Template>
+                  </Button>
+
+                  <ContentControl x:Name="PART_QatInline" Grid.Column="3" Margin="8,0,4,4" VerticalAlignment="Bottom" Focusable="False">
                     <ribbon:RibbonQuickAccessToolBar x:Name="PART_QAT" />
                   </ContentControl>
                 </Grid>
               </Grid>
 
-              <Border x:Name="PART_Content" Grid.Row="3" Background="{DynamicResource CONCOST.Brush.Surface}" BorderThickness="0" Padding="0" ClipToBounds="True">
-                <ContentControl Content="{Binding SelectedItem.Content, RelativeSource={RelativeSource TemplatedParent}}" ContentTemplate="{StaticResource CONCOST.Ribbon.TabContentTemplate}" />
+              <!-- A little air between the tab strip and the first row of commands; the groups are
+                   top-aligned, so without it they sit right on the tab underline. -->
+              <Border x:Name="PART_Content" Grid.Row="3" Background="{DynamicResource CONCOST.Brush.Surface}" BorderThickness="0" Padding="0,6,0,0" ClipToBounds="True">
+                <Grid>
+                  <ContentControl Content="{Binding SelectedItem.Content, RelativeSource={RelativeSource TemplatedParent}}" ContentTemplate="{StaticResource CONCOST.Ribbon.TabContentTemplate}" />
+
+                  <!-- Nothing to show: a host can drop a hint here instead of a blank strip. -->
+                  <ContentPresenter x:Name="EmptyHost" Content="{TemplateBinding EmptyContent}" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" />
+                </Grid>
               </Border>
 
               <!-- MenuBar slot below the ribbon body. -->
-              <ContentControl x:Name="PART_MenuBarBelow" Grid.Row="4" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+              <ContentControl x:Name="PART_MenuBarBelow" Grid.Row="4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Visibility="Collapsed" Focusable="False" />
 
               <!-- Quick access, "below the ribbon" slot. -->
               <ContentControl x:Name="PART_QatBelow" Grid.Row="5" Margin="8,3,8,3" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
@@ -9570,6 +9883,17 @@
             <Trigger Property="ApplicationMenu" Value="{x:Null}">
               <Setter TargetName="AppMenuHost" Property="Visibility" Value="Collapsed" />
               <Setter TargetName="AppMenuHost" Property="Margin" Value="0" />
+            </Trigger>
+            <!-- Docked into a host panel: the shell outline would double the panel's own border. -->
+            <Trigger Property="ShowBorder" Value="False">
+              <Setter TargetName="ShellBorder" Property="BorderThickness" Value="0" />
+            </Trigger>
+            <!-- No tabs: give the empty state the whole content area. -->
+            <Trigger Property="IsEmpty" Value="True">
+              <Setter TargetName="EmptyHost" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsTabStripOverflowing" Value="True">
+              <Setter TargetName="TabOverflowButton" Property="Visibility" Value="Visible" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -9657,6 +9981,12 @@
         </ItemsPanelTemplate>
       </Setter.Value>
     </Setter>
+    <Style.Triggers>
+      <!-- The hairline under the bar: the bar itself always spans the ribbon width. -->
+      <Trigger Property="ShowDivider" Value="False">
+        <Setter Property="BorderThickness" Value="0" />
+      </Trigger>
+    </Style.Triggers>
   </Style>
 
   <Style x:Key="CONCOST.RibbonMenuBarItem.Base" TargetType="{x:Type ribbon:RibbonMenuBarItem}">
@@ -10261,5 +10591,941 @@
   <Style TargetType="{x:Type ribbon:RibbonGallery}" BasedOn="{StaticResource CONCOST.RibbonGallery.Base}" />
   <Style TargetType="{x:Type ribbon:RibbonColorPicker}" BasedOn="{StaticResource CONCOST.RibbonColorPicker.Base}" />
   <Style TargetType="{x:Type ribbon:RibbonSearchBox}" BasedOn="{StaticResource CONCOST.RibbonSearchBox.Base}" />
+
+  <!-- ===================== CommandPalette ===================== -->
+  <Style x:Key="CONCOST.CommandPalette.Base" TargetType="{x:Type controls:CommandPalette}">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="MaxListHeight" Value="320" />
+    <Setter Property="Placeholder" Value="Type a command…" />
+    <Setter Property="EmptyText" Value="No command matches." />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:CommandPalette}">
+          <Grid x:Name="Root" Visibility="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border Background="#8C0F172A" />
+            <Border x:Name="Card"
+                    MaxWidth="600"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                    Margin="24,88,24,24"
+                    Background="{DynamicResource CONCOST.Brush.Surface}"
+                    BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    SnapsToDevicePixels="True">
+              <Border.Effect>
+                <DropShadowEffect BlurRadius="34" ShadowDepth="12" Direction="270" Opacity="0.24" Color="#000000" />
+              </Border.Effect>
+              <Grid>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Search row -->
+                <Grid Grid.Row="0" Margin="18,15,14,15">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+
+                  <icons:Icon Kind="Search" Width="16" Height="16" VerticalAlignment="Center"
+                              Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+
+                  <Grid Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="{TemplateBinding controls:CommandPalette.Placeholder}"
+                               IsHitTestVisible="False"
+                               FontSize="14"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource CONCOST.Brush.TextTertiary}">
+                      <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                          <Setter Property="Visibility" Value="Collapsed" />
+                          <Style.Triggers>
+                            <DataTrigger Binding="{Binding FilterText, RelativeSource={RelativeSource TemplatedParent}}" Value="">
+                              <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                          </Style.Triggers>
+                        </Style>
+                      </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBox x:Name="PART_SearchBox"
+                             FontSize="14"
+                             MinHeight="0" Height="24"
+                             Padding="0" Margin="0"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             VerticalContentAlignment="Center"
+                             Foreground="{DynamicResource CONCOST.Brush.TextPrimary}"
+                             CaretBrush="{DynamicResource CONCOST.Brush.TextPrimary}"
+                             Text="{Binding FilterText, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                  </Grid>
+
+                  <Border Grid.Column="2" CornerRadius="5" Padding="6,2" VerticalAlignment="Center"
+                          BorderThickness="1"
+                          BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}"
+                          Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}">
+                    <TextBlock Text="esc" FontSize="9" FontFamily="Consolas, Cascadia Mono, monospace"
+                               Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+                  </Border>
+                </Grid>
+
+                <Border Grid.Row="1" Height="1" Background="{DynamicResource CONCOST.Brush.Border}" />
+
+                <!-- Results -->
+                <Grid Grid.Row="2">
+                  <ListBox x:Name="PART_List"
+                           ItemsSource="{Binding FilteredItems, RelativeSource={RelativeSource TemplatedParent}}"
+                           SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                           Background="Transparent"
+                           BorderThickness="0"
+                           Padding="8,6"
+                           Focusable="False"
+                           IsTabStop="False"
+                           IsTextSearchEnabled="False"
+                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                           ScrollViewer.VerticalScrollBarVisibility="Visible">
+                    <ListBox.ItemContainerStyle>
+                      <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource CONCOST.ListBoxItem.Base}">
+                        <Setter Property="Padding" Value="10,6" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Height" Value="44" />
+                        <Setter Property="Focusable" Value="False" />
+                        <Setter Property="attached:BorderElement.CornerRadius" Value="8" />
+                      </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                      <DataTemplate>
+                        <Grid>
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                          </Grid.ColumnDefinitions>
+
+                          <Border Width="26" Height="26" CornerRadius="7" VerticalAlignment="Center"
+                                  Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}">
+                            <icons:Icon Kind="{Binding Icon}" Width="14" Height="14"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+                          </Border>
+
+                          <StackPanel Grid.Column="1" Margin="10,0,10,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Title}" FontSize="12.5" FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                            <TextBlock Text="{Binding Subtitle}" FontSize="10.5"
+                                       TextTrimming="CharacterEllipsis"
+                                       Margin="0,1,0,0"
+                                       Foreground="{DynamicResource CONCOST.Brush.TextTertiary}">
+                              <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                  <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Subtitle}" Value="{x:Null}">
+                                      <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                  </Style.Triggers>
+                                </Style>
+                              </TextBlock.Style>
+                            </TextBlock>
+                          </StackPanel>
+
+                          <Border Grid.Column="2" CornerRadius="4" Padding="6,1" VerticalAlignment="Center"
+                                  BorderThickness="1"
+                                  BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}"
+                                  Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}">
+                            <Border.Style>
+                              <Style TargetType="Border">
+                                <Style.Triggers>
+                                  <DataTrigger Binding="{Binding Shortcut}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                  </DataTrigger>
+                                </Style.Triggers>
+                              </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding Shortcut}" FontSize="9"
+                                       FontFamily="Consolas, Cascadia Mono, monospace"
+                                       Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+                          </Border>
+                        </Grid>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+
+                  <TextBlock Text="{TemplateBinding controls:CommandPalette.EmptyText}"
+                             Margin="0,26,0,30"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Top"
+                             FontSize="11.5"
+                             IsHitTestVisible="False"
+                             Foreground="{DynamicResource CONCOST.Brush.TextTertiary}">
+                    <TextBlock.Style>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding HasResults, RelativeSource={RelativeSource TemplatedParent}}" Value="False">
+                            <Setter Property="Visibility" Value="Visible" />
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </TextBlock.Style>
+                  </TextBlock>
+                </Grid>
+
+                <!-- Footer hints -->
+                <Border Grid.Row="3" CornerRadius="0,0,13,13" Padding="16,7"
+                        Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
+                        BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                        BorderThickness="0,1,0,0">
+                  <StackPanel Orientation="Horizontal">
+                    <Border CornerRadius="4" Padding="5,1" BorderThickness="1"
+                            BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}"
+                            Background="{DynamicResource CONCOST.Brush.Surface}">
+                      <TextBlock Text="↑↓" FontSize="9" FontFamily="Consolas, Cascadia Mono, monospace"
+                                 Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+                    </Border>
+                    <Border CornerRadius="4" Padding="5,1" Margin="6,0,0,0" BorderThickness="1"
+                            BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}"
+                            Background="{DynamicResource CONCOST.Brush.Surface}">
+                      <TextBlock Text="↵" FontSize="9" FontFamily="Consolas, Cascadia Mono, monospace"
+                                 Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+                    </Border>
+                    <TextBlock Text="esc" FontSize="9" Margin="10,0,0,0" VerticalAlignment="Center"
+                               FontFamily="Consolas, Cascadia Mono, monospace"
+                               Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+                  </StackPanel>
+                </Border>
+              </Grid>
+            </Border>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:CommandPalette}" TargetType="{x:Type controls:CommandPalette}" BasedOn="{StaticResource CONCOST.CommandPalette.Base}" />
+
+  <!-- ===================== PageTransitionHost ===================== -->
+  <Style x:Key="CONCOST.PageTransitionHost.Base" TargetType="{x:Type controls:PageTransitionHost}">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:PageTransitionHost}">
+          <ContentPresenter HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+                            SnapsToDevicePixels="True" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:PageTransitionHost}" TargetType="{x:Type controls:PageTransitionHost}" BasedOn="{StaticResource CONCOST.PageTransitionHost.Base}" />
+
+  <!-- ===================== TreeDataGrid ===================== -->
+  <!-- BasedOn the DataGrid style: the grid template, row style and grid lines all carry over,
+       only the hierarchy column is new. -->
+  <Style x:Key="CONCOST.TreeDataGrid.Base" TargetType="{x:Type controls:TreeDataGrid}" BasedOn="{StaticResource CONCOST.DataGrid.Base}">
+    <Setter Property="DataGrid.RowHeight" Value="34" />
+    <Setter Property="DataGrid.GridLinesVisibility" Value="Horizontal" />
+  </Style>
+  <Style x:Key="{x:Type controls:TreeDataGrid}" TargetType="{x:Type controls:TreeDataGrid}" BasedOn="{StaticResource CONCOST.TreeDataGrid.Base}" />
+
+  <!-- ===================== MultiSelectDataGrid ===================== -->
+  <Style x:Key="CONCOST.MultiSelectDataGrid.Base" TargetType="{x:Type controls:MultiSelectDataGrid}" BasedOn="{StaticResource CONCOST.DataGrid.Base}">
+    <Setter Property="DataGrid.SelectionMode" Value="Extended" />
+    <Setter Property="DataGrid.SelectionUnit" Value="FullRow" />
+  </Style>
+  <Style x:Key="{x:Type controls:MultiSelectDataGrid}" TargetType="{x:Type controls:MultiSelectDataGrid}" BasedOn="{StaticResource CONCOST.MultiSelectDataGrid.Base}" />
+
+  <!-- ===================== ToolWindow ===================== -->
+  <Style x:Key="CONCOST.ToolWindow.Base" TargetType="{x:Type controls:ToolWindow}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:ToolWindow}">
+          <Border Background="{TemplateBinding Control.Background}"
+                  BorderBrush="{TemplateBinding Control.BorderBrush}"
+                  BorderThickness="{TemplateBinding Control.BorderThickness}"
+                  SnapsToDevicePixels="True">
+            <DockPanel>
+              <Border x:Name="HeaderBar"
+                      DockPanel.Dock="Top"
+                      Height="30"
+                      Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
+                      BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                      BorderThickness="0,0,0,1"
+                      Cursor="SizeAll">
+                <Grid Margin="8,0,4,0">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+
+                  <icons:Icon Grid.Column="0"
+                              Kind="{TemplateBinding controls:ToolWindow.Icon}"
+                              Width="14" Height="14"
+                              VerticalAlignment="Center"
+                              Margin="0,0,6,0"
+                              Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+
+                  <ContentPresenter Grid.Column="1"
+                                    Content="{TemplateBinding controls:ToolWindow.Header}"
+                                    VerticalAlignment="Center"
+                                    TextElement.FontSize="12"
+                                    TextElement.FontWeight="SemiBold"
+                                    TextElement.Foreground="{DynamicResource CONCOST.Brush.TextPrimary}"
+                                    Margin="0,0,6,0" />
+
+                  <Button x:Name="PinButton"
+                          Grid.Column="2"
+                          Width="22" Height="22"
+                          Style="{StaticResource CONCOST.Button.Icon.Ghost}"
+                          attached:IconElement.Kind="PinItem"
+                          attached:IconElement.IconSize="12"
+                          ToolTip="Ghim / tự ẩn" />
+
+                  <Button x:Name="CloseButton"
+                          Grid.Column="3"
+                          Width="22" Height="22"
+                          Style="{StaticResource CONCOST.Button.Icon.Ghost}"
+                          attached:IconElement.Kind="Close"
+                          attached:IconElement.IconSize="11"
+                          ToolTip="Đóng" />
+                </Grid>
+              </Border>
+
+              <ContentPresenter Content="{TemplateBinding ContentControl.Content}"
+                                ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+                                ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
+            </DockPanel>
+          </Border>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="controls:ToolWindow.ShowHeader" Value="False">
+              <Setter TargetName="HeaderBar" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="controls:ToolWindow.CanClose" Value="False">
+              <Setter TargetName="CloseButton" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="controls:ToolWindow.CanAutoHide" Value="False">
+              <Setter TargetName="PinButton" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="controls:ToolWindow.IsActive" Value="True">
+              <Setter TargetName="HeaderBar" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:ToolWindow}" TargetType="{x:Type controls:ToolWindow}" BasedOn="{StaticResource CONCOST.ToolWindow.Base}" />
+
+  <!-- ===================== DocumentTabItem / DocumentTabControl ===================== -->
+  <Style x:Key="CONCOST.DocumentTabItem.Base" TargetType="{x:Type controls:DocumentTabItem}">
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:DocumentTabItem}">
+          <Border x:Name="Chrome"
+                  Height="32"
+                  Margin="0,0,2,0"
+                  Padding="12,0,6,0"
+                  CornerRadius="6,6,0,0"
+                  Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
+                  BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                  BorderThickness="1,1,1,0"
+                  SnapsToDevicePixels="True">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <icons:Icon x:Name="TabIcon"
+                          Kind="{TemplateBinding controls:DocumentTabItem.Icon}"
+                          Width="13" Height="13"
+                          Margin="0,0,6,0"
+                          VerticalAlignment="Center"
+                          Foreground="{TemplateBinding Control.Foreground}" />
+
+              <ContentPresenter ContentSource="Header"
+                                VerticalAlignment="Center"
+                                TextElement.FontSize="12"
+                                TextElement.Foreground="{TemplateBinding Control.Foreground}" />
+
+              <TextBlock x:Name="DirtyDot"
+                         Text="&#x2022;"
+                         Margin="6,0,0,0"
+                         VerticalAlignment="Center"
+                         Visibility="Collapsed"
+                         FontSize="14"
+                         Foreground="{DynamicResource CONCOST.Brush.Warning}" />
+
+              <Button x:Name="CloseButton"
+                      Width="18" Height="18"
+                      Margin="8,0,0,0"
+                      VerticalAlignment="Center"
+                      Style="{StaticResource CONCOST.Button.Icon.Ghost}"
+                      attached:IconElement.Kind="Close"
+                      attached:IconElement.IconSize="9"
+                      ToolTip="Đóng" />
+            </StackPanel>
+          </Border>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selector.IsSelected" Value="True">
+              <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+            <MultiTrigger>
+              <MultiTrigger.Conditions>
+                <Condition Property="Selector.IsSelected" Value="False" />
+                <Condition Property="UIElement.IsMouseOver" Value="True" />
+              </MultiTrigger.Conditions>
+              <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </MultiTrigger>
+            <Trigger Property="controls:DocumentTabItem.IsDirty" Value="True">
+              <Setter TargetName="DirtyDot" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="controls:DocumentTabItem.CanClose" Value="False">
+              <Setter TargetName="CloseButton" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="controls:DocumentTabItem.Icon" Value="None">
+              <Setter TargetName="TabIcon" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:DocumentTabItem}" TargetType="{x:Type controls:DocumentTabItem}" BasedOn="{StaticResource CONCOST.DocumentTabItem.Base}" />
+
+  <Style x:Key="CONCOST.DocumentTabControl.Base" TargetType="{x:Type controls:DocumentTabControl}" BasedOn="{StaticResource CONCOST.TabControl.Base}">
+    <Setter Property="ItemContainerStyle" Value="{StaticResource CONCOST.DocumentTabItem.Base}" />
+  </Style>
+  <Style x:Key="{x:Type controls:DocumentTabControl}" TargetType="{x:Type controls:DocumentTabControl}" BasedOn="{StaticResource CONCOST.DocumentTabControl.Base}" />
+
+  <!-- ===================== StatusBar ===================== -->
+  <Style x:Key="CONCOST.StatusBarItem.Base" TargetType="{x:Type controls:StatusBarItem}">
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    <Setter Property="FontSize" Value="11.5" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:StatusBarItem}">
+          <Grid x:Name="Root" Background="Transparent" Cursor="Hand">
+            <StackPanel x:Name="Content" Orientation="Horizontal" VerticalAlignment="Center">
+              <icons:Icon x:Name="CellIcon"
+                          Kind="{TemplateBinding controls:StatusBarItem.Icon}"
+                          Width="12" Height="12"
+                          Margin="0,0,5,0"
+                          VerticalAlignment="Center"
+                          Foreground="{TemplateBinding Control.Foreground}" />
+
+              <ContentPresenter x:Name="CellContent"
+                                Content="{TemplateBinding ContentControl.Content}"
+                                ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+                                VerticalAlignment="Center"
+                                TextElement.FontSize="{TemplateBinding Control.FontSize}"
+                                TextElement.Foreground="{TemplateBinding Control.Foreground}" />
+
+              <TextBlock x:Name="CellText"
+                         Text="{TemplateBinding controls:StatusBarItem.Text}"
+                         VerticalAlignment="Center"
+                         FontSize="{TemplateBinding Control.FontSize}"
+                         Foreground="{TemplateBinding Control.Foreground}" />
+            </StackPanel>
+
+            <Rectangle x:Name="Separator"
+                       Width="1"
+                       Margin="0,5"
+                       HorizontalAlignment="Left"
+                       Fill="{DynamicResource CONCOST.Brush.Border}"
+                       Visibility="Collapsed" />
+          </Grid>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="controls:StatusBarItem.Icon" Value="None">
+              <Setter TargetName="CellIcon" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="controls:StatusBarItem.IsSeparator" Value="True">
+              <Setter TargetName="Content" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="Separator" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="controls:StatusBarItem.Command" Value="{x:Null}">
+              <Setter TargetName="Root" Property="Cursor" Value="Arrow" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:StatusBarItem}" TargetType="{x:Type controls:StatusBarItem}" BasedOn="{StaticResource CONCOST.StatusBarItem.Base}" />
+
+  <Style x:Key="CONCOST.StatusBar.Base" TargetType="{x:Type controls:StatusBar}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    <Setter Property="Height" Value="28" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:StatusBar}">
+          <Border Background="{TemplateBinding Control.Background}"
+                  BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                  BorderThickness="0,1,0,0"
+                  Padding="12,0"
+                  SnapsToDevicePixels="True">
+            <ItemsPresenter />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <controls:StatusBarPanel Spacing="{Binding Spacing, RelativeSource={RelativeSource AncestorType=controls:StatusBar}}" />
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:StatusBar}" TargetType="{x:Type controls:StatusBar}" BasedOn="{StaticResource CONCOST.StatusBar.Base}" />
+
+  <!-- ===================== CommandBar ===================== -->
+  <Style x:Key="CONCOST.CommandBar.Base" TargetType="{x:Type controls:CommandBar}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="Height" Value="38" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:CommandBar}">
+          <Border Background="{TemplateBinding Control.Background}"
+                  BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                  BorderThickness="0,0,0,1"
+                  Padding="6,0"
+                  SnapsToDevicePixels="True">
+            <DockPanel LastChildFill="True">
+              <ToggleButton x:Name="OverflowButton"
+                            DockPanel.Dock="Right"
+                            Width="24" Height="24"
+                            MinWidth="24" MinHeight="24"
+                            Margin="4,0,0,0"
+                            Style="{StaticResource CONCOST.ToggleButton.Icon.Ghost}"
+                            attached:IconElement.Kind="ChevronDown"
+                            attached:IconElement.IconSize="11"
+                            ToolTip="{TemplateBinding controls:CommandBar.OverflowToolTip}"
+                            IsChecked="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+
+              <ItemsControl x:Name="PART_Items"
+                            ItemsSource="{TemplateBinding controls:OverflowToolbar.ItemsSource}"
+                            VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <controls:OverflowPanel Spacing="2" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <Button x:Name="BarButton"
+                              Style="{StaticResource CONCOST.Button.Secondary}"
+                              Command="{Binding Command}"
+                              CommandParameter="{Binding CommandParameter}"
+                              IsEnabled="{Binding IsEnabled}"
+                              ToolTip="{Binding ToolTip}"
+                              Padding="8,4">
+                        <StackPanel Orientation="Horizontal">
+                          <icons:Icon Kind="{Binding Icon}" Width="14" Height="14" Margin="0,0,6,0" VerticalAlignment="Center" />
+                          <TextBlock x:Name="BarLabel" Text="{Binding Label}" FontSize="12" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Button>
+                      <Rectangle x:Name="BarSeparator"
+                                 Width="1" Height="18"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"
+                                 Fill="{DynamicResource CONCOST.Brush.Border}"
+                                 Visibility="Collapsed" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                      <DataTrigger Binding="{Binding ShowLabel}" Value="False">
+                        <Setter TargetName="BarLabel" Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSeparator}" Value="True">
+                        <Setter TargetName="BarButton" Property="Visibility" Value="Collapsed" />
+                        <Setter TargetName="BarSeparator" Property="Visibility" Value="Visible" />
+                      </DataTrigger>
+                    </DataTemplate.Triggers>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <Popup IsOpen="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                     PlacementTarget="{Binding ElementName=OverflowButton}"
+                     Placement="Bottom"
+                     StaysOpen="False"
+                     AllowsTransparency="True"
+                     PopupAnimation="Fade">
+                <Border Background="{DynamicResource CONCOST.Brush.Surface}"
+                        BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="4"
+                        MinWidth="160"
+                        Margin="0,4,0,0">
+                  <ItemsControl ItemsSource="{TemplateBinding controls:OverflowToolbar.OverflowItems}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <Button Style="{StaticResource CONCOST.Button.Secondary}"
+                                HorizontalContentAlignment="Left"
+                                Margin="0,1"
+                                Command="{Binding Command}"
+                                CommandParameter="{Binding CommandParameter}"
+                                IsEnabled="{Binding IsEnabled}"
+                                ToolTip="{Binding ToolTip}"
+                                Padding="10,6">
+                          <StackPanel Orientation="Horizontal">
+                            <icons:Icon Kind="{Binding Icon}" Width="13" Height="13" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Label}" FontSize="12" VerticalAlignment="Center" />
+                          </StackPanel>
+                        </Button>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </Border>
+              </Popup>
+            </DockPanel>
+          </Border>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="controls:OverflowToolbar.HasOverflow" Value="False">
+              <Setter TargetName="OverflowButton" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:CommandBar}" TargetType="{x:Type controls:CommandBar}" BasedOn="{StaticResource CONCOST.CommandBar.Base}" />
+
+  <!-- ===================== QuickAccessToolbar ===================== -->
+  <Style x:Key="CONCOST.QuickAccessToolbar.Base" TargetType="{x:Type controls:QuickAccessToolbar}">
+    <Setter Property="Height" Value="28" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:QuickAccessToolbar}">
+          <DockPanel LastChildFill="True">
+            <ToggleButton x:Name="MoreButton"
+                          DockPanel.Dock="Right"
+                          Width="20" Height="20"
+                          MinWidth="20" MinHeight="20"
+                          Margin="2,0,0,0"
+                          Style="{StaticResource CONCOST.ToggleButton.Icon.Ghost}"
+                          attached:IconElement.Kind="ChevronDown"
+                          attached:IconElement.IconSize="10"
+                          ToolTip="Tuỳ chỉnh"
+                          IsChecked="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+
+            <ItemsControl x:Name="PART_Items"
+                          ItemsSource="{TemplateBinding controls:OverflowToolbar.ItemsSource}"
+                          VerticalAlignment="Center">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <controls:OverflowPanel Spacing="1" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid>
+                    <Button x:Name="QuickButton"
+                            Width="24" Height="24"
+                            Style="{StaticResource CONCOST.Button.Icon.Ghost}"
+                            attached:IconElement.Kind="{Binding Icon}"
+                            attached:IconElement.IconSize="14"
+                            ToolTip="{Binding ToolTip}"
+                            Command="{Binding Command}"
+                            CommandParameter="{Binding CommandParameter}"
+                            IsEnabled="{Binding IsEnabled}" />
+                    <Rectangle x:Name="QuickSeparator"
+                               Width="1" Height="14"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Fill="{DynamicResource CONCOST.Brush.Border}"
+                               Visibility="Collapsed" />
+                  </Grid>
+                  <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding IsSeparator}" Value="True">
+                      <Setter TargetName="QuickButton" Property="Visibility" Value="Collapsed" />
+                      <Setter TargetName="QuickSeparator" Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+                  </DataTemplate.Triggers>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Popup IsOpen="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                   PlacementTarget="{Binding ElementName=MoreButton}"
+                   Placement="Bottom"
+                   StaysOpen="False"
+                   AllowsTransparency="True"
+                   PopupAnimation="Fade">
+              <Border Background="{DynamicResource CONCOST.Brush.Surface}"
+                      BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="4"
+                      Margin="0,4,0,0">
+                <ItemsControl ItemsSource="{TemplateBinding controls:OverflowToolbar.OverflowItems}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Button Style="{StaticResource CONCOST.Button.Icon.Ghost}"
+                              Width="24" Height="24"
+                              Margin="1"
+                              attached:IconElement.Kind="{Binding Icon}"
+                              attached:IconElement.IconSize="14"
+                              ToolTip="{Binding ToolTip}"
+                              Command="{Binding Command}"
+                              CommandParameter="{Binding CommandParameter}"
+                              IsEnabled="{Binding IsEnabled}" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </Border>
+            </Popup>
+          </DockPanel>
+
+          <ControlTemplate.Triggers>
+            <MultiTrigger>
+              <MultiTrigger.Conditions>
+                <Condition Property="controls:OverflowToolbar.HasOverflow" Value="False" />
+                <Condition Property="controls:QuickAccessToolbar.IsCustomizable" Value="False" />
+              </MultiTrigger.Conditions>
+              <Setter TargetName="MoreButton" Property="Visibility" Value="Collapsed" />
+            </MultiTrigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:QuickAccessToolbar}" TargetType="{x:Type controls:QuickAccessToolbar}" BasedOn="{StaticResource CONCOST.QuickAccessToolbar.Base}" />
+
+  <!-- ===================== DockTabStrip ===================== -->
+  <Style x:Key="CONCOST.DockTab.Base" TargetType="{x:Type ToggleButton}">
+    <Setter Property="FontSize" Value="11.5" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    <Setter Property="Height" Value="26" />
+    <Setter Property="Padding" Value="11,0" />
+    <Setter Property="FrameworkElement.Cursor" Value="Hand" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ToggleButton}">
+          <Grid Background="Transparent">
+            <Border x:Name="Chrome"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0,0,0,2"
+                    Padding="{TemplateBinding Control.Padding}"
+                    SnapsToDevicePixels="True">
+              <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
+            </Border>
+          </Grid>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="UIElement.IsMouseOver" Value="True">
+              <Setter TargetName="Chrome" Property="Border.Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+              <Setter Property="Control.Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+            <Trigger Property="ToggleButton.IsChecked" Value="True">
+              <Setter TargetName="Chrome" Property="Border.BorderBrush" Value="{DynamicResource CONCOST.Brush.Primary}" />
+              <Setter TargetName="Chrome" Property="Border.Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+              <Setter Property="Control.Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+              <Setter Property="Control.FontWeight" Value="SemiBold" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.DockTabStrip.Base" TargetType="{x:Type controls:DockTabStrip}">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:DockTabStrip}">
+          <Border x:Name="Strip"
+                  Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
+                  BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                  BorderThickness="0,1,0,0"
+                  SnapsToDevicePixels="True">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden"
+                          VerticalScrollBarVisibility="Disabled"
+                          Focusable="False">
+              <StackPanel x:Name="PART_Tabs" Orientation="Horizontal" VerticalAlignment="Center" />
+            </ScrollViewer>
+          </Border>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="controls:DockTabStrip.TabPlacement" Value="Top">
+              <Setter TargetName="Strip" Property="Border.BorderThickness" Value="0,0,0,1" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:DockTabStrip}" TargetType="{x:Type controls:DockTabStrip}" BasedOn="{StaticResource CONCOST.DockTabStrip.Base}" />
+
+  <!-- ===================== SearchableTreePicker ===================== -->
+  <Style x:Key="CONCOST.SearchableTreePicker.Base" TargetType="{x:Type controls:SearchableTreePicker}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:SearchableTreePicker}">
+          <Border Background="{TemplateBinding Control.Background}"
+                  BorderBrush="{TemplateBinding Control.BorderBrush}"
+                  BorderThickness="{TemplateBinding Control.BorderThickness}"
+                  CornerRadius="8"
+                  SnapsToDevicePixels="True">
+            <DockPanel>
+              <controls:SearchBox x:Name="PART_Search"
+                                  DockPanel.Dock="Top"
+                                  Margin="8,8,8,6" />
+
+              <TreeView x:Name="PART_Tree"
+                        BorderThickness="0"
+                        Background="Transparent"
+                        Margin="4,0,4,6" />
+            </DockPanel>
+          </Border>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="controls:SearchableTreePicker.IsSearchEnabled" Value="False">
+              <Setter TargetName="PART_Search" Property="UIElement.Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:SearchableTreePicker}" TargetType="{x:Type controls:SearchableTreePicker}" BasedOn="{StaticResource CONCOST.SearchableTreePicker.Base}" />
+
+  <!-- ===================== FileDropZone ===================== -->
+  <Style x:Key="CONCOST.FileDropZone.Base" TargetType="{x:Type controls:FileDropZone}">
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    <Setter Property="MinHeight" Value="150" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:FileDropZone}">
+          <Grid Background="Transparent">
+            <Rectangle x:Name="Frame"
+                       RadiusX="10"
+                       RadiusY="10"
+                       Stroke="{DynamicResource CONCOST.Brush.Border}"
+                       StrokeThickness="1.5"
+                       StrokeDashArray="4 3"
+                       Fill="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
+                       SnapsToDevicePixels="True" />
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="16">
+              <icons:Icon x:Name="Glyph"
+                          Kind="FolderUpload"
+                          Width="26" Height="26"
+                          HorizontalAlignment="Center"
+                          Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+
+              <TextBlock x:Name="Caption"
+                         Text="{TemplateBinding controls:FileDropZone.Caption}"
+                         FontSize="13"
+                         FontWeight="Medium"
+                         Margin="0,10,0,0"
+                         HorizontalAlignment="Center"
+                         TextAlignment="Center"
+                         TextWrapping="Wrap"
+                         Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
+
+              <TextBlock x:Name="Hint"
+                         Text="{TemplateBinding controls:FileDropZone.Hint}"
+                         FontSize="11.5"
+                         Margin="0,4,0,0"
+                         HorizontalAlignment="Center"
+                         TextAlignment="Center"
+                         TextWrapping="Wrap"
+                         Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+            </StackPanel>
+          </Grid>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="controls:FileDropZone.IsDragOver" Value="True">
+              <Setter TargetName="Frame" Property="Shape.Stroke" Value="{DynamicResource CONCOST.Brush.Primary}" />
+              <Setter TargetName="Frame" Property="Shape.Fill" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+              <Setter TargetName="Glyph" Property="icons:Icon.Foreground" Value="{DynamicResource CONCOST.Brush.Primary}" />
+            </Trigger>
+            <Trigger Property="controls:FileDropZone.IsDragRejected" Value="True">
+              <Setter TargetName="Frame" Property="Shape.Stroke" Value="{DynamicResource CONCOST.Brush.Danger}" />
+              <Setter TargetName="Glyph" Property="icons:Icon.Foreground" Value="{DynamicResource CONCOST.Brush.Danger}" />
+            </Trigger>
+            <Trigger Property="UIElement.IsEnabled" Value="False">
+              <Setter Property="UIElement.Opacity" Value="0.5" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:FileDropZone}" TargetType="{x:Type controls:FileDropZone}" BasedOn="{StaticResource CONCOST.FileDropZone.Base}" />
+
+  <!-- ===================== AnimatedGradientBorder ===================== -->
+  <Style x:Key="CONCOST.AnimatedGradientBorder.Base" TargetType="{x:Type controls:AnimatedGradientBorder}">
+    <Setter Property="Fill" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="Padding" Value="18" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:AnimatedGradientBorder}">
+          <Border x:Name="PART_Frame"
+                  Background="{TemplateBinding controls:AnimatedGradientBorder.Fill}"
+                  CornerRadius="{TemplateBinding controls:AnimatedGradientBorder.Corner}"
+                  BorderThickness="{TemplateBinding controls:AnimatedGradientBorder.RingThickness}"
+                  SnapsToDevicePixels="True">
+            <ContentPresenter Margin="{TemplateBinding Control.Padding}"
+                              HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:AnimatedGradientBorder}" TargetType="{x:Type controls:AnimatedGradientBorder}" BasedOn="{StaticResource CONCOST.AnimatedGradientBorder.Base}" />
+
+  <!-- ===================== FrostedGlass ===================== -->
+  <Style x:Key="CONCOST.FrostedGlass.Base" TargetType="{x:Type controls:FrostedGlass}">
+    <Setter Property="Padding" Value="18" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="EdgeBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:FrostedGlass}">
+          <Grid>
+            <Rectangle x:Name="PART_Glass" />
+            <Border x:Name="PART_Tint" BorderThickness="1" />
+            <ContentPresenter Margin="{TemplateBinding Control.Padding}"
+                              HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" />
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:FrostedGlass}" TargetType="{x:Type controls:FrostedGlass}" BasedOn="{StaticResource CONCOST.FrostedGlass.Base}" />
 
 </ResourceDictionary>

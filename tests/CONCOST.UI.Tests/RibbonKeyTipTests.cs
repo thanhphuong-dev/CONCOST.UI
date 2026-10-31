@@ -28,14 +28,11 @@ public class RibbonKeyTipTests
     private static void RunOnSta(Action action)
     {
         Exception? exception = null;
-        var thread = new Thread(() =>
+        WpfApplicationHost.Run(() =>
         {
             try { action(); }
             catch (Exception ex) { exception = ex; }
         });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
         if (exception is not null) throw new AggregateException("STA test failed", exception);
     }
 

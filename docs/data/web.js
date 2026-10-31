@@ -902,7 +902,7 @@ ribbon.ItemsSource = new List<RibbonTabItem> { home };`,
             },
             {
                 title: "Tự thu gọn khi hẹp",
-                desc: "Ribbon đo tổng bề rộng của tab đang chọn rồi leo thang: hạ toàn bộ <code>Large</code> xuống Medium → hạ tiếp xuống Small → gộp từng group thành một nút. Group bị gộp vẫn giữ đủ lệnh trong flyout của nó.",
+                desc: "Ribbon đo tổng bề rộng của tab đang chọn rồi leo thang: hạ toàn bộ <code>Large</code> xuống Medium → hạ tiếp xuống Small → gộp từng group thành một nút. Group bị gộp vẫn giữ đủ lệnh trong flyout của nó. Hẹp đến mức dải tab cũng không vừa thì các tab bị cắt bớt và nút <b>»</b> hiện ra để liệt kê toàn bộ tab — không tab nào bị mất.",
                 csharp: `// Group quan trọng: không bao giờ bị gộp
 var review = new RibbonGroup { Header = "Review", CollapsePriority = 0 };
 
@@ -1163,7 +1163,7 @@ RibbonState? state = RibbonStateStore.FromJson(json);`,
             },
             {
                 title: "MenuBar phía trên ribbon",
-                desc: "<code>RibbonMenuBar</code> là dải menu ngang đặt trên ribbon (hoặc dùng một mình trong app đơn giản). Mỗi <code>RibbonMenuBarItem</code> mở dropdown chứa <code>RibbonMenuItem</code> và <code>RibbonMenuSeparator</code>, tận dụng toàn bộ hệ thống menu đã có. Click mở dropdown, hover chuyển đổi khi menu đang mở, Left/Right di chuyển, Escape đóng.",
+                desc: "<code>RibbonMenuBar</code> là dải menu ngang đặt trên ribbon (hoặc dùng một mình trong app đơn giản). Mỗi <code>RibbonMenuBarItem</code> mở dropdown chứa <code>RibbonMenuItem</code> và <code>RibbonMenuSeparator</code>, tận dụng toàn bộ hệ thống menu đã có. Click mở dropdown, hover chuyển đổi khi menu đang mở, Left/Right di chuyển, Escape đóng. Thanh luôn giãn hết bề rộng ribbon; đường kẻ dưới nó tắt bằng <code>ShowDivider=\"False\"</code> khi muốn thanh hoà vào nền.",
                 xaml: `<ribbon:RibbonMenuBar>
     <ribbon:RibbonMenuBarItem Header="File">
         <ribbon:RibbonMenuItem Header="New" InputGestureText="Ctrl+N" />
@@ -1182,6 +1182,41 @@ file.Items.Add(new RibbonMenuItem { Header = "New" });
 var bar = new RibbonMenuBar();
 bar.Items.Add(file);
 bar.Items.Add(new RibbonMenuBarItem { Header = "Edit" });`
+            },
+            {
+                title: "Thuộc tính mở rộng cho host",
+                desc: "Sáu công tắc để gắn ribbon vào một shell cụ thể: chọn tab theo <code>Id</code>, tắt rung cuối của thang thu gọn, khoá thanh Quick Access, nhường phím <code>Alt</code> cho host, bỏ viền/nhãn group, và đặt nội dung cho trạng thái rỗng.",
+                xaml: `<ribbon:Ribbon ShowBorder="False"
+               IsGroupCollapseEnabled="False"
+               IsQuickAccessCustomizable="False"
+               IsKeyTipEnabled="False"
+               SelectedTabId="{Binding ActiveTabId}"
+               EmptyContent="No workspace open." />
+
+<!-- Nhãn group là attached property, đặt trên ribbon là áp cho mọi group -->
+<ribbon:Ribbon ShowGroupLabels="False" />`,
+                csharp: `// Chọn tab theo Id: đổi thứ tự tab cũng không trỏ sai tab
+ribbon.SelectedTabId = "insert";
+
+// Tắt rung cuối: group chỉ bị hạ cỡ, không bao giờ gộp thành một nút
+ribbon.IsGroupCollapseEnabled = false;
+
+// Khoá thanh Quick Access: lệnh đã ghim vẫn bấm được, chỉ mất nút tùy biến
+ribbon.IsQuickAccessCustomizable = false;
+
+// Nhường Alt cho Revit / AutoCAD
+ribbon.IsKeyTipEnabled = false;
+
+// Dock vào panel riêng
+ribbon.ShowBorder = false;
+Ribbon.SetShowGroupLabels(ribbon, false);
+
+// Trạng thái rỗng
+ribbon.EmptyContent = "No workspace open.";   // IsEmpty = true khi không còn tab nào`,
+                callout: {
+                    type: "tip",
+                    body: "<code>SelectedTabId</code> và <code>SelectedIndex</code> cùng hai chiều: chọn tab thì <code>Id</code> được đẩy ra, đặt <code>Id</code> thì tab được chọn. <code>IsGroupCollapseEnabled = false</code> còn tự mở lại những group vừa bị gộp, nên bật/tắt lúc chạy vẫn đúng."
+                }
             }
         ],
         related: ["ribboncommands", "splitbutton", "concostwindow"]
@@ -1239,6 +1274,1067 @@ export.ArrowWidth = 20;                               // bề rộng vùng mũi 
             }
         ],
         related: ["ribbon", "splitbutton", "badge"]
+    },
+    datagridpanels: {
+        title: "Panel phụ trợ cho DataGrid — lọc, tìm, chọn cột, tổng hợp",
+        badge: "Basic Controls",
+        desc: "Bốn control độc lập gắn vào một <code>DataGrid</code> có sẵn để biến bảng chỉ-đọc thành công cụ dữ liệu: dải lọc theo từng cột, ô tìm kiếm toàn bảng, menu chọn cột hiển thị và dòng tổng hợp ở chân bảng. Cả bốn đều <b>không cần viết lại DataGrid</b> — chỉ trỏ <code>TargetGrid</code> vào bảng là xong.",
+        keywords: ["datagrid", "filter", "search", "column chooser", "summary", "lọc", "tìm kiếm", "tổng hợp"],
+        sections: [
+            {
+                title: "Dải lọc theo cột",
+                desc: "Mỗi cột có một ô nhập; gõ gì lọc ngay theo kiểu <code>Contains</code> không phân biệt hoa thường trên chuỗi hiển thị của ô đó. Ô nhập <b>trùng khít chiều rộng cột</b> nên luôn nằm đúng dưới cột nó lọc, kể cả khi kéo giãn cột hay cuộn ngang. Đường dẫn binding nhiều cấp như <code>Material.Grade</code> cũng đọc được.",
+                xaml: `<StackPanel>
+    <controls:DataGridFilterPanel TargetGrid="{Binding ElementName=beamGrid}" />
+
+    <DataGrid x:Name="beamGrid"
+              ItemsSource="{Binding Beams}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="False">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Element" Binding="{Binding Name}" Width="2*" />
+            <DataGridTextColumn Header="Grade" Binding="{Binding Material.Grade}" Width="*" />
+        </DataGrid.Columns>
+    </DataGrid>
+</StackPanel>`,
+                csharp: `var panel = new DataGridFilterPanel { TargetGrid = beamGrid };
+
+// Lọc sẵn một cột trước khi người dùng gõ
+panel.Filters.Single(f => f.Header == "Grade").FilterText = "C30";
+
+// Xoá toàn bộ (hoặc gắn vào nút ClearFiltersCommand)
+panel.ClearFilters();
+
+// Biết khi nào bảng đã lọc lại
+panel.FiltersApplied += (_, __) => status.Text = $"{beamGrid.Items.Count} dòng";`,
+                callout: {
+                    type: "tip",
+                    body: "Dải lọc và ô tìm kiếm <b>cộng dồn</b> chứ không ghi đè nhau: một dòng phải thoả cả hai. Xoá ô tìm kiếm sẽ để nguyên bộ lọc theo cột."
+                }
+            },
+            {
+                title: "Tìm kiếm toàn bảng",
+                desc: "Một ô duy nhất quét mọi cột đang hiển thị. Cột bị ẩn bằng <code>Visibility</code> sẽ được bỏ qua, nên bảng đã giấu cột nội bộ thì tìm kiếm cũng không lộ nội dung của cột đó.",
+                xaml: `<StackPanel>
+    <controls:DataGridSearchPanel TargetGrid="{Binding ElementName=beamGrid}"
+                                  PlaceholderText="Tìm mã cấu kiện, mác bê tông…" />
+    <DataGrid x:Name="beamGrid" ItemsSource="{Binding Beams}" AutoGenerateColumns="False" />
+</StackPanel>`,
+                csharp: `var search = new DataGridSearchPanel { TargetGrid = beamGrid };
+
+search.SearchText = "C30";      // lọc ngay, hai chiều
+search.ClearSearch();           // trả lại toàn bộ dòng
+
+// IsSearching dùng để bật/tắt nhãn "đang tìm" trên toolbar
+if (search.IsSearching) hint.Visibility = Visibility.Visible;`,
+                callout: {
+                    type: "tip",
+                    body: "Ô tìm kiếm dùng sẵn nút ✕ của <code>TextBox</code> (<code>InfoElement.ShowClearButton</code>), không cần thêm nút Clear riêng."
+                }
+            },
+            {
+                title: "Chọn cột hiển thị",
+                desc: "Nút thả xuống liệt kê mọi cột của bảng; bỏ tick là cột ẩn ngay. Danh sách tự dựng lại khi bảng thêm/bớt cột và mỗi lần mở menu, nên nếu app ẩn cột từ menu riêng thì trạng thái tick vẫn đúng.",
+                xaml: `<StackPanel>
+    <controls:DataGridColumnChooser TargetGrid="{Binding ElementName=beamGrid}"
+                                    HeaderText="Cột hiển thị"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,8" />
+    <DataGrid x:Name="beamGrid" ItemsSource="{Binding Beams}" AutoGenerateColumns="False" />
+</StackPanel>`,
+                csharp: `var chooser = new DataGridColumnChooser
+{
+    TargetGrid = beamGrid,
+    HeaderText = "Cột hiển thị"
+};
+
+// Ẩn cột thứ hai, rồi trả lại tất cả
+chooser.Columns[1].IsVisible = false;
+chooser.ShowAll();
+
+// Mở/đóng bằng code (menu tự đóng khi bấm ra ngoài)
+chooser.IsOpen = true;`,
+                callout: {
+                    type: "tip",
+                    body: "Cột được khớp theo <b>tham chiếu</b> chứ không theo tiêu đề, nên hai cột trùng tên vẫn ẩn đúng cột. Muốn khoá tính năng này khi in ấn thì ẩn luôn nút bằng <code>Visibility</code>."
+                }
+            },
+            {
+                title: "Dòng tổng hợp",
+                desc: "Một dòng ngay dưới bảng, mỗi cột một ô: cột số hiện <code>Sum</code>, cột chữ hiện số dòng. Dòng này <b>bám theo hình học của bảng</b> — độ rộng cột, thứ tự kéo cột, bề rộng header dòng và cả vị trí cuộn ngang — nên con số luôn nằm dưới đúng cột.",
+                xaml: `<StackPanel>
+    <DataGrid x:Name="beamGrid" ItemsSource="{Binding Beams}" AutoGenerateColumns="False" />
+    <controls:DataGridSummary TargetGrid="{Binding ElementName=beamGrid}" DisplayFormat="N0" />
+</StackPanel>`,
+                csharp: `var summary = new DataGridSummary
+{
+    TargetGrid = beamGrid,
+    Aggregate = DataGridSummaryAggregate.Auto,   // số → Sum, chữ → Count
+    DisplayFormat = "N0"
+};
+
+// Đổi cách tính cho riêng một cột
+DataGridSummary.SetAggregateOnColumn(lengthColumn, DataGridSummaryAggregate.Average);
+
+// Tính lại khi dữ liệu đổi ngoài luồng binding
+summary.RefreshSummaries();`,
+                callout: {
+                    type: "tip",
+                    body: "Tổng hợp chạy trên <b>view đã lọc</b>: lọc còn 5 dòng thì tổng cũng chỉ của 5 dòng đó. Số được đọc theo culture hiện tại trước, rồi mới thử culture bất biến, nên dữ liệu <code>\"1,5\"</code> kiểu Việt Nam vẫn cộng đúng."
+                }
+            }
+        ],
+        related: ["datagrid", "datapager", "stackedheaderdatagrid"]
+    },
+
+    commandpalette: {
+        title: "CommandPalette — thanh lệnh Ctrl+K",
+        badge: "Mới",
+        desc: "Hộp tìm kiếm phủ lên màn hình, lọc danh sách lệnh khi gõ và chạy bằng <code>Enter</code>. Tìm <b>không phân biệt dấu tiếng Việt</b>, điều hướng bằng mũi tên, và tự vẽ lớp phủ tối phía sau nên không phải quản popup hay chuyển focus.",
+        keywords: ["command palette", "ctrl k", "tìm lệnh", "không dấu", "quick actions", "spotlight"],
+        variants: [
+            { key: "CONCOST.CommandPalette.Base", desc: "Scrim tối <code>#8C0F172A</code>, thẻ rộng tối đa 600px, dòng cao 44px, footer gợi ý phím." }
+        ],
+        sections: [
+            {
+                title: "Mở palette bằng Ctrl+K",
+                desc: "Đặt palette vào cùng <code>Grid</code> với nội dung trang và bind <code>IsOpen</code>. Phím tắt do app đăng ký — control không chiếm phím toàn cục khi chưa nằm trong cây visual.",
+                xaml: `<Grid>
+    <ContentControl Content="{Binding CurrentPage}" />
+
+    <ui:CommandPalette x:Name="Palette"
+                       IsOpen="{Binding IsPaletteOpen, Mode=TwoWay}"
+                       ItemsSource="{Binding Commands}"
+                       Placeholder="Tìm lệnh, trang hoặc cấu hình…"
+                       EmptyText="Không có lệnh nào khớp" />
+
+    <Grid.InputBindings>
+        <KeyBinding Key="K" Modifiers="Control" Command="{Binding TogglePaletteCommand}" />
+    </Grid.InputBindings>
+</Grid>`,
+                csharp: `// Mỗi dòng là dữ liệu thuần: tiêu đề, mô tả, lệnh, icon, phím tắt, nhóm
+Commands = new List<CommandPaletteItem>
+{
+    new("Xuất PDF", "Xuất bản vẽ hiện tại", ExportPdfCommand, IconKind.File, "Ctrl+P", "Xuất bản"),
+    new("Tổng quan dự án", "Bảng KPI và tiến độ", NavigateCommand, IconKind.ChartLine, "Ctrl+1", "Điều hướng"),
+    new("Cấu hình thép", "Đường kính, mác thép, lớp bảo vệ", SettingsCommand, IconKind.Settings, null, "Hệ thống")
+};
+
+// Biết lệnh nào vừa chạy để ghi log / đóng palette
+Palette.ItemInvoked += (_, e) => Status = "Đã chạy: " + e.Item.Title;`,
+                callout: {
+                    type: "tip",
+                    body: "Muốn giữ palette mở để chạy liên tiếp nhiều lệnh thì đặt <code>CloseOnInvoke=\"False\"</code>; mặc định palette tự đóng sau khi chạy."
+                }
+            },
+            {
+                title: "Tìm không dấu, khớp từng từ khoá",
+                desc: "Chuỗi truy vấn được chuẩn hoá <code>FormD</code> rồi bỏ dấu, riêng <code>đ</code> đổi thành <code>d</code> vì <code>FormD</code> không tách được chữ này. Mỗi từ khoá khớp độc lập trên tiêu đề, mô tả, nhóm, phím tắt và <code>Keywords</code>.",
+                xaml: `<ui:CommandPalette ItemsSource="{Binding Commands}" IsOpen="True" />`,
+                csharp: `// Gõ "duong kinh" ra "Đường kính", "hoa don" ra "Hoá đơn"
+var tokens = CommandPaletteText.Tokenize("duong kinh");   // ["duong", "kinh"]
+bool hit = CommandPaletteText.Matches(item, tokens);
+
+// Từ đồng nghĩa: thêm vào Keywords để tìm được bằng từ khác
+new CommandPaletteItem("Bảng khối lượng", "Bóc tách theo cấu kiện",
+    QuantityCommand, IconKind.Table, "Ctrl+2", "Dữ liệu")
+{
+    Keywords = "bom tong hop volume takeoff"
+};`,
+                callout: {
+                    type: "note",
+                    body: "Chiều cao danh sách tự cắt theo <b>số dòng nguyên</b> (44px/dòng, <code>MaxListHeight</code> mặc định 276 = 6 dòng) nên không bao giờ hiện nửa lệnh ở mép dưới. Highlight luôn bám danh sách sau lọc, không trỏ vào dòng vừa bị lọc mất."
+                }
+            }
+        ],
+        related: ["searchbox", "contextmenu", "hotkeymanager"]
+    },
+
+    radialgauge: {
+        title: "RadialGauge — đồng hồ KPI tròn",
+        badge: "Mới",
+        desc: "Cung nền + cung giá trị + vạch chia + số ở giữa, vẽ trong <code>OnRender</code> bằng <code>StreamGeometry</code> với đầu nét tròn nên sắc ở mọi kích thước và mọi DPI. Giá trị clamp vào <code>Minimum</code>–<code>Maximum</code> rồi chạy êm bằng cubic ease.",
+        keywords: ["gauge", "kpi", "đồng hồ", "vòng tròn", "dashboard", "progress ring"],
+        sections: [
+            {
+                title: "Đồng hồ phần trăm",
+                desc: "Mặc định cung mở ở đáy (bắt đầu 135°, quét 270°). <code>ValueFormat</code> theo định dạng số chuẩn, <code>Suffix</code> và <code>Label</code> là chữ đi kèm.",
+                xaml: `<ui:RadialGauge Width="180" Height="180"
+               Minimum="0" Maximum="100" Value="{Binding Progress}"
+               ValueFormat="N0" Suffix="%"
+               Label="Tiến độ bóc tách"
+               ShowTicks="True" TickCount="10"
+               TrackThickness="14" />`,
+                csharp: `var gauge = new RadialGauge
+{
+    Minimum = 0,
+    Maximum = 100,
+    Value = 72,
+    StartAngle = 135,
+    SweepAngle = 270,
+    ValueFormat = "N0",
+    Suffix = "%",
+    Label = "Hoàn thành",
+    ShowTicks = true,
+    TickCount = 10,
+    IsAnimated = true,
+    AnimationDuration = TimeSpan.FromMilliseconds(520)
+};`,
+                callout: {
+                    type: "tip",
+                    body: "Màu cung lấy từ <code>ValueBrush</code>, nền cung từ <code>TrackBrush</code> — để trống thì lấy brush theme, nên đổi Light/Dark là đồng hồ tự đổi theo. Vạch chia dùng <code>TextTertiary</code>: nếu dùng màu track thì gần như không nhìn thấy."
+                }
+            },
+            {
+                title: "Đồng hồ áp lực đất, thang ngược",
+                desc: "Đặt <code>Minimum</code> lớn hơn <code>Maximum</code> để có thang ngược (ví dụ độ sâu), hoặc đổi <code>StartAngle</code>/<code>SweepAngle</code> để cung mở ở nửa trên cho bảng điều khiển thấp.",
+                xaml: `<ui:RadialGauge Width="150" Height="150"
+               Minimum="0" Maximum="250" Value="{Binding Pressure}"
+               StartAngle="180" SweepAngle="180"
+               ValueFormat="F1" Suffix=" kPa"
+               ShowValue="True" />`,
+                csharp: `// Thang ngược: 0 ở đỉnh, giá trị càng lớn cung càng ngắn
+gauge.Minimum = 10;
+gauge.Maximum = 0;
+
+// Giá trị ngoài khoảng được clamp, không ném lỗi
+gauge.Value = 999;      // vẽ như Maximum
+
+// Tắt animation cho lưới nhiều đồng hồ cập nhật liên tục
+gauge.IsAnimated = false;`,
+                callout: {
+                    type: "note",
+                    body: "Mỗi đồng hồ chỉ vẽ vài primitive, nhưng <b>đừng</b> bật animation cho hàng trăm đồng hồ cập nhật mỗi giây — mỗi lần đổi giá trị là một <code>DoubleAnimation</code>."
+                }
+            }
+        ],
+        related: ["statisticcard", "progress", "sparkline"]
+    },
+
+    particlefield: {
+        title: "ParticleField — nền hạt trôi",
+        badge: "Mới",
+        desc: "Hạt trôi nhẹ làm nền cho hero, splash hoặc empty state. Hạt wrap quanh biên nên nền không bao giờ trống, <code>Seed</code> cho kết quả tái lập, và field tự dựng lại khi host đổi kích thước. Bật <code>ConnectDistance</code> để có hiệu ứng chòm sao.",
+        keywords: ["particle", "hạt", "nền động", "constellation", "chòm sao", "splash", "ambient"],
+        sections: [
+            {
+                title: "Nền hạt cho thẻ hero",
+                desc: "Đặt làm phần tử đầu tiên trong <code>Grid</code> để nó nằm dưới nội dung. <code>IsHitTestVisible</code> đã tắt sẵn nên không chặn click.",
+                xaml: `<Grid>
+    <ui:ParticleField ParticleCount="70"
+                      Speed="14"
+                      Direction="270"
+                      ParticleOpacity="0.6"
+                      ParticleBrush="{DynamicResource CONCOST.Brush.Primary}" />
+
+    <StackPanel Margin="32" VerticalAlignment="Center">
+        <TextBlock Text="Bóc tách khối lượng" Style="{DynamicResource CONCOST.TextBlock.H1}" />
+        <TextBlock Text="Nhập dữ liệu, xuất báo cáo." Style="{DynamicResource CONCOST.TextBlock.Body}" />
+    </StackPanel>
+</Grid>`,
+                csharp: `var field = new ParticleField
+{
+    ParticleCount = 70,
+    MinRadius = 1.0,
+    MaxRadius = 2.6,
+    Speed = 14,          // px/giây
+    Direction = 270,     // 270 = rơi xuống, 90 = bay lên
+    Spread = 0.28,       // độ lệch hướng, 0 = mọi hạt song song
+    ParticleOpacity = 0.6,
+    Seed = 42            // cùng seed = cùng bố cục
+};`,
+                callout: {
+                    type: "note",
+                    body: "Field dựng lại hạt khi kích thước thật khác kích thước lúc dựng — nếu không, hạt chỉ phủ một phần ba trên cùng của khung."
+                }
+            },
+            {
+                title: "Chòm sao: nối hạt gần nhau",
+                desc: "Đặt <code>ConnectDistance &gt; 0</code> để vẽ đường nối giữa các hạt gần nhau. Khoảng cách tính bằng pixel; càng lớn càng nhiều đường và càng tốn CPU.",
+                xaml: `<Border Height="220" CornerRadius="16" ClipToBounds="True"
+        Background="{DynamicResource CONCOST.Brush.SurfaceAlt}">
+    <ui:ParticleField ParticleCount="48"
+                      ConnectDistance="90"
+                      Speed="8"
+                      ParticleOpacity="0.9"
+                      ParticleBrush="{DynamicResource CONCOST.Brush.TextTertiary}" />
+</Border>`,
+                csharp: `// Số hạt đang hoạt động — dùng cho test hoặc chẩn đoán hiệu năng
+int alive = field.ActiveParticleCount;
+
+// Giảm tải khi cửa sổ mất focus
+field.Speed = 0;`,
+                callout: {
+                    type: "tip",
+                    body: "Ngân sách: khoảng 60 hạt không nối là thoải mái; bật <code>ConnectDistance</code> thì chi phí là <b>bậc hai</b> theo số hạt — 48 hạt là mức an toàn cho nền toàn màn hình."
+                }
+            }
+        ],
+        related: ["aurorabackground", "snowcanvas", "gridpattern"]
+    },
+
+    pagetransitionhost: {
+        title: "PageTransitionHost — chuyển trang có hiệu ứng",
+        badge: "Mới",
+        desc: "Đổi <code>Content</code> là trang mới chạy hiệu ứng vào: fade, trượt từ bốn phía, hoặc scale. Animation nằm ở host nên dùng được với mọi loại nội dung, không cần storyboard riêng cho từng trang.",
+        keywords: ["transition", "chuyển trang", "slide", "fade", "scale", "điều hướng"],
+        variants: [
+            { key: "CONCOST.PageTransitionHost.Base", desc: "Template tối giản: chỉ <code>ContentPresenter</code> bọc trong <code>TransformGroup</code> (scale + translate)." }
+        ],
+        sections: [
+            {
+                title: "Trượt ngang khi đổi màn hình",
+                desc: "<code>Transition</code> nhận <code>Fade</code>, <code>SlideLeft</code>, <code>SlideRight</code>, <code>SlideUp</code>, <code>SlideDown</code> hoặc <code>Scale</code>. <code>Offset</code> là quãng trượt, <code>Duration</code> là thời gian chạy.",
+                xaml: `<ui:PageTransitionHost Content="{Binding CurrentPage}"
+                       Transition="SlideLeft"
+                       Offset="32"
+                       Duration="0:0:0.26" />`,
+                csharp: `var host = new PageTransitionHost
+{
+    Transition = PageTransition.SlideLeft,
+    Offset = 32,
+    Duration = TimeSpan.FromMilliseconds(260),
+    Content = new OverviewView()
+};
+
+// Đổi nội dung là tự chạy hiệu ứng vào
+host.Content = new QuantityView();
+
+// Chạy lại hiệu ứng cho nội dung hiện tại
+host.Play();`,
+                callout: {
+                    type: "tip",
+                    body: "Hiệu ứng <b>tự bỏ qua</b> khi control chưa load, khi <code>IsTransitionEnabled=\"False\"</code>, hoặc khi Windows tắt animation — nội dung vẫn đổi ngay, không bao giờ bị kẹt ở trạng thái trong suốt."
+                }
+            },
+            {
+                title: "Chọn kiểu chuyển cảnh theo hướng điều hướng",
+                desc: "Thường người dùng đi tới thì trượt sang trái, quay lại thì trượt sang phải. Bind <code>Transition</code> vào hướng điều hướng để có cảm giác đúng chiều.",
+                xaml: `<ui:PageTransitionHost Content="{Binding CurrentPage}"
+                       Transition="{Binding NavigationTransition}"
+                       IsTransitionEnabled="{Binding IsEffectsEnabled}" />`,
+                csharp: `// Đi tới: nội dung mới vào từ phải. Quay lại: vào từ trái.
+NavigationTransition = isForward ? PageTransition.SlideLeft : PageTransition.SlideRight;
+
+// Tắt hiệu ứng trên máy yếu mà không phải gỡ control khỏi XAML
+host.IsTransitionEnabled = false;
+
+// Đang chạy hay không (để khoá nút Next trong lúc chuyển)
+if (host.IsTransitioning) NextButton.IsEnabled = false;`,
+                callout: {
+                    type: "note",
+                    body: "Host chỉ animate <b>nội dung mới đi vào</b>, không animate nội dung cũ đi ra — như vậy mỗi lần chuyển trang chỉ có một animation, và không cần giữ hai view cùng lúc."
+                }
+            }
+        ],
+        related: ["tabs", "cardcarousel", "navigationview"]
+    },
+
+    treedatagrid: {
+        title: "TreeDataGrid — bảng có phân cấp",
+        badge: "Mới",
+        desc: "<code>DataGrid</code> hiển thị cây: bind <code>RootItems</code> và grid tự dẹt cây thành danh sách dòng, mỗi dòng là <b>chính item</b> chứ không phải wrapper — nên mọi cột vẫn bind thẳng vào thuộc tính của item.",
+        keywords: ["tree grid", "phân cấp", "hierarchy", "datagrid", "expand", "cây"],
+        sections: [
+            {
+                title: "Cây dữ liệu cơ bản",
+                desc: "Cột đầu tiên do grid tự sinh: nó vẽ thụt lề và nút mở/đóng. Chỉ cần <code>HierarchyPath</code> là tên thuộc tính hiển thị — giống <code>DisplayMemberPath</code>. Cần định dạng phức tạp hơn thì dùng <code>HierarchyContentTemplate</code>.",
+                xaml: `<ui:TreeDataGrid RootItems="{Binding Assemblies}"
+                   ChildrenPath="Children"
+                   HierarchyPath="Name"
+                   IndentSize="18"
+                   HierarchyHeader="Cấu kiện"
+                   HierarchyColumnWidth="280">
+    <DataGridTextColumn Header="Khối lượng" Binding="{Binding Volume, StringFormat=N2}" />
+    <DataGridTextColumn Header="Mác" Binding="{Binding Grade}" />
+</ui:TreeDataGrid>`,
+                csharp: `var grid = new TreeDataGrid
+{
+    RootItems = assemblies,
+    ChildrenPath = "Children",
+    HierarchyPath = "Name",   // không đặt thì cell hiện ToString() của item
+    IndentSize = 18,
+    HierarchyColumnWidth = 280
+};
+
+// Nội dung phức tạp hơn một dòng chữ: icon, badge…
+grid.HierarchyContentTemplate = (DataTemplate)FindResource("NodeCellTemplate");
+
+// Mở rộng / thu gọn theo lập trình
+grid.ExpandAll();
+grid.ExpandTo(node);      // mở cả đường dẫn tới node rồi cuộn tới
+grid.ToggleNode(node);
+bool open = grid.IsNodeExpanded(node);`,
+                callout: {
+                    type: "note",
+                    body: "Đặt cả <code>HierarchyPath</code> lẫn <code>HierarchyContentTemplate</code> thì template thắng. Trạng thái mở/đóng giữ theo <b>tham chiếu object</b>, nên hai node trùng giá trị vẫn là hai nhánh khác nhau và trạng thái sống sót qua mỗi lần dựng lại danh sách."
+                }
+            },
+            {
+                title: "Cột phát sinh và số dòng hiển thị",
+                desc: "<code>ShowHierarchyColumn=\"False\"</code> để dùng grid như bảng phẳng; <code>VisibleItemCount</code> cho biết đang có bao nhiêu dòng nhìn thấy (chỉ nhánh đang mở), tiện cho dòng trạng thái.",
+                xaml: `<TextBlock Text="{Binding ElementName=Tree, Path=VisibleItemCount, StringFormat='{}{0} dòng đang hiển thị'}" />`,
+                csharp: `// Bảng phẳng: bỏ cột cây, giữ nguyên dữ liệu
+grid.ShowHierarchyColumn = false;
+
+// Đếm dòng đang thấy để hiện ở status bar
+StatusText = grid.VisibleItemCount + " dòng";`,
+                callout: {
+                    type: "tip",
+                    body: "Style <code>CONCOST.TreeDataGrid.Base</code> dựa trên <code>CONCOST.DataGrid.Base</code>, nên template, row style, grid lines và virtualization đều dùng chung — không có bản sao template nào để lệch nhau về sau."
+                }
+            }
+        ],
+        related: ["datagrid", "treeview", "multiselectdatagrid"]
+    },
+
+    multiselectdatagrid: {
+        title: "MultiSelectDataGrid — chọn nhiều dòng bằng checkbox",
+        badge: "Mới",
+        desc: "DataGrid có cột checkbox và checkbox ba trạng thái ở header. Bấm vào ô checkbox là <b>đảo một dòng</b> chứ không xoá lựa chọn cũ, nên chọn hai mươi dòng không cần giữ Ctrl.",
+        keywords: ["multi select", "checkbox", "chọn nhiều", "select all", "datagrid"],
+        sections: [
+            {
+                title: "Chọn nhiều, lấy danh sách ra",
+                desc: "<code>SelectedItemsList</code> là danh sách có phát thông báo (khác <code>SelectedItems</code> của DataGrid), nên bind command hoặc bật/tắt nút được ngay.",
+                xaml: `<ui:MultiSelectDataGrid ItemsSource="{Binding Beams}"
+                          ShowCheckBoxColumn="True"
+                          CheckBoxColumnWidth="44" />`,
+                csharp: `var grid = new MultiSelectDataGrid { ItemsSource = beams };
+
+grid.SelectEverything();     // chọn hết
+grid.InvertSelection();      // đảo lựa chọn
+grid.ToggleItem(beam);       // đảo một dòng
+grid.ClearEverything();
+
+// Danh sách có phát thông báo để bind
+DeleteCommand = new RelayCommand(
+    () => Delete(grid.SelectedItemsList.Cast<Beam>().ToList()),
+    () => grid.SelectedCount > 0);`,
+                callout: {
+                    type: "note",
+                    body: "<code>IsAllSelected</code> là ba trạng thái: <code>true</code> khi chọn hết, <code>false</code> khi không chọn gì, <code>null</code> khi chọn một phần — header hiện ô gạch ngang đúng như bạn mong đợi."
+                }
+            },
+            {
+                title: "Click thường vẫn là click thường",
+                desc: "Chỉ ô checkbox mới đảo lựa chọn. Bấm vào chỗ khác trong dòng thì DataGrid chạy như cũ: click thường chọn một dòng, Ctrl và Shift mở rộng.",
+                xaml: `<ui:MultiSelectDataGrid ItemsSource="{Binding Beams}" ShowCheckBoxColumn="False" />`,
+                csharp: `// Tắt cột checkbox nhưng giữ nguyên API chọn
+grid.ShowCheckBoxColumn = false;
+bool selected = grid.IsItemSelected(beam);`,
+                callout: {
+                    type: "tip",
+                    body: "Checkbox trong ô có <code>IsHitTestVisible=\"False\"</code> — click rơi xuống dòng, đó chính là cơ chế khiến click thường đảo lựa chọn thay vì thay thế nó."
+                }
+            }
+        ],
+        related: ["datagrid", "treedatagrid", "checkbox"]
+    },
+
+    treemap: {
+        title: "TreeMap — bản đồ diện tích",
+        badge: "Mới",
+        desc: "Diện tích mỗi ô tỉ lệ với giá trị, các ô được xếp <b>squarified</b> để gần vuông thay vì thành dải dài. Dùng cho cơ cấu khối lượng, phân bổ chi phí, mức tiêu thụ theo hạng mục.",
+        keywords: ["treemap", "bản đồ cây", "diện tích", "squarified", "dashboard"],
+        sections: [
+            {
+                title: "Cơ cấu khối lượng theo cấu kiện",
+                desc: "<code>ValuePath</code> là trọng số, <code>LabelPath</code> là chữ hiển thị. Giá trị 0 hoặc âm bị bỏ — ô diện tích 0 chỉ tạo ra vệt không nhìn thấy.",
+                xaml: `<ui:TreeMap Height="260"
+           ItemsSource="{Binding Volumes}"
+           ValuePath="Value"
+           LabelPath="Label"
+           ShowValues="True"
+           ValueFormat="N1"
+           Gap="4"
+           CornerRadius="6">
+    <ui:TreeMap.Palette>
+        <SolidColorBrush Color="#FF7900" />
+        <SolidColorBrush Color="#0284C7" />
+        <SolidColorBrush Color="#16A34A" />
+        <SolidColorBrush Color="#9333EA" />
+    </ui:TreeMap.Palette>
+</ui:TreeMap>`,
+                csharp: `var map = new TreeMap
+{
+    ItemsSource = volumes,
+    ValuePath = "Value",
+    LabelPath = "Label",
+    ShowValues = true,
+    Gap = 4
+};
+
+// Ô nào vừa được bấm
+map.ItemInvoked += (_, e) => Select(e.Entry.Item);
+
+// Tự vẽ tooltip theo đúng hình chữ nhật đã vẽ
+var entry = map.HitTest(mousePoint);`,
+                callout: {
+                    type: "note",
+                    body: "<code>Entries</code> trả về đúng các hình chữ nhật đã vẽ (kèm <code>Bounds</code> và <code>Share</code>), nên hit-test, tooltip và nhãn của bạn luôn khớp với hình — không phải tính lại layout lần thứ hai."
+                }
+            },
+            {
+                title: "Một màu, hoặc không nhãn",
+                desc: "Không đặt <code>Palette</code> thì mọi ô dùng <code>Fill</code> (mặc định là màu accent của theme). Tắt nhãn khi ô quá nhỏ để khỏi rối.",
+                xaml: `<ui:TreeMap ItemsSource="{Binding Cost}" ShowLabels="False" Fill="{DynamicResource CONCOST.Brush.PrimaryTint}" />`,
+                csharp: `// Cùng một màu cho mọi ô
+map.Fill = (Brush)FindResource("CONCOST.Brush.Primary");
+
+// Tắt chữ khi chỉ cần hình khối
+map.ShowLabels = false;`,
+                callout: {
+                    type: "tip",
+                    body: "Bố cục tính lại khi đổi kích thước. Với dữ liệu rất nhỏ, đặt <code>Gap=\"0\"</code> để không mất diện tích vào khoảng hở."
+                }
+            }
+        ],
+        related: ["charts", "statisticcard", "sparkline"]
+    },
+
+    dockingmanager: {
+        title: "DockingManager — layout kiểu Visual Studio",
+        badge: "Mới",
+        desc: "Panel quản lý các <code>ToolWindow</code> ở bốn cạnh và vùng giữa. Cùng một cạnh thì các panel trở thành <b>tab của một nhóm</b>, kích thước co giãn theo tỉ lệ khi đổi cửa sổ, kéo header để dock sang cạnh khác với 5 vùng thả, và lưu/khôi phục được layout.",
+        keywords: ["docking", "tool window", "auto hide", "splitter", "layout", "tab", "visual studio"],
+        sections: [
+            {
+                title: "Nhóm pane và tab",
+                desc: "Mọi panel khai <code>Dock=\"Left\"</code> thuộc <b>một nhóm</b> ở cạnh trái. Từ hai panel trở lên, nhóm hiện thành tab ở đáy — không phải mỗi panel chiếm một dải riêng. Tab đang chọn là <code>IsActive</code>, và header riêng của panel tự ẩn đi vì tab đã ghi tên nó.",
+                xaml: `<ui:DockingManager>
+    <ui:ToolWindow Header="Cấu kiện" Icon="Layers" Dock="Left" DockSize="210" />
+    <ui:ToolWindow Header="Lớp" Icon="LayerColor" Dock="Left" DockSize="210" />
+
+    <ui:ToolWindow Header="Thuộc tính" Dock="Right" DockSize="230" />
+    <ui:ToolWindow Header="Nhật ký" Dock="Bottom" DockSize="120" />
+    <ui:ToolWindow Header="Bản vẽ" Dock="Center" />
+</ui:DockingManager>`,
+                csharp: `// Hai panel cùng cạnh = hai tab của một nhóm
+manager.Children.Add(new ToolWindow { Header = "Cấu kiện", Dock = DockSide.Left, DockSize = 210 });
+manager.Children.Add(new ToolWindow { Header = "Lớp", Dock = DockSide.Left, DockSize = 210 });
+
+// Chọn tab bằng code, đi đúng đường của cú click
+layers.IsActive = true;
+
+// Nhóm hiện tại của một cạnh
+IReadOnlyList<ToolWindow> left = manager.Group(DockSide.Left);`,
+                callout: {
+                    type: "tip",
+                    body: "Kích thước trong một nhóm được đồng bộ: kéo splitter hay đổi <code>DockSize</code> của panel này thì các tab còn lại nhận cùng kích thước, nên chuyển tab không làm cạnh bị giật."
+                }
+            },
+            {
+                title: "Kích thước theo tỉ lệ",
+                desc: "Mặc định panel giữ <b>tỉ lệ</b> của nó khi cửa sổ đổi kích thước — như cột <code>*</code> trong <code>Grid</code>. Đặt <code>IsProportional=\"False\"</code> nếu muốn ghim cứng pixel.",
+                xaml: `<ui:DockingManager IsProportional="True" SplitterThickness="6" />`,
+                csharp: `// 210px trên cửa sổ 1174px → thu còn 814px thì panel còn ~146px
+manager.IsProportional = false;   // tắt: giữ nguyên 210px`,
+                callout: {
+                    type: "note",
+                    body: "Kéo splitter cập nhật <code>DockSize</code> của cả nhóm; lần đổi kích thước cửa sổ sau đó sẽ lấy tỉ lệ mới làm chuẩn."
+                }
+            },
+            {
+                title: "Kéo để dock lại — 5 vùng thả",
+                desc: "Giữ và kéo header: vùng đang trỏ tới được tô sáng bằng khung nét đứt. Vùng thả tính theo <b>từng panel</b> (25% mỗi cạnh, còn lại là giữa), nên kéo vào nửa trái của vùng giữa là dock sang trái, không phải theo dải biên của cả cửa sổ.",
+                xaml: `<ui:ToolWindow Header="Nhật ký" Dock="Bottom"
+               CanAutoHide="True" CanClose="True" />`,
+                csharp: `// Dock theo code (menu View)
+manager.Dock(pane, DockSide.Right);
+
+// Tự ẩn / flyout
+pane.ToggleAutoHide();
+manager.ToggleFlyout(pane);
+manager.CloseFlyouts();
+
+// Sự kiện để lưu layout hoặc ghi log
+manager.PaneDocked += (_, w) => SaveLayout();
+manager.PaneClosed += (_, w) => Log(w.Header);`,
+                callout: {
+                    type: "tip",
+                    body: "Khung nét đứt vẽ đúng vùng panel sẽ chiếm sau khi thả, không phải nửa panel đang trỏ — gợi ý không bao giờ nói dối."
+                }
+            },
+            {
+                title: "Nhóm lồng nhau — layout là một cây",
+                desc: "<code>DockPaneGroup</code> chia vùng của nó cho các con theo <code>Proportion</code>, và các con có thể là nhóm khác. Nhờ vậy biểu diễn được “cạnh trái chia hai hàng, hàng trên lại có tab” — thứ mà bốn slot cố định không làm được.",
+                xaml: `<ui:DockPaneGroup Dock="Left" DockSize="250" Orientation="Vertical">
+    <!-- Hàng trên: hai tab -->
+    <ui:DockPaneGroup Mode="Tabs" ui:DockPaneGroup.Proportion="2">
+        <ui:ToolWindow Header="Cấu kiện" Icon="Layers" />
+        <ui:ToolWindow Header="Lớp" Icon="LayerColor" />
+    </ui:DockPaneGroup>
+
+    <!-- Hàng dưới: một panel -->
+    <ui:ToolWindow Header="Tìm kiếm" Icon="Search" ui:DockPaneGroup.Proportion="1" />
+</ui:DockPaneGroup>`,
+                csharp: `var tabs = new DockPaneGroup { Mode = DockGroupMode.Tabs };
+tabs.Children.Add(tree);
+tabs.Children.Add(layers);
+DockPaneGroup.SetProportion(tabs, 2);
+
+var split = new DockPaneGroup
+{
+    Dock = DockSide.Left,
+    DockSize = 250,
+    Orientation = Orientation.Vertical,   // các con xếp dọc
+    Mode = DockGroupMode.Split
+};
+split.Children.Add(tabs);
+split.Children.Add(search);
+
+manager.Children.Add(split);`,
+                callout: {
+                    type: "tip",
+                    body: "<code>Mode=\"Tabs\"</code> biến nhóm thành tab (chỉ con đang <code>IsActive</code> hiện); <code>Mode=\"Split\"</code> chia chỗ. Mỗi nhóm tự vẽ và tự kéo splitter của nó, nên lồng bao nhiêu tầng cũng được."
+                }
+            },
+            {
+                title: "Cửa sổ nổi",
+                desc: "Kéo header ra **ngoài** vùng docking là panel tách thành cửa sổ riêng. Gọi <code>Float(pane)</code> nếu muốn làm bằng code; đóng cửa sổ đó thì panel tự dock lại đúng cạnh cũ, đúng kích thước cũ.",
+                xaml: `<!-- Không cần XAML -->`,
+                csharp: `Window floating = manager.Float(props);
+
+// Đóng cửa sổ → tự dock lại cạnh cũ
+floating.Closed += (_, _) => SaveLayout();`,
+                callout: {
+                    type: "note",
+                    body: "Panel đang nổi bị tắt <code>CanAutoHide</code> (vì không còn cạnh nào để ghim vào), và được bật lại khi dock về."
+                }
+            },
+            {
+                title: "Kéo tab",
+                desc: "Giữ và kéo một tab: thả lại trên chính dải tab thì nó **đổi thứ tự**, thả sang cạnh khác thì panel chuyển sang nhóm đó, thả ra ngoài cửa sổ thì tách thành cửa sổ nổi. Ba việc đó cũng gọi được bằng code.",
+                xaml: `<!-- Không cần XAML: tab tự kéo được -->`,
+                csharp: `// Đổi thứ tự tab (0 = đầu)
+manager.MovePane(pane, 0);
+group.MoveChild(pane, 1);      // trong một nhóm lồng
+
+// Thả ở một toạ độ bất kỳ — dock hoặc tách
+manager.DockAt(pane, pointInManager);
+
+// Tự vẽ gợi ý thả khi làm drag riêng
+manager.ShowDropHint(pane, point);
+manager.EndDropPreview();`,
+                callout: {
+                    type: "tip",
+                    body: "<code>DockAt</code> nhận toạ độ trong hệ của manager: điểm nằm ngoài biên thì tách cửa sổ, nằm trong thì dock theo vùng thả. Nhờ vậy một dải tab tự dựng cũng dùng lại được toàn bộ gesture."
+                }
+            },
+            {
+                title: "Lưu và khôi phục layout",
+                desc: "Mỗi panel được lưu cạnh, kích thước, trạng thái tự ẩn và tab đang chọn. Khôi phục khớp theo <code>Header</code>, nên panel lạ trong file cũ bị bỏ qua thay vì làm hỏng layout.",
+                xaml: `<!-- Không cần XAML: gọi từ code khi đóng/mở ứng dụng -->`,
+                csharp: `string snapshot = manager.CaptureLayout();
+File.WriteAllText("layout.txt", snapshot);
+
+// Lần chạy sau
+manager.ApplyLayout(File.ReadAllText("layout.txt"));
+
+// Trả về false nếu không khớp panel nào
+bool ok = manager.ApplyLayout(snapshot);`,
+                callout: {
+                    type: "note",
+                    body: "Định dạng là văn bản thuần có dòng tiêu đề phiên bản (<code>CONCOST-DOCK-1</code>), nên đọc được bằng mắt và tiến hoá được mà không cần thư viện JSON."
+                }
+            }
+        ],
+        related: ["tabs", "documenttabcontrol", "expander"]
+    },
+
+    searchabletreepicker: {
+        title: "SearchableTreePicker — cây có tìm kiếm",
+        badge: "Mới",
+        desc: "Ô tìm kiếm đặt trước một cây: gõ để thu hẹp cây xuống các mục khớp <b>và những nhánh dẫn tới chúng</b>, rồi chọn một hoặc nhiều mục.",
+        keywords: ["tree picker", "tìm kiếm cây", "chọn nhiều", "search", "treeview"],
+        sections: [
+            {
+                title: "Lọc mà vẫn thấy đường dẫn",
+                desc: "Bộ lọc giữ lại nhánh cha của mỗi kết quả. Bỏ hết node không khớp sẽ chỉ còn một danh sách lá trơ trọi, không biết nó nằm ở đâu — giữ đường dẫn là thứ làm kết quả đọc được.",
+                xaml: `<ui:SearchableTreePicker ItemsSource="{Binding Nodes}"
+                         ChildrenPath="Children"
+                         DisplayPath="Name"
+                         SelectionMode="Multiple"
+                         Placeholder="Tìm cấu kiện..." />`,
+                csharp: `var picker = new SearchableTreePicker
+{
+    ItemsSource = nodes,
+    ChildrenPath = "Children",
+    DisplayPath = "Name",        // đường dẫn có chấm cũng được: "Info.Label"
+    SelectionMode = PickerSelectionMode.Multiple
+};
+
+picker.SelectionChanged += (_, _) => Show(picker.SelectedItems);`,
+                callout: {
+                    type: "tip",
+                    body: "So khớp đi qua <code>CommandPaletteText.Normalize</code>: gõ <code>dam d1</code> tìm ra “Dầm D1”, <code>tang 1</code> tìm ra “Tầng 1”. Với thư viện tiếng Việt thì đây là khác biệt giữa dùng được và không."
+                }
+            },
+            {
+                title: "Chọn một hay nhiều",
+                desc: "<code>SelectionMode=\"Multiple\"</code> hiện checkbox từng dòng. <code>SelectAllVisible()</code> chỉ lấy những gì đang hiện — nghĩa là sau khi lọc, “chọn tất cả” đúng nghĩa là chọn hết kết quả.",
+                xaml: `<ui:SearchableTreePicker SelectionMode="Single" />`,
+                csharp: `picker.SearchText = "cột";
+picker.SelectAllVisible();      // chỉ các mục còn hiện sau khi lọc
+picker.ClearSelection();
+
+int n = picker.SelectedCount;
+IReadOnlyList<object> picked = picker.SelectedItems;`,
+                callout: {
+                    type: "note",
+                    body: "Đổi từ Multiple sang Single thì danh sách chọn được rút còn mục cuối, không để lại trạng thái không hợp lệ."
+                }
+            }
+        ],
+        related: ["treedatagrid", "commandpalette", "searchbox"]
+    },
+
+    meshgradient: {
+        title: "Mesh gradient & đèn rọi",
+        badge: "Mới",
+        desc: "Hai hiệu ứng nền: <code>AnimatedMeshGradient</code> cho bốn khối màu “thở” quanh neo cố định, và <code>CursorSpotlight</code> làm tối mọi thứ trừ một vòng quanh con trỏ.",
+        keywords: ["mesh gradient", "gradient động", "spotlight", "đèn rọi", "nền"],
+        sections: [
+            {
+                title: "Mesh, không phải aurora",
+                desc: "Khác <code>AuroraBackground</code>: aurora trôi các khối ngang mặt phẳng nên đọc như thời tiết; mesh giữ khối quanh neo và chỉ dao động nhẹ, nên trông như một ảnh tĩnh biết cử động. Bán kính tính theo <b>cạnh dài</b> — tính theo cạnh ngắn thì panel rộng sẽ hở nền giữa các khối.",
+                xaml: `<controls:AnimatedMeshGradient Height="240"
+    ColorA="#7F77DD" ColorB="#1D9E75"
+    ColorC="#EF9F27" ColorD="#D4537E"
+    Speed="1" BlobOpacity="0.55" Spread="0.75" />`,
+                csharp: "mesh.Restart();          // quay lại frame đầu\n" +
+                        "mesh.IsAnimated = false; // đứng yên, vẫn vẽ",
+                callout: {
+                    type: "note",
+                    body: "Vẽ bằng radial gradient trong suốt ở viền, không dùng <code>BlurEffect</code> — rẻ hơn nhiều khi phủ cả cửa sổ."
+                }
+            },
+            {
+                title: "Đèn rọi không cướp click",
+                desc: "<code>CursorSpotlight</code> không nhận hit-test, nhưng vẫn theo được con trỏ vì <code>Mouse.GetPosition</code> đọc vị trí hiện tại chứ không cần nhận sự kiện. Đặt <code>FollowCursor=\"False\"</code> rồi tự đặt <code>SpotlightCenter</code> nếu muốn điều khiển theo kịch bản tour.",
+                xaml: `<Grid>
+    <StackPanel>...</StackPanel>
+    <controls:CursorSpotlight Radius="130" SpotDim="0.62" />
+</Grid>`,
+                csharp: "spotlight.FollowCursor = false;\n" +
+                        "spotlight.SpotlightCenter = new Point(120, 80);\n\n" +
+                        "spotlight.SpotColor = Color.FromArgb(0x22, 0xFF, 0xFF, 0xFF);",
+                callout: {
+                    type: "tip",
+                    body: "Vẽ bằng <b>một</b> hình chữ nhật phủ toàn khung với gradient tuyệt đối và <code>SpreadMethod=Pad</code>. Chỉ vẽ hình ellipse sẽ ra vòng tối ở giữa — đúng ngược lại điều cần."
+                }
+            }
+        ],
+        related: ["aurorabackground", "spotlightcard", "cursorglow"]
+    },
+
+    glasscard: {
+        title: "Kính mờ & viền gradient",
+        badge: "Mới",
+        desc: "Hai bề mặt: <code>FrostedGlass</code> làm mờ đúng vùng nằm sau nó, và <code>AnimatedGradientBorder</code> cho viền gradient xoay quanh thẻ.",
+        keywords: ["frosted", "kính mờ", "glass", "gradient border", "viền động"],
+        sections: [
+            {
+                title: "Kính mờ không cần backdrop filter",
+                desc: "WPF không có backdrop filter, nên blur phải tự dựng: trỏ <code>Source</code> vào phần tử phía sau, control vẽ <code>VisualBrush</code> của nó qua <code>BlurEffect</code>. Viewbox của brush được đặt theo <b>toạ độ tấm kính trong Source</b>, nên blur khớp đúng vùng nằm sau thay vì kéo giãn cả nền vào tấm kính.",
+                xaml: `<Grid>
+    <controls:AnimatedMeshGradient x:Name="Backdrop" />
+    <controls:FrostedGlass Source="{Binding ElementName=Backdrop}"
+        BlurRadius="22" Corner="16"
+        Tint="#66FFFFFF" />
+</Grid>`,
+                csharp: "glass.Source = backdrop;\n" +
+                        "glass.BlurRadius = 24;\n" +
+                        "glass.Tint = new SolidColorBrush(Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF));",
+                callout: {
+                    type: "warning",
+                    body: "Bản sao đó được vẽ lại mỗi khi Source đổi, nên đây là control cho <b>vài tấm kính trên một hero</b> — không phải nền cho danh sách cuộn dài."
+                }
+            },
+            {
+                title: "Viền xoay bằng animation, không bằng OnRender",
+                desc: "<code>AnimatedGradientBorder</code> xoay một <code>RotateTransform</code> gắn vào brush bằng <code>DoubleAnimation</code>. WPF chạy nó ở render thread, nên một chục thẻ như vậy không tốn gì trên UI thread và vẫn mượt khi cửa sổ bận.",
+                xaml: `<controls:AnimatedGradientBorder SecondsPerTurn="8"
+    RingThickness="2" Corner="14">
+    <StackPanel>...</StackPanel>
+</controls:AnimatedGradientBorder>`,
+                csharp: "card.IsAnimated = false;   // dừng ở frame đầu, thẻ vẫn hiện",
+                callout: {
+                    type: "note",
+                    body: "Khi <code>MotionSettings.AnimationsEnabled</code> tắt, animation bị xoá và viền giữ frame đầu — người dùng giảm chuyển động thấy đúng chiếc thẻ đó, không phải một khung trống."
+                }
+            }
+        ],
+        related: ["card", "meshgradient", "borderbeam"]
+    },
+
+    motion: {
+        title: "Stagger & Shared element",
+        badge: "Mới",
+        desc: "Hai kiểu chuyển động: danh sách hiện dần từng mục, và một phần tử “lớn ra” từ chỗ nó từng nằm.",
+        keywords: ["stagger", "shared element", "animation", "chuyển cảnh", "flip"],
+        sections: [
+            {
+                title: "Danh sách hiện dần",
+                desc: "<code>StaggerAnimation</code> là attached behaviour: độ trễ suy ra từ vị trí mục nên dùng được với mọi panel và mọi item template. Container được đánh dấu theo <b>tham chiếu</b> — panel ảo hoá dùng lại container, nếu không đánh dấu thì cuộn qua lại mục nào cũng chạy lại hiệu ứng.",
+                xaml: `<ListBox controls:StaggerAnimation.IsEnabled="True"
+         controls:StaggerAnimation.Delay="55"
+         controls:StaggerAnimation.OffsetY="16"
+         controls:StaggerAnimation.MaxItems="24" />`,
+                csharp: "StaggerAnimation.SetDelay(list, 70);\n" +
+                        "StaggerAnimation.SetMaxItems(list, 12);   // chặn trần độ trễ",
+                callout: {
+                    type: "tip",
+                    body: "<code>MaxItems</code> chặn độ trễ tăng mãi: danh sách 200 dòng sẽ không mất mười giây mới hiện xong."
+                }
+            },
+            {
+                title: "Shared element",
+                desc: "<code>SharedElementTransition</code> không animate layout — phần tử đã nằm đúng chỗ cuối, chỉ bị scale/dịch về hình chữ nhật cũ ở frame đầu rồi về identity. Nhờ vậy không có layout thrash và phần tử vẫn tương tác được trong suốt quá trình.",
+                xaml: `<!-- Không cần XAML: gọi khi đổi view -->`,
+                csharp: "SharedElementTransition.RunFrom(target, source);\n\n" +
+                        "// hoặc tự tính rect trong hệ của cha\n" +
+                        "var parent = (UIElement)VisualTreeHelper.GetParent(target);\n" +
+                        "var origin = source.TranslatePoint(new Point(0, 0), parent);\n" +
+                        "SharedElementTransition.Run(target, new Rect(origin, source.RenderSize));",
+                callout: {
+                    type: "note",
+                    body: "Cả hai rect phải ở cùng hệ toạ độ — thường là cha của phần tử. Kết thúc thì <code>RenderTransform</code> được trả về như cũ để không phá hit-test."
+                }
+            }
+        ],
+        related: ["pagetransitionhost", "scrollreveal", "glasscard"]
+    },
+
+    dragdrop: {
+        title: "Drop zone, viền gợi ý & ghost",
+        badge: "Mới",
+        desc: "Ba mảnh của một thao tác kéo thả: <code>FileDropZone</code> nhận tệp, <code>DropTargetHighlight</code> vẽ viền gợi ý quanh bất kỳ phần tử nào, và <code>DragGhost</code> mang nhãn theo con trỏ.",
+        keywords: ["drag drop", "file drop", "kéo thả", "ghost", "drop target"],
+        sections: [
+            {
+                title: "Vùng thả tệp",
+                desc: "<code>Filter</code> được kiểm tra <b>ngay khi tệp còn đang bay</b>, nên vùng chỉ sáng lên với tệp nó sẽ nhận. Nhận mọi drag rồi từ chối lúc thả là kiểu hành vi làm người dùng thấy hỏng.",
+                xaml: `<ui:FileDropZone Filter="*.dwg;*.dxf"
+                 Caption="Kéo tệp bản vẽ vào đây"
+                 Hint="hoặc bấm để chọn tệp" />`,
+                csharp: `zone.FilesDropped += (_, e) => Load(e.Files);
+
+// Bấm vào vùng thì host tự mở hộp chọn tệp
+zone.BrowseRequested += (_, _) => OpenDialog();
+zone.AddFiles(picked);          // cùng bộ lọc, cùng sự kiện
+
+bool ok = zone.Matches(@"C://ban ve//cot.dwg");`,
+                callout: {
+                    type: "tip",
+                    body: "Thư viện không tự mở hộp chọn tệp: hiện picker nào, và host có muốn hay không, không phải quyết định của control."
+                }
+            },
+            {
+                title: "Viền gợi ý cho mọi phần tử",
+                desc: "<code>DropTargetHighlight</code> là attached property, vẽ viền nét đứt bằng <b>adorner</b> nên nằm trên nội dung và không đổi layout — không thêm border, không xô padding. Nó chỉ báo “đang có drag ở trên”; việc nhận hay không vẫn do phần tử quyết định qua <code>DragDropEffects</code>.",
+                xaml: `<Border controls:DropTargetHighlight.IsEnabled="True"
+        controls:DropTargetHighlight.CornerRadius="10" />`,
+                csharp: `DropTargetHighlight.SetIsEnabled(card, true);
+DropTargetHighlight.SetBrush(card, Brushes.OrangeRed);`,
+                callout: {
+                    type: "note",
+                    body: "Tách hai việc đó ra là thứ cho phép tô sáng cả một thẻ trong khi chỉ một dòng bên trong nhận dữ liệu."
+                }
+            },
+            {
+                title: "Ghost theo con trỏ",
+                desc: "<code>DragGhost</code> là một cửa sổ trong suốt, luôn trên cùng, không nhận chuột, đặt lệch khỏi con trỏ 14px. Cả tiến trình chỉ có một ghost — người dùng không kéo hai thứ một lúc.",
+                xaml: `<!-- Không cần XAML -->`,
+                csharp: `DragGhost.Show("Dầm D1 (300×600)", IconKind.Layers);
+DragGhost.Move(this, e.GetPosition(this));   // tự quy đổi DPI
+DragGhost.Hide();`,
+                callout: {
+                    type: "tip",
+                    body: "Truyền vào <code>Move</code> chính visual mà con trỏ đang thuộc về; phép chia theo DPI được làm bên trong nên ghost rơi đúng chỗ con trỏ."
+                }
+            }
+        ],
+        related: ["filedropzone", "dragdrophelper", "searchabletreepicker"]
+    },
+
+    documenttabcontrol: {
+        title: "DocumentTabControl — tab tài liệu",
+        badge: "Mới",
+        desc: "TabControl cho tài liệu: mỗi tab có icon, chấm đánh dấu chưa lưu và nút đóng. Đóng tab là một <b>yêu cầu</b> — host có thể chặn để hỏi lưu trước.",
+        keywords: ["document tab", "tab", "đóng tab", "dirty", "unsaved", "editor"],
+        sections: [
+            {
+                title: "Tab có nút đóng và chấm chưa lưu",
+                desc: "<code>IsDirty</code> chỉ hiện chấm — control không bao giờ tự xoá nó, vì việc lưu là của host. <code>CanClose=\"False\"</code> ẩn nút đóng của riêng tab đó.",
+                xaml: `<ui:DocumentTabControl ItemsSource="{Binding Documents}" ShowCloseButtons="True">
+    <ui:DocumentTabControl.ItemTemplate>
+        <DataTemplate>
+            <ui:DocumentTabItem Header="{Binding Title}"
+                                Icon="File"
+                                IsDirty="{Binding IsDirty}"
+                                CloseCommand="{Binding DataContext.CloseDocumentCommand,
+                                               RelativeSource={RelativeSource AncestorType=ui:DocumentTabControl}}"
+                                Content="{Binding}" />
+        </DataTemplate>
+    </ui:DocumentTabControl.ItemTemplate>
+</ui:DocumentTabControl>`,
+                csharp: `// Đóng theo lập trình, đi đúng đường của nút đóng
+tabs.CloseTab(document);
+tabs.CloseOtherTabs(document);
+tabs.CloseAllTabs();
+
+// Tab không có CloseCommand thì bị gỡ khỏi Items;
+// có CloseCommand thì command chạy và control không tự gỡ.`,
+                callout: {
+                    type: "note",
+                    body: "<code>Close()</code> phát routed event <code>CloseRequested</code> (bubble) — <code>DocumentTabControl</code> bắt bằng class handler. Nhờ vậy nút đóng, menu ngữ cảnh và phím tắt đều đi qua cùng một chỗ."
+                }
+            },
+            {
+                title: "Tắt nút đóng toàn bộ",
+                desc: "Khi cửa sổ chỉ hiển thị một tài liệu, tắt hết nút đóng cho gọn — hoặc tắt theo từng tab.",
+                xaml: `<ui:DocumentTabControl ShowCloseButtons="False" />
+<ui:DocumentTabItem Header="Bản vẽ A" CanClose="False" />`,
+                csharp: `tabs.ShowCloseButtons = false;
+
+// Một tab cụ thể không được đóng
+var locked = new DocumentTabItem { Header = "Mẫu", CanClose = false };
+tabs.Items.Add(locked);`,
+                callout: {
+                    type: "tip",
+                    body: "Style <code>CONCOST.DocumentTabControl.Base</code> kế thừa <code>CONCOST.TabControl.Base</code> nhưng thay <code>ItemContainerStyle</code> bằng style document — nếu không, tab sẽ rơi về template TabItem thường và mất nút đóng."
+                }
+            }
+        ],
+        related: ["tabs", "dockingmanager", "tabcontrol"]
+    },
+
+    statusbar: {
+        title: "StatusBar — thanh trạng thái",
+        badge: "Mới",
+        desc: "Dải thông tin dưới đáy cửa sổ. Mỗi ô là một <code>StatusBarItem</code>; ô khai <code>Alignment=\"Right\"</code> bám mép phải, phần giữa co giãn theo cửa sổ.",
+        keywords: ["status bar", "trạng thái", "bottom", "footer", "shell"],
+        sections: [
+            {
+                title: "Hai phía, một khoảng trống ở giữa",
+                desc: "<code>StatusBarPanel</code> xếp ô trái từ mép trái và ô phải từ mép phải, nên không cần <code>Grid</code> với cột <code>*</code> để đẩy hai nhóm ra hai đầu.",
+                xaml: `<ui:StatusBar>
+    <ui:StatusBarItem Text="Sẵn sàng" Icon="Check" />
+    <ui:StatusBarItem Text="12 cấu kiện" IsSeparator="True" />
+    <ui:StatusBarItem Text="Đã lưu" Icon="Save" />
+
+    <ui:StatusBarItem Text="100%" Alignment="Right" />
+    <ui:StatusBarItem Text="mm" Alignment="Right" IsSeparator="True" />
+</ui:StatusBar>`,
+                csharp: `var bar = new StatusBar { Spacing = 12 };
+
+bar.Items.Add(new StatusBarItem { Text = "Sẵn sàng", Icon = IconKind.Check });
+bar.Items.Add(new StatusBarItem { Text = "100%", Alignment = StatusBarAlignment.Right });`,
+                callout: {
+                    type: "tip",
+                    body: "Thứ tự khai báo quyết định thứ tự trong từng nhóm, không phải vị trí trên màn hình — một ô <code>Right</code> chen giữa các ô <code>Left</code> vẫn nằm bên phải."
+                }
+            },
+            {
+                title: "Ô bấm được",
+                desc: "Gắn <code>Command</code> cho ô để biến nó thành nút — ví dụ mở bảng log hoặc đổi đơn vị. Ô không có command thì con trỏ để mặc định, không giả vờ bấm được.",
+                xaml: `<ui:StatusBarItem Text="3 cảnh báo" Icon="Alert"
+                   Command="{Binding ShowWarningsCommand}" />`,
+                csharp: `var warnings = new StatusBarItem
+{
+    Text = "3 cảnh báo",
+    Icon = IconKind.Alert,
+    Command = new RelayCommand(() => ShowWarnings())
+};`,
+                callout: {
+                    type: "note",
+                    body: "<code>Content</code> được ưu tiên hơn <code>Text</code>: đặt một control vào ô (progress bar, combo đơn vị) thì bỏ <code>Text</code> đi, đừng đặt cả hai."
+                }
+            }
+        ],
+        related: ["ribbon", "commandbar", "concostwindow"]
+    },
+
+    commandbar: {
+        title: "CommandBar — thanh lệnh có menu “thêm”",
+        badge: "Mới",
+        desc: "Thanh công cụ một dòng: nút có icon + nhãn, và khi hết chỗ thì phần thừa rơi vào menu xổ xuống thay vì bị cắt cụt.",
+        keywords: ["command bar", "toolbar", "overflow", "menu", "shell"],
+        sections: [
+            {
+                title: "Khai báo lệnh bằng dữ liệu",
+                desc: "Mỗi mục là một <code>CommandBarItem</code>. Control không tự quyết định cái gì vừa — <code>OverflowPanel</code> đo trong lượt layout rồi báo lại, nên <code>OverflowItems</code> luôn khớp với thứ đang bị giấu.",
+                xaml: `<ui:CommandBar ItemsSource="{Binding Commands}" OverflowToolTip="Thêm lệnh" />`,
+                csharp: `bar.ItemsSource = new[]
+{
+    new CommandBarItem("Xuất PDF", ExportPdfCommand, IconKind.File),
+    new CommandBarItem("Xuất Excel", ExportExcelCommand, IconKind.Save),
+    new CommandBarItem("In", PrintCommand, IconKind.Print),
+    new CommandBarItem { IsSeparator = true },
+    new CommandBarItem("Trợ giúp", HelpCommand, IconKind.Help, "Mở tài liệu")
+};`,
+                callout: {
+                    type: "tip",
+                    body: "<code>ShowLabel=\"False\"</code> giữ icon và bỏ nhãn — dùng cho nhóm lệnh phụ để thanh gọn lại trước khi phải overflow."
+                }
+            },
+            {
+                title: "Menu thừa và trạng thái",
+                desc: "<code>HasOverflow</code> và <code>OverflowItems</code> là read-only, tự cập nhật sau mỗi lượt layout. <code>IsOverflowOpen</code> hai chiều, bind được để đóng menu khi chuyển tab.",
+                xaml: `<ui:CommandBar ItemsSource="{Binding Commands}"
+               IsOverflowOpen="{Binding IsMoreOpen, Mode=TwoWay}" />`,
+                csharp: `if (bar.HasOverflow) status.Text = $"{bar.OverflowItems.Cast<object>().Count()} lệnh bị ẩn";
+
+// Chạy lệnh bằng code, đi đúng đường của nút bấm
+bar.Invoke(bar.ItemsSource.First());`,
+                callout: {
+                    type: "note",
+                    body: "Khi không còn mục nào bị ẩn, control tự đặt <code>IsOverflowOpen = false</code> — menu không bao giờ mở rỗng."
+                }
+            }
+        ],
+        related: ["ribbon", "quickaccesstoolbar", "statusbar"]
+    },
+
+    quickaccesstoolbar: {
+        title: "QuickAccessToolbar — dải icon trên cùng",
+        badge: "Mới",
+        desc: "Bản rời của thanh truy cập nhanh trong ribbon: chỉ icon, cao 28px, đặt được ở bất kỳ cửa sổ nào không cần cả ribbon.",
+        keywords: ["quick access", "qat", "toolbar", "icon", "shell"],
+        sections: [
+            {
+                title: "Icon, tooltip, hết",
+                desc: "Mỗi mục là một <code>QuickAccessItem</code> — icon, tooltip, command. Không nhãn, không nhóm: đây là chỗ cho những lệnh dùng hàng ngày.",
+                xaml: `<ui:QuickAccessToolbar ItemsSource="{Binding QuickCommands}" IsCustomizable="False" />`,
+                csharp: `qat.ItemsSource = new[]
+{
+    new QuickAccessItem(IconKind.Save, "Lưu (Ctrl+S)", SaveCommand),
+    new QuickAccessItem(IconKind.Undo, "Hoàn tác", UndoCommand),
+    new QuickAccessItem { IsSeparator = true },
+    new QuickAccessItem(IconKind.Print, "In", PrintCommand)
+};`,
+                callout: {
+                    type: "tip",
+                    body: "<code>IsCustomizable=\"False\"</code> ẩn nút mũi tên khi không có gì bị tràn — hợp với cửa sổ con chỉ có ba bốn lệnh cố định."
+                }
+            },
+            {
+                title: "Tràn xuống menu",
+                desc: "Cùng cơ chế với <code>CommandBar</code>: hết chỗ thì mục thừa rơi vào popup, không bị cắt.",
+                xaml: `<ui:QuickAccessToolbar ItemsSource="{Binding QuickCommands}"
+                        IsOverflowOpen="{Binding IsQatMoreOpen, Mode=TwoWay}" />`,
+                csharp: `// Lưu bố cục người dùng tự sắp
+var visible = qat.ItemsSource.Cast<QuickAccessItem>()
+                  .Take(qat.ItemsSource.Cast<QuickAccessItem>().Count() - qat.OverflowItems.Cast<object>().Count());`,
+                callout: {
+                    type: "note",
+                    body: "Đây là control độc lập, không phải con của <code>Ribbon</code>. Ribbon vẫn dùng <code>RibbonQuickAccessToolBar</code> nội bộ của nó — hai thứ cùng ý tưởng, khác phạm vi."
+                }
+            }
+        ],
+        related: ["commandbar", "ribbon", "ribboncommands"]
     },
 
 };

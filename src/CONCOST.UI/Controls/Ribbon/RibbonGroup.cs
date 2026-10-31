@@ -124,6 +124,33 @@ public class RibbonGroup : HeaderedItemsControl
     protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
         new RibbonGroupAutomationPeer(this);
 
+    /// <summary>
+    /// Drops the caption row when <see cref="Ribbon.ShowGroupLabels"/> is false. Driven from code
+    /// rather than a template trigger: the property is an inherited attached one, so a binding from
+    /// inside the template has no reliable source to point at.
+    /// </summary>
+    internal void ApplyShowGroupLabels(bool show)
+    {
+        _showLabels = show;
+
+        if (Template?.FindName("HeaderHost", this) is UIElement header)
+            header.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+
+        if (Template?.FindName("HeaderRow", this) is RowDefinition row)
+            row.Height = show ? new GridLength(21) : new GridLength(0);
+    }
+
+    public override void OnApplyTemplate()
+    {
+        base.OnApplyTemplate();
+
+        // The live inherited value is authoritative: the group may already have inherited false
+        // before its template existed.
+        ApplyShowGroupLabels(Ribbon.GetShowGroupLabels(this));
+    }
+
+    private bool _showLabels = true;
+
     private static void OnUserCollapsedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is RibbonGroup group) group.IsCollapsed = (bool)e.NewValue;

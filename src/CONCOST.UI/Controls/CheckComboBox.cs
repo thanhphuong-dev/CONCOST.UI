@@ -263,7 +263,9 @@ public class CheckComboBox : Control
         if (d is CheckComboBox ccb && !ccb._isInternalValueUpdate)
         {
             var val = e.NewValue as string;
-            if (string.IsNullOrEmpty(val))
+            // `is not { Length: > 0 }` narrows on net48 too; string.IsNullOrEmpty does not,
+            // because .NET Framework ships no nullable annotations.
+            if (val is not { Length: > 0 })
             {
                 ccb.UnselectAll();
             }

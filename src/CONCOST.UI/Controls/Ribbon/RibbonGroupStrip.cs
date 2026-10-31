@@ -25,6 +25,7 @@ public class RibbonGroupStrip : Panel
     private readonly HashSet<RibbonGroup> _autoCollapsed = new();
     private double _lastAvailable = -1;
     private bool _measureAfterRestore;
+    private Ribbon? _owner;
 
     protected override Size MeasureOverride(Size availableSize)
     {
@@ -33,6 +34,14 @@ public class RibbonGroupStrip : Panel
         // The window grew: forget the previous ladder and give every group its space back, except
         // the ones the user collapsed by hand.
         if (available > _lastAvailable + 0.5)
+        {
+            RestoreAutoCollapsed();
+            _measureAfterRestore = true;
+        }
+
+        // The host may switch the last rung off at any time; a group collapsed a moment ago has to
+        // come back, otherwise the property looks like it did nothing.
+        if (!IsGroupCollapseAllowed() && _autoCollapsed.Count > 0)
         {
             RestoreAutoCollapsed();
             _measureAfterRestore = true;
@@ -86,7 +95,9 @@ public class RibbonGroupStrip : Panel
         }
         else
         {
-            changed = CollapseNextGroup();
+            // Hosts that need every group readable at any width switch the last rung off; the
+            // strip then keeps demoting but never turns a group into a drop-down button.
+            changed = IsGroupCollapseAllowed() && CollapseNextGroup();
         }
 
         // Invalidating during MeasureOverride is swallowed by the layout manager, so the follow-up
@@ -135,6 +146,47 @@ public class RibbonGroupStrip : Panel
         }
 
         return changed;
+    }
+
+    /// <summary>
+    /// Puts back every group this strip folded. The ribbon calls it when the host switches
+    /// <see cref="Ribbon.IsGroupCollapseEnabled"/> off, so the property takes effect immediately
+    /// instead of only for the next collapse.
+    /// </summary>
+    internal void RestoreCollapsed()
+    {
+        if (_autoCollapsed.Count == 0) return;
+
+        RestoreAutoCollapsed();
+        InvalidateMeasure();
+    }
+
+    /// <summary>
+    /// Reads <see cref="Ribbon.IsGroupCollapseEnabled"/> from the ribbon that hosts this strip.
+    /// The strip is created by an ItemsPanelTemplate inside a DataTemplate, so it is safer to walk
+    /// the visual tree than to rely on the property being in the inheritance chain.
+    /// </summary>
+    private bool IsGroupCollapseAllowed()
+    {
+        _owner ??= FindOwner();
+
+        // The visual-tree walk can come up empty on the very first measure pass; the inherited
+        // property is the reliable fallback because it is already set on every descendant.
+        return _owner?.IsGroupCollapseEnabled
+            ?? (bool)GetValue(Ribbon.IsGroupCollapseEnabledProperty);
+    }
+
+    private Ribbon? FindOwner()
+    {
+        DependencyObject? node = this;
+
+        while (node != null)
+        {
+            if (node is Ribbon ribbon) return ribbon;
+            node = System.Windows.Media.VisualTreeHelper.GetParent(node);
+        }
+
+        return null;
     }
 
     private bool CollapseNextGroup()

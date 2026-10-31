@@ -86,6 +86,26 @@ Object.assign(DOCS_EN.pages, {
                     "CONCOST.Brush.TextPrimary": "Primary text colour, adapts to the theme.",
                     "CONCOST.Brush.TextSecondary": "Secondary/label text colour."
                 }
+            },
+            {
+                title: "2. Auto mode — follow the host window (Revit / AutoCAD plugins)",
+                desc: "<code>AppTheme.Auto</code> reads the background colour of the window the control lives in and picks Light or Dark from its brightness. That is the mode for an add-in: a plugin has <b>no <code>Application.Current</code></b> of its own, only the host's window — and that window already decides whether the surrounding UI is light or dark. Detection walks up from the plugin root to the first element that actually paints a background (a plugin panel is usually transparent, the host's panel is not) and falls back to the Windows setting when it finds none.",
+                xaml: `<!-- The add-in root: keep it transparent so detection reaches the host panel -->
+<UserControl x:Name="PluginRoot" Background="Transparent">
+    <!-- plugin content -->
+</UserControl>`,
+                csharp: `// Apply once, when the plugin view loads
+ThemeManager.Current.ApplyTheme(PluginRoot, AppTheme.Auto);
+
+// The host just switched its own theme (Revit/AutoCAD light ↔ dark)
+ThemeManager.Current.RefreshAutoTheme(PluginRoot);
+
+// Ask first if you need to know which way the host is
+var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
+                callout: {
+                    type: "tip",
+                    body: "Auto applies the theme to a <b>root element</b>, so it never touches the rest of the application: two panels in two different windows can be light and dark at the same time. <code>AppTheme.System</code> is the opposite — it follows the Windows light/dark setting."
+                }
             }
         ]
     },

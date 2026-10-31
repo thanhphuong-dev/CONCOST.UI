@@ -14,7 +14,7 @@ public class ToggleButtonTests
     [Fact]
     public void ToggleButton_IconKind_CanBeAttached()
     {
-        var thread = new Thread(() =>
+        WpfApplicationHost.Run(() =>
         {
             var btn = new ToggleButton();
             IconElement.SetKind(btn, IconKind.Eye);
@@ -26,9 +26,6 @@ public class ToggleButtonTests
             IconElement.SetKind(btn, IconKind.EyeOff);
             Assert.Equal(IconKind.EyeOff, IconElement.GetKind(btn));
         });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
     }
 
     [Fact]

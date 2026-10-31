@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -86,11 +86,18 @@ public partial class ShowcaseViewModel
         // The transparent frame fixes the natural size at 16 × 16. Without it the drawing is exactly
         // as tall as the letter, and the Image stretches the letter itself to 16 px — which makes a
         // bold "B" tower over the 16 px icons beside it.
-        var group = new DrawingGroup();
-        group.Children.Add(new GeometryDrawing(Brushes.Transparent, null, new RectangleGeometry(new Rect(0, 0, 16, 16))));
-        group.Children.Add(new GeometryDrawing(RibbonIconBrush, null, geometry));
-        group.Freeze();
+        var frame = new RectangleGeometry(new Rect(0, 0, 16, 16));
+        frame.Freeze();
+        geometry.Freeze();
 
+        var group = new DrawingGroup();
+        group.Children.Add(new GeometryDrawing(Brushes.Transparent, null, frame));
+        group.Children.Add(new GeometryDrawing(RibbonIconBrush, null, geometry));
+
+        // The group is deliberately left unfrozen: freezing it also freezes every Freezable inside
+        // it, including the shared RibbonIconBrush, and the next theme change then dies with
+        // "Cannot set a property ... because it is in a read-only state" when it recolours the
+        // brush. Only the geometries — which never change — are frozen.
         return new DrawingImage(group);
     }
 
@@ -314,8 +321,125 @@ public partial class ShowcaseViewModel
         root.Children.Add(BuildRibbonShellCard());
         root.Children.Add(BuildRibbonInputCard());
         root.Children.Add(BuildRibbonKeyboardCard());
+        root.Children.Add(BuildRibbonExtendedCard());
 
         return root;
+    }
+
+    /// <summary>Card 7 — the properties a host uses to bend the ribbon to its own shell.</summary>
+    private UIElement BuildRibbonExtendedCard()
+    {
+        var fileGroup = new RibbonGroup { Header = "File" };
+        fileGroup.Items.Add(Cmd("New", RibbonItemSize.Large, IconKind.File, "Tạo bản vẽ mới", "Ctrl+N"));
+        fileGroup.Items.Add(Cmd("Open", RibbonItemSize.Large, IconKind.Folder, "Mở bản vẽ", "Ctrl+O"));
+        fileGroup.Items.Add(Cmd("Save", RibbonItemSize.Large, IconKind.Save, "Ghi bản vẽ", "Ctrl+S"));
+
+        var editGroup = new RibbonGroup { Header = "Edit" };
+        editGroup.Items.Add(Cmd("Undo", RibbonItemSize.Large, IconKind.Undo, "Hoàn tác", "Ctrl+Z"));
+        editGroup.Items.Add(Cmd("Redo", RibbonItemSize.Large, IconKind.Redo, "Làm lại", "Ctrl+Y"));
+        editGroup.Items.Add(new RibbonSeparator());
+        editGroup.Items.Add(Cmd("Cut", RibbonItemSize.Small, IconKind.Close, "Cắt", "Ctrl+X"));
+        editGroup.Items.Add(Cmd("Copy", RibbonItemSize.Small, IconKind.Copy, "Sao chép", "Ctrl+C"));
+
+        var viewGroup = new RibbonGroup { Header = "Show" };
+        viewGroup.Items.Add(Cmd("Grid", RibbonItemSize.Small, IconKind.GridSquare, "Hiện lưới", "F7"));
+        viewGroup.Items.Add(Cmd("Ruler", RibbonItemSize.Small, IconKind.Ruler, "Hiện thước", "F8"));
+
+        var media = new RibbonGroup { Header = "Media" };
+        media.Items.Add(Cmd("Table", RibbonItemSize.Large, IconKind.TableData, "Chèn bảng"));
+        media.Items.Add(Cmd("Chart", RibbonItemSize.Large, IconKind.ChartBar, "Chèn biểu đồ"));
+
+        var home = new RibbonTabItem { Header = "Home", Id = "home", Icon = RibbonIcon(IconKind.Folder) };
+        home.Content = new List<RibbonGroup> { fileGroup, editGroup };
+
+        var insert = new RibbonTabItem { Header = "Insert", Id = "insert", Icon = RibbonIcon(IconKind.TableData) };
+        insert.Content = new List<RibbonGroup> { media };
+
+        var view = new RibbonTabItem { Header = "View", Id = "view", Icon = RibbonIcon(IconKind.GridSquare) };
+        view.Content = new List<RibbonGroup> { viewGroup };
+
+        var extended = new Ribbon
+        {
+            EmptyContent = "Chưa mở không gian làm việc nào.",
+            ItemsSource = new object[] { home, insert, view }
+        };
+
+        var options = new WrapPanel();
+
+        options.Children.Add(Option("Viền khung", true, on => extended.ShowBorder = on));
+        options.Children.Add(Option("Nhãn group", true, on => Ribbon.SetShowGroupLabels(extended, on)));
+        options.Children.Add(Option("Gộp group khi hẹp", true, on => extended.IsGroupCollapseEnabled = on));
+        options.Children.Add(Option("Cho tùy biến QAT", true, on => extended.IsQuickAccessCustomizable = on));
+        options.Children.Add(Option("Bật key tip (Alt)", true, on => extended.IsKeyTipEnabled = on));
+
+        var empty = new Button
+        {
+            Content = "Bỏ hết tab",
+            Padding = new Thickness(12, 5, 12, 5),
+            Margin = new Thickness(0, 0, 16, 8)
+        };
+        empty.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+        empty.Click += (_, _) =>
+        {
+            bool wasEmpty = extended.IsEmpty;
+            extended.ItemsSource = wasEmpty ? new object[] { home, insert, view } : Array.Empty<RibbonTabItem>();
+            empty.Content = extended.IsEmpty ? "Khôi phục tab" : "Bỏ hết tab";
+        };
+        options.Children.Add(empty);
+
+        var tabs = new ComboBox { Width = 150, Margin = new Thickness(0, 0, 0, 8) };
+        tabs.Items.Add("home");
+        tabs.Items.Add("insert");
+        tabs.Items.Add("view");
+        tabs.SelectedIndex = 0;
+        tabs.SelectionChanged += (_, _) =>
+        {
+            if (tabs.SelectedItem is string id) extended.SelectedTabId = id;
+        };
+        options.Children.Add(tabs);
+
+        var stack = new StackPanel();
+        stack.Children.Add(extended);
+        stack.Children.Add(options);
+
+        return DemoSection("Thuộc tính mở rộng", stack,
+            xaml: "<ribbon:Ribbon ShowBorder=\"False\"\n" +
+                  "               IsGroupCollapseEnabled=\"False\"\n" +
+                  "               IsQuickAccessCustomizable=\"False\"\n" +
+                  "               IsKeyTipEnabled=\"False\"\n" +
+                  "               SelectedTabId=\"{Binding ActiveTabId}\"\n" +
+                  "               EmptyContent=\"No workspace open.\" />\n\n" +
+                  "<!-- Caption row off for every group in the ribbon -->\n" +
+                  "<ribbon:Ribbon ShowGroupLabels=\"False\" />",
+            csharp: "// Select by id instead of by index\n" +
+                    "ribbon.SelectedTabId = \"insert\";\n\n" +
+                    "// Drop the last rung: a group never becomes a single button\n" +
+                    "ribbon.IsGroupCollapseEnabled = false;\n\n" +
+                    "// Lock the quick access strip: pinned commands stay, the customise button goes\n" +
+                    "ribbon.IsQuickAccessCustomizable = false;\n\n" +
+                    "// Hand Alt back to the host (Revit / AutoCAD)\n" +
+                    "ribbon.IsKeyTipEnabled = false;\n\n" +
+                    "// Docked into a panel: no outline, no caption row\n" +
+                    "ribbon.ShowBorder = false;\n" +
+                    "Ribbon.SetShowGroupLabels(ribbon, false);\n\n" +
+                    "// Empty state\n" +
+                    "ribbon.EmptyContent = \"No workspace open.\";   // IsEmpty is true with no tabs");
+    }
+
+    private static CheckBox Option(string label, bool initial, Action<bool> apply)
+    {
+        var box = new CheckBox
+        {
+            Content = label,
+            IsChecked = initial,
+            Margin = new Thickness(0, 0, 16, 8),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        box.Checked += (_, _) => apply(true);
+        box.Unchecked += (_, _) => apply(false);
+
+        return box;
     }
 
     /// <summary>Card 3 — application menu, quick-access toolbar, contextual tabs, rich tooltips.</summary>
@@ -566,11 +690,22 @@ public partial class ShowcaseViewModel
         mbShowCheck.Checked += (_, _) => shellRibbon.ShowMenuBar = true;
         mbShowCheck.Unchecked += (_, _) => shellRibbon.ShowMenuBar = false;
 
+        // ---- The hairline under the bar ----
+        var mbDividerCheck = new System.Windows.Controls.CheckBox
+        {
+            Content = "Đường kẻ dưới MenuBar",
+            IsChecked = true,
+            Margin = new Thickness(0, 6, 0, 0)
+        };
+        mbDividerCheck.Checked += (_, _) => menuBar.ShowDivider = true;
+        mbDividerCheck.Unchecked += (_, _) => menuBar.ShowDivider = false;
+
         var stack = new StackPanel();
         stack.Children.Add(shellRibbon);
         stack.Children.Add(mbPlacementLabel);
         stack.Children.Add(mbPlacementBox);
         stack.Children.Add(mbShowCheck);
+        stack.Children.Add(mbDividerCheck);
         stack.Children.Add(placementLabel);
         stack.Children.Add(placementBox);
         stack.Children.Add(ctxLabel);

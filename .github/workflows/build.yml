@@ -36,4 +36,27 @@ jobs:
       run: dotnet test tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Release --no-build --verbosity normal
 
     - name: Create NuGet Package
-      run: dotnet pack src/CONCOST.UI/CONCOST.UI.csproj --configuration Release --no-build --no-restore
+      run: dotnet pack src/CONCOST.UI/CONCOST.UI.csproj --configuration Release --no-build --no-restore --output artifacts/packages
+
+    - name: Upload the package
+      uses: actions/upload-artifact@v4
+      with:
+        name: CONCOST.UI-nupkg
+        path: artifacts/packages/*.nupkg
+        if-no-files-found: error
+
+    # Publishing only happens on a tag, and only when the repository owns a NUGET_API_KEY secret,
+    # so a pull request from a fork can never reach nuget.org.
+    - name: Publish to nuget.org
+      if: startsWith(github.ref, 'refs/tags/v')
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      shell: pwsh
+      run: |
+        if ([string]::IsNullOrWhiteSpace($env:NUGET_API_KEY)) {
+          Write-Host "::warning::NUGET_API_KEY is not set, skipping the push."
+          exit 0
+        }
+        Get-ChildItem artifacts/packages/*.nupkg | ForEach-Object {
+          dotnet nuget push $_.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+        }

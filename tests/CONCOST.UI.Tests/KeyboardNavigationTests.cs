@@ -14,29 +14,7 @@ namespace CONCOST.UI.Tests;
 
 public class KeyboardNavigationTests
 {
-    private static void RunOnSTA(Action action)
-    {
-        Exception? exception = null;
-        var thread = new Thread(() =>
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-
-        if (exception != null)
-        {
-            throw new AggregateException("STA test failed", exception);
-        }
-    }
+    private static void RunOnSTA(Action action) => WpfApplicationHost.Run(action);
 
     private static ResourceDictionary EnsureResources()
     {

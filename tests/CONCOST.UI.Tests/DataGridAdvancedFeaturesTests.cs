@@ -79,9 +79,6 @@ public class DataGridAdvancedFeaturesTests
             pager.FirstPage();
             Assert.Equal(1, pager.PageIndex);
         });
-        thread.SetApartmentState(System.Threading.ApartmentState.STA);
-        thread.Start();
-        thread.Join();
     }
 
     [Fact]

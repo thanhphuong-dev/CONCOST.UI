@@ -68,7 +68,29 @@ Object.assign(DOCS_EN.pages, {
             { desc: "Height 28px / 40px." }
         ],
         sections: [
-            { title: "XAML example", desc: "Bind <code>ItemsSource</code> and <code>SelectedValue</code> to a lookup list." }
+            { title: "XAML example", desc: "Bind <code>ItemsSource</code> and <code>SelectedValue</code> to a lookup list." },
+            {
+                title: "Searchable list (still read-only)",
+                desc: "Set <code>ComboBoxHelper.IsSearchEnabled</code> to put a search box at the top of the drop-down: typing narrows the list, while the selection box stays <b>non-editable</b> — the user can only pick a value that exists. The filter is applied to the ComboBox's own <code>Items</code>, so the bound <code>ItemsSource</code> is never modified and two combo boxes can share one source. Closing the drop-down clears the term.",
+                xaml: `<ComboBox Width="280"
+          ItemsSource="{Binding Grades}"
+          DisplayMemberPath="Name"
+          attached:ComboBoxHelper.IsSearchEnabled="True"
+          attached:ComboBoxHelper.SearchPlaceholder="Search a grade…" />`,
+                csharp: `// From code
+ComboBoxHelper.SetIsSearchEnabled(combo, true);
+ComboBoxHelper.SetSearchPlaceholder(combo, "Search a grade…");
+
+// Pre-filter
+ComboBoxHelper.SetSearchText(combo, "C30");
+
+// Clear the term and show everything again (closing the drop-down does this too)
+ComboBoxHelper.ResetSearch(combo);`,
+                callout: {
+                    type: "tip",
+                    body: "Because <code>IsEditable</code> stays <code>false</code>, nobody can type a value that is not in the list — the behaviour you want for pick-only fields such as concrete grade, steel class or approval status."
+                }
+            }
         ]
     },
 

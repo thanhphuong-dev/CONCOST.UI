@@ -32,7 +32,9 @@ public static class RebarParser
     public static RebarInfo Parse(string? input)
     {
         var info = new RebarInfo { RawText = input?.Trim() ?? string.Empty };
-        if (string.IsNullOrWhiteSpace(input))
+        // `is not { Length: > 0 }` plus an explicit Trim check keeps the narrowing on net48,
+        // where string.IsNullOrWhiteSpace has no [NotNullWhen(false)] annotation.
+        if (input is not { Length: > 0 } || input.Trim().Length == 0)
             return info;
 
         string clean = input.Trim().Replace(" ", "");

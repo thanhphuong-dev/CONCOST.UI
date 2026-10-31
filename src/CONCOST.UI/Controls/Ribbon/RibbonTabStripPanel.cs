@@ -32,6 +32,7 @@ public class RibbonTabStripPanel : Panel
 
     private Rect[] _tabRects = new Rect[0];
     private double _measuredWidth;
+    private Ribbon? _owner;
 
     /// <summary>Height of the contextual band. Zero hides it entirely.</summary>
     public double BandHeight
@@ -99,6 +100,9 @@ public class RibbonTabStripPanel : Panel
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);
+
+        // A merged band cannot be clipped gracefully: half of it reads as a stray block.
+        if (IsStripClipped()) return;
 
         int count = InternalChildren.Count;
         if (count == 0 || _tabRects.Length < count) return;
@@ -172,6 +176,30 @@ public class RibbonTabStripPanel : Panel
         double y = Math.Max(0, (height - text.Height) / 2);
 
         dc.DrawText(text, new Point(x, y));
+    }
+
+    /// <summary>
+    /// True while the tabs no longer fit. The band is a merged run drawn across several tabs, so a
+    /// clipped run shows up as a stray coloured block; the ribbon knows when that happens and the
+    /// band steps aside until the strip fits again.
+    /// </summary>
+    private bool IsStripClipped()
+    {
+        _owner ??= FindOwner();
+        return _owner?.IsTabStripOverflowing == true;
+    }
+
+    private Ribbon? FindOwner()
+    {
+        DependencyObject? node = this;
+
+        while (node != null)
+        {
+            if (node is Ribbon ribbon) return ribbon;
+            node = System.Windows.Media.VisualTreeHelper.GetParent(node);
+        }
+
+        return null;
     }
 
     private bool HasContextualBand()

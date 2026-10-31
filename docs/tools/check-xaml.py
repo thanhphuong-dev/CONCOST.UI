@@ -127,6 +127,13 @@ def main():
                     elif cls not in ATTACHED:
                         problems.append(f"[{page}] <{tag}> unknown attached class {cls}")
                     continue
+                # An attached property written with the type prefix — ui:DockPaneGroup.Proportion.
+                # That is the normal XAML form, so accept it when the owner really declares the property.
+                if ":" in attr:
+                    _, _, qualified = attr.partition(":")
+                    owner, dot, prop = qualified.partition(".")
+                    if dot and owner in ALL_CLASSES and prop in inherited(owner):
+                        continue
                 if attr in known:
                     continue
                 # inherited/other framework props on our custom controls

@@ -101,7 +101,7 @@ Lợi ích: 13 hiệu ứng giảm ~500 dòng trùng lặp, và **tự động**
 
 ## 4. Lộ trình 4 phase
 
-Mỗi phase = 1 minor release, làm đủ Definition of Done. Phase 0–2 đã xong trước bản công khai đầu tiên (1.0.0); các số 3.x bên dưới là mốc nội bộ, không phải bản phát hành công khai.
+Mỗi phase = 1 minor release, làm đủ Definition of Done. Phase 0–2 đã xong trước bản công khai đầu tiên (1.0.0), Phase 3 xong trong 1.1.0; các số 3.x bên dưới là mốc nội bộ, không phải bản phát hành công khai.
 
 ### Phase 0 (nền móng) — ✅ ĐÃ XONG, có trong 1.0.0
 1. ✅ `MotionSettings` + `AnimatedEffectBase` (3 hiệu ứng mới dùng base; 8 hiệu ứng cũ đã thêm guard).
@@ -118,9 +118,13 @@ Mỗi phase = 1 minor release, làm đủ Definition of Done. Phase 0–2 đã x
 `ScrollReveal`, `ParallaxPanel`, `TypewriterText`, `TextReveal`.
 > Nhóm scrollytelling — dùng cho màn hình giới thiệu/tổng quan dự án.
 
-### Phase 3 → 1.1.0 (nâng cao)
-`CommandPalette`, `ParticleField`, `RadialGauge`, `PageTransitionHost`.
-> `CommandPalette` là control giá trị nhất còn lại nhưng cũng nặng nhất; tách release riêng để test kỹ bàn phím.
+### Phase 3 (nâng cao) — ✅ ĐÃ XONG, có trong 1.1.0
+1. ✅ `CommandPalette` + `CommandPaletteItem` + `CommandPaletteText` — tìm kiếm không dấu tiếng Việt (`FormD` + `đ`→`d`), điều hướng bàn phím, `ItemInvoked`/`Opened`/`Closed`, `CloseOnInvoke`.
+2. ✅ `ParticleField` — hạt trôi + chế độ chòm sao (`ConnectDistance > 0`), `Seed` để tái lập, `ActiveParticleCount` cho test.
+3. ✅ `RadialGauge` — vẽ `StreamGeometry` + `ArcTo`, `StartAngle`/`SweepAngle`, tick, readout, giá trị animate bằng `DoubleAnimation` + `CubicEase`.
+4. ✅ `PageTransitionHost` — `Fade`/`SlideLeft`/`SlideRight`/`SlideUp`/`SlideDown`/`Scale`, tự phát khi `Content` đổi, tôn trọng reduced motion.
+> `CommandPalette` là control nặng nhất về bàn phím nên có bộ test riêng (`KeyboardInputTests`) gửi phím thật qua `Window` đã `Show()`.
+> Kèm theo Phase 3: visual-regression (§96), automated UI test (§97) và ký strong-name + publish NuGet tự động (§100).
 
 ---
 
@@ -164,9 +168,11 @@ Mỗi phase = 1 minor release, làm đủ Definition of Done. Phase 0–2 đã x
 
 ---
 
-## 8. Cần bạn chốt
+## 8. Đã chốt
 
-1. Làm **Phase 0 (nền móng)** trước hay nhảy thẳng vào `CommandPalette`?
-2. Có cần **tôn trọng reduced-motion** mặc định bật không (khuyến nghị: có)?
-3. Tên control có giữ tiếng Anh như hiện tại không (`TiltCard`, `CursorGlow`) hay đặt theo nghiệp vụ (`BeamTiltCard`)?
-4. Có cần **bộ style Neo-brutalism** như một theme preset riêng (`ThemePreset.Brutal`) không?
+1. ✅ Làm **Phase 0 (nền móng)** trước — `AnimatedEffectBase` ra đời trước mọi hiệu ứng mới.
+2. ✅ **Tôn trọng reduced-motion** mặc định bật (`MotionSettings` + `SystemParameters.ClientAreaAnimation`).
+3. ✅ Tên control giữ tiếng Anh (`TiltCard`, `CursorGlow`, `CommandPalette`…).
+4. ✅ Có **theme preset Neo-brutalism** riêng (`ThemePreset.Brutal`).
+
+> Toàn bộ 4 phase của lộ trình này đã xong tính đến 1.1.0. Việc còn lại chỉ là nợ kỹ thuật không chặn gì: migrate 8 hiệu ứng cũ sang `AnimatedEffectBase`.

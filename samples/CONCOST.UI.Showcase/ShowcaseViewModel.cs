@@ -116,6 +116,13 @@ public class ElementSafetyItem
                                        StressRatio > 0.85 ? "High stress utilization (>85%). Verification recommended." : "Stress within allowable limits (Eurocode 2 / ACI 318).";
 }
 
+public class ShowcaseVariant
+{
+    public string Name { get; set; } = string.Empty;
+    public string? XamlCode { get; set; }
+    public string? CSharpCode { get; set; }
+}
+
 public class ShowcaseItem : System.ComponentModel.INotifyPropertyChanged
 {
     private static int _nextIconAccentIndex;
@@ -138,6 +145,9 @@ public class ShowcaseItem : System.ComponentModel.INotifyPropertyChanged
     public Brush IconAccent => (Brush)(Application.Current.TryFindResource(_iconAccentKey) ?? SystemColors.ControlTextBrush);
     public string Description { get; set; } = string.Empty;
     public object Content => _content ??= _contentFactory();
+    public string? XamlCode { get; set; }
+    public string? CSharpCode { get; set; }
+    public List<ShowcaseVariant> Variants { get; set; } = new();
     public string DisplayName
     {
         get
@@ -165,13 +175,15 @@ public class ShowcaseItem : System.ComponentModel.INotifyPropertyChanged
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-    public ShowcaseItem(string name, string category, IconKind icon, string description, Func<object> contentFactory)
+    public ShowcaseItem(string name, string category, IconKind icon, string description, Func<object> contentFactory, string? xamlCode = null, string? csharpCode = null)
     {
         Name = name;
         Category = category;
         Icon = icon;
         Description = description;
         _contentFactory = contentFactory;
+        XamlCode = xamlCode;
+        CSharpCode = csharpCode;
         _iconAccentKey = IconAccentKeys[Interlocked.Increment(ref _nextIconAccentIndex) % IconAccentKeys.Length];
         LocalizationManager.Current.PropertyChanged += OnLocalizationChanged;
     }
@@ -239,7 +251,12 @@ public partial class ShowcaseViewModel : ObservableObject
     public ShowcaseItem? SelectedItem
     {
         get => _selectedItem;
-        set => SetProperty(ref _selectedItem, value);
+        set
+        {
+            // The extended-properties dock was removed from the window; the inspector data
+            // layer is kept for reuse, but nothing binds it, so it is not rebuilt per click.
+            SetProperty(ref _selectedItem, value);
+        }
     }
 
     public RelayCommand<string> SetAccentCommand { get; }
@@ -313,7 +330,13 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("Documentation", "Getting Started", IconKind.File, "CONCOST.UI overview: design tokens, theme system, namespace conventions, and quick-start guide.", CreateDocumentationDemo));
         // ==================== BASIC CONTROLS (WPF Standard Enhanced) ====================
         AllItems.Add(new ShowcaseItem("Brush", "Basic Controls", IconKind.Layers, "Color and Brush Tokens system: Primary, Semantic, Surfaces, Borders, and Typography Brushes seamlessly adapting to Dark/Light themes.", CreateBrushDemo));
-        AllItems.Add(new ShowcaseItem("Button", "Basic Controls", IconKind.Check, "Interactive Button controls with multiple appearances (Primary, Secondary, Success, Outline, Danger), vector icons, and states.", CreateButtonDemo));
+        var buttonItem = new ShowcaseItem("Button", "Basic Controls", IconKind.Check, "Interactive Button controls with multiple appearances (Primary, Secondary, Success, Outline, Danger), vector icons, and states.", CreateButtonDemo, CodeSamples.ButtonXaml, CodeSamples.ButtonCSharp);
+        buttonItem.Variants.Add(new ShowcaseVariant { Name = "Primary", XamlCode = "<Button Style=\"{StaticResource CONCOST.Button.Primary}\" Content=\"Click Me\" />" });
+        buttonItem.Variants.Add(new ShowcaseVariant { Name = "Secondary", XamlCode = "<Button Style=\"{StaticResource CONCOST.Button.Secondary}\" Content=\"Cancel\" />" });
+        buttonItem.Variants.Add(new ShowcaseVariant { Name = "Success", XamlCode = "<Button Style=\"{StaticResource CONCOST.Button.Success}\" Content=\"Save\" />" });
+        buttonItem.Variants.Add(new ShowcaseVariant { Name = "Outline", XamlCode = "<Button Style=\"{StaticResource CONCOST.Button.Outline}\" Content=\"Learn More\" />" });
+        buttonItem.Variants.Add(new ShowcaseVariant { Name = "Danger", XamlCode = "<Button Style=\"{StaticResource CONCOST.Button.Danger}\" Content=\"Delete\" />" });
+        AllItems.Add(buttonItem);
         AllItems.Add(new ShowcaseItem("ToggleButton", "Basic Controls", IconKind.Settings, "Two-state toggle button with checked/unchecked visual indicators.", CreateToggleButtonDemo));
         AllItems.Add(new ShowcaseItem("RadioButton", "Basic Controls", IconKind.Check, "Single-selection option control for choosing between multiple alternatives.", CreateRadioButtonDemo));
         AllItems.Add(new ShowcaseItem("CheckBox", "Basic Controls", IconKind.Check, "Multi-selection checkbox with checked, unchecked, and indeterminate states.", CreateCheckBoxDemo));
@@ -378,6 +401,7 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("Spreadsheet", "Custom Controls", IconKind.File, "Enterprise-grade native WPF Spreadsheet suite with recursive formula engine, multi-sheet tabs, formatting toolbar, and BoQ cost estimation template.", CreateSpreadsheetDemo));
         AllItems.Add(new ShowcaseItem("Ripple", "Custom Controls", IconKind.Layers, "Material-design water wave feedback effect originating from the pointer click position.", CreateRippleDemo));
         AllItems.Add(new ShowcaseItem("Skeleton (Shimmer)", "Custom Controls", IconKind.Layers, "Animated linear gradient shimmer placeholder loading effect for cards, avatars, and text.", CreateSkeletonDemo));
+        AllItems.Add(new ShowcaseItem("LoadingOverlay", "Custom Controls", IconKind.Bell, "Loading indicators: spinner dots, circles, lines and overlay with progress message.", CreateLoadingOverlayDemo));
         AllItems.Add(new ShowcaseItem("SpotlightCard", "Custom Controls", IconKind.Star, "Card with a cursor-following spotlight and a gradient border revealed on hover (web-inspired).", CreateSpotlightCardDemo));
         AllItems.Add(new ShowcaseItem("Ribbon", "Custom Controls", IconKind.Menu, "Tabbed ribbon with 3-row groups, large/medium/small commands and a collapsible body.", CreateRibbonDemo));
         AllItems.Add(new ShowcaseItem("OdometerNumber", "Custom Controls", IconKind.ChartLine, "Numeric readout that rolls from the previous value to the new one with easing.", CreateOdometerNumberDemo));
@@ -396,6 +420,7 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("GridPattern", "Custom Controls", IconKind.GridSquare, "Tiled dot / line / cross pattern for engineering backdrops.", CreateGridPatternDemo));
         AllItems.Add(new ShowcaseItem("ShakeElement", "Custom Controls", IconKind.Warning, "Attached shake feedback for invalid input.", CreateShakeDemo));
         AllItems.Add(new ShowcaseItem("ThemePreset.Brutal", "Custom Controls", IconKind.LayerColor, "Neo-brutalist preset: cream surfaces, ink borders, electric accent.", CreateBrutalThemeDemo));
+        AllItems.Add(new ShowcaseItem("Theme Auto", "Getting Started", IconKind.LightMode, "Theme that follows the host window — the mode for Revit/AutoCAD plugins that have no Application of their own.", CreateAutoThemeDemo));
         AllItems.Add(new ShowcaseItem("Reduced motion", "Custom Controls", IconKind.Settings, "Every effect follows the Windows animation setting via MotionSettings.", CreateReducedMotionDemo));
         AllItems.Add(new ShowcaseItem("TiltCard", "Custom Controls", IconKind.Layers, "Card that leans toward the pointer with a slight lift (2.5D).", CreateTiltCardDemo));
         AllItems.Add(new ShowcaseItem("MagneticHover", "Custom Controls", IconKind.TargetGoal, "Attached behaviour that pulls an element toward the pointer.", CreateMagneticHoverDemo));
@@ -406,6 +431,26 @@ public partial class ShowcaseViewModel : ObservableObject
         AllItems.Add(new ShowcaseItem("TypewriterText", "Custom Controls", IconKind.Pencil, "Types text character by character with a blinking caret.", CreateTypewriterDemo));
         AllItems.Add(new ShowcaseItem("TextReveal", "Custom Controls", IconKind.Edit, "Headline revealed word by word with a staggered rise.", CreateTextRevealDemo));
         AllItems.Add(new ShowcaseItem("StackedHeaderDataGrid", "Custom Controls", IconKind.Layers, "Enterprise multi-level stacked column header DataGrid with footer aggregates, context menu, Excel clipboard copy, and rich cell type support.", CreateStackedHeaderDataGridDemo));
+        AllItems.Add(new ShowcaseItem("CommandPalette", "Custom Controls", IconKind.Search, "Ctrl+K command bar: type to filter, arrows to move, Enter to run. Search ignores diacritics, so \"tong quan\" finds \"Tổng quan\".", CreateCommandPaletteDemo));
+        AllItems.Add(new ShowcaseItem("ParticleField", "Custom Controls", IconKind.Star, "Ambient field of drifting particles for hero panels and empty states, with an optional constellation mode.", CreateParticleFieldDemo));
+        AllItems.Add(new ShowcaseItem("RadialGauge", "Custom Controls", IconKind.ProgressRing, "Circular gauge for KPI readouts: value arc, tick marks and a formatted number in the middle.", CreateRadialGaugeDemo));
+        AllItems.Add(new ShowcaseItem("PageTransitionHost", "Custom Controls", IconKind.ArrowRight, "Content host that fades or slides new content in instead of snapping it.", CreatePageTransitionDemo));
+        AllItems.Add(new ShowcaseItem("TreeDataGrid", "Data Controls", IconKind.ViewTree, "Hierarchical DataGrid: rows are the items themselves, so column bindings are not re-projected. Expansion state is keyed by reference and survives a rebuild.", CreateTreeDataGridDemo));
+        AllItems.Add(new ShowcaseItem("MultiSelectDataGrid", "Data Controls", IconKind.CheckAll, "DataGrid with a tri-state checkbox column: SelectEverything / ClearEverything / InvertSelection, plus a live SelectedCount.", CreateMultiSelectDataGridDemo));
+        AllItems.Add(new ShowcaseItem("SearchableTreePicker", "Input & Drag", IconKind.Search, "Tree with a search box in front: the filter keeps the branches that lead to a match, so the result still shows a path. Matching ignores diacritics — \"dam d1\" finds \"Dầm D1\".", CreateSearchableTreePickerDemo));
+        AllItems.Add(new ShowcaseItem("TreeMap", "Data Controls", IconKind.ChartTreemap, "Squarified treemap for share-of-total: each tile's area is its value, sized by the RowWorst minimisation.", CreateTreeMapDemo));
+        AllItems.Add(new ShowcaseItem("AnimatedMeshGradient", "Effects", IconKind.Drawing, "Four colour blobs that breathe around fixed anchors — a mesh gradient, not a drifting aurora. Drawn with radial gradients, no blur effect.", CreateAnimatedMeshGradientDemo));
+        AllItems.Add(new ShowcaseItem("AnimatedGradientBorder", "Effects", IconKind.GridSquare, "A card whose gradient ring rotates. The rotation is a DoubleAnimation on the brush's transform, so it runs on the render thread and costs the UI thread nothing.", CreateAnimatedGradientBorderDemo));
+        AllItems.Add(new ShowcaseItem("FrostedGlass", "Effects", IconKind.Layers, "Frosted panel: a VisualBrush of the element behind, through a BlurEffect, with the viewbox set to the panel's own rectangle so the blur lines up instead of stretching the whole source.", CreateFrostedGlassDemo));
+        AllItems.Add(new ShowcaseItem("CursorSpotlight", "Effects", IconKind.Search, "Dims everything except a soft circle around the pointer. The overlay is not hit-testable, so it never steals a click.", CreateCursorSpotlightDemo));
+        AllItems.Add(new ShowcaseItem("StaggerAnimation", "Effects", IconKind.CheckAll, "Attached behaviour that brings the items of any ItemsControl in one after another, with the delay capped so a long list does not take seconds to arrive.", CreateStaggerAnimationDemo));
+        AllItems.Add(new ShowcaseItem("SharedElementTransition", "Effects", IconKind.ArrowLeftRight, "Animates an element from a rectangle it used to occupy to where it is now — transform only, so nothing re-lays out and the element stays interactive.", CreateSharedElementTransitionDemo));
+        AllItems.Add(new ShowcaseItem("FileDropZone", "Input & Drag", IconKind.FolderUpload, "Drop area for files: the filter is checked while the drag is still in the air, so the zone only lights up for files it will take. Ships with DropTargetHighlight and DragGhost.", CreateFileDropZoneDemo));
+        AllItems.Add(new ShowcaseItem("DockingManager", "Layout & Shell", IconKind.GridSquare, "Visual Studio-style docking: four edge regions plus a centre, drag a header to redock with a dashed preview, pin to auto-hide into an edge strip.", CreateDockingManagerDemo));
+        AllItems.Add(new ShowcaseItem("DocumentTabControl", "Layout & Shell", IconKind.FileText, "Document tabs with an icon, an unsaved dot and a close button. Closing is a request the host can veto.", CreateDocumentTabControlDemo));
+        AllItems.Add(new ShowcaseItem("StatusBar", "Layout & Shell", IconKind.GridSquare, "Status strip with cells that hug either edge — no Grid with a * column needed to push the two groups apart.", CreateStatusBarDemo));
+        AllItems.Add(new ShowcaseItem("CommandBar", "Layout & Shell", IconKind.Menu, "Single-row command strip that pushes what does not fit into a drop-down instead of clipping it.", CreateCommandBarDemo));
+        AllItems.Add(new ShowcaseItem("QuickAccessToolbar", "Layout & Shell", IconKind.Star, "Standalone icon-only strip for everyday commands — the ribbon's quick-access toolbar, usable in any window.", CreateQuickAccessToolbarDemo));
     }
 
     private object CreateIconsGalleryDemo()
@@ -3444,6 +3489,122 @@ public partial class ShowcaseViewModel : ObservableObject
     </controls:StackedHeaderDataGrid.ColumnHeaderTree>
 </controls:StackedHeaderDataGrid>");
 
+        // ==============================================================================?
+        // SECTION 6: DataGrid Column Chooser
+        // ==============================================================================?
+        var dgChooser = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
+        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
+        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+
+        var chooser = new CONCOST.UI.Controls.DataGridColumnChooser
+        {
+            TargetGrid = dgChooser,
+            HeaderText = "Show / Hide Columns",
+            HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+            Margin = new System.Windows.Thickness(0, 0, 0, 8)
+        };
+        var dgChooserWrapper = new StackPanel();
+        dgChooserWrapper.Children.Add(chooser);
+        dgChooserWrapper.Children.Add(dgChooser);
+
+        AddCardSection("6. Column Chooser — pick the visible columns", dgChooserWrapper,
+@"<!-- DataGrid with Column Chooser -->
+<StackPanel>
+    <controls:DataGridColumnChooser TargetGrid=""{Binding ElementName=myGrid}""
+                                   HeaderText=""Show / Hide Columns""
+                                   HorizontalAlignment=""Left""
+                                   Margin=""0,0,0,8"" />
+
+    <DataGrid x:Name=""myGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
+            <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
+            <DataGridTextColumn Header=""Depth (mm)"" Binding=""{Binding Height}"" Width=""*"" />
+            <DataGridTextColumn Header=""Rebar Layout"" Binding=""{Binding Rebar}"" Width=""1.5*"" />
+        </DataGrid.Columns>
+    </DataGrid>
+</StackPanel>");
+
+        // ==============================================================================?
+        // SECTION 7: DataGrid Filter Panel
+        // ==============================================================================?
+        var dgFilter = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
+        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
+        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+
+        var filterPanel = new CONCOST.UI.Controls.DataGridFilterPanel { TargetGrid = dgFilter };
+        var filterWrapper = new StackPanel();
+        filterWrapper.Children.Add(filterPanel);
+        filterWrapper.Children.Add(dgFilter);
+
+        AddCardSection("7. Filter Panel — live text filter per column", filterWrapper,
+@"<!-- DataGrid with Filter Panel -->
+<DataGrid x:Name=""filterGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+    <DataGrid.Columns>
+        <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
+        <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
+        <DataGridTextColumn Header=""Depth (mm)"" Binding=""{Binding Height}"" Width=""*"" />
+        <DataGridTextColumn Header=""Rebar Layout"" Binding=""{Binding Rebar}"" Width=""1.5*"" />
+    </DataGrid.Columns>
+</DataGrid>
+<controls:DataGridFilterPanel TargetGrid=""{Binding ElementName=filterGrid}"" />");
+
+        // ==============================================================================?
+        // SECTION 8: DataGrid Search Panel
+        // ==============================================================================?
+        var dgSearch = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
+        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
+        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+
+        var searchPanel = new CONCOST.UI.Controls.DataGridSearchPanel { TargetGrid = dgSearch };
+        var searchWrapper = new StackPanel();
+        searchWrapper.Children.Add(searchPanel);
+        searchWrapper.Children.Add(dgSearch);
+
+        AddCardSection("8. Search Panel — global text search across all columns", searchWrapper,
+@"<!-- DataGrid with Search Panel -->
+<DataGrid x:Name=""searchGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+    <DataGrid.Columns>
+        <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
+        <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
+        <DataGridTextColumn Header=""Depth (mm)"" Binding=""{Binding Height}"" Width=""*"" />
+        <DataGridTextColumn Header=""Rebar Layout"" Binding=""{Binding Rebar}"" Width=""1.5*"" />
+    </DataGrid.Columns>
+</DataGrid>
+<controls:DataGridSearchPanel TargetGrid=""{Binding ElementName=searchGrid}"" />");
+
+        // ==============================================================================?
+        // SECTION 9: DataGrid Summary Row
+        // ==============================================================================?
+        var dgSum = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
+        dgSum.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
+        dgSum.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgSum.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgSum.Columns.Add(new DataGridTextColumn { Header = "Length (mm)", Binding = new System.Windows.Data.Binding("Length"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+
+        var summaryRow = new CONCOST.UI.Controls.DataGridSummary { TargetGrid = dgSum };
+        var sumWrapper = new StackPanel();
+        sumWrapper.Children.Add(dgSum);
+        sumWrapper.Children.Add(summaryRow);
+
+        AddCardSection("9. Summary Row — aggregates at the bottom of the grid", sumWrapper,
+@"<!-- DataGrid with Summary Row -->
+<DataGrid x:Name=""sumGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+    <DataGrid.Columns>
+        <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
+        <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
+        <DataGridTextColumn Header=""Depth (mm)"" Binding=""{Binding Height}"" Width=""*"" />
+        <DataGridTextColumn Header=""Length (mm)"" Binding=""{Binding Length}"" Width=""*"" />
+    </DataGrid.Columns>
+</DataGrid>
+<controls:DataGridSummary TargetGrid=""{Binding ElementName=sumGrid}"" />");
+
         return mainSp;
     }
 
@@ -5941,6 +6102,59 @@ ScrollViewerHelper.ScrollToRight(ComboScrollViewer);");
     <ComboBoxItem Content=""1.35G + 1.50Q (ULS Fundamental)"" />
     <ComboBoxItem Content=""1.00G + 1.00Q (SLS Characteristic)"" />
 </ComboBox>");
+
+        // ==================== SECTION 4: searchable combo box ====================
+        var sec4 = new StackPanel();
+
+        var lbl4A = new TextBlock
+        {
+            Text = "Gõ để lọc danh sách — ô chọn vẫn chỉ đọc, không sửa được giá trị:",
+            FontWeight = System.Windows.FontWeights.Normal,
+            FontSize = 12,
+            Margin = new System.Windows.Thickness(0, 0, 0, 10)
+        };
+        lbl4A.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        sec4.Children.Add(lbl4A);
+
+        var cbSearch = new ComboBox
+        {
+            Width = 280,
+            HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+            DisplayMemberPath = "Name"
+        };
+
+        foreach (var grade in new[]
+                 {
+                     "Concrete C16/20", "Concrete C20/25", "Concrete C25/30", "Concrete C30/37",
+                     "Concrete C35/45", "Concrete C40/50", "Concrete C45/55", "Concrete C50/60",
+                     "Steel CB300-V", "Steel CB400-V", "Steel CB500-V", "Steel GR60"
+                 })
+        {
+            cbSearch.Items.Add(new { Name = grade });
+        }
+
+        cbSearch.SelectedIndex = 3;
+        CONCOST.UI.AttachedProperties.ComboBoxHelper.SetIsSearchEnabled(cbSearch, true);
+        CONCOST.UI.AttachedProperties.ComboBoxHelper.SetSearchPlaceholder(cbSearch, "Tìm mác bê tông hoặc mác thép…");
+        sec4.Children.Add(cbSearch);
+
+        var lbl4B = new TextBlock
+        {
+            Text = "Đóng danh sách, từ khoá tự xoá — lần mở sau luôn thấy đủ danh sách.",
+            FontWeight = System.Windows.FontWeights.Normal,
+            FontSize = 11.5,
+            Margin = new System.Windows.Thickness(0, 10, 0, 0)
+        };
+        lbl4B.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        sec4.Children.Add(lbl4B);
+
+        AddCardSection("4. ComboBox tìm kiếm  (lọc khi gõ · không sửa được giá trị)", sec4,
+@"<!-- Searchable, still read-only -->
+<ComboBox Width=""280""
+          ItemsSource=""{Binding Grades}""
+          DisplayMemberPath=""Name""
+          attached:ComboBoxHelper.IsSearchEnabled=""True""
+          attached:ComboBoxHelper.SearchPlaceholder=""Tìm mác bê tông…"" />");
 
         return mainSp;
     }
@@ -11615,6 +11829,8 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
 </StackPanel>";
 
         AddCardSection("5. Lớp phủ chờ khi tính toán kỹ thuật (LoadingOverlay)", CreateOverlayDemo(), sec5Xaml);
+
+        // Variant demos removed - only Standard is supported
 
         return mainSp;
     }

@@ -80,7 +80,9 @@ public class PasswordInput : Control
             _textBox.TextChanged += OnTextBoxChanged;
         }
 
-        UpdateVisibility();
+        // No focus move here: applying a template must not pull the caret out of whatever the
+        // host focused (a login form is often opened with the user name field active).
+        UpdateVisibility(moveFocus: false);
     }
 
     private void OnPasswordBoxChanged(object sender, RoutedEventArgs e)
@@ -117,11 +119,12 @@ public class PasswordInput : Control
     {
         if (d is PasswordInput ctrl)
         {
-            ctrl.UpdateVisibility();
+            // Toggling reveal is a user action, so the caret should follow it.
+            ctrl.UpdateVisibility(moveFocus: true);
         }
     }
 
-    private void UpdateVisibility()
+    private void UpdateVisibility(bool moveFocus)
     {
         if (_passwordBox == null || _textBox == null) return;
 
@@ -129,6 +132,9 @@ public class PasswordInput : Control
         {
             _passwordBox.Visibility = Visibility.Collapsed;
             _textBox.Visibility = Visibility.Visible;
+
+            if (!moveFocus) return;
+
             _textBox.Focus();
             _textBox.CaretIndex = _textBox.Text.Length;
         }
@@ -136,7 +142,8 @@ public class PasswordInput : Control
         {
             _textBox.Visibility = Visibility.Collapsed;
             _passwordBox.Visibility = Visibility.Visible;
-            _passwordBox.Focus();
+
+            if (moveFocus) _passwordBox.Focus();
         }
     }
 }

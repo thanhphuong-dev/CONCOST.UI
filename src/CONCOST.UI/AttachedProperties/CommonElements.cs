@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media.Animation;
 using CONCOST.UI.Icons;
 
@@ -299,6 +300,69 @@ public static class DataGridElement
 
     public static HorizontalAlignment GetCellHorizontalContentAlignment(DependencyObject obj) => (HorizontalAlignment)obj.GetValue(CellHorizontalContentAlignmentProperty);
     public static void SetCellHorizontalContentAlignment(DependencyObject obj, HorizontalAlignment value) => obj.SetValue(CellHorizontalContentAlignmentProperty, value);
+
+    // ── Quick per-column helpers ──
+
+    public static readonly DependencyProperty TextHeaderProperty =
+        DependencyProperty.RegisterAttached("TextHeader", typeof(string), typeof(DataGridElement),
+            new PropertyMetadata(null, OnTextHeaderChanged));
+
+    public static string GetTextHeader(DependencyObject obj) => (string)obj.GetValue(TextHeaderProperty);
+    public static void SetTextHeader(DependencyObject obj, string value) => obj.SetValue(TextHeaderProperty, value);
+
+    private static void OnTextHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is DataGridColumn col && e.NewValue is string s)
+            col.Header = s;
+    }
+
+    public static readonly DependencyProperty HeaderAlignmentProperty =
+        DependencyProperty.RegisterAttached("HeaderAlignment", typeof(HorizontalAlignment?), typeof(DataGridElement),
+            new PropertyMetadata(null, OnHeaderAlignmentChanged));
+
+    public static HorizontalAlignment? GetHeaderAlignment(DependencyObject obj) => (HorizontalAlignment?)obj.GetValue(HeaderAlignmentProperty);
+    public static void SetHeaderAlignment(DependencyObject obj, HorizontalAlignment? value) => obj.SetValue(HeaderAlignmentProperty, value);
+
+    private static void OnHeaderAlignmentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not DataGridColumn col || e.NewValue is not HorizontalAlignment ha) return;
+
+        var existing = col.HeaderStyle;
+        var style = existing != null
+            ? new Style(typeof(DataGridColumnHeader), existing)
+            : new Style(typeof(DataGridColumnHeader));
+        style.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, ha));
+        col.HeaderStyle = style;
+    }
+
+    public static readonly DependencyProperty CellAlignmentProperty =
+        DependencyProperty.RegisterAttached("CellAlignment", typeof(HorizontalAlignment?), typeof(DataGridElement),
+            new PropertyMetadata(null, OnCellAlignmentChanged));
+
+    public static HorizontalAlignment? GetCellAlignment(DependencyObject obj) => (HorizontalAlignment?)obj.GetValue(CellAlignmentProperty);
+    public static void SetCellAlignment(DependencyObject obj, HorizontalAlignment? value) => obj.SetValue(CellAlignmentProperty, value);
+
+    private static void OnCellAlignmentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not DataGridBoundColumn col || e.NewValue is not HorizontalAlignment ha) return;
+
+        var existing = col.ElementStyle;
+        var style = existing != null
+            ? new Style(typeof(TextBlock), existing)
+            : new Style(typeof(TextBlock));
+        style.Setters.Add(new Setter(FrameworkElement.HorizontalAlignmentProperty, ha));
+        col.ElementStyle = style;
+
+        if (col is DataGridTextColumn textCol)
+        {
+            var editExisting = textCol.EditingElementStyle;
+            var editStyle = editExisting != null
+                ? new Style(typeof(TextBox), editExisting)
+                : new Style(typeof(TextBox));
+            editStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, ha));
+            textCol.EditingElementStyle = editStyle;
+        }
+    }
 }
 
 

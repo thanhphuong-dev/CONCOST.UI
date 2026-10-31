@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 // CONCOST.UI.Controls.Canvas is a namespace in this library, so the panel needs a distinct alias.
 using KeyTipCanvas = System.Windows.Controls.Canvas;
@@ -71,13 +72,63 @@ public class Ribbon : Control
         DependencyProperty.Register(nameof(TabAlignment), typeof(RibbonTabAlignment), typeof(Ribbon),
             new FrameworkPropertyMetadata(RibbonTabAlignment.Left));
 
+    public static readonly DependencyProperty SelectedTabIdProperty =
+        DependencyProperty.Register(nameof(SelectedTabId), typeof(string), typeof(Ribbon),
+            new FrameworkPropertyMetadata(string.Empty,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedTabIdChanged));
+
+    public static readonly DependencyProperty IsGroupCollapseEnabledProperty =
+        DependencyProperty.Register(nameof(IsGroupCollapseEnabled), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits,
+                OnIsGroupCollapseEnabledChanged));
+
+    public static readonly DependencyProperty IsKeyTipEnabledProperty =
+        DependencyProperty.Register(nameof(IsKeyTipEnabled), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(true, OnIsKeyTipEnabledChanged));
+
+    public static readonly DependencyProperty IsQuickAccessCustomizableProperty =
+        DependencyProperty.Register(nameof(IsQuickAccessCustomizable), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(true, OnIsQuickAccessCustomizableChanged));
+
+    public static readonly DependencyProperty ShowBorderProperty =
+        DependencyProperty.Register(nameof(ShowBorder), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(true));
+
+    public static readonly DependencyProperty EmptyContentProperty =
+        DependencyProperty.Register(nameof(EmptyContent), typeof(object), typeof(Ribbon),
+            new FrameworkPropertyMetadata(null));
+
+    /// <summary>Opens the list of tabs from the “»” overflow button.</summary>
+    public static readonly RoutedUICommand ShowTabListCommand =
+        new("All tabs", nameof(ShowTabListCommand), typeof(Ribbon));
+
+    private static readonly DependencyPropertyKey IsTabStripOverflowingPropertyKey =
+        DependencyProperty.RegisterReadOnly(nameof(IsTabStripOverflowing), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(false));
+
+    public static readonly DependencyProperty IsTabStripOverflowingProperty =
+        IsTabStripOverflowingPropertyKey.DependencyProperty;
+
+    private static readonly DependencyPropertyKey IsEmptyPropertyKey =
+        DependencyProperty.RegisterReadOnly(nameof(IsEmpty), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(true));
+
+    public static readonly DependencyProperty IsEmptyProperty = IsEmptyPropertyKey.DependencyProperty;
+
     /// <summary>
     /// Attached property that tells a <see cref="RibbonGroup"/> whether to show its header label.
     /// Set on the <see cref="Ribbon"/> and read by groups through the visual tree.
     /// </summary>
     public static readonly DependencyProperty ShowGroupLabelsProperty =
         DependencyProperty.RegisterAttached("ShowGroupLabels", typeof(bool), typeof(Ribbon),
-            new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits));
+            new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits, OnShowGroupLabelsChanged));
+
+    private static void OnShowGroupLabelsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // Inherited properties raise this on every descendant, so each group hears about it
+        // directly instead of having to bind to an ancestor from inside its template.
+        if (d is RibbonGroup group) group.ApplyShowGroupLabels((bool)e.NewValue);
+    }
 
     public static bool GetShowGroupLabels(DependencyObject obj) => (bool)obj.GetValue(ShowGroupLabelsProperty);
     public static void SetShowGroupLabels(DependencyObject obj, bool value) => obj.SetValue(ShowGroupLabelsProperty, value);
@@ -98,8 +149,10 @@ public class Ribbon : Control
     private ContentControl? _menuBarAbove;
     private ContentControl? _menuBarBelow;
     private RibbonKeyTipController? _keyTips;
+    private System.Windows.Controls.ScrollViewer? _tabScroll;
     private Window? _hostWindow;
     private bool _restoringPins;
+    private bool _syncingTabId;
 
     static Ribbon()
     {
@@ -111,6 +164,10 @@ public class Ribbon : Control
     {
         Loaded += OnRibbonLoaded;
         Unloaded += OnRibbonUnloaded;
+
+        // Generic.xaml has no code-behind, so the overflow button talks to the ribbon through a
+        // routed command instead of a Click handler.
+        CommandBindings.Add(new CommandBinding(ShowTabListCommand, OnShowTabList));
     }
 
     /// <summary>
@@ -222,6 +279,70 @@ public class Ribbon : Control
         get => (RibbonTabAlignment)GetValue(TabAlignmentProperty);
         set => SetValue(TabAlignmentProperty, value);
     }
+
+    /// <summary>
+    /// The <see cref="RibbonTabItem.Id"/> of the active tab. Bind this instead of
+    /// <see cref="SelectedIndex"/> when tabs can be reordered or added at runtime — an index would
+    /// silently point at a different tab.
+    /// </summary>
+    public string SelectedTabId
+    {
+        get => (string)GetValue(SelectedTabIdProperty);
+        set => SetValue(SelectedTabIdProperty, value);
+    }
+
+    /// <summary>
+    /// When false the ribbon may still demote Large to Medium to Small, but it never merges a group
+    /// into a single drop-down button. Use it when a group must stay readable at any width.
+    /// </summary>
+    public bool IsGroupCollapseEnabled
+    {
+        get => (bool)GetValue(IsGroupCollapseEnabledProperty);
+        set => SetValue(IsGroupCollapseEnabledProperty, value);
+    }
+
+    /// <summary>
+    /// The Alt key-tip gesture. Turn it off when the host owns the keyboard (Revit and AutoCAD both
+    /// intercept Alt) and drives <see cref="ProcessKeyTipKey"/> itself.
+    /// </summary>
+    public bool IsKeyTipEnabled
+    {
+        get => (bool)GetValue(IsKeyTipEnabledProperty);
+        set => SetValue(IsKeyTipEnabledProperty, value);
+    }
+
+    /// <summary>
+    /// Lets the user open the quick-access customise panel. Pinned commands stay usable when false;
+    /// only the chevron and the panel go away — the usual locked-down build.
+    /// </summary>
+    public bool IsQuickAccessCustomizable
+    {
+        get => (bool)GetValue(IsQuickAccessCustomizableProperty);
+        set => SetValue(IsQuickAccessCustomizableProperty, value);
+    }
+
+    /// <summary>Draws the one-pixel outline around the ribbon. Off for a ribbon docked into a panel.</summary>
+    public bool ShowBorder
+    {
+        get => (bool)GetValue(ShowBorderProperty);
+        set => SetValue(ShowBorderProperty, value);
+    }
+
+    /// <summary>Shown in place of the tab content when there is no tab to show.</summary>
+    public object? EmptyContent
+    {
+        get => GetValue(EmptyContentProperty);
+        set => SetValue(EmptyContentProperty, value);
+    }
+
+    /// <summary>True when there is no tab to show — the <see cref="EmptyContent"/> state.</summary>
+    public bool IsEmpty => (bool)GetValue(IsEmptyProperty);
+
+    /// <summary>
+    /// True when the tabs no longer fit and the strip can scroll. The template uses it to show the
+    /// “»” button that lists every tab.
+    /// </summary>
+    public bool IsTabStripOverflowing => (bool)GetValue(IsTabStripOverflowingProperty);
 
     /// <summary>Tabs currently offered to the user, in strip order.</summary>
     public IReadOnlyList<RibbonTabItem> VisibleTabs =>        (IReadOnlyList<RibbonTabItem>?)GetValue(VisibleTabsProperty) ?? Array.Empty<RibbonTabItem>();
@@ -413,6 +534,7 @@ public class Ribbon : Control
 
         List<RibbonTabItem> visible = all.Where(t => t.IsAvailable).ToList();
         SetValue(VisibleTabsPropertyKey, visible);
+        SetValue(IsEmptyPropertyKey, visible.Count == 0);
 
         if (_quickAccess != null)
         {
@@ -439,6 +561,11 @@ public class Ribbon : Control
 
         TabStrip = GetTemplateChild("PART_Tabs") as ListBox;
 
+        if (_tabScroll != null) _tabScroll.ScrollChanged -= OnTabScrollChanged;
+        _tabScroll = GetTemplateChild("PART_TabScroll") as System.Windows.Controls.ScrollViewer;
+        if (_tabScroll != null) _tabScroll.ScrollChanged += OnTabScrollChanged;
+        SetValue(IsTabStripOverflowingPropertyKey, false);
+
         _quickAccess = GetTemplateChild("PART_QAT") as RibbonQuickAccessToolBar;
         if (_quickAccess == null) return;
 
@@ -454,6 +581,7 @@ public class Ribbon : Control
         PlaceMenuBar();
 
         _quickAccess.PinnableItems = AllItems;
+        _quickAccess.IsCustomizable = IsQuickAccessCustomizable;
         _quickAccess.PinsChanged += OnQuickAccessPinsChanged;
 
         // A re-applied template builds a brand-new toolbar: put the pins back.
@@ -494,7 +622,7 @@ public class Ribbon : Control
 
     private void OnHostPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
     {
-        if (_keyTips == null || !KeyTipService.GetIsEnabled(this)) return;
+        if (_keyTips == null || !IsKeyTipEnabled || !KeyTipService.GetIsEnabled(this)) return;
 
         if (_keyTips.IsShowing)
         {
@@ -516,6 +644,123 @@ public class Ribbon : Control
     private void OnHostPreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         if (_keyTips?.IsShowing == true) _keyTips.Hide();
+    }
+
+    private void OnTabScrollChanged(object sender, ScrollChangedEventArgs e)
+    {
+        // Extent minus viewport is the part of the strip that is out of sight; a sub-pixel
+        // rounding difference must not pop the overflow button in and out.
+        bool overflowing = e.ExtentWidth - e.ViewportWidth > 0.5;
+        if (overflowing == IsTabStripOverflowing) return;
+
+        SetValue(IsTabStripOverflowingPropertyKey, overflowing);
+
+        // The strip paints its contextual band itself, so it has to be told to repaint.
+        FindTabPanel(TabStrip)?.InvalidateVisual();
+    }
+
+    private static RibbonTabStripPanel? FindTabPanel(DependencyObject? root)
+    {
+        if (root == null) return null;
+
+        int count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+
+        for (int i = 0; i < count; i++)
+        {
+            DependencyObject child = System.Windows.Media.VisualTreeHelper.GetChild(root, i);
+            if (child is RibbonTabStripPanel panel) return panel;
+
+            RibbonTabStripPanel? nested = FindTabPanel(child);
+            if (nested != null) return nested;
+        }
+
+        return null;
+    }
+
+    /// <summary>Lists every tab under the “»” button so a clipped strip stays reachable.</summary>
+    private void OnShowTabList(object sender, ExecutedRoutedEventArgs e)
+    {
+        if (e.Source is not FrameworkElement anchor) return;
+
+        var menu = new System.Windows.Controls.ContextMenu
+        {
+            PlacementTarget = anchor,
+            Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+        };
+
+        IReadOnlyList<RibbonTabItem> tabs = VisibleTabs;
+
+        for (int i = 0; i < tabs.Count; i++)
+        {
+            int index = i;
+            var row = new System.Windows.Controls.MenuItem
+            {
+                Header = tabs[i].Header,
+                IsCheckable = true,
+                IsChecked = i == SelectedIndex
+            };
+
+            row.Click += (_, _) => SelectedIndex = index;
+            menu.Items.Add(row);
+        }
+
+        menu.IsOpen = true;
+    }
+
+    private static void OnSelectedTabIdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not Ribbon ribbon || ribbon._syncingTabId) return;
+
+        string id = e.NewValue as string ?? string.Empty;
+        if (id.Length == 0) return;
+
+        IReadOnlyList<RibbonTabItem> tabs = ribbon.VisibleTabs;
+        for (int i = 0; i < tabs.Count; i++)
+        {
+            if (!string.Equals(tabs[i].Id, id, StringComparison.Ordinal)) continue;
+
+            ribbon.SelectedIndex = i;
+            return;
+        }
+    }
+
+    private static void OnIsGroupCollapseEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // Switching the last rung off has to give the folded groups back right away, otherwise the
+        // property looks like it did nothing until the window is resized.
+        if (d is Ribbon ribbon && !(bool)e.NewValue) FindGroupStrip(ribbon)?.RestoreCollapsed();
+    }
+
+    private static RibbonGroupStrip? FindGroupStrip(DependencyObject? root)
+    {
+        if (root == null) return null;
+
+        int count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+
+        for (int i = 0; i < count; i++)
+        {
+            DependencyObject child = System.Windows.Media.VisualTreeHelper.GetChild(root, i);
+            if (child is RibbonGroupStrip strip) return strip;
+
+            RibbonGroupStrip? nested = FindGroupStrip(child);
+            if (nested != null) return nested;
+        }
+
+        return null;
+    }
+
+    private static void OnIsKeyTipEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not Ribbon ribbon) return;
+
+        KeyTipService.SetIsEnabled(ribbon, (bool)e.NewValue);
+        if (!(bool)e.NewValue) ribbon._keyTips?.Hide();
+    }
+
+    private static void OnIsQuickAccessCustomizableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Ribbon ribbon && ribbon._quickAccess != null)
+            ribbon._quickAccess.IsCustomizable = (bool)e.NewValue;
     }
 
     private static void OnQuickAccessPlacementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -753,5 +998,13 @@ public class Ribbon : Control
         for (int i = 0; i < tabs.Count; i++) tabs[i].IsSelected = i == index;
 
         SelectedItem = tabs[index];
+
+        // Keep SelectedTabId in step without re-entering the selection logic.
+        if (!_syncingTabId && !string.Equals(SelectedTabId, tabs[index].Id, StringComparison.Ordinal))
+        {
+            _syncingTabId = true;
+            try { SetCurrentValue(SelectedTabIdProperty, tabs[index].Id); }
+            finally { _syncingTabId = false; }
+        }
     }
 }

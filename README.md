@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/.NET-4.8%20%7C%208%20%7C%2010-512BD4" alt=".NET Framework 4.8, .NET 8, .NET 10">
     <img src="https://img.shields.io/badge/platform-Windows%20%C2%B7%20WPF-0078D4" alt="Windows and WPF">
     <img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="MIT license">
-    <img src="https://img.shields.io/badge/docs-108%20pages-ff7900" alt="108 documentation pages">
+    <img src="https://img.shields.io/badge/docs-113%20pages-ff7900" alt="113 documentation pages">
   </p>
 
   <p>
@@ -56,11 +56,11 @@ Revit and AutoCAD runtime requirements vary by release. Check the requirements f
 
 ### A. NuGet package from the release
 
-Download `CONCOST.UI.1.0.1.nupkg` from the [latest release](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), then:
+Download `CONCOST.UI.1.1.0.nupkg` from the [latest release](https://github.com/thanhphuong-dev/CONCOST.UI/releases/latest), then:
 
 ```powershell
 dotnet nuget add source "C:\path\to\downloads" --name concost-local
-dotnet add package CONCOST.UI --version 1.0.1
+dotnet add package CONCOST.UI --version 1.1.0
 ```
 
 ### B. Project reference
@@ -185,7 +185,7 @@ All of these are drawn directly, so they cost almost nothing and stay crisp at a
 
 [![Documentation preview](docs/assets/docs-preview.png)](https://thanhphuong-dev.github.io/CONCOST.UI/)
 
-The reference is a static wiki — **108 pages**, bilingual **Vietnamese / English**, searchable with `Ctrl K`, with an XAML ↔ C# code inspector on every page. It is fully offline-capable: fonts, icons and syntax highlighting are self-hosted, no CDN.
+The reference is a static wiki — **113 pages**, bilingual **Vietnamese / English**, searchable with `Ctrl K`, with an XAML ↔ C# code inspector on every page. It is fully offline-capable: fonts, icons and syntax highlighting are self-hosted, no CDN.
 
 - **Online:** <https://thanhphuong-dev.github.io/CONCOST.UI/> (`?lang=en` for English)
 - [Documentation index](docs/README.md) — page map and maintenance workflow

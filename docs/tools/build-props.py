@@ -1089,6 +1089,7 @@ PAGE_CLASS = {
     "timeline": ["Timeline", "TimelineItem"],
     "statisticcard": ["StatisticCard"],
     "datapager": ["DataPager"],
+    "datagridpanels": ["DataGridColumnChooser", "DataGridFilterPanel", "DataGridSearchPanel", "DataGridSummary"],
     # feedback
     "dialog": ["Dialog"],
     "drawer": ["Drawer"],
@@ -1166,6 +1167,24 @@ PAGE_CLASS = {
     "parallaxpanel": ["ParallaxPanel"],
     "typewritertext": ["TypewriterText"],
     "textreveal": ["TextReveal"],
+    "commandpalette": ["CommandPalette"],
+    "radialgauge": ["RadialGauge"],
+    "particlefield": ["ParticleField"],
+    "pagetransitionhost": ["PageTransitionHost"],
+    # data controls
+    "treedatagrid": ["TreeDataGrid"],
+    "multiselectdatagrid": ["MultiSelectDataGrid"],
+    "treemap": ["TreeMap"],
+    # shell / docking
+    "dockingmanager": ["DockingManager", "ToolWindow", "DockPaneGroup", "DockTabStrip", "AutoHidePane", "DockSplitter", "DockPreview"],
+    "searchabletreepicker": ["SearchableTreePicker"],
+    "dragdrop": ["FileDropZone", "DropTargetHighlight"],
+    "meshgradient": ["AnimatedMeshGradient", "CursorSpotlight"],
+    "glasscard": ["FrostedGlass", "AnimatedGradientBorder"],
+    "documenttabcontrol": ["DocumentTabControl", "DocumentTabItem"],
+    "statusbar": ["StatusBar", "StatusBarItem", "StatusBarPanel"],
+    "commandbar": ["CommandBar", "CommandBarItem", "OverflowToolbar"],
+    "quickaccesstoolbar": ["QuickAccessToolbar", "QuickAccessItem"],
     # effects
     "snowcanvas": ["SnowCanvas"],
     "sprite": ["Sprite"],

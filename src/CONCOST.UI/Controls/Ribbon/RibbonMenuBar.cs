@@ -11,6 +11,10 @@ namespace CONCOST.UI.Controls.Ribbon;
 /// </summary>
 public class RibbonMenuBar : ItemsControl
 {
+    public static readonly DependencyProperty ShowDividerProperty =
+        DependencyProperty.Register(nameof(ShowDivider), typeof(bool), typeof(RibbonMenuBar),
+            new FrameworkPropertyMetadata(true));
+
     static RibbonMenuBar()
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(RibbonMenuBar),
@@ -24,6 +28,16 @@ public class RibbonMenuBar : ItemsControl
 
         // Close everything when a menu item is invoked.
         AddHandler(RibbonMenuItem.ClickEvent, new RoutedEventHandler((_, _) => CloseAll()));
+    }
+
+    /// <summary>
+    /// Draws the hairline under the bar. The bar itself always spans the full ribbon width, so this
+    /// is the line that separates it from the tabs.
+    /// </summary>
+    public bool ShowDivider
+    {
+        get => (bool)GetValue(ShowDividerProperty);
+        set => SetValue(ShowDividerProperty, value);
     }
 
     /// <summary>True when any top-level item currently has its dropdown open.</summary>

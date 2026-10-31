@@ -407,7 +407,7 @@ public class StackedHeaderDataGrid : DataGrid
 
         // Auto-generate DataGrid columns with Rich Cell Types
         Columns.Clear();
-        var editStyle = TryFindResource("CONCOST.DataGrid.EditTextBox") as Style;
+        var editStyle = TryFindResource("CONCOST.DataGrid.EditingTextBox") as Style;
 
         foreach (var leaf in ColumnHeaderTree.SelectMany(n => n.GetLeaves()))
         {

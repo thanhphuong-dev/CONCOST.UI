@@ -129,6 +129,126 @@ public partial class ShowcaseViewModel
         return root;
     }
 
+    /// <summary>
+    /// AppTheme.Auto: the plugin has no Application of its own, so the theme is read from the
+    /// window it lives in. Two simulated host windows — one light, one dark — prove the point.
+    /// </summary>
+    private object CreateAutoThemeDemo()
+    {
+        var note = new TextBlock
+        {
+            Text = "Hai khung dưới là host window giả lập (một sáng, một tối). Nội dung bên trong tự chọn theme theo khung chứa nó — đúng cách plugin Revit/AutoCAD chạy: không có Application riêng, chỉ có window của host.",
+            FontSize = 12,
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 0, 0, 14)
+        };
+        note.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+
+        Border HostPanel(Color background, Color border)
+        {
+            var panel = new Border
+            {
+                Background = new SolidColorBrush(background),
+                BorderBrush = new SolidColorBrush(border),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(10),
+                Padding = new Thickness(16),
+                Margin = new Thickness(0, 0, 12, 0)
+            };
+            return panel;
+        }
+
+        FrameworkElement PluginContent(string caption)
+        {
+            var stack = new StackPanel();
+
+            var title = new TextBlock { Text = caption, FontSize = 12.5, FontWeight = FontWeights.SemiBold };
+            title.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
+            stack.Children.Add(title);
+
+            var body = new TextBlock
+            {
+                Text = "Nội dung plugin — chữ, viền và nút lấy theo theme của host.",
+                FontSize = 11.5,
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 5, 0, 0)
+            };
+            body.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+            stack.Children.Add(body);
+
+            var action = new Button
+            {
+                Content = "Rebar layout",
+                Margin = new Thickness(0, 12, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            action.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Primary");
+            stack.Children.Add(action);
+
+            // The plugin's own root: transparent, so detection walks up to the host panel.
+            var scope = new Border { Child = stack };
+            scope.Loaded += (_, __) => ThemeManager.Current.ApplyTheme(scope, AppTheme.Auto);
+            return scope;
+        }
+
+        var lightHost = HostPanel(Color.FromRgb(0xFF, 0xFF, 0xFF), Color.FromRgb(0xE2, 0xE8, 0xF0));
+        var darkHost = HostPanel(Color.FromRgb(0x11, 0x18, 0x27), Color.FromRgb(0x33, 0x41, 0x55));
+
+        var lightScope = PluginContent("Host sáng (light window)");
+        var darkScope = PluginContent("Host tối (dark window)");
+        lightHost.Child = lightScope;
+        darkHost.Child = darkScope;
+
+        var row = new Grid();
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        Grid.SetColumn(lightHost, 0);
+        Grid.SetColumn(darkHost, 1);
+        darkHost.Margin = new Thickness(0);
+        row.Children.Add(lightHost);
+        row.Children.Add(darkHost);
+
+        var swap = new Button
+        {
+            Content = "Đảo màu 2 host",
+            Margin = new Thickness(0, 14, 0, 0),
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Padding = new Thickness(14, 6, 14, 6)
+        };
+        swap.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+        swap.Click += (_, __) =>
+        {
+            (lightHost.Background, darkHost.Background) = (darkHost.Background, lightHost.Background);
+            (lightHost.BorderBrush, darkHost.BorderBrush) = (darkHost.BorderBrush, lightHost.BorderBrush);
+
+            // The host changed its own theme: tell the plugin roots to look again.
+            ThemeManager.Current.RefreshAutoTheme(lightScope);
+            ThemeManager.Current.RefreshAutoTheme(darkScope);
+        };
+
+        var content = new StackPanel();
+        content.Children.Add(note);
+        content.Children.Add(row);
+        content.Children.Add(swap);
+
+        var root = new StackPanel();
+        root.Children.Add(DemoSection(
+            "Auto — theme bám theo window chủ",
+            content,
+            xaml: "<!-- Plugin root: một UserControl hoặc Grid của add-in -->\n" +
+                  "<UserControl x:Name=\"PluginRoot\" Background=\"Transparent\">\n" +
+                  "    <!-- nội dung plugin -->\n" +
+                  "</UserControl>",
+            csharp: "// Không cần Application.Current — chỉ cần root của plugin\n" +
+                    "ThemeManager.Current.ApplyTheme(PluginRoot, AppTheme.Auto);\n\n" +
+                    "// Host vừa đổi theme (Revit/AutoCAD chuyển sáng-tối)\n" +
+                    "ThemeManager.Current.RefreshAutoTheme(PluginRoot);\n\n" +
+                    "// Hỏi trước khi cần biết host đang sáng hay tối\n" +
+                    "var hostTheme = ThemeManager.DetectTheme(PluginRoot);"));
+
+        return root;
+    }
+
     private object CreateBrutalThemeDemo()
     {
         var note = new TextBlock

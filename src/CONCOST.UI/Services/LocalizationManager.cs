@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using CONCOST.UI.Core.MVVM;
 
 namespace CONCOST.UI.Services;
@@ -64,6 +64,10 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Filters.All"] = "Tất cả",
             ["Showcase.Filters.Basic"] = "Cơ bản",
             ["Showcase.Filters.Custom"] = "Mở rộng",
+            ["Showcase.Filters.Data"] = "Dữ liệu",
+            ["Showcase.Filters.Layout"] = "Khung",
+            ["Showcase.Filters.Input"] = "Nhập liệu",
+            ["Showcase.Filters.Effects"] = "Hiệu ứng",
             ["Showcase.Catalog.Title"] = "THÀNH PHẦN",
             ["Showcase.Catalog.Subtitle"] = "Duyệt thư viện",
             ["Showcase.Catalog.Search"] = "Tìm thành phần...",
@@ -211,7 +215,17 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Overview.FeatureCheckCombo"] = "Chọn nhiều mục có tìm kiếm và phản hồi lựa chọn.",
             ["Showcase.Overview.FeatureDrawer"] = "Ngăn trượt cho các quy trình phụ.",
             ["Showcase.Toast.Title"] = "CONCOST UI",
-            ["Showcase.Toast.Message"] = "Thao tác đã được thực hiện thành công!"
+            ["Showcase.Toast.Message"] = "Thao tác đã được thực hiện thành công!",
+            ["Showcase.Inspector.Variants"] = "BIẾN THỂ",
+            ["Showcase.Inspector.VariantCount"] = "biến thể",
+            ["Showcase.Inspector.Properties"] = "THUỘC TÍNH MỞ RỘNG",
+            ["Showcase.Inspector.ColumnProperty"] = "THUỘC TÍNH",
+            ["Showcase.Inspector.ColumnType"] = "KIỂU",
+            ["Showcase.Inspector.ColumnDefault"] = "MẶC ĐỊNH",
+            ["Showcase.Inspector.ColumnSource"] = "NGUỒN",
+            ["Showcase.Inspector.ReadOnly"] = "chỉ đọc",
+            ["Showcase.Inspector.NoProperties"] = "Mục này không có thuộc tính mở rộng.",
+            ["Showcase.Inspector.NoData"] = "Mục này không gắn với một control cụ thể."
         });
 
         AddShowcaseTranslations("en-US", new()
@@ -224,6 +238,10 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Filters.All"] = "All",
             ["Showcase.Filters.Basic"] = "Basic",
             ["Showcase.Filters.Custom"] = "Custom",
+            ["Showcase.Filters.Data"] = "Data",
+            ["Showcase.Filters.Layout"] = "Layout",
+            ["Showcase.Filters.Input"] = "Input",
+            ["Showcase.Filters.Effects"] = "Effects",
             ["Showcase.Catalog.Title"] = "COMPONENTS",
             ["Showcase.Catalog.Subtitle"] = "Browse the library",
             ["Showcase.Catalog.Search"] = "Search components...",
@@ -282,7 +300,17 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Overview.FeatureCheckCombo"] = "Searchable multi-select with clear selection feedback.",
             ["Showcase.Overview.FeatureDrawer"] = "An animated side panel for secondary workflows.",
             ["Showcase.Toast.Title"] = "CONCOST UI",
-            ["Showcase.Toast.Message"] = "Action executed successfully!"
+            ["Showcase.Toast.Message"] = "Action executed successfully!",
+            ["Showcase.Inspector.Variants"] = "VARIANTS",
+            ["Showcase.Inspector.VariantCount"] = "variants",
+            ["Showcase.Inspector.Properties"] = "EXTENDED PROPERTIES",
+            ["Showcase.Inspector.ColumnProperty"] = "PROPERTY",
+            ["Showcase.Inspector.ColumnType"] = "TYPE",
+            ["Showcase.Inspector.ColumnDefault"] = "DEFAULT",
+            ["Showcase.Inspector.ColumnSource"] = "SOURCE",
+            ["Showcase.Inspector.ReadOnly"] = "read-only",
+            ["Showcase.Inspector.NoProperties"] = "This entry has no extended properties.",
+            ["Showcase.Inspector.NoData"] = "This entry is not bound to a specific control."
         });
     }
 

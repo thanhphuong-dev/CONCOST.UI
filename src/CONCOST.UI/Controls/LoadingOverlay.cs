@@ -4,6 +4,16 @@ using System;
 
 namespace CONCOST.UI.Controls;
 
+public enum LoadingOverlayVariant
+{
+    Standard,
+    NeonGlow,
+    GlassMorphism,
+    MinimalDot,
+    PulsingRing,
+    LiquidBlob
+}
+
 public class LoadingOverlay : ContentControl
 {
     static LoadingOverlay()
@@ -34,6 +44,22 @@ public class LoadingOverlay : ContentControl
     public static readonly DependencyProperty IndicatorTypeProperty =
         DependencyProperty.Register(nameof(IndicatorType), typeof(LoadingIndicatorType), typeof(LoadingOverlay),
             new PropertyMetadata(LoadingIndicatorType.ThreeDotsWave));
+
+    public static readonly DependencyProperty VariantProperty =
+        DependencyProperty.Register(nameof(Variant), typeof(LoadingOverlayVariant), typeof(LoadingOverlay),
+            new PropertyMetadata(LoadingOverlayVariant.Standard));
+
+    public static readonly DependencyProperty GlowColorProperty =
+        DependencyProperty.Register(nameof(GlowColor), typeof(System.Windows.Media.Brush), typeof(LoadingOverlay),
+            new PropertyMetadata(null));
+
+    public static readonly DependencyProperty ShowProgressRingProperty =
+        DependencyProperty.Register(nameof(ShowProgressRing), typeof(bool), typeof(LoadingOverlay),
+            new PropertyMetadata(false));
+
+    public static readonly DependencyProperty BlurRadiusProperty =
+        DependencyProperty.Register(nameof(BlurRadius), typeof(double), typeof(LoadingOverlay),
+            new PropertyMetadata(10.0));
 
     public bool IsLoading
     {
@@ -69,6 +95,30 @@ public class LoadingOverlay : ContentControl
     {
         get => (LoadingIndicatorType)GetValue(IndicatorTypeProperty);
         set => SetValue(IndicatorTypeProperty, value);
+    }
+
+    public LoadingOverlayVariant Variant
+    {
+        get => (LoadingOverlayVariant)GetValue(VariantProperty);
+        set => SetValue(VariantProperty, value);
+    }
+
+    public System.Windows.Media.Brush? GlowColor
+    {
+        get => (System.Windows.Media.Brush?)GetValue(GlowColorProperty);
+        set => SetValue(GlowColorProperty, value);
+    }
+
+    public bool ShowProgressRing
+    {
+        get => (bool)GetValue(ShowProgressRingProperty);
+        set => SetValue(ShowProgressRingProperty, value);
+    }
+
+    public double BlurRadius
+    {
+        get => (double)GetValue(BlurRadiusProperty);
+        set => SetValue(BlurRadiusProperty, value);
     }
 
     private static object CoerceProgress(DependencyObject d, object value)

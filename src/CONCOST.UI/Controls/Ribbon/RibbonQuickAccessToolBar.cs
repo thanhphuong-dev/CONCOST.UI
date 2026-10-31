@@ -40,6 +40,10 @@ public class RibbonQuickAccessToolBar : ItemsControl
         DependencyProperty.Register(nameof(IsCustomizeOpen), typeof(bool), typeof(RibbonQuickAccessToolBar),
             new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
+    public static readonly DependencyProperty IsCustomizableProperty =
+        DependencyProperty.Register(nameof(IsCustomizable), typeof(bool), typeof(RibbonQuickAccessToolBar),
+            new FrameworkPropertyMetadata(true, OnIsCustomizableChanged));
+
     public static readonly DependencyProperty ShowLabelsProperty =
         DependencyProperty.Register(nameof(ShowLabels), typeof(bool), typeof(RibbonQuickAccessToolBar),
             new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure));
@@ -84,6 +88,16 @@ public class RibbonQuickAccessToolBar : ItemsControl
     {
         get => (bool)GetValue(IsCustomizeOpenProperty);
         set => SetValue(IsCustomizeOpenProperty, value);
+    }
+
+    /// <summary>
+    /// Shows the chevron and lets the customise panel open. When false the pinned commands stay
+    /// usable but the user cannot add or remove any — the locked-down build.
+    /// </summary>
+    public bool IsCustomizable
+    {
+        get => (bool)GetValue(IsCustomizableProperty);
+        set => SetValue(IsCustomizableProperty, value);
     }
 
     /// <summary>Shows the label next to each icon. Off by default, as in Office.</summary>
@@ -154,6 +168,12 @@ public class RibbonQuickAccessToolBar : ItemsControl
     }
 
     internal void SetCustomizeMenu(object? menu) => SetValue(CustomizeMenuPropertyKey, menu);
+
+    private static void OnIsCustomizableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // Closing an open panel is the whole point of locking the toolbar down.
+        if (d is RibbonQuickAccessToolBar bar && !(bool)e.NewValue) bar.IsCustomizeOpen = false;
+    }
 
     public override void OnApplyTemplate()
     {

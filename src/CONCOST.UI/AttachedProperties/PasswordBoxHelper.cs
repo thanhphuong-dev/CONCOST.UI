@@ -3,15 +3,37 @@ using System.Windows.Controls;
 
 namespace CONCOST.UI.AttachedProperties;
 
+/// <summary>
+/// Mirrors a <see cref="PasswordBox"/>'s password into a bindable attached property.
+/// </summary>
+/// <remarks>
+/// <see cref="PasswordBox.Password"/> is deliberately not a dependency property, so it cannot be
+/// bound. The helper listens to <see cref="PasswordBox.PasswordChangedEvent"/> for every password
+/// box through a class handler, which means <c>Password="{Binding …}"</c> works on its own — no
+/// extra attribute needed. Set <see cref="AttachProperty"/> to <c>false</c> to opt a single box out.
+/// </remarks>
 public static class PasswordBoxHelper
 {
+    static PasswordBoxHelper()
+    {
+        EventManager.RegisterClassHandler(
+            typeof(PasswordBox),
+            PasswordBox.PasswordChangedEvent,
+            new RoutedEventHandler(OnAnyPasswordBoxChanged),
+            true);
+    }
+
     public static readonly DependencyProperty PasswordProperty =
         DependencyProperty.RegisterAttached("Password", typeof(string), typeof(PasswordBoxHelper),
             new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnPasswordPropertyChanged));
 
+    /// <summary>
+    /// Kept for compatibility and as an opt-out: the sync is on by default, set this to
+    /// <c>false</c> on a box whose password must never leave the control.
+    /// </summary>
     public static readonly DependencyProperty AttachProperty =
         DependencyProperty.RegisterAttached("Attach", typeof(bool), typeof(PasswordBoxHelper),
-            new PropertyMetadata(false, Attach));
+            new PropertyMetadata(true));
 
     private static readonly DependencyProperty IsUpdatingProperty =
         DependencyProperty.RegisterAttached("IsUpdating", typeof(bool), typeof(PasswordBoxHelper));
@@ -34,41 +56,20 @@ public static class PasswordBoxHelper
 
     private static void OnPasswordPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
     {
-        if (sender is PasswordBox box)
-        {
-            box.PasswordChanged -= HandlePasswordChanged;
-            if (!GetIsUpdating(box))
-            {
-                box.Password = (string)e.NewValue ?? string.Empty;
-                SetPasswordLength(box, box.Password.Length);
-            }
-            box.PasswordChanged += HandlePasswordChanged;
-        }
+        if (sender is not PasswordBox box || GetIsUpdating(box)) return;
+
+        box.Password = (string)e.NewValue ?? string.Empty;
+        SetPasswordLength(box, box.Password.Length);
     }
 
-    private static void Attach(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+    /// <summary>Runs for every password box: typing in the box writes the attached property.</summary>
+    private static void OnAnyPasswordBoxChanged(object sender, RoutedEventArgs e)
     {
-        if (sender is PasswordBox box)
-        {
-            if ((bool)e.OldValue)
-            {
-                box.PasswordChanged -= HandlePasswordChanged;
-            }
-            if ((bool)e.NewValue)
-            {
-                box.PasswordChanged += HandlePasswordChanged;
-            }
-        }
-    }
+        if (sender is not PasswordBox box || !GetAttach(box)) return;
 
-    private static void HandlePasswordChanged(object sender, RoutedEventArgs e)
-    {
-        if (sender is PasswordBox box)
-        {
-            SetIsUpdating(box, true);
-            SetPassword(box, box.Password);
-            SetPasswordLength(box, box.Password.Length);
-            SetIsUpdating(box, false);
-        }
+        SetIsUpdating(box, true);
+        SetPassword(box, box.Password);
+        SetPasswordLength(box, box.Password.Length);
+        SetIsUpdating(box, false);
     }
 }
