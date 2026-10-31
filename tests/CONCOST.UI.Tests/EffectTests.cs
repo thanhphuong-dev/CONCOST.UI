@@ -192,8 +192,42 @@ public class EffectTests
 
             SharedElementTransition.Run(target, new Rect(0, 0, 40, 20));
 
-            Assert.NotNull(target.RenderTransform);
-            Assert.IsType<TransformGroup>(target.RenderTransform);
+            // The transition honours reduced motion, and a headless CI session reports
+            // SystemParameters.ClientAreaAnimation = false. Both branches are the contract: either the
+            // element is transformed for the animation, or it is left untouched.
+            if (Core.MotionSettings.AnimationsEnabled)
+                Assert.IsType<TransformGroup>(target.RenderTransform);
+            else
+                Assert.Same(Transform.Identity, target.RenderTransform);
+        });
+    }
+
+    [Fact]
+    public void SharedElementTransition_WithMotionDisabled_LeavesTheElementAlone()
+    {
+        RunOnSTA(() =>
+        {
+            var target = new Border { Width = 200, Height = 100 };
+            var parent = new Grid();
+            parent.Children.Add(target);
+
+            Host(parent);
+
+            var wasDisabled = Core.MotionSettings.ForceDisabled;
+            Core.MotionSettings.ForceDisabled = true;
+
+            try
+            {
+                SharedElementTransition.Run(target, new Rect(0, 0, 40, 20));
+
+                // Reduced motion is a contract, not a missing feature: nothing moves.
+                Assert.Same(Transform.Identity, target.RenderTransform);
+                Assert.Equal(1.0, target.Opacity);
+            }
+            finally
+            {
+                Core.MotionSettings.ForceDisabled = wasDisabled;
+            }
         });
     }
 }
