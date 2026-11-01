@@ -41,7 +41,7 @@ public partial class ShowcaseViewModel
             VerticalAlignment = VerticalAlignment.Stretch,
             ShowAxes = true,
             Zoom = 0.9,
-            EdgeBrush = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8)), // Sky Cyan BIM
+            EdgeBrush = new SolidColorBrush(Color.FromRgb(0x02, 0x84, 0xC7)), // High-contrast technical blue
             Cursor = System.Windows.Input.Cursors.SizeAll
         };
 
@@ -114,11 +114,11 @@ public partial class ShowcaseViewModel
         var viewTelemetry = new TextBlock
         {
             Text = $"Yaw: {camera.Yaw:0.#}° | Pitch: {camera.Pitch:0.#}° | Roll: {camera.Roll:0.#}°",
-            Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)),
             FontSize = 11,
             FontFamily = new FontFamily("Consolas, Courier New, monospace"),
             VerticalAlignment = VerticalAlignment.Center
         };
+        viewTelemetry.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
         var viewNameBadge = new TextBlock
         {
@@ -131,10 +131,10 @@ public partial class ShowcaseViewModel
         var interactionHint = new TextBlock
         {
             Text = "Sẵn sàng điều hướng. Bấm các mặt hoặc kéo chuột để xoay.",
-            Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)),
             FontSize = 11,
             VerticalAlignment = VerticalAlignment.Center
         };
+        interactionHint.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
         bool updatingFromCamera = false;
         camera.Changed += (_, e) =>
@@ -187,12 +187,10 @@ public partial class ShowcaseViewModel
             Height = 460,
             CornerRadius = new CornerRadius(12),
             BorderThickness = new Thickness(1),
-            BorderBrush = new SolidColorBrush(Color.FromRgb(0x33, 0x41, 0x55)),
-            Background = new LinearGradientBrush(
-                Color.FromRgb(0x13, 0x1A, 0x24),
-                Color.FromRgb(0x0A, 0x0E, 0x14), 45),
             ClipToBounds = true
         };
+        stage.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.CanvasBackground");
+        stage.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
 
         var viewportGrid = new Grid();
         viewportGrid.Children.Add(viewer);
@@ -592,8 +590,6 @@ cube.GoToFace(""TOP"");"));
 
         var hudPill = new Border
         {
-            Background = new SolidColorBrush(Color.FromArgb(220, 15, 23, 42)),
-            BorderBrush = new SolidColorBrush(Color.FromArgb(120, 56, 189, 248)),
             BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(6),
             Padding = new Thickness(12, 5, 12, 5),
@@ -602,6 +598,9 @@ cube.GoToFace(""TOP"");"));
             Margin = new Thickness(14),
             Child = hudText
         };
+        hudPill.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
+        hudPill.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+        hudText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
 
         // Callout thong bao trang thai
         var statusCallout = CreateCalloutCard("Sẵn sàng: Bấm các nút trên thanh NavigationBar để điều khiển góc nhìn và công cụ 3D.");
@@ -676,13 +675,12 @@ cube.GoToFace(""TOP"");"));
         {
             Height = 260,
             CornerRadius = new CornerRadius(8),
-            Background = new LinearGradientBrush(
-                Color.FromRgb(0x13, 0x1B, 0x2A), Color.FromRgb(0x1F, 0x2D, 0x42), 45),
-            BorderBrush = new SolidColorBrush(Color.FromRgb(0x33, 0x41, 0x55)),
             BorderThickness = new Thickness(1),
             ClipToBounds = true,
             Child = viewportHost
         };
+        stage.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.CanvasBackground");
+        stage.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
 
         // 3. Khay cau hinh tuong tac 2 cot chuan Desktop CAD/BIM
         var workbench = new Grid { Margin = new Thickness(0, 14, 0, 4) };
@@ -1007,13 +1005,12 @@ bar.ActiveToolChanged += (sender, e) =>
         {
             Height = 310,
             CornerRadius = new CornerRadius(8),
-            Background = new LinearGradientBrush(
-                Color.FromRgb(0x13, 0x1B, 0x2A), Color.FromRgb(0x1F, 0x2D, 0x42), 45),
-            BorderBrush = new SolidColorBrush(Color.FromRgb(0x33, 0x41, 0x55)),
             BorderThickness = new Thickness(1),
             ClipToBounds = true,
             Child = viewportHost
         };
+        stage.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.CanvasBackground");
+        stage.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
 
         // 3. Khay cau hinh tuong tac 2 cot chuan muc
         var workbench = new Grid { Margin = new Thickness(0, 18, 0, 4) };
@@ -2393,11 +2390,8 @@ LiveInput.ValueCommitted += (_, e) =>
         // 2. CAD Viewport Stage mo phong chan thuc
         var stageCanvas = new Grid();
 
-        var bgGrid = new Border
-        {
-            Background = new LinearGradientBrush(
-                Color.FromRgb(0x13, 0x1B, 0x2A), Color.FromRgb(0x1F, 0x2D, 0x42), 45)
-        };
+        var bgGrid = new Border();
+        bgGrid.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.CanvasBackground");
         stageCanvas.Children.Add(bgGrid);
 
         var cadWatermark = new StackPanel
@@ -3042,13 +3036,13 @@ workspace.TileMode = DocumentTileMode.Vertical;"));
         // CAD Drawing Viewport (Trái)
         var drawingBorder = new Border
         {
-            Background = new LinearGradientBrush(Color.FromRgb(0x0F, 0x17, 0x2A), Color.FromRgb(0x09, 0x0E, 0x1A), 45),
             CornerRadius = new CornerRadius(8),
-            BorderBrush = new SolidColorBrush(Color.FromRgb(0x33, 0x41, 0x55)),
             BorderThickness = new Thickness(1),
             Margin = new Thickness(0, 0, 10, 0),
             ClipToBounds = true
         };
+        drawingBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.CanvasBackground");
+        drawingBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
 
         var drawingGrid = new Grid();
         var beamCanvas = new Canvas { HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Width = 380, Height = 180 };

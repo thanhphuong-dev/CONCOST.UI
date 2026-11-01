@@ -179,6 +179,16 @@ public static partial class VisualElement
 
                 if (Looks.TryGetValue(element, out Look? look))
                 {
+                    if (!element.Dispatcher.CheckAccess())
+                    {
+                        element.Dispatcher.BeginInvoke(() =>
+                        {
+                            ApplyFocusRing(element, look);
+                            Apply(element, look);
+                        });
+                        continue;
+                    }
+
                     ApplyFocusRing(element, look);
                     Apply(element, look);
                 }
@@ -306,15 +316,16 @@ public static partial class VisualElement
         // The alpha is nudged, not the effect opacity: a themed shadow token can then carry the whole
         // light/dark difference and the levels only add weight on top of it.
         double factor = clamped == 1 || clamped == 3 ? 0.85 : 1.0;
-        byte alpha = (byte)Math.Min(255, Math.Round(theme.A * factor));
+        // In WPF DropShadowEffect, Color.A is ignored. Opacity controls the alpha of the shadow.
+        double opacity = Math.Max(0.0, Math.Min(1.0, (theme.A / 255.0) * factor * 0.4));
 
         var shadow = new DropShadowEffect
         {
-            Color = Color.FromArgb(alpha, theme.R, theme.G, theme.B),
-            BlurRadius = 6 + 4 * clamped,
-            ShadowDepth = 2 * clamped,
+            Color = Color.FromRgb(theme.R, theme.G, theme.B),
+            BlurRadius = 4 + 3 * clamped,
+            ShadowDepth = 1 * clamped,
             Direction = 270,
-            Opacity = 1,
+            Opacity = opacity,
             RenderingBias = RenderingBias.Performance
         };
 

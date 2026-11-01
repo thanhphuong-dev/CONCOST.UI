@@ -53,15 +53,25 @@ public partial class ShowcaseViewModel
         hero.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
         var intro = new StackPanel { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Left, MaxWidth = 880 };
-        var eyebrow = Text(L("Showcase.Overview.Eyebrow", "CONCOST.UI  /  LIVE COMPONENT SHOWCASE"), 11, "CONCOST.Brush.Primary", FontWeights.SemiBold);
-        eyebrow.Margin = new Thickness(0, 0, 0, 12);
+        var eyebrowBadge = new Border
+        {
+            HorizontalAlignment = HorizontalAlignment.Left,
+            CornerRadius = new CornerRadius(10),
+            Padding = new Thickness(9, 3, 9, 3),
+            Margin = new Thickness(0, 0, 0, 12),
+            BorderThickness = new Thickness(1)
+        };
+        eyebrowBadge.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.PrimarySoftLight");
+        eyebrowBadge.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.PrimarySoftBorder");
+        var eyebrowText = Text(L("Showcase.Overview.Eyebrow", "CONCOST.UI  /  LIVE COMPONENT SHOWCASE"), 10, "CONCOST.Brush.PrimarySoftForeground", FontWeights.SemiBold);
+        eyebrowBadge.Child = eyebrowText;
+        intro.Children.Add(eyebrowBadge);
         var headline = Text(L("Showcase.Overview.Headline", "Engineering interfaces,\nready for real projects."), 30, "CONCOST.Brush.TextPrimary", FontWeights.SemiBold);
         headline.LineHeight = 38;
         headline.Margin = new Thickness(0, 0, 0, 10);
         var summary = Text(L("Showcase.Overview.Summary", "Explore polished WPF controls built for engineering, CAD, BIM, and construction workflows. Every example is interactive and designed to show how the component behaves in an application."), 15, "CONCOST.Brush.TextSecondary");
         summary.LineHeight = 23;
         summary.Margin = new Thickness(0, 0, 0, 18);
-        intro.Children.Add(eyebrow);
         intro.Children.Add(headline);
         intro.Children.Add(summary);
 
@@ -108,7 +118,7 @@ public partial class ShowcaseViewModel
             VerticalAlignment = VerticalAlignment.Center,
             BorderThickness = new Thickness(1)
         };
-        preview.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+        preview.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
         preview.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
         var previewContent = new StackPanel();
         var previewHeader = new Grid { Margin = new Thickness(0, 0, 0, 16) };
@@ -118,9 +128,9 @@ public partial class ShowcaseViewModel
         Grid.SetColumn(previewTitle, 0);
         previewHeader.Children.Add(previewTitle);
         var status = new Border { CornerRadius = new CornerRadius(9), Padding = new Thickness(8, 4, 8, 4), BorderThickness = new Thickness(1) };
-        status.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
-        status.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
-        var statusText = Text(L("Showcase.Overview.Live", "LIVE"), 9, "CONCOST.Brush.Primary", FontWeights.SemiBold);
+        status.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SuccessSoft");
+        status.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
+        var statusText = Text(L("Showcase.Overview.Live", "LIVE"), 9, "CONCOST.Brush.Success", FontWeights.Bold);
         status.Child = statusText;
         Grid.SetColumn(status, 1);
         previewHeader.Children.Add(status);
@@ -219,15 +229,15 @@ public partial class ShowcaseViewModel
         void AddStat(Panel panel, string value, string label, IconKind iconKind, string accentKey)
         {
             var body = new Grid();
-            body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(38) });
+            body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(44) });
             body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            var iconBox = new Border { Width = 34, Height = 34, CornerRadius = new CornerRadius(8), VerticalAlignment = VerticalAlignment.Center };
-            var icon = new Icon { Kind = iconKind, Width = 16, Height = 16, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            var iconBox = new Border { Width = 38, Height = 38, CornerRadius = new CornerRadius(8), VerticalAlignment = VerticalAlignment.Center };
+            var icon = new Icon { Kind = iconKind, Width = 18, Height = 18, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
             SetAccentIcon(iconBox, icon, accentKey);
             iconBox.Child = icon;
             body.Children.Add(iconBox);
-            var copy = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(10, 0, 4, 0) };
-            var valueText = Text(value, 18, "CONCOST.Brush.TextPrimary", FontWeights.SemiBold);
+            var copy = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(12, 0, 4, 0) };
+            var valueText = Text(value, 20, "CONCOST.Brush.TextPrimary", FontWeights.Bold);
             valueText.Margin = new Thickness(0, 0, 0, 3);
             copy.Children.Add(valueText);
             var labelText = Text(label, 10, "CONCOST.Brush.TextSecondary", FontWeights.SemiBold);
@@ -333,8 +343,17 @@ public partial class ShowcaseViewModel
 
         void SetAccentIcon(Border plate, Icon icon, string accentKey)
         {
-            plate.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
-            plate.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+            string softBgKey = accentKey switch
+            {
+                "CONCOST.Brush.Info" => "CONCOST.Brush.InfoSoft",
+                "CONCOST.Brush.Success" => "CONCOST.Brush.SuccessSoft",
+                "CONCOST.Brush.Warning" => "CONCOST.Brush.WarningSoft",
+                "CONCOST.Brush.Danger" => "CONCOST.Brush.DangerSoft",
+                "CONCOST.Brush.Primary" => "CONCOST.Brush.PrimarySoftLight",
+                _ => "CONCOST.Brush.SurfaceSecondary"
+            };
+            plate.SetResourceReference(Border.BackgroundProperty, softBgKey);
+            plate.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
             plate.BorderThickness = new Thickness(1);
             icon.SetResourceReference(Icon.ForegroundProperty, accentKey);
         }

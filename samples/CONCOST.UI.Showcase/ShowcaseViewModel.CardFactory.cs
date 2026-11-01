@@ -6,6 +6,7 @@ using System.Windows.Media;
 using CONCOST.UI.AttachedProperties;
 using CONCOST.UI.Controls;
 using CONCOST.UI.Icons;
+using CONCOST.UI.Services;
 
 namespace CONCOST.UI.Showcase;
 
@@ -102,7 +103,7 @@ public partial class ShowcaseViewModel
             Margin = new Thickness(16, 14, 16, 16),
             ClipToBounds = true
         };
-        stage.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+        stage.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.CanvasBackground");
         stage.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
         stage.Child = content;
 
@@ -112,9 +113,14 @@ public partial class ShowcaseViewModel
         if (!string.IsNullOrEmpty(xaml) || !string.IsNullOrEmpty(csharp))
         {
             // Detect if xaml snippet is actually C# code
+            bool isVi = LocalizationManager.Current.Culture.TwoLetterISOLanguageName.Equals("vi", StringComparison.OrdinalIgnoreCase);
             bool xamlLooksLikeXaml = !string.IsNullOrWhiteSpace(xaml) && xaml.TrimStart().StartsWith("<");
-            string xamlBtnText = xamlLooksLikeXaml ? "View XAML" : "View Code";
-            string xamlBadgeText = xamlLooksLikeXaml ? "XAML Code" : "Code Snippet";
+            string xamlBtnText = isVi ? (xamlLooksLikeXaml ? "Xem XAML" : "Xem mã") : (xamlLooksLikeXaml ? "View XAML" : "View Code");
+            string csBtnText = isVi ? "Xem C#" : "View C#";
+            string xamlBadgeText = isVi ? (xamlLooksLikeXaml ? "Mã XAML" : "Đoạn mã") : (xamlLooksLikeXaml ? "XAML Code" : "Code Snippet");
+            string csBadgeText = isVi ? "Mã C#" : "C# Code";
+            string copyText = isVi ? "Sao chép" : "Copy";
+            string copiedText = isVi ? "Đã chép!" : "Copied!";
 
             FrameworkElement? xamlView = string.IsNullOrEmpty(xaml) ? null : CreateXamlSyntaxHighlighter(xaml!);
             FrameworkElement? csView = string.IsNullOrEmpty(csharp) ? null : CreatePlainCodeView(csharp!);
@@ -172,7 +178,7 @@ public partial class ShowcaseViewModel
 
             var copyBtn = new Button
             {
-                Content = "Copy",
+                Content = copyText,
                 Padding = new Thickness(10, 2, 10, 2),
                 FontSize = 11.5,
                 Height = 24,
@@ -188,11 +194,11 @@ public partial class ShowcaseViewModel
                 try
                 {
                     Clipboard.SetText(currentActiveCode.Trim());
-                    copyBtn.Content = "Copied!";
+                    copyBtn.Content = copiedText;
                     var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
                     timer.Tick += (ts, te) =>
                     {
-                        copyBtn.Content = "Copy";
+                        copyBtn.Content = copyText;
                         timer.Stop();
                     };
                     timer.Start();
@@ -242,9 +248,9 @@ public partial class ShowcaseViewModel
 
             if (csView != null)
             {
-                var btn = CreateCodeActionPill("View C#");
+                var btn = CreateCodeActionPill(csBtnText);
                 btn.Margin = new Thickness(6, 0, 0, 0);
-                btn.Click += (_, _) => ToggleCode(csView, "C# Code", csharp!);
+                btn.Click += (_, _) => ToggleCode(csView, csBadgeText, csharp!);
                 buttons.Children.Add(btn);
             }
 

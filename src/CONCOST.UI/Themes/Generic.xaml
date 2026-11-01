@@ -5794,7 +5794,7 @@
         <ControlTemplate TargetType="{x:Type controls:LoadingOverlay}">
           <Grid>
             <ContentPresenter Content="{TemplateBinding ContentControl.Content}" />
-            <Border Name="OverlayBorder" Background="#900F172A" Visibility="Collapsed" CornerRadius="{DynamicResource CONCOST.CornerRadius.Default}">
+            <Border Name="OverlayBorder" Background="{DynamicResource CONCOST.Brush.Overlay}" Visibility="Collapsed" CornerRadius="{DynamicResource CONCOST.CornerRadius.Default}">
               <Border Name="ContentBorder" Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="12" Padding="32,24" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="420">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="200">
                   <controls:LoadingLine Name="StandardSpinner" Foreground="{DynamicResource CONCOST.Brush.Primary}" Margin="0,0,0,16" Style="{StaticResource CONCOST.LoadingLine.Base}" />

@@ -14,9 +14,12 @@
     <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSunken" Color="#0E141F" />
 
     <!-- Scrim behind a modal. Black rather than the shell colour, so dimming never shifts the hue. -->
-    <SolidColorBrush x:Key="CONCOST.Brush.Overlay" Color="#B3000000" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Overlay" Color="#B30B0F19" />
 
     <SolidColorBrush x:Key="CONCOST.Brush.Border" Color="#263346" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderSubtle" Color="#1E293B" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasBackground" Color="#0B0F19" />
+
     <SolidColorBrush x:Key="CONCOST.Brush.BorderSecondary" Color="#334155" />
     <SolidColorBrush x:Key="CONCOST.Brush.BorderHover" Color="#475569" />
     <SolidColorBrush x:Key="CONCOST.Brush.BorderFocused" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
@@ -69,5 +72,10 @@
          with the level, so a level 1 card stays subtle and a level 4 dialog reads as detached. -->
     <Color x:Key="CONCOST.Color.Shadow">#4D000000</Color>
     <Color x:Key="CONCOST.Color.ShadowStrong">#8C000000</Color>
+
+    <!-- Dedicated Dark Primary Soft Tint -->
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftLight" Color="#2D1D12" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftBorder" Color="#7C2D12" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftForeground" Color="#FB923C" />
 
 </ResourceDictionary>

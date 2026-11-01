@@ -15,9 +15,12 @@
     <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSunken" Color="#F1F5F9" />
 
     <!-- Scrim behind a modal: dims the drawing behind it without pushing it grey-blue. -->
-    <SolidColorBrush x:Key="CONCOST.Brush.Overlay" Color="#5C0B0F19" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Overlay" Color="#CCFFFFFF" />
 
     <SolidColorBrush x:Key="CONCOST.Brush.Border" Color="#E2E8F0" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderSubtle" Color="#EDF2F7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasBackground" Color="#F8FAFC" />
+
     <SolidColorBrush x:Key="CONCOST.Brush.BorderSecondary" Color="#CBD5E1" />
     <SolidColorBrush x:Key="CONCOST.Brush.BorderHover" Color="#94A3B8" />
     <SolidColorBrush x:Key="CONCOST.Brush.BorderFocused" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
@@ -73,5 +76,10 @@
          drop shadow and deepens it per level, so the token itself stays almost invisible. -->
     <Color x:Key="CONCOST.Color.Shadow">#1A0F172A</Color>
     <Color x:Key="CONCOST.Color.ShadowStrong">#330F172A</Color>
+
+    <!-- Dedicated Light Primary Soft Tint (Tailwind Orange 50/100) -->
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftLight" Color="#FFF7ED" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftBorder" Color="#FED7AA" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftForeground" Color="#C2410C" />
 
 </ResourceDictionary>

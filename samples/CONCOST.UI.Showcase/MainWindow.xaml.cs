@@ -49,6 +49,14 @@ public partial class MainWindow : Window
 
     private void OnCatalogSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (sender is ListBox lb && lb.SelectedItem is ShowcaseItem item && DataContext is ShowcaseViewModel vm)
+        {
+            if (vm.SelectedItem != item)
+            {
+                vm.SelectedItem = item;
+            }
+        }
+
         // The stage reuses one ScrollViewer for every demo. Reset its offset after
         // the new content has been measured so each component opens at its title.
         Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => ShowcaseScrollViewer?.ScrollToTop()));

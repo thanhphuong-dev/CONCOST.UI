@@ -11,10 +11,10 @@
          a hovered tile. Regenerated from the accent by ThemeManager, so it follows the palette. -->
     <Color x:Key="CONCOST.Color.PrimarySoft">#1FFF7900</Color>
 
-    <Color x:Key="CONCOST.Color.Success">#28A745</Color>
-    <Color x:Key="CONCOST.Color.Warning">#FFB020</Color>
-    <Color x:Key="CONCOST.Color.Danger">#DC3545</Color>
-    <Color x:Key="CONCOST.Color.Info">#2196F3</Color>
+    <Color x:Key="CONCOST.Color.Success">#16A34A</Color>
+    <Color x:Key="CONCOST.Color.Warning">#D97706</Color>
+    <Color x:Key="CONCOST.Color.Danger">#DC2626</Color>
+    <Color x:Key="CONCOST.Color.Info">#0284C7</Color>
 
     <!-- Neutral Palette -->
     <Color x:Key="CONCOST.Color.Gray50">#FAFAFA</Color>
@@ -45,6 +45,10 @@
     <SolidColorBrush x:Key="CONCOST.Brush.Warning" Color="{StaticResource CONCOST.Color.Warning}" />
     <SolidColorBrush x:Key="CONCOST.Brush.Danger" Color="{StaticResource CONCOST.Color.Danger}" />
     <SolidColorBrush x:Key="CONCOST.Brush.Info" Color="{StaticResource CONCOST.Color.Info}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SuccessSoft" Color="#F0FDF4" />
+    <SolidColorBrush x:Key="CONCOST.Brush.WarningSoft" Color="#FFFBEB" />
+    <SolidColorBrush x:Key="CONCOST.Brush.DangerSoft" Color="#FEF2F2" />
+    <SolidColorBrush x:Key="CONCOST.Brush.InfoSoft" Color="#F0F9FF" />
 
     <SolidColorBrush x:Key="CONCOST.Brush.White" Color="{StaticResource CONCOST.Color.White}" />
     <SolidColorBrush x:Key="CONCOST.Brush.Black" Color="{StaticResource CONCOST.Color.Black}" />

@@ -164,13 +164,42 @@ public class ShowcaseItem : System.ComponentModel.INotifyPropertyChanged
             return localization.GetString($"Showcase.Component.{Name}", Name);
         }
     }
-    public string DisplayCategory => Category switch
+    public string DisplayCategory
     {
-        "Basic Controls" => LocalizationManager.Current.GetString("Showcase.Category.Basic", Category),
-        "Custom Controls" => LocalizationManager.Current.GetString("Showcase.Category.Custom", Category),
-        "Getting Started" => LocalizationManager.Current.GetString("Showcase.Category.GettingStarted", Category),
-        _ => Category
-    };
+        get
+        {
+            var loc = LocalizationManager.Current;
+            bool isVi = loc.Culture.TwoLetterISOLanguageName.Equals("vi", StringComparison.OrdinalIgnoreCase);
+            if (!isVi)
+            {
+                return Category switch
+                {
+                    "CAD & Drafting" or "CAD & BIM Engineering" => "CAD & BIM Engineering",
+                    "Data & Grid" or "Dữ liệu & Bảng tính" => "Data & Grid",
+                    "Layout & Shell" or "Navigation" or "Khung nhìn & Điều hướng" => "Viewports & Navigation",
+                    "Input & Forms" or "Soạn thảo & Nhập liệu" => "Editing & Input",
+                    "Basic Controls" or "Thành phần cơ bản" => "Foundation Controls",
+                    "Effects & Styling" or "Hiệu ứng & Đồ họa" => "Effects & Graphics",
+                    "Custom Controls" or "Advanced" or "Thành phần tùy biến" => "Custom Controls",
+                    "Getting Started" or "Bắt đầu" => "Getting Started",
+                    _ => Category
+                };
+            }
+
+            return Category switch
+            {
+                "CAD & Drafting" or "CAD & BIM Engineering" => "CAD & BIM Engineering",
+                "Data & Grid" or "Dữ liệu & Bảng tính" => "Dữ liệu & Bảng tính",
+                "Layout & Shell" or "Navigation" or "Khung nhìn & Điều hướng" => "Khung nhìn & Điều hướng",
+                "Input & Forms" or "Soạn thảo & Nhập liệu" => "Soạn thảo & Nhập liệu",
+                "Basic Controls" or "Thành phần cơ bản" => "Thành phần cơ bản",
+                "Effects & Styling" or "Hiệu ứng & Đồ họa" => "Hiệu ứng & Đồ họa",
+                "Custom Controls" or "Advanced" or "Thành phần tùy biến" => "Thành phần tùy biến",
+                "Getting Started" or "Bắt đầu" => "Bắt đầu",
+                _ => Category
+            };
+        }
+    }
     public string DisplayDescription => LocalizationManager.Current.GetString($"Showcase.Description.{Name}", Description);
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
@@ -201,6 +230,34 @@ public class ShowcaseItem : System.ComponentModel.INotifyPropertyChanged
     }
 }
 
+public class ShowcaseCategoryGroup : System.ComponentModel.INotifyPropertyChanged
+{
+    private bool _isExpanded = true;
+    private bool _isVisible = true;
+
+    public string Name { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
+    public IconKind Icon { get; set; } = IconKind.Folder;
+    public ObservableCollection<ShowcaseItem> Items { get; } = new();
+
+    public int Count => Items.Count;
+
+    public bool IsExpanded
+    {
+        get => _isExpanded;
+        set { _isExpanded = value; OnPropertyChanged(nameof(IsExpanded)); }
+    }
+
+    public bool IsVisible
+    {
+        get => _isVisible;
+        set { _isVisible = value; OnPropertyChanged(nameof(IsVisible)); }
+    }
+
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+}
+
 public partial class ShowcaseViewModel : ObservableObject
 {
     private bool _isDarkMode;
@@ -210,6 +267,8 @@ public partial class ShowcaseViewModel : ObservableObject
 
     public ObservableCollection<ShowcaseItem> AllItems { get; } = new();
     public ObservableCollection<ShowcaseItem> FilteredItems { get; } = new();
+    public ObservableCollection<ShowcaseCategoryGroup> CategoryGroups { get; } = new();
+    public RelayCommand<string> SelectItemCommand { get; }
     public string CatalogCountText => $"{AllItems.Count} {LocalizationManager.Current.GetString("Showcase.Catalog.Items", "items")}";
 
     public bool IsDarkMode
@@ -253,11 +312,19 @@ public partial class ShowcaseViewModel : ObservableObject
         get => _selectedItem;
         set
         {
-            // The extended-properties dock was removed from the window; the inspector data
-            // layer is kept for reuse, but nothing binds it, so it is not rebuilt per click.
-            SetProperty(ref _selectedItem, value);
+            if (value == null) return;
+            if (SetProperty(ref _selectedItem, value))
+            {
+                OnPropertyChanged(nameof(IsOverviewActive));
+                OnPropertyChanged(nameof(IsDocumentationActive));
+                OnPropertyChanged(nameof(ShowHeroHeaderBanner));
+            }
         }
     }
+
+    public bool IsOverviewActive => SelectedItem?.Name == "Overview";
+    public bool IsDocumentationActive => SelectedItem?.Name == "Documentation";
+    public bool ShowHeroHeaderBanner => SelectedItem != null && SelectedItem.Name != "Overview";
 
     public RelayCommand<string> SetAccentCommand { get; }
     public RelayCommand<string> SetCategoryCommand { get; }
@@ -281,6 +348,9 @@ public partial class ShowcaseViewModel : ObservableObject
             LocalizationManager.Current.GetString("Showcase.Toast.Message", "Action executed successfully!"),
             LocalizationManager.Current.GetString("Showcase.Toast.Title", "CONCOST UI")));
 
+        SelectItemCommand = new RelayCommand<string>(name => OpenControl(name));
+
+        InitCategoryGroups();
         InitShowcaseItems();
         ApplyFilter();
         SelectedItem = FilteredItems.FirstOrDefault(x => x.Name == "Overview") ?? FilteredItems.FirstOrDefault();
@@ -322,6 +392,67 @@ public partial class ShowcaseViewModel : ObservableObject
 
         SearchText = string.Empty;
         SelectedCategory = category;
+    }
+
+    private void InitCategoryGroups()
+    {
+        CategoryGroups.Clear();
+
+        CategoryGroups.Add(new ShowcaseCategoryGroup
+        {
+            Name = "CAD & Drafting",
+            DisplayName = "CAD & BIM Engineering",
+            Icon = IconKind.FileCAD,
+            IsExpanded = true
+        });
+
+        CategoryGroups.Add(new ShowcaseCategoryGroup
+        {
+            Name = "Data Controls",
+            DisplayName = "Dữ liệu & Bảng tính",
+            Icon = IconKind.TableData,
+            IsExpanded = false
+        });
+
+        CategoryGroups.Add(new ShowcaseCategoryGroup
+        {
+            Name = "Layout & Shell",
+            DisplayName = "Khung nhìn & Điều hướng",
+            Icon = IconKind.PlotLayout,
+            IsExpanded = false
+        });
+
+        CategoryGroups.Add(new ShowcaseCategoryGroup
+        {
+            Name = "Input & Drag",
+            DisplayName = "Soạn thảo & Nhập liệu",
+            Icon = IconKind.Edit,
+            IsExpanded = false
+        });
+
+        CategoryGroups.Add(new ShowcaseCategoryGroup
+        {
+            Name = "Basic Controls",
+            DisplayName = "Thành phần cơ bản",
+            Icon = IconKind.Cube,
+            IsExpanded = true
+        });
+
+        CategoryGroups.Add(new ShowcaseCategoryGroup
+        {
+            Name = "Effects",
+            DisplayName = "Hiệu ứng & Đồ họa",
+            Icon = IconKind.Star,
+            IsExpanded = false
+        });
+
+        CategoryGroups.Add(new ShowcaseCategoryGroup
+        {
+            Name = "Custom Controls",
+            DisplayName = "Thành phần tùy biến",
+            Icon = IconKind.SectionBox,
+            IsExpanded = false
+        });
     }
 
     private void InitShowcaseItems()
@@ -723,21 +854,54 @@ public partial class ShowcaseViewModel : ObservableObject
     private void ApplyFilter()
     {
         FilteredItems.Clear();
-        foreach (var item in AllItems)
-        {
-            bool matchCat = SelectedCategory == "All" || item.Category.Equals(SelectedCategory, StringComparison.OrdinalIgnoreCase);
-            bool matchSearch = string.IsNullOrWhiteSpace(SearchText) ||
-                               item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                               item.Description.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
+        string query = SearchText?.Trim() ?? string.Empty;
 
-            if (matchCat && matchSearch)
+        foreach (var group in CategoryGroups)
+        {
+            group.Items.Clear();
+            var matches = AllItems.Where(item => item.Category.Equals(group.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                matches = matches.Where(item =>
+                    item.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    item.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    item.Description.Contains(query, StringComparison.OrdinalIgnoreCase));
+            }
+
+            foreach (var match in matches)
+            {
+                group.Items.Add(match);
+                FilteredItems.Add(match);
+            }
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                group.IsVisible = group.Items.Count > 0;
+                group.IsExpanded = group.Items.Count > 0;
+            }
+            else
+            {
+                group.IsVisible = true;
+                group.IsExpanded = group.Name is "CAD & Drafting" or "Data Controls" or "Basic Controls";
+            }
+        }
+
+        // Include Getting Started items in FilteredItems
+        foreach (var item in AllItems.Where(i => i.Category.Equals("Getting Started", StringComparison.OrdinalIgnoreCase)))
+        {
+            if (string.IsNullOrEmpty(query) ||
+                item.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                item.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                item.Description.Contains(query, StringComparison.OrdinalIgnoreCase))
             {
                 FilteredItems.Add(item);
             }
         }
-        if (SelectedItem == null || !FilteredItems.Contains(SelectedItem))
+
+        if (SelectedItem == null || (!FilteredItems.Contains(SelectedItem) && SelectedItem.Name != "Overview" && SelectedItem.Name != "Documentation"))
         {
-            SelectedItem = FilteredItems.FirstOrDefault();
+            SelectedItem = FilteredItems.FirstOrDefault(x => x.Name == "Overview") ?? FilteredItems.FirstOrDefault();
         }
     }
 
@@ -7643,12 +7807,13 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
         {
             var container = new StackPanel { MaxWidth = 560, HorizontalAlignment = System.Windows.HorizontalAlignment.Left };
 
+            bool isVi = LocalizationManager.Current.Culture.TwoLetterISOLanguageName.Equals("vi", StringComparison.OrdinalIgnoreCase);
             var lo = new LoadingOverlay
             {
                 Style = (System.Windows.Style)App.Current.Resources["CONCOST.LoadingOverlay.Base"],
                 IsLoading = true,
-                Message = "Running Finite Element Analysis...",
-                SubMessage = "Computing stiffness matrix and internal force envelopes...",
+                Message = isVi ? "Đang chạy phân tích phần tử hữu hạn..." : "Running Finite Element Analysis...",
+                SubMessage = isVi ? "Đang tính toán ma trận độ cứng và biểu đồ nội lực..." : "Computing stiffness matrix and internal force envelopes...",
                 Height = 160
             };
 
@@ -7661,8 +7826,8 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
             underlyingCard.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
             underlyingCard.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
             var cardSp = new StackPanel();
-            cardSp.Children.Add(new TextBlock { Text = "Structural Calculation Table: Beams G1 - G12", FontWeight = System.Windows.FontWeights.Normal, FontSize = 13 });
-            var subTxt = new TextBlock { Text = "Concrete Class B25 • Cross Section 300x600 • Span L = 7.5m", Margin = new System.Windows.Thickness(0, 4, 0, 0) };
+            cardSp.Children.Add(new TextBlock { Text = isVi ? "Bảng tính toán kết cấu: Dầm D1 - D12" : "Structural Calculation Table: Beams G1 - G12", FontWeight = System.Windows.FontWeights.Normal, FontSize = 13 });
+            var subTxt = new TextBlock { Text = isVi ? "Bê tông B25 • Tiết diện 300x600 • Nhịp L = 7.5m" : "Concrete Class B25 • Cross Section 300x600 • Span L = 7.5m", Margin = new System.Windows.Thickness(0, 4, 0, 0) };
             subTxt.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
             cardSp.Children.Add(subTxt);
             underlyingCard.Child = cardSp;
@@ -7670,7 +7835,7 @@ private void OnTabClosed(object sender, RoutedEventArgs e)
 
             var toggleBtn = new ToggleButton
             {
-                Content = "Toggle Loading State",
+                Content = isVi ? "Bật / Tắt trạng thái chờ" : "Toggle Loading State",
                 IsChecked = true,
                 Margin = new System.Windows.Thickness(0, 10, 0, 0),
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Left
@@ -14577,10 +14742,10 @@ OnPropertyChanged(nameof(PagedRecords));";
         {
             Text = "CONCOST.UI",
             FontSize = 28,
-            FontWeight = System.Windows.FontWeights.Normal,
+            FontWeight = System.Windows.FontWeights.Bold,
             Margin = new System.Windows.Thickness(0, 0, 0, 6)
         };
-        bannerTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.Primary");
+        bannerTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
 
         var bannerSub = new TextBlock
         {
@@ -14610,11 +14775,11 @@ OnPropertyChanged(nameof(PagedRecords));";
                 Padding = new System.Windows.Thickness(14, 8, 14, 8),
                 Margin = new System.Windows.Thickness(0, 0, 10, 8)
             };
-            statBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+            statBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
             statBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
             var statSp = new StackPanel { HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
-            var valLbl = new TextBlock { Text = val, FontSize = 18, FontWeight = System.Windows.FontWeights.Normal, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
-            valLbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.Primary");
+            var valLbl = new TextBlock { Text = val, FontSize = 18, FontWeight = System.Windows.FontWeights.Bold, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
+            valLbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
             var labelLbl = new TextBlock { Text = label, FontSize = 11, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
             labelLbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
             statSp.Children.Add(valLbl);
