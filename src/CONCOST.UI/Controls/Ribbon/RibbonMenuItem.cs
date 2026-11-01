@@ -161,6 +161,16 @@ public class RibbonMenuItem : HeaderedItemsControl
         }
     }
 
+    /// <summary>
+    /// Runs the row as a click would. A split button uses it to replay the entry it last ran, so
+    /// its body can stand for that entry instead of the default command.
+    /// </summary>
+    public void PerformClick()
+    {
+        if (!IsEnabled || HasItems) return;
+        Invoke();
+    }
+
     private void Invoke()
     {
         if (IsCheckable) IsChecked = !IsChecked;

@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**126 pages · 922 documented properties · 99 controls mapped to source · 2 languages (VI / EN).**
+**153 pages · 1238 documented properties · 124 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -47,6 +47,25 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [RebarInput](index.html#rebarinput) | Ô nhập liệu cốt thép thông minh dành riêng cho kỹ sư xây dựng. Tự động nhận diện cú pháp thép dầm/cột/móng (vd: 4D20, 2Ø16, 4Φ20, 2x3D18, D10@200), tự |
 | [Engineering Boxes](index.html#engineeringboxes) | Bộ 6 hộp nhập đại lượng kỹ thuật chuyên sâu kế thừa từ UnitBox: LengthBox (mm, m), AreaBox (m²), VolumeBox (m³), ForceBox (kN), MomentBox (kN.m), Pres |
 | [CompassIndicator](index.html#compassindicator) | La bàn đồ họa chỉ hướng gió và hướng Bắc địa chính (True North / Project North) của dự án công trình, tự động quay kim chỉ hướng theo góc Angle (0 đến |
+
+### CAD & Drafting
+
+| Page | Nội dung |
+| --- | --- |
+| [ViewportControl](index.html#viewportcontrol) | Bề mặt vẽ: lưới, tâm ngắm, dấu bám điểm, grip, dimension tạm, khung chọn và một lớp overlay. Camera là CameraController thật nên cùng một camera dùng  |
+| [ViewCube](index.html#viewcube) | Khối lập phương vát cạnh ở góc khung vẽ, quay theo camera: 26 vùng bấm — sáu mặt có chữ, mười hai dải cạnh và tám tam giác góc — cùng vòng la bàn trên |
+| [NavigationBar](index.html#navigationbar) | Dải nút cho zoom in/out/extents, pan, orbit, walk và nhãn hệ toạ độ làm việc. Công cụ pan/orbit/walk là bật/tắt giữ trạng thái: bấm lại để thoát, giốn |
+| [ViewControlBar](index.html#viewcontrolbar) | Tỉ lệ, mức chi tiết, kiểu hiển thị, đổ bóng, crop, hiện phần tử ẩn và nhóm lệnh hide/isolate. Mỗi thay đổi — do chuột hay do code — đều bắn SettingsCh |
+| [CommandLine](index.html#commandline) | Lịch sử lệnh, ô nhập có gợi ý, nhớ lệnh cũ bằng phím mũi tên, Tab để hoàn tất tên lệnh, và prompt mode cho giá trị mà lệnh còn thiếu. Prompt được ghi  |
+| [DynamicInput](index.html#dynamicinput) | Ô nhập nhỏ đi theo con trỏ trong lúc vẽ: gõ chiều dài, góc hay toạ độ ngay chỗ đang nhìn, không phải nhìn xuống đáy cửa sổ. Một tấm nền, một gạch chân |
+| [CadStatusBar](index.html#cadstatusbar) | Một tấm duy nhất, không viền lồng viền: tóm tắt lựa chọn và mặt phẳng làm việc bên trái, toạ độ con trỏ ở giữa, năm công tắc bám điểm có nhãn SNAP, GR |
+| [ProjectBrowser](index.html#projectbrowser) | Cây các view, sheet, family, schedule và level. Tìm kiếm giữ nguyên đường dẫn tới node khớp, lọc theo loại, nhóm theo loại, sắp xếp theo tên hoặc loại |
+| [DocumentWorkspace](index.html#documentworkspace) | Host các view dưới dạng tab, chia khung dọc/ngang/lưới, tách một view ra cửa sổ riêng, và cho host từ chối việc đóng khi còn thay đổi chưa lưu. |
+| [PropertiesPalette](index.html#propertiespalette) | Bảng thuộc tính của đối tượng đang chọn: tiêu đề, ô tìm, lưới theo nhóm, dòng thông báo lỗi và nút reset về mặc định. Mỗi lần ghi đi qua TransactionMa |
+| [ApplicationTitleBar](index.html#applicationtitlebar) | Tiêu đề cửa sổ theo kiểu tài liệu: tên bản vẽ kèm dấu * khi có thay đổi chưa lưu, dải quick-access (tràn vào menu khi hết chỗ), kéo để di chuyển, đúp  |
+| [ApplicationInfoBar](index.html#applicationinfobar) | Một dòng thông báo nằm dưới ribbon: bốn mức (Info, Success, Warning, Error) quyết định icon và nền pha màu, kèm một hành động và nút đóng. Nó ở trong  |
+| [BackstageView](index.html#backstageview) | Trang phủ toàn cửa sổ sau nút File: dải mục bên trái (kèm nút Back) và nội dung của mục đang chọn bên phải. Nó là một panel của cửa sổ chứ không phải  |
+| [FontPicker](index.html#fontpicker) | Ô chọn font family và cỡ chữ, hai nút bật đậm/nghiêng, kèm dòng xem trước sống. Đủ cho hộp thoại text style mà không phải tự ghép bốn control. |
 
 ### Data & Dashboard
 
@@ -125,18 +144,36 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Divider](index.html#divider) | Đường kẻ phân chia khu vực bố cục với tiêu đề nhãn văn bản ở giữa. |
 | [AdaptivePanel](index.html#adaptivepanel) | ContentControl tự chọn layout theo bề rộng khả dụng qua danh sách Breakpoint — dùng để chuyển 3 cấp Compact / Normal / Wide mà không cần code-behind. |
 | [CONCOSTWindow](index.html#concostwindow) | Cửa sổ WPF với chrome tuỳ biến (title bar, nút min/max/close trong template) — kéo cửa sổ, double-click để maximize đều xử lý sẵn. |
-| [Ribbon](index.html#ribbon) | Ribbon kiểu Office / AutoCAD: dải tab ở trên, mỗi tab chứa các group, mỗi group xếp lệnh trên lưới 3 hàng. Khi hẹp, ribbon tự hạ kích thước lệnh rồi g |
+| [Ribbon](index.html#ribbon) | Ribbon kiểu Office / AutoCAD: dải tab ở trên, mỗi tab chứa các group, mỗi group xếp lệnh trên lưới 3 hàng. Khi hẹp, ribbon tự hạ kích thước lệnh, ẩn n |
 | [Ribbon commands](index.html#ribboncommands) | Bộ lệnh đặt trong ribbon: nút thường, toggle, radio, split button hai vùng, dropdown và menu lồng nhau. Tất cả đều theo ICommand: IsEnabled tự bám Can |
 | [StatusBar](index.html#statusbar) | Dải thông tin dưới đáy cửa sổ. Mỗi ô là một StatusBarItem; ô khai Alignment="Right" bám mép phải, phần giữa co giãn theo cửa sổ. |
 | [CommandBar](index.html#commandbar) | Thanh công cụ một dòng: nút có icon + nhãn, và khi hết chỗ thì phần thừa rơi vào menu xổ xuống thay vì bị cắt cụt. |
 | [QuickAccessToolbar](index.html#quickaccesstoolbar) | Bản rời của thanh truy cập nhanh trong ribbon: chỉ icon, cao 28px, đặt được ở bất kỳ cửa sổ nào không cần cả ribbon. |
+| [MasonryPanel](index.html#masonrypanel) | Panel trả lại chiều cao tự nhiên cho từng con: con nào cao thì chiếm chỗ ấy, và mỗi con rơi vào cột đang ngắn nhất. Không cần đặt chiều cao cho cột, k |
+| [Wizard](index.html#wizard) | Các bước là con của wizard nên form đọc như form trong XAML. Mỗi bước tự giữ IsValid; nút Tiếp chỉ bật khi bước hiện tại hợp lệ, và Navigating cho hos |
 
 ### Input & Drag
 
 | Page | Nội dung |
 | --- | --- |
 | [SearchableTreePicker](index.html#searchabletreepicker) | Ô tìm kiếm đặt trước một cây: gõ để thu hẹp cây xuống các mục khớp và những nhánh dẫn tới chúng, rồi chọn một hoặc nhiều mục. |
+| [TagInput](index.html#taginput) | Mỗi giá trị là một chip có nút đóng; dán cả chuỗi “bê tông, thép, cốp pha” thì control tự tách theo dấu phẩy. Có gợi ý, có giới hạn số thẻ, và không c |
+| [SignaturePad](index.html#signaturepad) | Vùng ký dùng StrokeCollection thật của System.Windows.Ink: mỗi nét là một Stroke, nên huỷ nét chỉ là bỏ phần tử cuối, và ảnh chữ ký được dựng lại sau  |
 | [Drop zone & Drag](index.html#dragdrop) | Ba mảnh của một thao tác kéo thả: FileDropZone nhận tệp, DropTargetHighlight vẽ viền gợi ý quanh bất kỳ phần tử nào, và DragGhost mang nhãn theo con t |
+
+### App & Tooling
+
+| Page | Nội dung |
+| --- | --- |
+| [Scheduler](index.html#scheduler) | Một cột thời gian cho một ngày: khung giờ, vạch giờ và các khối booking tự chia lane khi trùng giờ. Không cần dữ liệu mẫu - đưa SchedulerItem vào Item |
+| [KanbanBoard](index.html#kanbanboard) | Bảng nhiều cột, mỗi cột là một KanbanColumn chứa KanbanCard. Thẻ kéo được sang cột khác, và board phát CardMoved để host ghi lại. |
+| [CodeEditor](index.html#codeeditor) | Khung sửa mã có số dòng, phím Tab và tô màu cho C#, XAML, SQL và JSON. Bộ tô màu là một hàm thuần nên test được mà không cần mở cửa sổ. |
+| [MarkdownViewer](index.html#markdownviewer) | Hiển thị Markdown thành FlowDocument để dùng lại được cho cả màn hình lẫn bản in. Chỉ hỗ trợ tập con cần cho tài liệu trợ giúp, và mọi cú pháp lạ đều  |
+| [ImageViewer](index.html#imageviewer) | Xem ảnh bản vẽ với zoom, xoay và kéo, có nền ca-rô để thấy vùng trong suốt. Phép zoom giữ điểm dưới con trỏ đứng yên nên bản vẽ không bị trượt khi lăn |
+| [MiniMap](index.html#minimap) | Bản đồ thu nhỏ của toàn bộ mặt bằng kèm khung nhìn hiện tại. Click để nhảy tới vùng tương ứng - dùng chung cho bản vẽ, sơ đồ hay ảnh lớn. |
+| [ModelViewer3D](index.html#modelviewer3d) | Chiếu một tập đỉnh/cạnh 3D lên mặt phẳng 2D để xem nhanh mô hình mà không cần renderer. Đủ cho preview, icon mô hình và kiểm tra kết quả xuất. |
+| [CoachMark](index.html#coachmark) | Lớp phủ tối và một thẻ chỉ dẫn trỏ vào control đang được giới thiệu. Thẻ tự lật lên trên khi target ở sát đáy cửa sổ. |
+| [SplashScreen](index.html#splashscreen) | Thẻ khởi động có logo, tên ứng dụng, phiên bản và dòng trạng thái, kèm thanh tiến trình. Là control trong cây giao diện nên chạy được cả trong cửa sổ  |
 
 ### Effects & Decoration
 
@@ -210,6 +247,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | `data/guides.js` | FAQ and migration guides. |
 | `data/examples.js` | Cookbook page with complete, combined examples. |
 | `data/custom.js` | Newer control pages and C# overrides. |
+| `data/cad.js` | The Revit-inspired CAD shell: viewport, navigation, command line, status bar, browsers, chrome. |
 | `data/basic.js` | Styling-only basic controls + attached property tables. |
 | `data/enrich.js` | Remaining property tables and C# snippets. |
 | `data/auto.generated.js` | **Generated** property tables, C# samples and English property descriptions. Do not edit. |

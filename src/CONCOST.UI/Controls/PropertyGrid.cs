@@ -163,6 +163,10 @@ public class PropertyGrid : Control
         DependencyProperty.Register(nameof(Categories), typeof(ObservableCollection<PropertyCategoryGroup>), typeof(PropertyGrid),
             new PropertyMetadata(null));
 
+    public static readonly DependencyProperty ShowToolbarProperty =
+        DependencyProperty.Register(nameof(ShowToolbar), typeof(bool), typeof(PropertyGrid),
+            new PropertyMetadata(true));
+
     public object? SelectedObject
     {
         get => GetValue(SelectedObjectProperty);
@@ -173,6 +177,16 @@ public class PropertyGrid : Control
     {
         get => (ObservableCollection<PropertyCategoryGroup>)GetValue(CategoriesProperty);
         set => SetValue(CategoriesProperty, value);
+    }
+
+    /// <summary>
+    /// Shows the view switch and the filter box above the rows. A host that already offers its own
+    /// filter turns it off rather than stacking a second search box over the first.
+    /// </summary>
+    public bool ShowToolbar
+    {
+        get => (bool)GetValue(ShowToolbarProperty);
+        set => SetValue(ShowToolbarProperty, value);
     }
 
     public PropertyGrid()
@@ -193,10 +207,13 @@ public class PropertyGrid : Control
         if (_sortCategoryButton != null) _sortCategoryButton.Checked += OnSortByCategoryChecked;
         if (_sortNameButton != null) _sortNameButton.Checked += OnSortByNameChecked;
 
-        BuildProperties();
+        // Only when there is an object to reflect over. A host that fills Categories itself owns
+        // them, and clearing them on the first layout pass wipes the rows it just added — which is
+        // exactly what happened when a palette only became visible at the moment of a selection.
+        if (SelectedObject is not null) BuildProperties();
     }
 
-    private void OnSearchTextChanged(object sender, TextChangedEventArgs e) { _filterQuery = _searchBox?.Text.Trim() ?? string.Empty; BuildProperties(); }
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e) { if (SelectedObject is null) return; _filterQuery = _searchBox?.Text.Trim() ?? string.Empty; BuildProperties(); }
     private void OnSortByCategoryChecked(object sender, RoutedEventArgs e) { _sortByCategory = true; BuildProperties(); }
     private void OnSortByNameChecked(object sender, RoutedEventArgs e) { _sortByCategory = false; BuildProperties(); }
 

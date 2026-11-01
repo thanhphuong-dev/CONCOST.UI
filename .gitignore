@@ -21,6 +21,10 @@ packages/
 *.nupkg
 *.snupkg
 
+# Python bytecode from docs/tools/*.py
+__pycache__/
+*.pyc
+
 # Operating system files
 Thumbs.db
 Desktop.ini

@@ -6,9 +6,11 @@ The current repository structure and supported setup are documented in the root 
 
 ## Active
 
-- [Roadmap revision 3](roadmap-v3.md) — current direction, control coverage and release themes. Sections 96, 97, 100, 101 and 107.13 are annotated with what actually shipped.
+- [Roadmap revision 3](roadmap-v3.md) — current direction, control coverage and release themes. Sections 96, 97, 100, 101, 107.4, 107.9, 107.12, 107.13 and 107.16 are annotated with what actually shipped.
 - [Effects roadmap](effects-roadmap.md) — planned visual effects (web 2026 trends). Phases 0–2 shipped in 1.0.0, **phase 3 shipped in 1.1.0** (CommandPalette, ParticleField, RadialGauge, PageTransitionHost).
 - [Ribbon plan](ribbon-plan.md) — 22 controls in P0/P1/P2, layout engine, keytips, persistence. **All 22/22 shipped in 1.1.0**, earlier than the planned 1.1.0 = P0 / 1.2.0 = P1 / 1.3.0 = P2 split.
+- [Revit-inspired CAD UI spec — gap analysis](revit-spec-gap.md) — `Revit_Inspired_CAD_UI_Control_Specification_v1.0.docx` (TT-UI-SPEC-001) mapped item by item: **132 of 135 covered (98%), 3 partial, 0 missing**, plus **11 of the 12** services and **20 of 20** acceptance criteria.
+- [Revit-inspired CAD UI spec — plan](revit-spec-plan.md) — the phased plan that closed the gap (phases A–F), its verification rule, and the four items deliberately left partial with the boundary decision behind each.
 
 ## Release 1.1.0 at a glance
 

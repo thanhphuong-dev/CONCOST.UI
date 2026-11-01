@@ -7,6 +7,9 @@
     <Color x:Key="CONCOST.Color.PrimaryPressed">#D96600</Color>
     <Color x:Key="CONCOST.Color.PrimaryLight">#FFA040</Color>
     <Color x:Key="CONCOST.Color.PrimaryDark">#CC6000</Color>
+    <!-- 12% of the accent over whatever is behind it: the tint of a selected row, a keyed badge or
+         a hovered tile. Regenerated from the accent by ThemeManager, so it follows the palette. -->
+    <Color x:Key="CONCOST.Color.PrimarySoft">#1FFF7900</Color>
 
     <Color x:Key="CONCOST.Color.Success">#28A745</Color>
     <Color x:Key="CONCOST.Color.Warning">#FFB020</Color>
@@ -36,6 +39,7 @@
     <SolidColorBrush x:Key="CONCOST.Brush.PrimaryPressed" Color="{StaticResource CONCOST.Color.PrimaryPressed}" />
     <SolidColorBrush x:Key="CONCOST.Brush.PrimaryLight" Color="{StaticResource CONCOST.Color.PrimaryLight}" />
     <SolidColorBrush x:Key="CONCOST.Brush.PrimaryDark" Color="{StaticResource CONCOST.Color.PrimaryDark}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoft" Color="{StaticResource CONCOST.Color.PrimarySoft}" />
 
     <SolidColorBrush x:Key="CONCOST.Brush.Success" Color="{StaticResource CONCOST.Color.Success}" />
     <SolidColorBrush x:Key="CONCOST.Brush.Warning" Color="{StaticResource CONCOST.Color.Warning}" />

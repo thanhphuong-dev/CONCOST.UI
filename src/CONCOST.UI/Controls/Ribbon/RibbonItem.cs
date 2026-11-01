@@ -66,6 +66,37 @@ public abstract class RibbonItem : HeaderedContentControl
         DependencyProperty.Register(nameof(Id), typeof(string), typeof(RibbonItem),
             new FrameworkPropertyMetadata(string.Empty));
 
+    /// <summary>
+    /// How early the ribbon is allowed to shrink this item, lowest first. Zero keeps the item at the
+    /// size the host asked for however narrow the window gets — the same “never collapse” value
+    /// <see cref="RibbonGroup.CollapsePriority"/> uses.
+    /// </summary>
+    public static readonly DependencyProperty CollapsePriorityProperty =
+        DependencyProperty.Register(nameof(CollapsePriority), typeof(int), typeof(RibbonItem),
+            new FrameworkPropertyMetadata(100, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
+
+    public static readonly DependencyProperty ExtendedScreenTipProperty =
+        DependencyProperty.Register(nameof(ExtendedScreenTip), typeof(string), typeof(RibbonItem),
+            new FrameworkPropertyMetadata(string.Empty));
+
+    public static readonly DependencyProperty ToolTipPreviewProperty =
+        DependencyProperty.Register(nameof(ToolTipPreview), typeof(ImageSource), typeof(RibbonItem),
+            new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty ToolTipFooterProperty =
+        DependencyProperty.Register(nameof(ToolTipFooter), typeof(string), typeof(RibbonItem),
+            new FrameworkPropertyMetadata(string.Empty));
+
+    private static readonly DependencyPropertyKey IsLabelVisiblePropertyKey =
+        DependencyProperty.RegisterReadOnly(nameof(IsLabelVisible), typeof(bool), typeof(RibbonItem),
+            new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    /// <summary>
+    /// True while the item keeps its caption. The collapse ladder clears it to reach the icon-only
+    /// rung, so a template has to hide its label on this and not on the header being empty.
+    /// </summary>
+    public static readonly DependencyProperty IsLabelVisibleProperty = IsLabelVisiblePropertyKey.DependencyProperty;
+
     private RibbonToolTip? _autoTip;
     private bool _autoTipSuspended;
 
@@ -98,6 +129,13 @@ public abstract class RibbonItem : HeaderedContentControl
 
         // A greyed-out command still has to explain itself on hover.
         ToolTipService.SetShowOnDisabled(this, true);
+
+        // The tip appears the moment the pointer settles: 500 ms is short enough to feel instant and
+        // long enough that sweeping across a row of buttons does not stack tips up.
+        ToolTipService.SetInitialShowDelay(this, 500);
+        ToolTipService.SetBetweenShowDelay(this, 100);
+
+        ContextMenuOpening += OnBuildQuickAccessMenu;
     }
 
     /// <summary>Command executed when the item is invoked.</summary>
@@ -197,6 +235,53 @@ public abstract class RibbonItem : HeaderedContentControl
         set => SetValue(GestureTextProperty, value);
     }
 
+    /// <summary>
+    /// Lower values are demoted earlier. Zero refuses demotion altogether, which is how a host pins
+    /// an icon to the large size.
+    /// </summary>
+    public int CollapsePriority
+    {
+        get => (int)GetValue(CollapsePriorityProperty);
+        set => SetValue(CollapsePriorityProperty, value);
+    }
+
+    /// <summary>
+    /// The long text the screen tip grows into after <see cref="RibbonToolTip.ExpandDelay"/>
+    /// milliseconds. Leave it empty for a tip that stays short.
+    /// </summary>
+    public string ExtendedScreenTip
+    {
+        get => (string)GetValue(ExtendedScreenTipProperty);
+        set => SetValue(ExtendedScreenTipProperty, value);
+    }
+
+    /// <summary>Optional illustration shown by the expanded screen tip.</summary>
+    public ImageSource? ToolTipPreview
+    {
+        get => (ImageSource?)GetValue(ToolTipPreviewProperty);
+        set => SetValue(ToolTipPreviewProperty, value);
+    }
+
+    /// <summary>Bottom line of the expanded screen tip, usually “Press F1 for more help”.</summary>
+    public string ToolTipFooter
+    {
+        get => (string)GetValue(ToolTipFooterProperty);
+        set => SetValue(ToolTipFooterProperty, value);
+    }
+
+    /// <summary>False once the ribbon has hidden small-button captions to save width.</summary>
+    public bool IsLabelVisible => (bool)GetValue(IsLabelVisibleProperty);
+
+    /// <summary>
+    /// Called from <see cref="Ribbon.ShowItemLabels"/> on every descendant — same broadcast trick
+    /// <see cref="RibbonGroup.ApplyShowGroupLabels"/> uses for the panel captions.
+    /// </summary>
+    internal void ApplyShowItemLabels(bool show)
+    {
+        if (IsLabelVisible == show) return;
+        SetValue(IsLabelVisiblePropertyKey, show);
+    }
+
     /// <summary>Stable identifier used by quick-access and state persistence.</summary>
     public string Id
     {
@@ -261,7 +346,8 @@ public abstract class RibbonItem : HeaderedContentControl
 
         if (e.Property == HeaderProperty || e.Property == ScreenTipProperty ||
             e.Property == GestureTextProperty || e.Property == IconProperty ||
-            e.Property == LargeIconProperty)
+            e.Property == LargeIconProperty || e.Property == ExtendedScreenTipProperty ||
+            e.Property == ToolTipPreviewProperty || e.Property == ToolTipFooterProperty)
         {
             UpdateAutoToolTip();
         }
@@ -293,6 +379,9 @@ public abstract class RibbonItem : HeaderedContentControl
         _autoTip.Title = title;
         _autoTip.Description = ScreenTip;
         _autoTip.GestureText = GestureText;
+        _autoTip.ExpandedDescription = ExtendedScreenTip;
+        _autoTip.Preview = ToolTipPreview;
+        _autoTip.Footer = ToolTipFooter;
 
         if (!ReferenceEquals(ToolTip, _autoTip)) ToolTip = _autoTip;
     }
@@ -305,7 +394,59 @@ public abstract class RibbonItem : HeaderedContentControl
         if (!command.CanExecute(CommandParameter)) return false;
 
         command.Execute(CommandParameter);
+
+        // A minimised ribbon shows its commands in an overlay; running one is the signal to fold
+        // that overlay away again, exactly as the ribbon in the host application does.
+        Ribbon.DismissOverlayFor(this);
         return true;
+    }
+
+    /// <summary>
+    /// Adds the “Add to / Remove from Quick Access Toolbar” rows to the item's context menu. The
+    /// ribbon owns the pins, so the item only has to find it.
+    /// </summary>
+    private void OnBuildQuickAccessMenu(object sender, ContextMenuEventArgs e)
+    {
+        Ribbon? ribbon = FindRibbon();
+        if (ribbon == null || !ribbon.IsQuickAccessCustomizable || string.IsNullOrEmpty(Id)) return;
+
+        var menu = new ContextMenu();
+
+        var toggle = new MenuItem
+        {
+            Header = ribbon.IsPinnedToQuickAccess(this)
+                ? "Remove from Quick Access Toolbar"
+                : "Add to Quick Access Toolbar"
+        };
+
+        toggle.Click += (_, _) =>
+        {
+            if (ribbon.IsPinnedToQuickAccess(this)) ribbon.UnpinFromQuickAccess(this);
+            else ribbon.PinToQuickAccess(this);
+        };
+
+        menu.Items.Add(toggle);
+        ContextMenu = menu;
+    }
+
+    private Ribbon? FindRibbon()
+    {
+        DependencyObject? node = this;
+
+        while (node != null)
+        {
+            if (node is Ribbon ribbon) return ribbon;
+
+            DependencyObject? next = node is Visual or System.Windows.Media.Media3D.Visual3D
+                ? VisualTreeHelper.GetParent(node)
+                : null;
+
+            // Content hosted by a Popup lives in its own visual tree, so the walk has to continue
+            // through the logical tree to find the ribbon again.
+            node = next ?? LogicalTreeHelper.GetParent(node);
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -322,6 +463,11 @@ public abstract class RibbonItem : HeaderedContentControl
     private static object CoerceIsEnabled(DependencyObject d, object baseValue)
     {
         if (d is not RibbonItem item || item.Command == null) return baseValue;
+
+        // An explicit IsEnabled="False" — or a disabled ancestor — has to win over CanExecute, or the
+        // item stays clickable inside a region the host believes is disabled.
+        if (baseValue is false) return false;
+
         return item.Command.CanExecute(item.CommandParameter);
     }
 

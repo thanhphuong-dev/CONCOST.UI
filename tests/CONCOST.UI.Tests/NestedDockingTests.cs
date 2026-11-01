@@ -48,10 +48,11 @@ public class NestedDockingTests
 
             Host(group);
 
-            // Two equal slots and one 6px splitter between them.
-            Assert.Equal(197, top.ActualHeight, 1);
-            Assert.Equal(197, bottom.ActualHeight, 1);
-            Assert.Equal(400, top.ActualHeight + bottom.ActualHeight + 6, 1);
+            // Two equal slots and one splitter between them; the band is the group's own property.
+            double splitter = group.SplitterThickness;
+            Assert.Equal((400 - splitter) / 2, top.ActualHeight, 1);
+            Assert.Equal((400 - splitter) / 2, bottom.ActualHeight, 1);
+            Assert.Equal(400, top.ActualHeight + bottom.ActualHeight + splitter, 1);
         });
     }
 

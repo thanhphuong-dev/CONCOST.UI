@@ -19,6 +19,21 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Growl.RegisterPanel(PART_GrowlHost);
+
+        Loaded += (_, _) =>
+        {
+            var workArea = SystemParameters.WorkArea;
+            if (Height >= workArea.Height)
+            {
+                Height = Math.Max(MinHeight, workArea.Height - 60);
+                Top = workArea.Top + 30;
+            }
+            if (Width >= workArea.Width)
+            {
+                Width = Math.Max(MinWidth, workArea.Width - 60);
+                Left = workArea.Left + 30;
+            }
+        };
     }
 
     private void OnLanguageSelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -41,6 +41,38 @@ public class NumericUpDown : Control
     public static readonly DependencyProperty CanIncreaseProperty = CanIncreasePropertyKey.DependencyProperty;
     public static readonly DependencyProperty CanDecreaseProperty = CanDecreasePropertyKey.DependencyProperty;
 
+    public static readonly DependencyProperty LargeIncrementProperty =
+        DependencyProperty.Register(nameof(LargeIncrement), typeof(double), typeof(NumericUpDown),
+            new FrameworkPropertyMetadata(10.0));
+
+    public static readonly DependencyProperty IsReadOnlyProperty =
+        DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(NumericUpDown),
+            new FrameworkPropertyMetadata(false));
+
+    public static readonly DependencyProperty ShowButtonsProperty =
+        DependencyProperty.Register(nameof(ShowButtons), typeof(bool), typeof(NumericUpDown),
+            new FrameworkPropertyMetadata(true));
+
+    public static readonly DependencyProperty ButtonPlacementProperty =
+        DependencyProperty.Register(nameof(ButtonPlacement), typeof(Dock), typeof(NumericUpDown),
+            new FrameworkPropertyMetadata(Dock.Right));
+
+    public static readonly DependencyProperty CornerRadiusProperty =
+        DependencyProperty.Register(nameof(CornerRadius), typeof(CornerRadius), typeof(NumericUpDown),
+            new FrameworkPropertyMetadata(new CornerRadius(4)));
+
+    public static readonly DependencyProperty TextAlignmentProperty =
+        DependencyProperty.Register(nameof(TextAlignment), typeof(TextAlignment), typeof(NumericUpDown),
+            new FrameworkPropertyMetadata(TextAlignment.Right));
+
+    public static readonly DependencyProperty NullValueProperty =
+        DependencyProperty.Register(nameof(NullValue), typeof(double?), typeof(NumericUpDown),
+            new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty IsNullableProperty =
+        DependencyProperty.Register(nameof(IsNullable), typeof(bool), typeof(NumericUpDown),
+            new FrameworkPropertyMetadata(false));
+
     public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
         nameof(ValueChanged), RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<double>), typeof(NumericUpDown));
 
@@ -61,6 +93,54 @@ public class NumericUpDown : Control
     public string FormatString { get => (string)GetValue(FormatStringProperty); set => SetValue(FormatStringProperty, value); }
     public bool CanIncrease => (bool)GetValue(CanIncreaseProperty);
     public bool CanDecrease => (bool)GetValue(CanDecreaseProperty);
+
+    public double LargeIncrement
+    {
+        get => (double)GetValue(LargeIncrementProperty);
+        set => SetValue(LargeIncrementProperty, value);
+    }
+
+    public bool IsReadOnly
+    {
+        get => (bool)GetValue(IsReadOnlyProperty);
+        set => SetValue(IsReadOnlyProperty, value);
+    }
+
+    public bool ShowButtons
+    {
+        get => (bool)GetValue(ShowButtonsProperty);
+        set => SetValue(ShowButtonsProperty, value);
+    }
+
+    public Dock ButtonPlacement
+    {
+        get => (Dock)GetValue(ButtonPlacementProperty);
+        set => SetValue(ButtonPlacementProperty, value);
+    }
+
+    public CornerRadius CornerRadius
+    {
+        get => (CornerRadius)GetValue(CornerRadiusProperty);
+        set => SetValue(CornerRadiusProperty, value);
+    }
+
+    public TextAlignment TextAlignment
+    {
+        get => (TextAlignment)GetValue(TextAlignmentProperty);
+        set => SetValue(TextAlignmentProperty, value);
+    }
+
+    public double? NullValue
+    {
+        get => (double?)GetValue(NullValueProperty);
+        set => SetValue(NullValueProperty, value);
+    }
+
+    public bool IsNullable
+    {
+        get => (bool)GetValue(IsNullableProperty);
+        set => SetValue(IsNullableProperty, value);
+    }
 
     public override void OnApplyTemplate()
     {
@@ -128,10 +208,33 @@ public class NumericUpDown : Control
             _textBox.Text = FormatValue(Value);
             e.Handled = true;
         }
+        else if (e.Key == Key.Home)
+        {
+            SetCurrentValue(ValueProperty, Minimum);
+            UpdateTextBox();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.End)
+        {
+            SetCurrentValue(ValueProperty, Maximum);
+            UpdateTextBox();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.PageUp)
+        {
+            StepLarge(1);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.PageDown)
+        {
+            StepLarge(-1);
+            e.Handled = true;
+        }
     }
 
     private void Step(int direction)
     {
+        if (IsReadOnly) return;
         double next;
         try
         {
@@ -147,10 +250,38 @@ public class NumericUpDown : Control
         UpdateTextBox();
     }
 
+    private void StepLarge(int direction)
+    {
+        if (IsReadOnly) return;
+        double next;
+        try
+        {
+            next = (double)((decimal)Value + direction * (decimal)LargeIncrement);
+        }
+        catch (OverflowException)
+        {
+            next = Value + direction * LargeIncrement;
+        }
+
+        if (!NumericCompatibility.IsFinite(next)) return;
+        SetCurrentValue(ValueProperty, next);
+        UpdateTextBox();
+    }
+
     private void ParseAndApplyText()
     {
         if (_textBox is null) return;
         var text = _textBox.Text?.Trim();
+
+        // Support nullable/empty clearing
+        if (IsNullable && string.IsNullOrWhiteSpace(text))
+        {
+            if (NullValue.HasValue)
+                SetCurrentValue(ValueProperty, NullValue.Value);
+            _textBox.Text = FormatValue(Value);
+            return;
+        }
+
         var styles = NumberStyles.Float | NumberStyles.AllowThousands;
         bool isPercent = false;
         if (!string.IsNullOrWhiteSpace(FormatString))

@@ -34,7 +34,7 @@ public class Ribbon : Control
 
     public static readonly DependencyProperty IsMinimizedProperty =
         DependencyProperty.Register(nameof(IsMinimized), typeof(bool), typeof(Ribbon),
-            new FrameworkPropertyMetadata(false));
+            new FrameworkPropertyMetadata(false, OnIsMinimizedChanged));
 
     public static readonly DependencyProperty ApplicationMenuProperty =
         DependencyProperty.Register(nameof(ApplicationMenu), typeof(object), typeof(Ribbon),
@@ -98,6 +98,49 @@ public class Ribbon : Control
         DependencyProperty.Register(nameof(EmptyContent), typeof(object), typeof(Ribbon),
             new FrameworkPropertyMetadata(null));
 
+    public static readonly DependencyProperty DisplayModeProperty =
+        DependencyProperty.Register(nameof(DisplayMode), typeof(RibbonDisplayMode), typeof(Ribbon),
+            new FrameworkPropertyMetadata(RibbonDisplayMode.Full,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnDisplayModeChanged));
+
+    public static readonly DependencyProperty IsOverlayOpenProperty =
+        DependencyProperty.Register(nameof(IsOverlayOpen), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(false,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsOverlayOpenChanged));
+
+    /// <summary>Token in the top-right corner of the ribbon: search, sign-in, help.</summary>
+    public static readonly DependencyProperty InfoCenterProperty =
+        DependencyProperty.Register(nameof(InfoCenter), typeof(object), typeof(Ribbon),
+            new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty ShowInfoCenterProperty =
+        DependencyProperty.Register(nameof(ShowInfoCenter), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(true));
+
+    public static readonly DependencyProperty ShowMinimizeButtonProperty =
+        DependencyProperty.Register(nameof(ShowMinimizeButton), typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(true));
+
+    /// <summary>Folds the ribbon one step further: full, tabs only, titles only, buttons only.</summary>
+    public static readonly RoutedUICommand CycleDisplayModeCommand =
+        new("Cycle ribbon size", nameof(CycleDisplayModeCommand), typeof(Ribbon));
+
+    /// <summary>
+    /// Attached, inheriting switch that lets every <see cref="RibbonItem"/> hide its caption. The
+    /// collapse ladder turns it off to reach the icon-only rung.
+    /// </summary>
+    public static readonly DependencyProperty ShowItemLabelsProperty =
+        DependencyProperty.RegisterAttached("ShowItemLabels", typeof(bool), typeof(Ribbon),
+            new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits, OnShowItemLabelsChanged));
+
+    private static void OnShowItemLabelsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RibbonItem item) item.ApplyShowItemLabels((bool)e.NewValue);
+    }
+
+    public static bool GetShowItemLabels(DependencyObject obj) => (bool)obj.GetValue(ShowItemLabelsProperty);
+    public static void SetShowItemLabels(DependencyObject obj, bool value) => obj.SetValue(ShowItemLabelsProperty, value);
+
     /// <summary>Opens the list of tabs from the “»” overflow button.</summary>
     public static readonly RoutedUICommand ShowTabListCommand =
         new("All tabs", nameof(ShowTabListCommand), typeof(Ribbon));
@@ -142,6 +185,7 @@ public class Ribbon : Control
     private readonly HashSet<RibbonTabItem> _watched = new();
     private readonly List<RibbonMenuItem> _quickAccessRows = new();
     private readonly List<RibbonItem> _pinned = new();
+    private readonly List<RibbonTabItem> _contextualTabs = new();
     private RibbonQuickAccessToolBar? _quickAccess;
     private ContentControl? _qatAbove;
     private ContentControl? _qatInline;
@@ -151,8 +195,15 @@ public class Ribbon : Control
     private RibbonKeyTipController? _keyTips;
     private System.Windows.Controls.ScrollViewer? _tabScroll;
     private Window? _hostWindow;
+    private System.Windows.Controls.Primitives.Popup? _overlay;
+    private System.Windows.Controls.Border? _overlayShell;
+    private Panel? _contentSlot;
+    private FrameworkElement? _contentHost;
+    private RibbonTabItem? _tabBeforeContextual;
     private bool _restoringPins;
     private bool _syncingTabId;
+    private bool _applyingDisplayMode;
+    private bool _updatingOverlay;
 
     static Ribbon()
     {
@@ -168,6 +219,7 @@ public class Ribbon : Control
         // Generic.xaml has no code-behind, so the overflow button talks to the ribbon through a
         // routed command instead of a Click handler.
         CommandBindings.Add(new CommandBinding(ShowTabListCommand, OnShowTabList));
+        CommandBindings.Add(new CommandBinding(CycleDisplayModeCommand, (_, _) => CycleState()));
     }
 
     /// <summary>
@@ -196,13 +248,67 @@ public class Ribbon : Control
 
     /// <summary>
     /// Collapses the content area so only the tab strip remains — the classic “show tabs only”
-    /// ribbon state.
+    /// ribbon state. Kept as a two-way alias of <see cref="DisplayMode"/> so existing markup and
+    /// view models keep working: true means "at least tabs only" and clears the two deeper states.
     /// </summary>
     public bool IsMinimized
     {
         get => (bool)GetValue(IsMinimizedProperty);
         set => SetValue(IsMinimizedProperty, value);
     }
+
+    /// <summary>
+    /// How much of the ribbon is on screen. The four states are the ones the minimise button cycles
+    /// through; in the three minimised states a tab click opens the ribbon as an overlay.
+    /// </summary>
+    public RibbonDisplayMode DisplayMode
+    {
+        get => (RibbonDisplayMode)GetValue(DisplayModeProperty);
+        set => SetValue(DisplayModeProperty, value);
+    }
+
+    /// <summary>True while the minimised ribbon is showing its commands in the overlay.</summary>
+    public bool IsOverlayOpen
+    {
+        get => (bool)GetValue(IsOverlayOpenProperty);
+        set => SetValue(IsOverlayOpenProperty, value);
+    }
+
+    /// <summary>Content for the top-right corner: a search box, a sign-in chip, a help button.</summary>
+    public object? InfoCenter
+    {
+        get => GetValue(InfoCenterProperty);
+        set => SetValue(InfoCenterProperty, value);
+    }
+
+    /// <summary>Shows the info centre. On by default; an empty one occupies no room anyway.</summary>
+    public bool ShowInfoCenter
+    {
+        get => (bool)GetValue(ShowInfoCenterProperty);
+        set => SetValue(ShowInfoCenterProperty, value);
+    }
+
+    /// <summary>Shows the chevron at the end of the tab strip that folds the ribbon away.</summary>
+    public bool ShowMinimizeButton
+    {
+        get => (bool)GetValue(ShowMinimizeButtonProperty);
+        set => SetValue(ShowMinimizeButtonProperty, value);
+    }
+
+    /// <summary>Raised after <see cref="DisplayMode"/> settled on a new value.</summary>
+    public event EventHandler? DisplayModeChanged;
+
+    /// <summary>Steps to the next display mode: full → tabs → titles → buttons → full.</summary>
+    public void CycleState() => ApplyDisplayMode(NextMode(DisplayMode));
+
+    /// <summary>The state that follows <paramref name="mode"/> in the cycle.</summary>
+    public static RibbonDisplayMode NextMode(RibbonDisplayMode mode) => mode switch
+    {
+        RibbonDisplayMode.Full => RibbonDisplayMode.MinimizeToTabs,
+        RibbonDisplayMode.MinimizeToTabs => RibbonDisplayMode.MinimizeToPanelTitles,
+        RibbonDisplayMode.MinimizeToPanelTitles => RibbonDisplayMode.MinimizeToPanelButtons,
+        _ => RibbonDisplayMode.Full
+    };
 
     /// <summary>
     /// Optional <see cref="RibbonApplicationMenu"/> shown as the coloured File block at the
@@ -347,8 +453,152 @@ public class Ribbon : Control
     /// <summary>Tabs currently offered to the user, in strip order.</summary>
     public IReadOnlyList<RibbonTabItem> VisibleTabs =>        (IReadOnlyList<RibbonTabItem>?)GetValue(VisibleTabsProperty) ?? Array.Empty<RibbonTabItem>();
 
-    /// <summary>Tabs in declaration order, contextual groups expanded.</summary>
-    public IReadOnlyList<RibbonTabItem> Tabs => Expand(ItemsSource);
+    /// <summary>
+    /// Tabs in declaration order, contextual groups expanded, plus any contextual tab the host
+    /// pushed in at runtime through <see cref="ShowContextualTab"/>.
+    /// </summary>
+    public IReadOnlyList<RibbonTabItem> Tabs
+    {
+        get
+        {
+            IReadOnlyList<RibbonTabItem> declared = Expand(ItemsSource);
+            if (_contextualTabs.Count == 0) return declared;
+
+            var tabs = new List<RibbonTabItem>(declared);
+
+            foreach (RibbonTabItem tab in _contextualTabs)
+                if (!tabs.Contains(tab)) tabs.Add(tab);
+
+            return tabs;
+        }
+    }
+
+    /// <summary>
+    /// Adds a tab that only belongs to the current mode and, by default, switches to it — the
+    /// “Modify | Walls” tab of a ribbon. The tab is appended at the end of the strip, painted in the
+    /// contextual band and remembered so <see cref="HideContextualTab"/> can put the user back on
+    /// the tab they were working in.
+    /// </summary>
+    /// <remarks>Only one contextual tab is live at a time; a second one replaces the first.</remarks>
+    public void ShowContextualTab(RibbonTabItem tab, bool activate = true)
+    {
+        if (tab == null) return;
+
+        if (_contextualTabs.Contains(tab))
+        {
+            if (activate) ActivateContextualTab(tab);
+            return;
+        }
+
+        // Swapping one context for another must not stack bands in the strip.
+        if (_contextualTabs.Count > 0)
+        {
+            bool wasActive = _contextualTabs.Any(t => ReferenceEquals(t, SelectedItem));
+            HideContextualTab(TabKey(_contextualTabs[0]));
+            if (wasActive) _tabBeforeContextual = null;
+        }
+
+        if (activate) _tabBeforeContextual = SelectedItem;
+
+        tab.IsContextual = true;
+        tab.IsAvailable = true;
+
+        // A contextual tab with no band caption of its own is drawn with the part of its header
+        // before the bar — “Modify | Walls” gets a “Modify” band, exactly as the drawing tools do.
+        if (string.IsNullOrEmpty(tab.ContextualGroup) && tab.Header is string header && header.Length > 0)
+        {
+            int bar = header.IndexOf('|');
+            tab.ContextualGroup = bar > 0 ? header.Substring(0, bar).Trim() : header;
+        }
+
+        _contextualTabs.Add(tab);
+        RefreshTabs();
+
+        if (activate) ActivateContextualTab(tab);
+    }
+
+    /// <summary>
+    /// Removes a contextual tab. When it was the active one the ribbon returns to the tab the user
+    /// was on before the context appeared.
+    /// </summary>
+    public void HideContextualTab(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return;
+
+        RibbonTabItem? found = _contextualTabs.FirstOrDefault(t => string.Equals(t.Id, id, StringComparison.Ordinal))
+            ?? _contextualTabs.FirstOrDefault(t => string.Equals(TabKey(t), id, StringComparison.Ordinal));
+
+        if (found == null) return;
+
+        bool wasActive = ReferenceEquals(found, SelectedItem);
+
+        _contextualTabs.Remove(found);
+        found.IsAvailable = false;
+        RefreshTabs();
+
+        if (wasActive) RestoreTabBeforeContextual();
+    }
+
+    /// <summary>
+    /// Closes the overlay a minimised ribbon shows. Called by the command plumbing: a command that
+    /// has run is the signal that the user is done with this visit to the ribbon.
+    /// </summary>
+    internal static void DismissOverlayFor(DependencyObject source)
+    {
+        Ribbon? ribbon = FindAncestorRibbon(source);
+        if (ribbon != null && ribbon.IsOverlayOpen) ribbon.IsOverlayOpen = false;
+    }
+
+    internal static Ribbon? FindAncestorRibbon(DependencyObject? node)
+    {
+        while (node != null)
+        {
+            if (node is Ribbon ribbon) return ribbon;
+
+            DependencyObject? next = node is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D
+                ? System.Windows.Media.VisualTreeHelper.GetParent(node)
+                : null;
+
+            // Popup content lives in its own visual tree, so the walk has to continue through the
+            // logical tree to reach the ribbon again.
+            node = next ?? LogicalTreeHelper.GetParent(node);
+        }
+
+        return null;
+    }
+
+    private void ActivateContextualTab(RibbonTabItem tab)
+    {
+        IReadOnlyList<RibbonTabItem> tabs = VisibleTabs;
+
+        for (int i = 0; i < tabs.Count; i++)
+        {
+            if (!ReferenceEquals(tabs[i], tab)) continue;
+
+            SetCurrentValue(SelectedIndexProperty, i);
+
+            // “Activate” means the user sees the commands, even with the ribbon folded away.
+            if (DisplayMode != RibbonDisplayMode.Full) IsOverlayOpen = true;
+            return;
+        }
+    }
+
+    private void RestoreTabBeforeContextual()
+    {
+        RibbonTabItem? previous = _tabBeforeContextual;
+        _tabBeforeContextual = null;
+
+        if (previous == null) return;
+
+        IReadOnlyList<RibbonTabItem> tabs = VisibleTabs;
+
+        for (int i = 0; i < tabs.Count; i++)
+        {
+            if (!ReferenceEquals(tabs[i], previous)) continue;
+            SetCurrentValue(SelectedIndexProperty, i);
+            return;
+        }
+    }
 
     /// <summary>Every command in every tab — the pool the quick-access toolbar customises from.</summary>
     public IReadOnlyList<RibbonItem> AllItems
@@ -476,7 +726,7 @@ public class Ribbon : Control
             for (int i = 0; i < tabs.Count; i++)
             {
                 if (!string.Equals(TabKey(tabs[i]), state.SelectedTabId, StringComparison.Ordinal)) continue;
-                SelectedIndex = i;
+                SetCurrentValue(SelectedIndexProperty, i);
                 break;
             }
         }
@@ -561,6 +811,29 @@ public class Ribbon : Control
 
         TabStrip = GetTemplateChild("PART_Tabs") as ListBox;
 
+        if (TabStrip != null)
+        {
+            TabStrip.PreviewMouseLeftButtonUp -= OnTabStripMouseUp;
+            TabStrip.PreviewMouseLeftButtonUp += OnTabStripMouseUp;
+        }
+
+        // The overlay and the content slot belong together: the same content host is moved
+        // between them, so both have to be re-acquired whenever the template changes.
+        if (_overlay != null)
+        {
+            _overlay.Closed -= OnOverlayClosed;
+            _overlay.IsOpen = false;
+        }
+
+        _overlay = GetTemplateChild("PART_Overlay") as System.Windows.Controls.Primitives.Popup;
+        if (_overlay != null) _overlay.Closed += OnOverlayClosed;
+
+        _overlayShell = GetTemplateChild("PART_OverlayShell") as System.Windows.Controls.Border;
+        _contentSlot = GetTemplateChild("PART_ContentSlot") as Panel;
+        _contentHost = GetTemplateChild("PART_Content") as FrameworkElement;
+
+        UpdateOverlay();
+
         if (_tabScroll != null) _tabScroll.ScrollChanged -= OnTabScrollChanged;
         _tabScroll = GetTemplateChild("PART_TabScroll") as System.Windows.Controls.ScrollViewer;
         if (_tabScroll != null) _tabScroll.ScrollChanged += OnTabScrollChanged;
@@ -641,6 +914,29 @@ public class Ribbon : Control
         }
     }
 
+    private void OnTabStripMouseUp(object sender, MouseButtonEventArgs e)
+    {
+        // A fold-away ribbon opens on a tab click; that one gesture is the whole way in.
+        if (DisplayMode == RibbonDisplayMode.Full) return;
+        if (IsDescendantOf<ListBoxItem>(e.OriginalSource as DependencyObject) == null) return;
+
+        IsOverlayOpen = true;
+    }
+
+    private static T? IsDescendantOf<T>(DependencyObject? node) where T : DependencyObject
+    {
+        while (node != null)
+        {
+            if (node is T match) return match;
+
+            node = node is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D
+                ? System.Windows.Media.VisualTreeHelper.GetParent(node)
+                : null;
+        }
+
+        return null;
+    }
+
     private void OnHostPreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         if (_keyTips?.IsShowing == true) _keyTips.Hide();
@@ -700,11 +996,143 @@ public class Ribbon : Control
                 IsChecked = i == SelectedIndex
             };
 
-            row.Click += (_, _) => SelectedIndex = index;
+            row.Click += (_, _) => SetCurrentValue(SelectedIndexProperty, index);
             menu.Items.Add(row);
         }
 
         menu.IsOpen = true;
+    }
+
+    private static void OnDisplayModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not Ribbon ribbon || ribbon._applyingDisplayMode) return;
+        ribbon.ApplyDisplayMode((RibbonDisplayMode)e.NewValue);
+    }
+
+    /// <summary>
+    /// <see cref="IsMinimized"/> is the old boolean spelling of <see cref="DisplayMode"/>. It stays
+    /// two-way so a view model that only knows about the boolean keeps driving the ribbon.
+    /// </summary>
+    private static void OnIsMinimizedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not Ribbon ribbon || ribbon._applyingDisplayMode) return;
+
+        if ((bool)e.NewValue)
+            ribbon.ApplyDisplayMode(ribbon.DisplayMode == RibbonDisplayMode.Full
+                ? RibbonDisplayMode.MinimizeToTabs
+                : ribbon.DisplayMode);
+        else
+            ribbon.ApplyDisplayMode(RibbonDisplayMode.Full);
+    }
+
+    private static void OnIsOverlayOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Ribbon ribbon) ribbon.UpdateOverlay();
+    }
+
+    /// <summary>
+    /// Single entry point for every change of height. It keeps the two properties in step, tells
+    /// the groups how much of themselves to draw and moves the content host in or out of the
+    /// overlay — all inside one guard, so no callback re-enters the others.
+    /// </summary>
+    private void ApplyDisplayMode(RibbonDisplayMode mode)
+    {
+        if (_applyingDisplayMode) return;
+
+        bool changed = DisplayMode != mode;
+        _applyingDisplayMode = true;
+
+        try
+        {
+            if (changed) SetCurrentValue(DisplayModeProperty, mode);
+
+            bool minimized = mode != RibbonDisplayMode.Full;
+            if (IsMinimized != minimized) SetCurrentValue(IsMinimizedProperty, minimized);
+
+            // A full ribbon shows its content inline, so an open overlay has to fold away first.
+            if (mode == RibbonDisplayMode.Full && IsOverlayOpen) SetCurrentValue(IsOverlayOpenProperty, false);
+
+            SyncGroupDisplayMode();
+        }
+        finally
+        {
+            _applyingDisplayMode = false;
+        }
+
+        UpdateOverlay();
+
+        if (changed) DisplayModeChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Tells every group whether it draws its body, its title only or its single button. The
+    /// overlay always shows the full bodies, so an open overlay wins over the folded states.
+    /// </summary>
+    private void SyncGroupDisplayMode()
+    {
+        bool titles = !IsOverlayOpen && DisplayMode == RibbonDisplayMode.MinimizeToPanelTitles;
+        bool buttons = !IsOverlayOpen && DisplayMode == RibbonDisplayMode.MinimizeToPanelButtons;
+
+        foreach (RibbonTabItem tab in Tabs)
+        {
+            foreach (RibbonGroup group in GroupsOf(tab))
+            {
+                if (group.IsTitleOnly != titles) group.IsTitleOnly = titles;
+                if (group.IsButtonOnly != buttons) group.IsButtonOnly = buttons;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Moves the one content host between the ribbon body and the overlay popup. There is a single
+    /// host on purpose: the groups are real controls, so two presenters would fight over them.
+    /// </summary>
+    private void UpdateOverlay()
+    {
+        if (_overlay == null || _overlayShell == null || _contentSlot == null || _contentHost == null) return;
+        if (_updatingOverlay) return;
+
+        bool want = IsOverlayOpen && DisplayMode != RibbonDisplayMode.Full;
+        bool hosted = ReferenceEquals(_overlayShell.Child, _contentHost);
+
+        if (want == hosted)
+        {
+            if (_overlay.IsOpen != want) _overlay.IsOpen = want;
+            return;
+        }
+
+        _updatingOverlay = true;
+
+        try
+        {
+            if (want)
+            {
+                if (_contentHost.Parent is Panel panel) panel.Children.Remove(_contentHost);
+                _overlayShell.Child = _contentHost;
+                _overlay.IsOpen = true;
+            }
+            else
+            {
+                _overlay.IsOpen = false;
+                _overlayShell.Child = null;
+
+                if (!_contentSlot.Children.Contains(_contentHost)) _contentSlot.Children.Add(_contentHost);
+            }
+        }
+        finally
+        {
+            _updatingOverlay = false;
+        }
+
+        // The body has moved between layouts, so the panels have to settle again.
+        SyncGroupDisplayMode();
+    }
+
+    private void OnOverlayClosed(object? sender, EventArgs e)
+    {
+        // Clicking outside a StaysOpen=False popup closes it, and the host expects the property to
+        // say so as well — otherwise the next click on a tab would not reopen it.
+        if (IsOverlayOpen && !_updatingOverlay) SetCurrentValue(IsOverlayOpenProperty, false);
     }
 
     private static void OnSelectedTabIdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -719,7 +1147,7 @@ public class Ribbon : Control
         {
             if (!string.Equals(tabs[i].Id, id, StringComparison.Ordinal)) continue;
 
-            ribbon.SelectedIndex = i;
+            ribbon.SetCurrentValue(SelectedIndexProperty, i);
             return;
         }
     }
@@ -998,6 +1426,10 @@ public class Ribbon : Control
         for (int i = 0; i < tabs.Count; i++) tabs[i].IsSelected = i == index;
 
         SelectedItem = tabs[index];
+
+        // The tab that just came into view brings its own groups, so they need to hear how much of
+        // themselves to draw.
+        SyncGroupDisplayMode();
 
         // Keep SelectedTabId in step without re-entering the selection logic.
         if (!_syncingTabId && !string.Equals(SelectedTabId, tabs[index].Id, StringComparison.Ordinal))

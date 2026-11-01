@@ -156,22 +156,39 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
                 }
             },
             {
-                title: "5. VisualElement (elevation shadow and hover scale)",
-                desc: "Lightweight motion and depth helpers.",
+                title: "5. VisualElement (elevation, micro-interactions and state)",
+                desc: "A shared appearance pack that works on any <code>UIElement</code> (Card, Button, Border, Image, Panel) with no custom template. Shadows are rebuilt from theme tokens, so they follow Light ↔ Dark and accent changes automatically.",
                 table: {
-                    "attached:VisualElement.Elevation": "Shadow level from 0 to 4, resolved from theme tokens.",
-                    "attached:VisualElement.HoverScale": "Scale factor applied on hover (1.0 = no effect)."
+                    "attached:VisualElement.Elevation": "Shadow level from 0 to 4, resolved from the theme <code>Shadow</code> / <code>ShadowStrong</code> tokens.",
+                    "attached:VisualElement.HoverElevation": "Shadow level while hovering — usually <code>Elevation + 1</code> so the surface lifts.",
+                    "attached:VisualElement.HoverScale": "Scale factor applied on hover (1.0 = no effect).",
+                    "attached:VisualElement.PressScale": "Scale factor applied while pressed (e.g. <code>0.97</code>) for tactile feedback.",
+                    "attached:VisualElement.ScaleOrigin": "Origin of the scale transform, 0–1 (0.5 = centre, 0 = top-left).",
+                    "attached:VisualElement.MotionDuration": "Animation duration in milliseconds; set 0 to disable motion.",
+                    "attached:VisualElement.ShadowColor": "Overrides the shadow colour (theme token by default).",
+                    "attached:VisualElement.Glow": "Accent-coloured glow while hovering.",
+                    "attached:VisualElement.FocusRing": "Draws a 2px accent focus ring — restores the previous visual when disabled.",
+                    "attached:VisualElement.DisabledOpacity": "Opacity applied while <code>IsEnabled</code> is false, restored when re-enabled."
                 }
             },
             {
-                title: "6. ScrollViewerHelper (inertia scrolling and auto-hiding scrollbars)",
+                title: "6. SurfaceElement (themed surface skin in one line)",
+                desc: "Instead of hand-picking background, border brush and corner radius per control, pick a surface role — colours and borders follow theme tokens and switch with Light/Dark.",
+                table: {
+                    "attached:SurfaceElement.Role": "Surface role: <code>Base</code>, <code>Secondary</code>, <code>Elevated</code>, <code>Sunken</code>, <code>Accent</code>, <code>AccentSoft</code>, <code>Danger</code>.",
+                    "attached:SurfaceElement.Border": "Border style: <code>Soft</code>, <code>Strong</code>, <code>Accent</code> (<code>None</code> clears it).",
+                    "attached:SurfaceElement.Radius": "Corner radius override (e.g. <code>Radius=\"10\"</code> or <code>\"12,12,0,0\"</code>)."
+                }
+            },
+            {
+                title: "7. ScrollViewerHelper (inertia scrolling and auto-hiding scrollbars)",
                 desc: "Adds touch-like momentum and a back-to-top affordance to any scroll viewer.",
                 table: {
                     "attached:ScrollViewerHelper.IsInertiaEnabled": "Enables momentum scrolling."
                 }
             },
             {
-                title: "7. PasswordBoxHelper (two-way MVVM binding for passwords)",
+                title: "8. PasswordBoxHelper (two-way MVVM binding for passwords)",
                 desc: "<code>PasswordBox.Password</code> is not bindable; this helper makes it bindable without breaking security expectations.",
                 table: {
                     "attached:PasswordBoxHelper.Attach": "Enables the helper on the <code>PasswordBox</code>.",
@@ -180,7 +197,7 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
                 }
             },
             {
-                title: "8. ProgressBarElement &amp; DataGridElement",
+                title: "9. ProgressBarElement &amp; DataGridElement",
                 desc: "Display refinements for progress bars and data grids.",
                 table: {
                     "attached:ProgressBarElement.ShowText": "Shows the percentage on the bar.",
@@ -190,7 +207,7 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
                 }
             },
             {
-                title: "9. DragDropHelper (reordering and list transfer, gong-wpf-dragdrop style)",
+                title: "10. DragDropHelper (reordering and list transfer, gong-wpf-dragdrop style)",
                 desc: "Enables drag-and-drop between lists or inside a single list, grouped so unrelated lists do not accept each other's items.",
                 table: {
                     "attached:DragDropHelper.IsDragSource": "Allows dragging this element.",

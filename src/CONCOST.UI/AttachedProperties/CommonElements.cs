@@ -209,43 +209,26 @@ public static class ButtonElement
 }
 
 /// <summary>
-/// Floating micro-interaction and scale effects on hover or focus.
+/// Appearance and micro-interaction for any <see cref="UIElement"/>: elevation, hover lift, glow,
+/// press, focus ring and disabled dimming. The behaviour lives in <c>VisualElement.Appearance.cs</c>.
 /// </summary>
-public static class VisualElement
+public static partial class VisualElement
 {
+    /// <summary>Shadow levels 0-4. 0 draws no shadow; each level deepens and widens it.</summary>
     public static readonly DependencyProperty ElevationProperty =
         DependencyProperty.RegisterAttached("Elevation", typeof(int), typeof(VisualElement),
-            new FrameworkPropertyMetadata(0));
+            new FrameworkPropertyMetadata(0, OnLookChanged));
 
     public static int GetElevation(DependencyObject obj) => (int)obj.GetValue(ElevationProperty);
     public static void SetElevation(DependencyObject obj, int value) => obj.SetValue(ElevationProperty, value);
 
+    /// <summary>Scale on pointer over, above 1 to grow the element. 1 leaves it alone.</summary>
     public static readonly DependencyProperty HoverScaleProperty =
         DependencyProperty.RegisterAttached("HoverScale", typeof(double), typeof(VisualElement),
-            new FrameworkPropertyMetadata(1.0, OnHoverScaleChanged));
+            new FrameworkPropertyMetadata(1.0, OnLookChanged));
 
     public static double GetHoverScale(DependencyObject obj) => (double)obj.GetValue(HoverScaleProperty);
     public static void SetHoverScale(DependencyObject obj, double value) => obj.SetValue(HoverScaleProperty, value);
-
-    private static void OnHoverScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is not UIElement element) return;
-        double scale = (double)e.NewValue;
-
-        if (scale > 1.0)
-        {
-            var transform = new ScaleTransform(1.0, 1.0);
-            element.RenderTransformOrigin = new Point(0.5, 0.5);
-            element.RenderTransform = transform;
-
-            element.MouseEnter += (s, ev) =>
-            {
-                var anim = new DoubleAnimation(scale, TimeSpan.FromMilliseconds(150)) { EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut } };
-                transform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-                transform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
-            };
-        }
-    }
 }
 
 /// <summary>

@@ -13,7 +13,7 @@
         merge(
             merge(
                 merge(merge(merge(DOCS_LEGACY || {}, DOCS_GUIDES || {}), DOCS_EXAMPLES || {}), DOCS_WEB || {}),
-                DOCS_CUSTOM || {}
+                merge(DOCS_CUSTOM || {}, DOCS_CAD || {})
             ),
             DOCS_BASIC || {}
         ),

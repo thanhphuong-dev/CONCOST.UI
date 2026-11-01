@@ -8,6 +8,14 @@
     <SolidColorBrush x:Key="CONCOST.Brush.SurfaceHover" Color="#273549" />
     <SolidColorBrush x:Key="CONCOST.Brush.SurfacePressed" Color="#334155" />
 
+    <!-- Elevated surfaces. On a dark shell a lifted panel is lighter, not whiter: the paper gains a
+         few points of blue-grey so the edge of a popover is legible without a heavier border. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceElevated" Color="#1B2434" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSunken" Color="#0E141F" />
+
+    <!-- Scrim behind a modal. Black rather than the shell colour, so dimming never shifts the hue. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Overlay" Color="#B3000000" />
+
     <SolidColorBrush x:Key="CONCOST.Brush.Border" Color="#263346" />
     <SolidColorBrush x:Key="CONCOST.Brush.BorderSecondary" Color="#334155" />
     <SolidColorBrush x:Key="CONCOST.Brush.BorderHover" Color="#475569" />
@@ -24,7 +32,42 @@
     <SolidColorBrush x:Key="CONCOST.Brush.InputBorder" Color="#263346" />
     <SolidColorBrush x:Key="CONCOST.Brush.InputHoverBorder" Color="#475569" />
 
-    <!-- Shadow -->
-    <Color x:Key="CONCOST.Color.Shadow">#60000000</Color>
+    <!-- Drawing surfaces: a subtle lift off the shell background, never the border grey. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasGrid" Color="#1B2536" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasGridMajor" Color="#243146" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasAxis" Color="#2F3F57" />
+
+    <!-- ViewCube: the same five roles as the light theme, lifted so the cube reads against a dark
+         viewport without glowing like a lit panel. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeFace" Color="#39424F" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeEdge" Color="#4E5A6B" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeBorder" Color="#67758A" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeText" Color="#DCE3EC" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeHighlight" Color="#4C9AFF" />
+
+    <!-- Ribbon. On a dark shell the strip sits below the paper and hover lifts toward blue, so a
+         hovered command reads as lit rather than as merely brighter. Pressed is the same hue one
+         step further; checked keeps that fill without the border. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.TabStrip" Color="#101724" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.TabSelected" Color="#151D2A" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelBackground" Color="#151D2A" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.Divider" Color="#263346" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelTitle" Color="#94A3B8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemForeground" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHover" Color="#1D2E45" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHoverBorder" Color="#2C4463" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressed" Color="#24405E" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressedBorder" Color="#37608C" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemChecked" Color="#1F3956" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemCheckedBorder" Color="#2F5580" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemDisabledForeground" Color="#475569" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualAccent" Color="#4C9AFF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipBackground" Color="#1B2434" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipText" Color="#F8FAFC" />
+
+    <!-- Shadow: pure black pool under a floating panel. The elevation behaviour scales this alpha
+         with the level, so a level 1 card stays subtle and a level 4 dialog reads as detached. -->
+    <Color x:Key="CONCOST.Color.Shadow">#4D000000</Color>
+    <Color x:Key="CONCOST.Color.ShadowStrong">#8C000000</Color>
 
 </ResourceDictionary>

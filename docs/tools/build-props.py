@@ -24,7 +24,8 @@ OUT = os.path.join(DOCS, "data", "auto.generated.js")
 
 # ---------------------------------------------------------------- extraction
 
-CLASS_RE = re.compile(r"public\s+(?:sealed\s+|abstract\s+|partial\s+|static\s+)*class\s+([A-Za-z0-9_]+)")
+CLASS_RE = re.compile(
+    r"public\s+(?:sealed\s+|abstract\s+|partial\s+|static\s+)*class\s+([A-Za-z0-9_]+)")
 DP_RE = re.compile(
     r"DependencyProperty\.Register(ReadOnly)?(Attached)?\s*\(\s*"
     r"(?:nameof\s*\(\s*([A-Za-z0-9_]+)\s*\)|\"([A-Za-z0-9_]+)\")\s*,\s*"
@@ -74,7 +75,8 @@ def class_bodies(src):
 def default_value(body, start):
     """Read the first argument of the PropertyMetadata ctor, respecting nested parens."""
     tail = body[start:start + 900]
-    md = re.search(r"new\s+(?:FrameworkPropertyMetadata|PropertyMetadata)\s*\(", tail)
+    md = re.search(
+        r"new\s+(?:FrameworkPropertyMetadata|PropertyMetadata)\s*\(", tail)
     if not md:
         return ""
     i = md.end() - 1
@@ -130,9 +132,11 @@ def extract():
                         if depth == 0:
                             break
                     i += 1
-                members = [x.strip() for x in src[brace + 1:i].split(",") if x.strip()]
+                members = [x.strip()
+                           for x in src[brace + 1:i].split(",") if x.strip()]
                 members = [m.split("=")[0].strip() for m in members]
-                members = [m for m in members if re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", m)]
+                members = [m for m in members if re.match(
+                    r"^[A-Za-z_][A-Za-z0-9_]*$", m)]
                 enums.setdefault(em.group(1), members)
 
             for name, body in class_bodies(src):
@@ -179,7 +183,8 @@ def extract():
         if original is None:
             continue
 
-        entry = classes.setdefault(owner, {"namespace": "", "file": "", "props": [], "events": []})
+        entry = classes.setdefault(
+            owner, {"namespace": "", "file": "", "props": [], "events": []})
         name = bare(alias)
         if any(p["name"] == name for p in entry["props"]):
             continue
@@ -234,7 +239,66 @@ D = {
     "ShowAlpha": "Cho phép chọn kênh alpha (độ trong suốt).",
     "ShowScore": "Hiện điểm số bên cạnh số sao.",
     "ShowCrosshair": "Hiện tâm ngắm của kính lúp.",
-    "ShowToolbar": "Hiện thanh công cụ của spreadsheet.",
+    "ShowAxes": "Vẽ hai trục toạ độ thế giới qua gốc mô hình.",
+    "AxisBrush": "Màu nét trục; null để dùng token <code>CONCOST.Brush.CanvasAxis</code>.",
+    "AxisThickness": "Độ dày nét trục, tính bằng pixel.",
+    "AxisDashStyle": "Kiểu nét trục; <code>DashStyles.Solid</code> cho nét liền.",
+    "ShowOriginMarker": "Vẽ vòng tròn nhỏ ở gốc toạ độ, độc lập với <code>ShowAxes</code>.",
+    "GridBrush": "Màu lưới mảnh; null để dùng token <code>CONCOST.Brush.CanvasGrid</code>.",
+    "GridMajorBrush": "Màu lưới đậm, cứ mỗi <code>GridMajorEvery</code> đường một đường.",
+    "GridMajorEvery": "Cứ mỗi n đường lưới thì một đường đậm hơn.",
+    "MinGridPixelSpacing": "Khoảng cách tối thiểu (px) giữa hai đường lưới; bước tự nhân đôi khi dày hơn.",
+    "CrosshairBrush": "Màu tâm ngắm; null để dùng token <code>CONCOST.Brush.TextSecondary</code>.",
+    "ShowAperture": "Vẽ ô ngắm nhỏ quanh con trỏ.",
+    "SnapMarkerBrush": "Màu dấu bám điểm; null để dùng màu nhấn.",
+    "SnapMarkerSize": "Bán kính dấu bám điểm, tính bằng pixel.",
+    "ShowSnapLabel": "Hiện tên loại bám điểm (GRID, ENDPOINT…) cạnh dấu.",
+    "SelectionBrush": "Màu khung chọn, dùng cho cả viền và nền.",
+    "SelectionFillOpacity": "Độ đục của nền khung chọn; 0 = chỉ viền, không tô.",
+    "DimensionBrush": "Màu đường dimension tạm và hai đường gióng.",
+    "FitMargin": "Tỉ lệ không khí <code>ZoomToFit</code> chừa quanh biên (tối thiểu 1).",
+    "Variant": "Kiểu hiển thị, chọn từ enum riêng của control (<code>NavigationBarVariant</code>, <code>ViewControlBarVariant</code>, <code>CommandLineVariant</code>, <code>DynamicInputVariant</code>, <code>CadStatusBarVariant</code>, <code>ProjectBrowserVariant</code>, <code>LoadingOverlayVariant</code>…).",
+    "ButtonSize": "Cạnh vuông của mỗi nút lệnh (px); ghi đè mức 34 px của ghost style.",
+    "ShowUcsLabel": "Hiện nhãn hệ toạ độ làm việc và menu chọn của nó.",
+    "ShowZoom": "Hiện cụm zoom in / zoom out / zoom to fit.",
+    "ShowPerspective": "Hiện nút đổi phối cảnh / trực giao ở cuối thanh.",
+    "ShowDividers": "Hiện vạch phân cách giữa các nhóm; vạch cạnh một nhóm bị ẩn cũng tự rút.",
+    "ShowWalk": "Hiện công cụ walk trong nhóm công cụ điều hướng.",
+    "ControlHeight": "Chiều cao của mọi picker, công tắc và nút trên thanh (px); xoá luôn mức tối thiểu 34 px của style combo.",
+    "ShowScale": "Hiện ô chọn tỉ lệ khung nhìn.",
+    "ShowDetailLevel": "Hiện ô chọn mức chi tiết (coarse / medium / fine).",
+    "ShowVisualStyle": "Hiện ô chọn kiểu hiển thị (wireframe / hidden line / shaded / realistic).",
+    "ShowToggles": "Hiện một cụm công tắc như một nhóm: công tắc bám điểm với <code>CadStatusBar</code>, đổ bóng / crop / hiện phần tử ẩn với <code>ViewControlBar</code>.",
+    "ShowSelection": "Hiện dòng tóm tắt lựa chọn (\"Nothing selected\", số đối tượng đang chọn).",
+    "ShowWorkPlane": "Hiện nút tách chọn mặt phẳng làm việc.",
+    "ShowTaskQueue": "Cho phép thanh trạng thái hiện bộ đếm tác vụ nền; hàng đợi rỗng thì nó vẫn tự ẩn.",
+    "ShowNotifications": "Hiện chuông thông báo trên thanh trạng thái; số đếm chỉ hiện khi còn mục chưa đọc.",
+    "ShowToggleLabels": "In nhãn ngắn cạnh công tắc trên thanh trạng thái (SNAP, GRID, ORTHO, POLAR, OSNAP).",
+    "ShowHideIsolate": "Hiện nút hide / isolate ở cuối thanh.",
+    "Scales": "Danh sách tỉ lệ cho dropdown; null dùng năm tỉ lệ mặc định, list observable thì tự nạp lại khi lớn thêm.",
+    "HideIsolateCaption": "Nhãn của nút hide / isolate, đổi được để dịch.",
+    "EchoPrompt": "Ghi câu hỏi của prompt vào lịch sử để câu trả lời nằm chung dòng với nó, đúng kiểu nhật ký đối thoại của CAD.",
+    "SpaceSubmits": "Cho phím cách chạy lệnh như Enter khi con trỏ ở cuối dòng — tắt đi khi câu trả lời có thể chứa dấu cách.",
+    "IsHistoryExpanded": "Mở lịch sử lên <code>ExpandedHistoryHeight</code>; phím <code>F2</code> đổi chính giá trị này.",
+    "ExpandedHistoryHeight": "Chiều cao lịch sử khi mở rộng (px); chỉ thấy khác khi lớn hơn <code>HistoryHeight</code>.",
+    "Prompt": "Câu hỏi hiện cho người dùng biết đang nhập gì (ví dụ <code>Chiều dài</code>); đây là dòng đầu của hộp, không phải chú thích.",
+    "Anchor": "Điểm neo, tính theo toạ độ của control cha, mà hộp treo vào và đường gióng chỉ về.",
+    "ValidationMessage": "Lý do lần nhập gần nhất bị từ chối, hoặc chuỗi rỗng (read-only).",
+    "UnitSuffix": "Đơn vị ghi kèm giá trị (mm, °, in…); để trống thì lấy theo ngữ cảnh — với <code>DynamicInput</code> là <code>Kind</code>, còn trên thanh trạng thái là đơn vị bản vẽ.",
+    "ShowUnit": "Hiện khối đơn vị ở cuối dòng câu hỏi.",
+    "ShowLeader": "Vẽ đường gióng nét đứt từ hộp về điểm neo; hộp kiểu <code>Compact</code> luôn tắt vì không có chỗ.",
+    "FieldWidth": "Bề rộng tối thiểu của ô nhập (px); giá trị dài hơn thì ô tự giãn, nên ô toạ độ cần rộng hơn ô độ dài.",
+    "SelectAllOnOpen": "Chọn sẵn toàn bộ giá trị khi hộp mở, để gõ là thay chứ không nối vào số cũ.",
+    "ShowToolbar": "Hiện thanh công cụ phía trên nội dung của control (spreadsheet, project browser…).",
+    "ShowKindFilter": "Hiện combobox lọc theo loại của project browser.",
+    "ShowSort": "Hiện combobox sắp xếp của project browser.",
+    "ShowGroup": "Hiện công tắc nhóm theo loại của project browser.",
+    "ShowCount": "Hiện dòng đếm số mục ở chân palette.",
+    "SearchPlaceholder": "Chữ mờ trong ô tìm khi chưa gõ gì.",
+    "AllKindsCaption": "Nhãn của mục đầu trong bộ lọc loại (“All kinds”).",
+    "SortCaptions": "Ba nhãn sắp xếp; để thiếu nhãn nào thì nhãn đó giữ mặc định.",
+    "EmptyText": "Câu hiện thay chỗ cây khi bộ lọc không khớp mục nào.",
+    "CountCaption": "Khuôn dòng đếm ở chân; <code>{0}</code> là số mục đang hiện, nên bản dịch không phải sửa code.",
     "ShowFormulaBar": "Hiện thanh nhập công thức.",
     "ShowSheetTabs": "Hiện tab chuyển sheet.",
     "ShowStatusBar": "Hiện thanh trạng thái dưới cùng.",
@@ -259,7 +323,7 @@ D = {
     "MajorStep": "Khoảng chia lớn trên thước.",
     "OriginOffset": "Độ lệch gốc toạ độ của thước so với canvas.",
     "Orientation": "Hướng bố trí (<code>Horizontal</code> / <code>Vertical</code>).",
-    "Placement": "Vị trí bung ra của popup/drawer.",
+    "Placement": "Vị trí bung ra của popup/drawer; với <code>DynamicInput</code> là phía đặt hộp so với điểm neo (<code>DynamicInputPlacement</code>), <code>Auto</code> tự lật vào trong khi hộp sắp tràn khỏi control cha.",
     "Placeholder": "Chữ gợi ý khi ô nhập trống.",
     "Description": "Mô tả phụ hiển thị dưới tiêu đề.",
     "Subtitle": "Dòng phụ đề của thẻ.",
@@ -555,19 +619,44 @@ D = {
     "OffsetY": "Quãng trượt dọc của hiệu ứng (px).",
     "Axis": "Trục theo dõi cuộn: <code>Vertical</code> hoặc <code>Horizontal</code>.",
     "TitleBarBackground": "Màu nền thanh tiêu đề của cửa sổ.",
+    # appearance pack (VisualElement) + surface skin (SurfaceElement)
+    "Elevation": "Độ nổi bóng đổ 0–4, dựng lại từ token theme.",
+    "HoverElevation": "Độ nổi khi rê chuột qua control.",
+    "HoverScale": "Tỉ lệ phóng khi rê chuột (1.0 = không đổi).",
+    "PressScale": "Tỉ lệ thu nhỏ khi nhấn (1.0 = không đổi).",
+    "ScaleOrigin": "Tâm phóng/thu theo tỉ lệ 0–1 (0.5 = giữa).",
+    "MotionDuration": "Thời lượng animation (ms, 0 = tức thời).",
+    "ShadowColor": "Ghi đè màu bóng đổ của theme.",
+    "Glow": "Quầng sáng màu accent khi rê chuột.",
+    "FocusRing": "Vẽ vòng focus màu accent cho control không có sẵn.",
+    "DisabledOpacity": "Độ mờ khi vô hiệu, tự khôi phục khi bật lại.",
+    "AccentBar": "Cạnh mang vạch accent: None, Top, Left, Right, Bottom.",
+    "AccentBrush": "Màu vạch accent (mặc định theo màu nhấn).",
+    "AccentThickness": "Độ dày vạch accent (px).",
+    "HeaderBackground": "Màu nền vùng header.",
+    "FooterBackground": "Màu nền vùng footer.",
     "Progress2": "",
 }
 
 PREFIX_RULES = [
-    (r"^Is([A-Z]\w*)$", lambda m: f"Bật/tắt trạng thái <b>{split_words(m.group(1))}</b>."),
-    (r"^Show([A-Z]\w*)$", lambda m: f"Hiển thị thành phần <b>{split_words(m.group(1))}</b>."),
-    (r"^Has([A-Z]\w*)$", lambda m: f"Cho biết có <b>{split_words(m.group(1))}</b> hay không (read-only)."),
-    (r"^Max([A-Z]\w*)$", lambda m: f"Giá trị lớn nhất của <b>{split_words(m.group(1))}</b>."),
-    (r"^Min([A-Z]\w*)$", lambda m: f"Giá trị nhỏ nhất của <b>{split_words(m.group(1))}</b>."),
-    (r"^On([A-Z]\w*)$", lambda m: f"Trạng thái bật của <b>{split_words(m.group(1))}</b>."),
-    (r"^(\w+)Brush$", lambda m: f"Brush/màu cho <b>{split_words(m.group(1))}</b>."),
-    (r"^(\w+)Template$", lambda m: f"DataTemplate cho <b>{split_words(m.group(1))}</b>."),
-    (r"^(\w+)Command$", lambda m: f"Lệnh thực thi cho <b>{split_words(m.group(1))}</b>."),
+    (r"^Is([A-Z]\w*)$",
+     lambda m: f"Bật/tắt trạng thái <b>{split_words(m.group(1))}</b>."),
+    (r"^Show([A-Z]\w*)$",
+     lambda m: f"Hiển thị thành phần <b>{split_words(m.group(1))}</b>."),
+    (r"^Has([A-Z]\w*)$",
+     lambda m: f"Cho biết có <b>{split_words(m.group(1))}</b> hay không (read-only)."),
+    (r"^Max([A-Z]\w*)$",
+     lambda m: f"Giá trị lớn nhất của <b>{split_words(m.group(1))}</b>."),
+    (r"^Min([A-Z]\w*)$",
+     lambda m: f"Giá trị nhỏ nhất của <b>{split_words(m.group(1))}</b>."),
+    (r"^On([A-Z]\w*)$",
+     lambda m: f"Trạng thái bật của <b>{split_words(m.group(1))}</b>."),
+    (r"^(\w+)Brush$",
+     lambda m: f"Brush/màu cho <b>{split_words(m.group(1))}</b>."),
+    (r"^(\w+)Template$",
+     lambda m: f"DataTemplate cho <b>{split_words(m.group(1))}</b>."),
+    (r"^(\w+)Command$",
+     lambda m: f"Lệnh thực thi cho <b>{split_words(m.group(1))}</b>."),
 ]
 
 
@@ -629,7 +718,66 @@ EN_D = {
     "ShowAlpha": "Allows picking the alpha channel.",
     "ShowScore": "Shows the numeric score next to the stars.",
     "ShowCrosshair": "Shows the magnifier crosshair.",
-    "ShowToolbar": "Shows the spreadsheet toolbar.",
+    "ShowAxes": "Draws the two world axes through the model origin.",
+    "AxisBrush": "Axis stroke colour; null keeps the <code>CONCOST.Brush.CanvasAxis</code> token.",
+    "AxisThickness": "Axis stroke width in pixels.",
+    "AxisDashStyle": "Axis dash pattern; <code>DashStyles.Solid</code> draws a continuous line.",
+    "ShowOriginMarker": "Draws a small ring at the origin, independent of <code>ShowAxes</code>.",
+    "GridBrush": "Minor grid colour; null keeps the <code>CONCOST.Brush.CanvasGrid</code> token.",
+    "GridMajorBrush": "Major grid colour, one line in every <code>GridMajorEvery</code>.",
+    "GridMajorEvery": "One line in every n is drawn heavier.",
+    "MinGridPixelSpacing": "Smallest gap (px) between grid lines; the step doubles when it gets denser than this.",
+    "CrosshairBrush": "Crosshair colour; null keeps the <code>CONCOST.Brush.TextSecondary</code> token.",
+    "ShowAperture": "Draws the small pick box around the cursor.",
+    "SnapMarkerBrush": "Snap marker colour; null keeps the accent colour.",
+    "SnapMarkerSize": "Snap marker radius in pixels.",
+    "ShowSnapLabel": "Shows the snap kind caption (GRID, ENDPOINT…) beside the marker.",
+    "SelectionBrush": "Selection colour, used for both the outline and the fill.",
+    "SelectionFillOpacity": "Opacity of the selection fill; 0 draws the outline only.",
+    "DimensionBrush": "Colour of the temporary dimension and its witness lines.",
+    "FitMargin": "How much air <code>ZoomToFit</code> leaves around the bounds (at least 1).",
+    "Variant": "Which look to draw, picked from the control's own enum (<code>NavigationBarVariant</code>, <code>ViewControlBarVariant</code>, <code>CommandLineVariant</code>, <code>DynamicInputVariant</code>, <code>CadStatusBarVariant</code>, <code>ProjectBrowserVariant</code>, <code>LoadingOverlayVariant</code>…).",
+    "ButtonSize": "Square size of each command button in pixels; overrules the ghost style's 34 px.",
+    "ShowUcsLabel": "Shows the working coordinate-system label and its menu.",
+    "ShowZoom": "Shows the zoom in / zoom out / zoom to fit cluster.",
+    "ShowPerspective": "Shows the perspective / orthographic button at the end of the bar.",
+    "ShowDividers": "Shows the rules between groups; a rule beside a hidden group steps aside too.",
+    "ShowWalk": "Shows the walk tool inside the navigation tool group.",
+    "ControlHeight": "Height of every picker, toggle and button on the bar in pixels; also zeroes the combo style's 34 px minimum.",
+    "ShowScale": "Shows the view scale picker.",
+    "ShowDetailLevel": "Shows the detail level picker (coarse / medium / fine).",
+    "ShowVisualStyle": "Shows the visual style picker (wireframe / hidden line / shaded / realistic).",
+    "ShowToggles": "Shows one cluster of switches as a group: the snap toggles on a <code>CadStatusBar</code>, the shadows / crop / reveal-hidden toggles on a <code>ViewControlBar</code>.",
+    "ShowSelection": "Shows the selection summary line (\"Nothing selected\", the number of objects picked).",
+    "ShowWorkPlane": "Shows the work plane split button.",
+    "ShowTaskQueue": "Lets the status bar show the background task counter; an empty queue still hides it.",
+    "ShowNotifications": "Shows the notification bell on the status bar; the count appears only while something is unread.",
+    "ShowToggleLabels": "Prints the short caption beside each switch on a status bar (SNAP, GRID, ORTHO, POLAR, OSNAP).",
+    "ShowHideIsolate": "Shows the hide / isolate button at the end of the bar.",
+    "Scales": "Scales offered by the dropdown; null uses the five defaults, and an observable list refills itself as it grows.",
+    "HideIsolateCaption": "Caption of the hide / isolate button, settable so the bar can be translated.",
+    "EchoPrompt": "Writes the prompt into the history so the answer joins it on the same line, the way a CAD transcript reads.",
+    "SpaceSubmits": "Lets the space bar run the command like Enter with the caret at the end — turn it off when an answer may contain spaces.",
+    "IsHistoryExpanded": "Expands the history to <code>ExpandedHistoryHeight</code>; <code>F2</code> flips this value.",
+    "ExpandedHistoryHeight": "History height while expanded, in pixels; only visible when it is larger than <code>HistoryHeight</code>.",
+    "Prompt": "The question telling the user what to type (e.g. <code>Length</code>); it heads the box, it is not a caption.",
+    "Anchor": "The point, in the parent's coordinates, the box hangs off and the leader points back to.",
+    "ValidationMessage": "Why the last commit was refused, or an empty string (read-only).",
+    "UnitSuffix": "Unit written with the value (mm, °, in…); empty takes it from context — on <code>DynamicInput</code> from <code>Kind</code>, on a status bar from the drawing.",
+    "ShowUnit": "Shows the unit block at the end of the question row.",
+    "ShowLeader": "Draws the dashed leader from the box back to the anchor; a <code>Compact</code> strip always drops it for want of room.",
+    "FieldWidth": "Smallest width of the value field in pixels; a longer number widens it, so a coordinate box needs more than a length.",
+    "SelectAllOnOpen": "Selects the whole value when the box opens, so typing replaces the number instead of appending to it.",
+    "ShowToolbar": "Shows the toolbar above the control's content (spreadsheet, project browser…).",
+    "ShowKindFilter": "Shows the kind filter picker of a project browser.",
+    "ShowSort": "Shows the sort picker of a project browser.",
+    "ShowGroup": "Shows the group-by-kind switch of a project browser.",
+    "ShowCount": "Shows the item count at the foot of the palette.",
+    "SearchPlaceholder": "Placeholder in the search box before anything is typed.",
+    "AllKindsCaption": "Caption of the first entry in the kind filter (“All kinds”).",
+    "SortCaptions": "The three sort labels; leave any out and it keeps its default.",
+    "EmptyText": "Line shown in place of the tree when the filter matches nothing.",
+    "CountCaption": "Format of the item count; <code>{0}</code> is the visible count, so a translation never edits code.",
     "ShowFormulaBar": "Shows the formula input bar.",
     "ShowSheetTabs": "Shows the sheet tabs.",
     "ShowStatusBar": "Shows the bottom status bar.",
@@ -654,7 +802,7 @@ EN_D = {
     "MajorStep": "Distance between major ruler ticks.",
     "OriginOffset": "Ruler origin offset relative to the canvas.",
     "Orientation": "Layout direction (<code>Horizontal</code> / <code>Vertical</code>).",
-    "Placement": "Where the popup or drawer opens.",
+    "Placement": "Where the popup or drawer opens; on <code>DynamicInput</code> it is the side the box takes relative to its anchor (<code>DynamicInputPlacement</code>), and <code>Auto</code> flips it inward before it crosses the parent's edge.",
     "Placeholder": "Hint text shown while the input is empty.",
     "Description": "Supporting text below the title.",
     "Subtitle": "Secondary line of the card.",
@@ -704,6 +852,22 @@ EN_D = {
     "MaxConcurrentRipples": "Maximum number of simultaneous ripples.",
     "IsRippleEnabled": "Enables the ripple effect.",
     "Mode": "Operating mode (meaning depends on the control).",
+    # appearance pack (VisualElement) + surface skin (SurfaceElement)
+    "Elevation": "Shadow depth 0–4, rebuilt from theme tokens.",
+    "HoverElevation": "Shadow depth while the pointer is over the control.",
+    "HoverScale": "Scale factor applied on hover (1.0 = no motion).",
+    "PressScale": "Scale factor applied while pressed (1.0 = no motion).",
+    "ScaleOrigin": "Origin of the scale transform, 0–1 (0.5 = centre).",
+    "MotionDuration": "Animation duration in milliseconds (0 = instant).",
+    "ShadowColor": "Overrides the shadow colour used by the theme token.",
+    "Glow": "Accent-coloured glow while hovering.",
+    "FocusRing": "Draws an accent focus ring for elements without one.",
+    "DisabledOpacity": "Opacity applied while disabled; restored when re-enabled.",
+    "AccentBar": "Edge that carries the accent stripe (<code>None</code>, <code>Top</code>, <code>Left</code>, <code>Right</code>, <code>Bottom</code>).",
+    "AccentBrush": "Brush of the accent stripe (accent colour by default).",
+    "AccentThickness": "Thickness of the accent stripe in pixels.",
+    "HeaderBackground": "Background of the header area.",
+    "FooterBackground": "Background of the footer area.",
     "Length": "Number of cells/characters to enter.",
     "Password": "Current password value.",
     "PasswordChar": "Character used to mask the password.",
@@ -951,15 +1115,24 @@ EN_D = {
 }
 
 EN_PREFIX_RULES = [
-    (r"^Is([A-Z]\w*)$", lambda m: f"Toggles the <b>{split_words(m.group(1))}</b> state."),
-    (r"^Show([A-Z]\w*)$", lambda m: f"Shows the <b>{split_words(m.group(1))}</b> part."),
-    (r"^Has([A-Z]\w*)$", lambda m: f"Whether the control has <b>{split_words(m.group(1))}</b> (read-only)."),
-    (r"^Max([A-Z]\w*)$", lambda m: f"Upper bound of <b>{split_words(m.group(1))}</b>."),
-    (r"^Min([A-Z]\w*)$", lambda m: f"Lower bound of <b>{split_words(m.group(1))}</b>."),
-    (r"^On([A-Z]\w*)$", lambda m: f"On-state value of <b>{split_words(m.group(1))}</b>."),
-    (r"^(\w+)Brush$", lambda m: f"Brush used for <b>{split_words(m.group(1))}</b>."),
-    (r"^(\w+)Template$", lambda m: f"DataTemplate for <b>{split_words(m.group(1))}</b>."),
-    (r"^(\w+)Command$", lambda m: f"Command executed for <b>{split_words(m.group(1))}</b>."),
+    (r"^Is([A-Z]\w*)$",
+     lambda m: f"Toggles the <b>{split_words(m.group(1))}</b> state."),
+    (r"^Show([A-Z]\w*)$",
+     lambda m: f"Shows the <b>{split_words(m.group(1))}</b> part."),
+    (r"^Has([A-Z]\w*)$",
+     lambda m: f"Whether the control has <b>{split_words(m.group(1))}</b> (read-only)."),
+    (r"^Max([A-Z]\w*)$",
+     lambda m: f"Upper bound of <b>{split_words(m.group(1))}</b>."),
+    (r"^Min([A-Z]\w*)$",
+     lambda m: f"Lower bound of <b>{split_words(m.group(1))}</b>."),
+    (r"^On([A-Z]\w*)$",
+     lambda m: f"On-state value of <b>{split_words(m.group(1))}</b>."),
+    (r"^(\w+)Brush$",
+     lambda m: f"Brush used for <b>{split_words(m.group(1))}</b>."),
+    (r"^(\w+)Template$",
+     lambda m: f"DataTemplate for <b>{split_words(m.group(1))}</b>."),
+    (r"^(\w+)Command$",
+     lambda m: f"Command executed for <b>{split_words(m.group(1))}</b>."),
 ]
 
 
@@ -1025,7 +1198,8 @@ PRIORITY = [
 
 
 def pick_props(props, limit=3):
-    usable = [p for p in props if p["name"] not in SKIP_PROPS and not p["readonly"]]
+    usable = [p for p in props if p["name"]
+              not in SKIP_PROPS and not p["readonly"]]
     picked, seen = [], set()
     for want in PRIORITY:
         for p in usable:
@@ -1185,6 +1359,34 @@ PAGE_CLASS = {
     "statusbar": ["StatusBar", "StatusBarItem", "StatusBarPanel"],
     "commandbar": ["CommandBar", "CommandBarItem", "OverflowToolbar"],
     "quickaccesstoolbar": ["QuickAccessToolbar", "QuickAccessItem"],
+    "masonrypanel": ["MasonryPanel"],
+    "wizard": ["Wizard", "WizardStep"],
+    "taginput": ["TagInput"],
+    "signaturepad": ["SignaturePad"],
+    "scheduler": ["Scheduler", "SchedulerItem"],
+    "kanbanboard": ["KanbanBoard", "KanbanColumn", "KanbanCard"],
+    "codeeditor": ["CodeEditor"],
+    "markdownviewer": ["MarkdownViewer"],
+    "imageviewer": ["ImageViewer"],
+    "minimap": ["MiniMap", "MiniMapItem"],
+    "modelviewer3d": ["ModelViewer3D"],
+    "coachmark": ["CoachMark"],
+    "splashscreen": ["SplashScreen"],
+    # CAD shell
+    "viewportcontrol": ["ViewportControl"],
+    "viewcube": ["ViewCube"],
+    "navigationbar": ["NavigationBar"],
+    "viewcontrolbar": ["ViewControlBar"],
+    "commandline": ["CommandLine"],
+    "dynamicinput": ["DynamicInput"],
+    "cadstatusbar": ["CadStatusBar"],
+    "projectbrowser": ["ProjectBrowser"],
+    "documentworkspace": ["DocumentWorkspace"],
+    "propertiespalette": ["PropertiesPalette"],
+    "applicationtitlebar": ["ApplicationTitleBar"],
+    "applicationinfobar": ["ApplicationInfoBar"],
+    "backstageview": ["RibbonBackstageView"],
+    "fontpicker": ["FontPicker"],
     # effects
     "snowcanvas": ["SnowCanvas"],
     "sprite": ["Sprite"],
@@ -1254,7 +1456,8 @@ def main():
         for p in info["props"]:
             if p["name"] not in en_props:
                 en_props[p["name"]] = describe_en(p["name"], p["type"])
-    en_props = OrderedDict(sorted(en_props.items(), key=lambda kv: kv[0].lower()))
+    en_props = OrderedDict(
+        sorted(en_props.items(), key=lambda kv: kv[0].lower()))
 
     header = (
         "// AUTO-GENERATED by docs/tools/build-props.py — do not edit by hand.\n"
@@ -1271,7 +1474,8 @@ def main():
         fh.write(";\n")
 
     total_props = sum(len(v["props"]) for v in auto.values())
-    print(f"pages: {len(auto)} | props: {total_props} | classes: {len(classes)} | en props: {len(en_props)}")
+    print(
+        f"pages: {len(auto)} | props: {total_props} | classes: {len(classes)} | en props: {len(en_props)}")
     if missing:
         print("missing classes:", ", ".join(missing))
 

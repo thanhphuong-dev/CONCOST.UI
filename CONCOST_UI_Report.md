@@ -2,7 +2,7 @@
 
 ## 1. TỔNG QUAN
 
-- **Tổng số Control (có thể sử dụng trực tiếp):** 136
+- **Tổng số Control (có thể sử dụng trực tiếp):** 139
 - **Tổng số Hiệu ứng / Decoration:** 30
 - **Tổng số Helper / Internal:** 49
 
@@ -285,7 +285,6 @@
   - Thuộc tính mở rộng: IndicatorType, DotSize
 - **UnitBox** (Control)
   - Thuộc tính mở rộng: Value, Unit, DecimalPlaces, Header
-- **CustomControl1** (Control)
 - **ConditionalFormattingRule** (DependencyObject)
   - Thuộc tính mở rộng: Operator, Value1, Value2, Background, Foreground
 - **LengthBox** (UnitBox)
@@ -394,10 +393,11 @@ Các hiệu ứng này thường dùng như **background, overlay hoặc standal
 
 | Hạng mục | Số lượng |
 |---|---|
-| Control sử dụng trực tiếp | 136 |
+| Control sử dụng trực tiếp | 139 ở bản 1.1.0, + 4 ở mục 8, + 9 ở mục 9, + 17 ở mục 10 → **169** |
 | Hiệu ứng / Decoration | 30 |
 | Attached Property classes (chung) | 7 |
 | Behavior effects (gắn kèm) | 4 |
+| Service / Manager riêng | 9 (liệt kê ở mục 10) |
 
 ## 7. BỔ SUNG 1.1.0 — 30 CONTROL
 
@@ -484,5 +484,175 @@ Thuộc tính dưới đây đọc trực tiếp từ source.
 - **DragGhost** — cửa sổ ghost theo con trỏ: `Show(caption, icon)`, `Move(visual, point)`, `Hide()`, `IsVisible`
 - **SharedElementTransition** — `Run(element, fromRect, ms)`, `RunFrom(element, origin, ms)`
 
+## 8. BỔ SUNG 1.2.0 — 4 CONTROL
+
+Bốn mục còn lại của mục 107 trong roadmap: bố cục waterfall, hộp thẻ, chữ ký tay và wizard nhiều bước.
+
+### Layout & Form
+
+- **MasonryPanel** (Panel)
+  - Thuộc tính: Columns, MinColumnWidth, ColumnSpacing, RowSpacing, IsBalanced
+  - Phương thức: `GetColumnCount(width)`, `GetColumnWidth(width)`
+- **TagInput** (Control)
+  - Thuộc tính: ItemsSource, DisplayPath, SuggestionSource, Text, Placeholder, AllowFreeText, AllowDuplicates, MaxTags, Delimiter, IsSuggestionOpen
+  - Phương thức: `AddTag(item)`, `RemoveTag(entry)`, `ClearTags()`, `CommitText()`; sự kiện `TagsChanged`
+  - Item: **TagEntry** (`Item`, `Text`), **TagChangedEventArgs** (`Item`, `Text`, `IsAdded`)
+- **Wizard** (Control) + **WizardStep** (HeaderedContentControl)
+  - Wizard: CurrentIndex, CurrentStep, CanGoBack, CanGoNext, IsLastStep, ShowHeader, ShowFooter, BackText, NextText, FinishText
+  - WizardStep: Header, Description, IsValid, Index, Number, IsCurrent, IsCompleted
+  - Phương thức: `Next()`, `Back()`, `GoTo(index)`, `Finish()`, `RefreshState()`; sự kiện `Navigating`, `StepChanged`, `Finished`
+
+### Engineering
+
+- **SignaturePad** (FrameworkElement)
+  - Thuộc tính: StrokeBrush, StrokeThickness, Fill, EdgeBrush, CornerRadius, ShowGuideline, Placeholder, PlaceholderBrush, HasSignature, SignatureImage
+  - Phương thức: `Undo()`, `Clear()`, `Export(width, height, background)`; sự kiện `SignatureChanged`
+  - Ink: `Strokes` (`StrokeCollection`) — lưu/đọc được bằng Ink Serialized Format
+
 ---
-*Báo cáo được duy trì bằng tay; mục 7 sinh từ source bằng `docs/tools/build-props.py`.*
+
+## 9. BỔ SUNG 1.2.0 — 9 CONTROL (mục 107)
+
+Chín mục còn lại của mục 107 trong roadmap: lịch công tác, bảng kanban, khung xem ảnh, soạn mã,
+markdown, coach mark, minimap, mô hình 3D và splash. Thuộc tính dưới đây đọc trực tiếp từ source.
+
+### Data & Dashboard
+
+- **Scheduler** (FrameworkElement)
+  - Thuộc tính: ItemsSource, Date, StartHour, EndHour, HourHeight, SelectedItem, ItemBrush, ShowNowLine
+  - Phương thức: `SelectItem(item)`, `GetItemBounds(item)`, `ChangeDay(days)`
+  - Sự kiện: `SelectionChanged`, `ItemActivated`
+  - Item: **SchedulerItem** — `Title`, `Start`, `End`, `Resource`, `Accent`, `Tag`, `Duration`
+- **KanbanBoard** (Control)
+  - Thuộc tính: Columns (`ObservableCollection<KanbanColumn>`)
+  - Phương thức: `MoveCard(card, target, index)`, `ColumnOf(card)`; sự kiện `CardMoved`
+  - **KanbanColumn** (HeaderedItemsControl): Accent, IsDropTarget, Maximum
+  - **KanbanCard** (ContentControl): Title, Chip, Accent, IsDone
+
+### Media & Editing
+
+- **ImageViewer** (FrameworkElement)
+  - Thuộc tính: Source, Zoom, Rotation, Offset, MinZoom, MaxZoom, ShowCheckerboard
+  - Phương thức: `Fit()`, `Reset()`, `Centre()`, `RotateClockwise()`, `ZoomAt(anchor, factor)`, `GetImageBounds()`
+- **CodeEditor** (Control)
+  - Thuộc tính: Text, Syntax, IsReadOnly, HighlightSyntax, ShowLineNumbers, TabSize, CaretLine
+  - Phương thức: `Refresh()`, `GoToLine(line)`, `FindNext(term, matchCase)`; tĩnh `Tokenize(text, language)`
+- **MarkdownViewer** (Control)
+  - Thuộc tính: Markdown; `Document` (read-only, `FlowDocument` đã parse, bind được)
+  - Phương thức: `Rebuild()`; helper tĩnh **MarkdownParser** — `Parse(markdown)`
+- **ModelViewer3D** (FrameworkElement)
+  - Thuộc tính: Vertices, Edges, Yaw, Pitch, Zoom, Pan, ShowAxes, EdgeBrush
+  - Phương thức: `SetMesh(vertices, edges)`, `LoadBox(corner, w, d, h)`, `ResetView()`, `Orbit(dx, dy)`, `Project(point, out screen)`
+  - Struct: **MeshEdge** (`A`, `B`)
+
+### Feedback & Overlay
+
+- **CoachMark** (Control)
+  - Thuộc tính: Target, Placement, Title, StepIndex, StepCount, CardWidth, Gap, OverlayBrush
+  - Phương thức: `Advance()`, `Dismiss()`, `ComputeCardRect(host)`
+  - Sự kiện: `Next`, `Dismissed`; enum `CoachMarkPlacement`
+- **MiniMap** (FrameworkElement)
+  - Thuộc tính: ContentBounds, Viewport, ItemsSource, ItemBrush, ViewportBrush
+  - Phương thức: `WorldToMap(point)`, `MapToWorld(point)`, `CentreOn(world)`, `Fit()`; sự kiện `ViewportChanged`
+  - Item: **MiniMapItem** (`Bounds`, `Brush`); args: `MiniMapViewportChangedEventArgs` (`Viewport`, `IsFinal`)
+- **SplashScreen** (Control)
+  - Thuộc tính: AppName, Version, Status, Progress, ShowProgress, IsIndeterminate, Logo, Tagline
+  - Phương thức: `Show()`, `Report(progress, status)`, `Dismiss(animate)`; sự kiện `Dismissed`
+
+## 10. BỔ SUNG 1.2.0 — CAD SHELL (TT-UI-SPEC-001)
+
+Phần còn lại của spec 135 mục: khung nhìn, điều hướng, properties, project browser, document
+workspace, dòng lệnh, status bar, các service và chrome. Bảng đối chiếu từng mục nằm ở
+`docs/roadmap/revit-spec-gap.md`; dưới đây là danh sách control và API.
+
+### Viewport & điều hướng
+
+- **ViewportControl** (Panel)
+  - Thuộc tính: ShowGrid, GridStep, ShowCrosshair, SnapToGrid, SnapDistance, SelectionRectangle, Snap, SnapKind, TemporaryDimension, Grips
+  - `Overlay` — `Canvas` phủ theo toạ độ màn hình, đã tắt hit-test
+  - Phương thức: `ToWorld(point)`, `ToScreen(point)`, `UnitsToPixels(...)`, `ZoomToFit()`, `ToggleGrid()`
+  - Sự kiện: `CursorMoved`, `WorldClicked`
+- **ViewCube** (FrameworkElement) — khối vát cạnh 26 vùng bấm, vẽ bằng `OnRender`
+  - Thuộc tính: Host, Rotation, HomeRotation, FrontAngle, Theme, Visible, Position, DockMargin, Size, InactiveOpacity, ShowCompass, SnapToClosestView, SnapAngle, FitToViewOnChange, AnimatedTransitions, AnimationDuration, KeepSceneUpright, ClickThreshold
+  - Phương thức: `GoTo(region)`, `GoHome()`, `SetCurrentViewAsHome()`, `SetCurrentViewAsFront()`, `ResetFront()`, `RollBy(quarterTurns)`, `StepToNeighbor(direction)`, `SetProjection(mode)`, `Invalidate()`, `HitTest(point)`
+  - Sự kiện: `ViewRequested` (huỷ được và đổi được `Target`), `RegionHovered`, `ViewTransitionCompleted`, `HomeChanged`, `FrontChanged`, `ProjectionModeChanged`, `OptionsRequested`
+  - Kiểu phụ: `ViewCubePart`, `ViewCubeRegion` / `ViewCubeRegionKind`, `ViewCubeHit` (Part, Region, Arrow, Roll), `ICameraHost` / `ICameraHostEvents`, `ProjectionMode`, `ViewCubeMath` (bảng 26 vùng, `RotationFor`, `Slerp`, `Roll`)
+- **NavigationBar** (Control)
+  - Thuộc tính: ActiveTool, Ucs, ShowWalk
+  - Phương thức: `SetActiveTool(tool)`
+  - Sự kiện: `NavigationRequested`, `ActiveToolChanged`, `UcsChanged`
+  - Enum: `NavigationCommand`, `NavigationTool` (None/Pan/Orbit/Walk), `UcsMode` (World/Top/Front/Right)
+- **ViewControlBar** (Control)
+  - Thuộc tính: ViewScale, DetailLevel, VisualStyle, ShowShadows, CropView, RevealHidden
+  - Sự kiện: `SettingsChanged` (kèm tên thuộc tính vừa đổi), `HideIsolateRequested`
+  - Enum: `ViewDetailLevel`, `VisualStyleMode`, `HideIsolateAction`
+
+### Properties
+
+- **PropertiesPalette** (Control) — panel ghép, không có DependencyProperty riêng
+  - Thuộc tính CLR: `GridControl`, `Properties`, `Selection`, `Target`, `ValidationMessage`
+  - Phương thức: `Refresh()`, `ResetProperty(...)`, `Build()`
+  - Sự kiện: `EditTypeRequested`, `TypeChangeRequested`, `PropertyCommitted`
+- **PropertyReferencePicker** (Control)
+  - Thuộc tính: SelectedItem, Placeholder, IsReadOnly
+  - Phương thức: `TogglePopup()`; sự kiện `ReferencePicked`
+
+### Project browser & document workspace
+
+- **ProjectBrowser** (Control) — panel ghép
+  - Thuộc tính CLR: `Nodes`, `SelectedNode`, `GroupMode`, `SortMode`, `KindFilter`, `FilterText`, `VisibleNodes`
+  - Phương thức: `AddRoot(node)`, `SetSearchText(text)`, `Refresh()`, `ExpandAll()`, `CollapseAll()`, `Select(node)`, `Open(node)`
+  - Sự kiện: `OpenRequested`, `RenameRequested`, `DeleteRequested`, `DuplicateRequested`, `PropertiesRequested`, `SelectionChanged`
+  - **ProjectTreeNode**: `Kind` (`ProjectNodeKind`), `Parent`, `Children`, `IsModified`
+  - Enum: `ProjectNodeKind`, `ProjectGroupMode`, `ProjectSortMode`
+- **DocumentWorkspace** (Control) — panel ghép
+  - Thuộc tính CLR: `Documents`, `ActiveDocument`, `TileMode`, `PaneCount`, `PlaceholderTitle`, `PlaceholderText`
+  - Phương thức: `AddDocument(...)`, `CloseDocument(...)`, `CloseOthers(...)`, `CloseAll()`, `FloatDocument(pane)`
+  - Sự kiện: `DocumentClosing`, `DocumentAdded`, `DocumentClosed`, `ActiveDocumentChanged`, `DocumentFloated`
+  - **DocumentPane**: `IsDirty`; tile mode dùng `GridSplitter` giữa các pane, `DocumentTileMode` = Single/Vertical/Horizontal/Grid
+
+### Dòng lệnh & trạng thái
+
+- **CommandLine** (Control)
+  - Thuộc tính: Prompt, HistoryHeight, ShowHistory, MaxHistory
+  - Phương thức: `AddCommand(def)`, `AddCommands(defs)`, `Submit()`, `BeginPrompt(text)`, `CancelPrompt()`, `Complete()`, `WriteLine(text, kind)`, `Clear()`, `FocusInput()`, `Resolve(text)`
+  - Sự kiện: `CommandInvoked`, `UnknownCommand`, `PromptCompleted`, `PromptCancelled`
+  - **CommandDefinition**: `Name`, `Description`, `Prompt`, `Keys`; `WithAliases(...)`
+  - Helper tĩnh **CadInputParser**: `TryParseLength(text, out mm)`, `TryParseAngle(text, out deg)`, `TryParseCoordinate(text, out point)`
+- **CadStatusBar** (Control)
+  - Thuộc tính: SelectionCount, WorkPlane, Coordinates, UnitSuffix, ShowCoordinates, SnapEnabled, GridEnabled, OrthoEnabled, PolarEnabled, ObjectSnapEnabled
+  - Phương thức: `SetToggle(toggle, on)`, `IsToggleEnabled(toggle)`, tĩnh `FormatCoordinates(point, unit)`, `SelectionSummary(count)`, `AddTask(...)`, `RemoveTask(...)`, `Notify(...)`, `UpdateCoordinates(...)`, `RefreshTasks()`, `RefreshNotifications()`
+  - Sự kiện: `ToggleChanged`, `WorkPlaneChanged`, `TaskSelected`, `NotificationSelected`
+  - Enum: `CadToggle` (Snap/Grid/Ortho/Polar/ObjectSnap), `CadNotificationSeverity`
+- **DynamicInput** (Grid)
+  - Thuộc tính: Prompt, Text, Anchor, Offset, Kind, IsOpen; `IsValid`, `ValidationMessage` (read-only)
+  - Phương thức: `Open(anchor, prompt)`, `MoveTo(anchor)`, `Commit()`, `Cancel()`, tĩnh `TryParse(kind, text, out number, out point)`
+  - Sự kiện: `ValueCommitted`, `Cancelled`; enum `DynamicInputKind` (Distance/Angle/Coordinate/Text)
+
+### Chrome
+
+- **ApplicationTitleBar** (Control): ApplicationName, DocumentTitle, IsDocumentModified, ShowQuickAccess, ShowWindowButtons, IsMaximized; `ComposeTitle(...)`, `RefreshQuickAccess()`; sự kiện `MinimizeRequested`, `MaximizeRequested`, `CloseRequested`
+- **ApplicationInfoBar** (Control): Severity, Title, Message, ActionText, IsClosable; `Show(...)`, `Hide()`; sự kiện `ActionInvoked`, `Closed`
+- **RibbonBackstageView** (Control): IsOpen, ApplicationName; `Open()`, `Close()`, `Select(item)`, `RebuildRail()`; sự kiện `IsOpenChanged`, `SelectedItemChanged`
+- **FontPicker** (Control): SelectedFontFamily, SelectedFontSize, IsBold, IsItalic, ShowPreview, PreviewText; sự kiện `SelectionChanged`
+
+### Service / Manager
+
+| Service | API chính |
+|---|---|
+| **CameraController** | `Orbit`, `Pan`, `Zoom`, `ZoomAt`, `SetOrientation`, `LookAt`, `FitTo`, `TryProject`, `Unproject`, `VisibleHeight(distance)`, `CopyTo`; sự kiện `Changed` |
+| **SelectionManager** | `Select`, `SelectMany`, `Add`, `Remove`, `Toggle`, `Clear`, `Contains`; `SelectionChanged` |
+| **TransactionManager** | `Begin`, `Commit`, `Rollback`, `Record`, `Execute`, `Run`, `Undo`; `Committed`, `RolledBack`, `Changed` |
+| **PropertyManager** | `Register`, `GetDescriptors`, `Find`, `GetValue`, `TrySetValue`, `TrySetValueFromText`, `Validate`, `TryConvert`; `ValueChanged` |
+| **ApplicationStateService** | `Toggle`, `Attach`, `Detach`, `CaptureToggles`, `ApplyToggles`; `ToggleChanged`, `WorkPlaneChanged`, `CursorMoved`, `StatusChanged`, `ModifiedChanged` |
+| **DocumentManager** | `Open`, `Close`, `CloseAll`, `SetDirty`, `BuildTitle`; `DocumentOpened`, `DocumentClosed`, `DocumentClosing`, `ActiveDocumentChanged`, `DirtyChanged` |
+| **ViewManager** | `Add`, `Find`, `Open`, `Close`, `Capture`, `ApplyTo`, `RememberCamera`, `RestoreCamera`; `OpenRequested`, `ViewClosed`, `ActiveViewChanged` |
+| **WorkspaceLayoutService** | `Attach`, `Capture`, `Save`, `Apply`, `Find`, `Remove`, `Persist`, `ToToggles`, `FromToggles`; `ProfileApplied`, `ProfilesChanged` |
+| **RendererBridge** | `Adapter`, `Invalidate`, `TryProject`, `TryUnproject`, `TryPick`, `UpdateCursor`; `RenderRequested`, `HoverChanged` |
+
+Trạng thái đối chiếu spec: **132/135 mục (98%) đạt, 3 mục một phần, 0 mục thiếu**; 11/12 service và
+20/20 tiêu chí chấp nhận. Bốn mục một phần — DocumentTabContextMenu, ViewportHost, ContextMenuControl
+và CommandManager — được giải thích trong `docs/roadmap/revit-spec-gap.md`.
+
+---
+*Báo cáo được duy trì bằng tay; mục 7–10 sinh một phần từ source bằng `docs/tools/build-props.py`.*

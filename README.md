@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/.NET-4.8%20%7C%208%20%7C%2010-512BD4" alt=".NET Framework 4.8, .NET 8, .NET 10">
     <img src="https://img.shields.io/badge/platform-Windows%20%C2%B7%20WPF-0078D4" alt="Windows and WPF">
     <img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="MIT license">
-    <img src="https://img.shields.io/badge/docs-113%20pages-ff7900" alt="113 documentation pages">
+    <img src="https://img.shields.io/badge/docs-130%20pages-ff7900" alt="130 documentation pages">
   </p>
 
   <p>
@@ -35,8 +35,8 @@
 | --- | --- |
 | **Engineering & CAD** | `Spreadsheet` with formula engine, `StackedHeaderDataGrid`, `ZoomableCanvas` + `Ruler`, internal-force line charts, `RebarInput`, `CompassIndicator` |
 | **Data & dashboards** | `StatisticCard`, `OdometerNumber`, `Sparkline`, `HeatmapCalendar`, `AvatarStack`, `Timeline`, `CardCarousel`, `DataPager`, `PropertyGrid` |
-| **Input & forms** | 15 controls — `UnitBox` (value + unit + decimals), `NumericUpDown`, `OtpInput`, `PinBox`, `CheckComboBox`, `AutoCompleteTextBox`, `ColorPicker`, `RangeSlider`, `Rating`, `ToggleSwitch` |
-| **Navigation & shell** | `NavigationView`, `SideMenu`, `DrawerMenu`, `Breadcrumb`, `StepBar`, `Pagination`, `Transfer`, `TabControl`, `SplitButton`, `CONCOSTWindow` |
+| **Input & forms** | 17 controls — `UnitBox` (value + unit + decimals), `NumericUpDown`, `OtpInput`, `PinBox`, `CheckComboBox`, `AutoCompleteTextBox`, `ColorPicker`, `RangeSlider`, `Rating`, `ToggleSwitch`, `TagInput`, `SignaturePad` |
+| **Navigation & shell** | `NavigationView`, `SideMenu`, `DrawerMenu`, `Breadcrumb`, `StepBar`, `Pagination`, `Transfer`, `TabControl`, `SplitButton`, `CONCOSTWindow`, `MasonryPanel`, `Wizard` |
 | **Ribbon** | Office / AutoCAD-style `Ribbon` on a three-row group grid with a collapse ladder, `RibbonApplicationMenu`, quick-access toolbar, contextual tabs, Alt key tips, gallery, colour picker, `RibbonMenuBar` and JSON state persistence |
 | **Feedback & status** | `Dialog`, `Drawer`, `Growl` toast, loading indicators and overlays, `Skeleton` shimmer, `EmptyState`, `Watermark` |
 | **Visual effects** | `SpotlightCard`, `TiltCard`, `MagneticHover`, `AuroraBackground`, `BorderBeam`, `ConfettiBurst`, `TypewriterText`, `ScrollReveal`, `ParallaxPanel`, `PulseRing`, `GradientText` and more |
@@ -185,7 +185,7 @@ All of these are drawn directly, so they cost almost nothing and stay crisp at a
 
 [![Documentation preview](docs/assets/docs-preview.png)](https://thanhphuong-dev.github.io/CONCOST.UI/)
 
-The reference is a static wiki — **113 pages**, bilingual **Vietnamese / English**, searchable with `Ctrl K`, with an XAML ↔ C# code inspector on every page. It is fully offline-capable: fonts, icons and syntax highlighting are self-hosted, no CDN.
+The reference is a static wiki — **130 pages**, bilingual **Vietnamese / English**, searchable with `Ctrl K`, with an XAML ↔ C# code inspector on every page. It is fully offline-capable: fonts, icons and syntax highlighting are self-hosted, no CDN.
 
 - **Online:** <https://thanhphuong-dev.github.io/CONCOST.UI/> (`?lang=en` for English)
 - [Documentation index](docs/README.md) — page map and maintenance workflow
@@ -196,16 +196,25 @@ The reference is a static wiki — **113 pages**, bilingual **Vietnamese / Engli
 
 ## Build from source
 
-**Requirements:** Windows 10+, .NET 8 SDK, .NET 10 SDK. .NET Framework 4.8 reference assemblies are restored automatically for the `net48` target. Visual Studio 2022 with the *.NET desktop development* workload is optional.
+**Requirements:** Windows 10+ and the .NET 8 SDK. The .NET 10 SDK is optional: when it is installed the build also produces the `net10.0-windows` target, and on an older SDK the project quietly builds `net48` and `net8.0-windows` instead of failing to restore. .NET Framework 4.8 reference assemblies are restored automatically for the `net48` target. Visual Studio 2022 with the *.NET desktop development* workload is optional.
 
 ```powershell
 dotnet restore CONCOST.UI.sln
 dotnet build   CONCOST.UI.sln --configuration Release
 dotnet test    tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Release
 dotnet run     --project samples/CONCOST.UI.Showcase/CONCOST.UI.Showcase.csproj
+dotnet run     --project samples/CONCOST.UI.RevitLike/CONCOST.UI.RevitLike.csproj
 ```
 
 The Showcase app is the fastest way to see everything: browse by category, switch theme and accent, and open **View XAML** / **View C#** on any demo to copy the exact code.
+
+The **Revit-Like** sample assembles the shell controls into the application they were built for: a ribbon with a contextual *Modify* tab, a File backstage, a project browser, tabbed floor-plan and 3D views with a view cube inside a viewport, a properties palette, a command line and a drafting status bar. Walls are drawn on the plan with ortho/polar constraints, picked with the pointer, edited in the palette, and every change goes through the transaction stack — so the Undo button, `Ctrl+Z` and the `UNDO` command all move the same history.
+
+```powershell
+dotnet run --project samples/CONCOST.UI.RevitLike/CONCOST.UI.RevitLike.csproj
+```
+
+Type `HELP` in the command line for every command; the wall tool is `WA`, the 3D view is `F3`.
 
 ### Keeping the docs honest
 
@@ -228,6 +237,7 @@ node   docs/tools/build-index.js     # rebuild the page map and the page → sou
 │   ├── vendor/                  self-hosted fonts, Font Awesome, Prism (offline build)
 │   └── roadmap/                 active roadmap and archived plans
 ├── samples/CONCOST.UI.Showcase/ Interactive control gallery
+├── samples/CONCOST.UI.RevitLike/ Revit-shaped application shell (ribbon, backstage, palettes, viewport)
 ├── src/CONCOST.UI/              Multi-target WPF library
 ├── tests/CONCOST.UI.Tests/      Automated tests
 ├── artifacts/                   release packages and demo builds (git-ignored)

@@ -362,6 +362,7 @@ public class ThemeManager : ObservableObject
         rootElement.Resources["CONCOST.Brush.PrimaryPressed"] = ColorHelper.CreateBrush(palette.PrimaryPressed);
         rootElement.Resources["CONCOST.Brush.PrimaryLight"] = ColorHelper.CreateBrush(palette.PrimaryLight);
         rootElement.Resources["CONCOST.Brush.PrimaryDark"] = ColorHelper.CreateBrush(palette.PrimaryDark);
+        rootElement.Resources["CONCOST.Brush.PrimarySoft"] = ColorHelper.CreateBrush(palette.PrimarySoft);
         rootElement.Resources["CONCOST.Brush.BorderFocused"] = ColorHelper.CreateBrush(palette.Primary);
     }
 
@@ -378,6 +379,7 @@ public class ThemeManager : ObservableObject
         app.Resources["CONCOST.Brush.PrimaryPressed"] = ColorHelper.CreateBrush(palette.PrimaryPressed);
         app.Resources["CONCOST.Brush.PrimaryLight"] = ColorHelper.CreateBrush(palette.PrimaryLight);
         app.Resources["CONCOST.Brush.PrimaryDark"] = ColorHelper.CreateBrush(palette.PrimaryDark);
+        app.Resources["CONCOST.Brush.PrimarySoft"] = ColorHelper.CreateBrush(palette.PrimarySoft);
         app.Resources["CONCOST.Brush.BorderFocused"] = ColorHelper.CreateBrush(palette.Primary);
     }
 

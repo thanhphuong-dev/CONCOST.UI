@@ -98,6 +98,17 @@ public class DataGridFeaturePanelsTests
             _window.UpdateLayout();
         }
 
+        /// <summary>
+        /// Brings the window to the front. A <c>StaysOpen="False"</c> popup captures the mouse when
+        /// it opens and closes itself again if the capture is refused, so on an inactive window the
+        /// result depends on whether the desktop got round to activating the test window first.
+        /// </summary>
+        internal void Activate()
+        {
+            _window.Activate();
+            Pump();
+        }
+
         public void Dispose()
         {
             _window.Content = null;
@@ -392,6 +403,7 @@ public class DataGridFeaturePanelsTests
 
             using var host = new Host(480, stack);
 
+            host.Activate();
             chooser.IsOpen = true;
             chooser.UpdateLayout();
             Pump();

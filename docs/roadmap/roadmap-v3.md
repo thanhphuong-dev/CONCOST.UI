@@ -2863,17 +2863,22 @@ Dùng cho lịch sử thay đổi cấu kiện, log duyệt hồ sơ.
 
 Kéo-thả card giữa các cột, hữu ích cho module quản lý tiến độ dự án.
 
-## 107.4 Stepper / Wizard
+## 107.4 Stepper / Wizard — ✅ ĐÃ XONG trong 1.2.0
 
 ```xml
-<ui:Wizard>
-    <ui:WizardStep Title="Thông tin dự án"/>
-    <ui:WizardStep Title="Nhập tiết diện"/>
-    <ui:WizardStep Title="Xác nhận"/>
+<ui:Wizard Finished="OnFinished" FinishText="Hoàn tất">
+    <ui:WizardStep Header="Thông tin dự án" IsValid="{Binding HasProjectName}"/>
+    <ui:WizardStep Header="Nhập tiết diện" IsValid="True"/>
+    <ui:WizardStep Header="Xác nhận" IsValid="True"/>
 </ui:Wizard>
 ```
 
 Dùng cho các quy trình nhập liệu nhiều bước (khai báo dự án, khởi tạo mô hình).
+
+> **API thực tế khác bản phác ở trên:** bước dùng `Header` chứ không phải `Title` (kế thừa `HeaderedContentControl`), và `Steps` là `ContentProperty` nên khai báo trực tiếp trong XAML được.
+> - Tiến/lùi chỉ qua bước hợp lệ: `Next`, `Back`, `GoTo`, `Finish`, `CurrentIndex` (two-way), `CurrentStep`, `CanGoBack`, `CanGoNext`, `IsLastStep`, `RefreshState`.
+> - `WizardStep`: `Header`, `Description`, `IsValid`, `Number` / `Index` / `IsCurrent` / `IsCompleted` (read-only, tự đánh lại khi thêm bước).
+> - Sự kiện: `Navigating` (huỷ được qua `Cancel`), `StepChanged`, `Finished`; tắt `ShowHeader` / `ShowFooter` khi host đã có tiêu đề và nút riêng.
 
 ## 107.5 Rating
 
@@ -2909,13 +2914,21 @@ Hữu ích nếu phần mềm CONCOST có công thức tính toán tùy biến d
 
 Dùng để hiển thị changelog, hướng dẫn sử dụng ngay trong app.
 
-## 107.9 SignaturePad
+## 107.9 SignaturePad — ✅ ĐÃ XONG trong 1.2.0
 
 ```xml
-<ui:SignaturePad SignatureImage="{Binding SignedImage, Mode=OneWayToSource}"/>
+<ui:SignaturePad Height="220"
+                 Placeholder="Ký vào đây"
+                 ShowGuideline="True"
+                 SignatureImage="{Binding SignedImage}"/>
 ```
 
 Dùng cho ký duyệt hồ sơ kỹ thuật điện tử.
+
+> **API thực tế khác bản phác ở trên:** `SignatureImage` do control tự ghi sau mỗi nét hoàn tất, nên bind một chiều từ control ra view model là đủ (không cần `OneWayToSource`).
+> - Nét là `Stroke` thật trong `Strokes` (`System.Windows.Ink`), nên `Undo()` / `Clear()` chỉ là thao tác trên collection; `Ctrl+Z` và `Delete` đã nối sẵn.
+> - `Export(pixelWidth, pixelHeight, background)` trả `BitmapSource` đã freeze, nền trong suốt khi không truyền `background`.
+> - `HasSignature` (read-only) bind thẳng vào `IsEnabled` của nút Lưu; sự kiện `SignatureChanged`.
 
 ## 107.10 Comparison Slider
 
@@ -2933,13 +2946,18 @@ So sánh hai phương án thiết kế / trước-sau chỉnh sửa.
 <ui:OtpInput Length="6" Value="{Binding Code}"/>
 ```
 
-## 107.12 Mention / Tag Input
+## 107.12 Mention / Tag Input — ✅ ĐÃ XONG trong 1.2.0
 
 ```xml
-<ui:TagInput
-    ItemsSource="{Binding Tags}"
-    SuggestionsSource="{Binding AvailableTags}"/>
+<ui:TagInput ItemsSource="{Binding Tags}"
+             SuggestionSource="{Binding AvailableTags}"
+             MaxTags="6" />
 ```
+
+> **API thực tế khác bản phác ở trên:** property là `SuggestionSource` (không có `SuggestionsSource`), và control vẽ chip ở hàng trên chứ không nhét chip vào trong ô nhập.
+> - `Delimiter` mặc định `,`: dán "bê tông, thép" là ra hai thẻ; `CommitText()` trả số thẻ đã thêm, `AddTag` / `RemoveTag` / `ClearTags` thao tác bằng code.
+> - `AllowFreeText="False"` biến thành picker chỉ nhận mục có trong gợi ý; lọc gợi ý bỏ dấu qua `CommandPaletteText.Normalize`.
+> - `MaxTags`, `AllowDuplicates`, `DisplayPath`, `IsSuggestionOpen` (two-way); sự kiện `TagsChanged` (`IsAdded`); nút đóng chip gọi `RemoveTagCommand`.
 
 ## 107.13 Command Palette (Ctrl+K) — ✅ ĐÃ XONG trong 1.1.0
 
@@ -2973,11 +2991,18 @@ Tìm nhanh lệnh/điều hướng bằng bàn phím — nâng trải nghiệm c
 
 Dùng trên bản vẽ/báo cáo xuất PDF khi chưa duyệt chính thức.
 
-## 107.16 Masonry / Waterfall Panel
+## 107.16 Masonry / Waterfall Panel — ✅ ĐÃ XONG trong 1.2.0
 
 ```xml
-<ui:MasonryPanel ItemsSource="{Binding Gallery}" Columns="3"/>
+<ui:MasonryPanel MinColumnWidth="190" Columns="0" IsBalanced="True">
+    <ui:Card Height="132" />
+    <ui:Card Height="168" />
+</ui:MasonryPanel>
 ```
+
+> **API thực tế khác bản phác ở trên:** đây là `Panel` nhận con trực tiếp, không có `ItemsSource` — cần dữ liệu động thì đặt `ItemsControl` với `ItemsPanelTemplate` là `MasonryPanel`.
+> - `Columns = 0` (mặc định) tự tính số cột theo `MinColumnWidth`; `GetColumnCount` / `GetColumnWidth` cho biết trước để đo nội dung.
+> - `ColumnSpacing`, `RowSpacing`, `IsBalanced`: `True` xếp vào cột ngắn nhất cho đáy phẳng, `False` lấp theo thứ tự đọc.
 
 ## 107.17 KPI / Statistic Card
 

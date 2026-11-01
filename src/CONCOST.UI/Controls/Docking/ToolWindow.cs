@@ -17,6 +17,25 @@ public enum DockSide
     Center
 }
 
+/// <summary>When a pane header shows its pin and close buttons.</summary>
+public enum DockHeaderButtons
+{
+    /// <summary>Both buttons are always visible, the way a dialog frame shows them.</summary>
+    Always,
+
+    /// <summary>
+    /// Visible on the active pane and while the pointer is over any pane. The default: a header that
+    /// carries two glyphs it is not currently using is two glyphs of noise, and four panes make eight.
+    /// </summary>
+    Active,
+
+    /// <summary>Visible only while the pointer is over the pane — the quietest state that still works.</summary>
+    Hover,
+
+    /// <summary>Never drawn; the host closes the pane from its own menu instead.</summary>
+    None
+}
+
 /// <summary>
 /// A dockable panel: a header with a title and the pin/close buttons, and the content underneath.
 /// </summary>
@@ -78,6 +97,56 @@ public class ToolWindow : ContentControl
     {
         get => (bool)GetValue(ShowHeaderProperty);
         set => SetValue(ShowHeaderProperty, value);
+    }
+
+    public static readonly DependencyProperty HeaderHeightProperty =
+        DependencyProperty.Register(nameof(HeaderHeight), typeof(double), typeof(ToolWindow),
+            new FrameworkPropertyMetadata(28.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    /// <summary>Height of the header bar, in pixels. Default 28.</summary>
+    public double HeaderHeight
+    {
+        get => (double)GetValue(HeaderHeightProperty);
+        set => SetValue(HeaderHeightProperty, value);
+    }
+
+    public static readonly DependencyProperty IconSizeProperty =
+        DependencyProperty.Register(nameof(IconSize), typeof(double), typeof(ToolWindow),
+            new FrameworkPropertyMetadata(13.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    /// <summary>Size of the glyph in front of the title, in pixels. Default 13.</summary>
+    public double IconSize
+    {
+        get => (double)GetValue(IconSizeProperty);
+        set => SetValue(IconSizeProperty, value);
+    }
+
+    public static readonly DependencyProperty HeaderButtonsProperty =
+        DependencyProperty.Register(nameof(HeaderButtons), typeof(DockHeaderButtons), typeof(ToolWindow),
+            new PropertyMetadata(DockHeaderButtons.Active));
+
+    /// <summary>
+    /// When the pin and close buttons appear. Default <see cref="DockHeaderButtons.Active"/>: on the
+    /// active pane, plus any pane the pointer is over.
+    /// </summary>
+    public DockHeaderButtons HeaderButtons
+    {
+        get => (DockHeaderButtons)GetValue(HeaderButtonsProperty);
+        set => SetValue(HeaderButtonsProperty, value);
+    }
+
+    public static readonly DependencyProperty ShowActiveAccentProperty =
+        DependencyProperty.Register(nameof(ShowActiveAccent), typeof(bool), typeof(ToolWindow),
+            new PropertyMetadata(true));
+
+    /// <summary>
+    /// Draw the accent rule along the header's top edge while this pane is active. It is the one mark
+    /// that says which of four adjacent panes the keyboard is talking to.
+    /// </summary>
+    public bool ShowActiveAccent
+    {
+        get => (bool)GetValue(ShowActiveAccentProperty);
+        set => SetValue(ShowActiveAccentProperty, value);
     }
 
     // ---------------------------------------------------------------- docking state
@@ -310,11 +379,15 @@ public class ToolWindow : ContentControl
     /// <summary>Called by the template when the header is released.</summary>
     protected virtual void OnHeaderMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
+        // ReleaseMouseCapture raises LostMouseCapture synchronously, and that handler clears the flag.
+        // Read it first, otherwise the drop never reaches the manager and the preview stays on screen.
+        bool dragging = _isDragging;
+        _isDragging = false;
+
         ReleaseMouseCapture();
 
-        if (!_isDragging) return;
+        if (!dragging) return;
 
-        _isDragging = false;
         DragCompleted?.Invoke(this, ToManagerPoint(e));
     }
 

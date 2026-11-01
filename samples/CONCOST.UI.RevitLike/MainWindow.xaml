@@ -1,0 +1,153 @@
+<Window x:Class="CONCOST.UI.RevitLike.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:CONCOST.UI.Controls;assembly=CONCOST.UI"
+        Title="Riverside Tower — CONCOST Revit-Like"
+        Height="880" Width="1520"
+        MinHeight="640" MinWidth="1100"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI" FontSize="12"
+        Background="{DynamicResource CONCOST.Brush.Background}">
+
+    <Grid x:Name="Root">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Title strip: the File button takes the place of the tab that opens the backstage, and the
+             quick-access icons sit next to the document title exactly as they do in Revit. -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="FileButton"
+                    Grid.Column="0"
+                    Content="File"
+                    Width="64" Height="27"
+                    Margin="8,3,8,2"
+                    VerticalAlignment="Center"
+                    Click="OnFileButtonClick" />
+
+            <ui:ApplicationTitleBar x:Name="TitleBar"
+                                    Grid.Column="1"
+                                    ApplicationName="CONCOST Revit-Like"
+                                    DocumentTitle="Riverside Tower"
+                                    ShowQuickAccess="True"
+                                    ShowWindowButtons="False" />
+        </Grid>
+
+        <ContentControl x:Name="RibbonHost" Grid.Row="1" />
+
+        <!-- Hidden until something goes wrong: an empty info bar is just a grey stripe. -->
+        <ui:ApplicationInfoBar x:Name="InfoBar"
+                               Grid.Row="2"
+                               IsClosable="True"
+                               Visibility="Collapsed" />
+
+        <!-- Left palette, drawing area, right palette: the arrangement every CAD shell settles on. -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="292" MinWidth="210" />
+                <ColumnDefinition Width="4" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="4" />
+                <ColumnDefinition Width="336" MinWidth="250" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    BorderThickness="0,0,1,0"
+                    BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                    Background="{DynamicResource CONCOST.Brush.Surface}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="PROJECT BROWSER"
+                               Margin="12,9,12,7"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+
+                    <ContentControl x:Name="BrowserHost" Grid.Row="1" />
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1"
+                          Width="4"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ResizeDirection="Columns"
+                          ResizeBehavior="PreviousAndNext"
+                          Background="Transparent" />
+
+            <ContentControl x:Name="WorkspaceHost" Grid.Column="2" />
+
+            <GridSplitter Grid.Column="3"
+                          Width="4"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ResizeDirection="Columns"
+                          ResizeBehavior="PreviousAndNext"
+                          Background="Transparent" />
+
+            <Border Grid.Column="4"
+                    BorderThickness="1,0,0,0"
+                    BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                    Background="{DynamicResource CONCOST.Brush.Surface}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="PROPERTIES"
+                               Margin="12,9,12,7"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+
+                    <ContentControl x:Name="PaletteHost" Grid.Row="1" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <GridSplitter Grid.Row="4"
+                      Height="4"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeDirection="Rows"
+                      ResizeBehavior="PreviousAndNext"
+                      Background="Transparent" />
+
+        <!-- The command line is a band, not a floating control: a rule across the top separates it
+             from the drawing area the same way the status bar is separated from it below. -->
+        <Border Grid.Row="5"
+                Background="{DynamicResource CONCOST.Brush.Surface}"
+                BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                BorderThickness="0,1,0,0">
+            <ContentControl x:Name="CommandHost" />
+        </Border>
+
+        <ContentControl x:Name="StatusHost" Grid.Row="6" />
+
+        <!-- The backstage covers the whole window, so it lives above everything rather than inside a
+             panel; it keeps its own IsOpen state and collapses itself. -->
+        <ContentControl x:Name="BackstageHost"
+                        Grid.Row="0"
+                        Grid.RowSpan="7"
+                        Panel.ZIndex="100" />
+    </Grid>
+</Window>

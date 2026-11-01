@@ -17,7 +17,8 @@ public partial class ShowcaseViewModel
     // DEMO: controls ported from modern web UI patterns
     // =========================================================================
 
-    private Border DemoSection(string title, UIElement content, string? xaml = null, string? csharp = null)
+    private Border DemoSection(string title, UIElement content, string? xaml = null, string? csharp = null) => CreateStandardDemoCard(title, content, xaml, csharp);
+    private Border DemoSectionLegacy(string title, UIElement content, string? xaml = null, string? csharp = null)
     {
         var card = new Border
         {

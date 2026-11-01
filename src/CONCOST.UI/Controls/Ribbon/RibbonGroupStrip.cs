@@ -25,6 +25,7 @@ public class RibbonGroupStrip : Panel
     private readonly HashSet<RibbonGroup> _autoCollapsed = new();
     private double _lastAvailable = -1;
     private bool _measureAfterRestore;
+    private bool _labelsHidden;
     private Ribbon? _owner;
 
     protected override Size MeasureOverride(Size availableSize)
@@ -77,7 +78,20 @@ public class RibbonGroupStrip : Panel
             return new Size(total, height);
         }
 
-        if (total <= available) return new Size(total, height);
+        if (total <= available)
+        {
+            // Full density with captions is the ideal, so put the captions back the moment they fit
+            // again. They are not restored by RestoreAutoCollapsed: a few pixels of width noise
+            // would otherwise make the two undo each other on every other pass and the ladder would
+            // never settle on a collapsed group.
+            if (_mode == RibbonGroupSizeMode.Full && _labelsHidden)
+            {
+                ApplyLabels(true);
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(InvalidateMeasure));
+            }
+
+            return new Size(total, height);
+        }
 
         // One escalation step per pass. The returned width stays truthful so the parent keeps
         // asking for the real size instead of clipping a half-collapsed row.
@@ -92,6 +106,13 @@ public class RibbonGroupStrip : Panel
         {
             _mode = RibbonGroupSizeMode.Small;
             changed = ApplyMode(_mode);
+        }
+        else if (!_labelsHidden)
+        {
+            // Rung two of the ladder: the small buttons drop their captions and become icons, which
+            // is the cheapest width a group can give back without losing a command.
+            ApplyLabels(false);
+            changed = true;
         }
         else
         {
@@ -218,6 +239,18 @@ public class RibbonGroupStrip : Panel
         _autoCollapsed.Clear();
         _mode = RibbonGroupSizeMode.Full;
         ApplyMode(_mode);
+    }
+
+    /// <summary>
+    /// Shows or hides the captions of the small buttons. The value is set on the strip so it
+    /// inherits down to the groups, and cleared again to hand control back to the ribbon.
+    /// </summary>
+    private void ApplyLabels(bool show)
+    {
+        _labelsHidden = !show;
+
+        if (show) ClearValue(Ribbon.ShowItemLabelsProperty);
+        else SetValue(Ribbon.ShowItemLabelsProperty, false);
     }
 
     private List<RibbonGroup> Groups()

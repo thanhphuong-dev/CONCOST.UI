@@ -12,6 +12,9 @@ public class AccentPalette
     public Color PrimaryPressed { get; set; }
     public Color PrimaryDisabled { get; set; }
     public Color PrimaryText { get; set; }
+
+    /// <summary>The accent at 12% alpha: a tint that works over any surface without a second blend.</summary>
+    public Color PrimarySoft { get; set; }
 }
 
 public static class AccentPaletteGenerator
@@ -23,6 +26,7 @@ public static class AccentPaletteGenerator
         var hover = ColorHelper.Lighten(baseColor, 0.1);
         var pressed = ColorHelper.Darken(baseColor, 0.15);
         var disabled = Color.FromArgb(100, baseColor.R, baseColor.G, baseColor.B);
+        var soft = Color.FromArgb(31, baseColor.R, baseColor.G, baseColor.B);
 
         // Calculate contrasting text color (white or dark)
         var contrastAgainstWhite = ContrastChecker.Check(Colors.White, baseColor);
@@ -36,7 +40,8 @@ public static class AccentPaletteGenerator
             PrimaryHover = hover,
             PrimaryPressed = pressed,
             PrimaryDisabled = disabled,
-            PrimaryText = textColor
+            PrimaryText = textColor,
+            PrimarySoft = soft
         };
     }
 }

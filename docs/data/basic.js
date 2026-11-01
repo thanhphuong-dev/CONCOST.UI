@@ -508,12 +508,48 @@ var heading = new TextBlock
         className: "Card",
         props: [
             { name: "Icon", type: "IconKind", default: "IconKind.None", desc: "Icon ở header card." },
-            { name: "CornerRadius", type: "CornerRadius", default: "CornerRadius(10)", desc: "Bo góc card." },
-            { name: "Footer", type: "object", default: "null", desc: "Nội dung chân card." },
+            { name: "CornerRadius", type: "CornerRadius", default: "CornerRadius(10)", desc: "Bo góc card (header/footer và vạch accent tự tính theo)." },
+            { name: "Footer", type: "object", default: "null", desc: "Nội dung chân card (chỉ hiện khi có giá trị)." },
             { name: "FooterTemplate", type: "DataTemplate", default: "null", desc: "Template cho footer." },
+            { name: "Elevation", type: "int", default: "1", desc: "Độ nổi 0–4, shadow dựng từ token theme." },
+            { name: "IsInteractive", type: "bool", default: "false", desc: "Tự nâng nổi + phóng nhẹ + con trỏ bàn tay khi hover." },
+            { name: "AccentBar", type: "CardAccent", default: "CardAccent.None", desc: "Cạnh mang vạch accent: <code>Top</code>, <code>Left</code>, <code>Right</code>, <code>Bottom</code>." },
+            { name: "AccentBrush", type: "Brush", default: "null", desc: "Màu vạch accent (để trống = màu nhấn của theme)." },
+            { name: "AccentThickness", type: "double", default: "3.0", desc: "Độ dày vạch accent (px)." },
+            { name: "HeaderBackground", type: "Brush", default: "null", desc: "Nền vùng header (để trống = trong suốt)." },
+            { name: "FooterBackground", type: "Brush", default: "CONCOST.Brush.SurfaceSecondary", desc: "Nền vùng footer." },
+            { name: "AccentCornerRadius", type: "CornerRadius", default: "—", desc: "Bo góc vạch accent (read-only, tự tính)." },
+            { name: "HeaderCornerRadius", type: "CornerRadius", default: "—", desc: "Bo góc vùng header (read-only)." },
+            { name: "FooterCornerRadius", type: "CornerRadius", default: "—", desc: "Bo góc vùng footer (read-only)." },
             { name: "BorderElement.HoverBorderBrush", type: "Brush", default: "null", attached: true, desc: "Màu viền khi hover." },
             { name: "BorderElement.HoverBackground", type: "Brush", default: "null", attached: true, desc: "Màu nền khi hover." },
-            { name: "VisualElement.Elevation", type: "int", default: "0", attached: true, desc: "Độ nổi 0–4." }
+            { name: "VisualElement.HoverElevation", type: "int", default: "0", attached: true, desc: "Độ nổi khi hover (Card.IsInteractive tự đặt Elevation + 1)." }
+        ],
+        sections: [
+            {
+                title: "Vạch accent & card tương tác",
+                desc: "Chọn cạnh mang vạch accent bằng một thuộc tính và bật <code>IsInteractive</code> để thẻ tự nổi lên khi rê chuột — toàn bộ màu sắc đi theo theme.",
+                xaml: `<StackPanel Orientation="Horizontal">
+    <!-- Vạch accent cạnh trái, tự lấy màu nhấn của theme -->
+    <ui:Card Header="Cột thép D600"
+             AccentBar="Left"
+             IsInteractive="True"
+             Width="240">
+        <TextBlock Text="Tổ hợp bao phủ 12 trường hợp tải trọng." TextWrapping="Wrap" />
+    </ui:Card>
+
+    <!-- Vạch accent trên, màu success tuỳ biến -->
+    <ui:Card Header="Kiểm tra võng"
+             AccentBar="Top"
+             AccentBrush="{DynamicResource CONCOST.Brush.Success}"
+             AccentThickness="4"
+             CornerRadius="14"
+             Margin="12,0,0,0"
+             Width="240">
+        <TextBlock Text="Đạt giới hạn L/250." />
+    </ui:Card>
+</StackPanel>`
+            }
         ],
         variants: [
             { key: "CONCOST.Border.Base", desc: "Viền mảnh + nền surface." },

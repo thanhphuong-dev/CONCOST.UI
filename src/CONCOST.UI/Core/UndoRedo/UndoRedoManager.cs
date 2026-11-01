@@ -49,6 +49,23 @@ public class UndoRedoManager : MVVM.ObservableObject
         if (command == null) return;
         command.Execute();
 
+        Push(command);
+    }
+
+    /// <summary>
+    /// Pushes a command that has already run. A transaction applies its edits as they are recorded —
+    /// so the view updates live — and only hands the composite over at commit time; executing it again
+    /// there would apply every edit twice.
+    /// </summary>
+    public void Record(IUndoableCommand command)
+    {
+        if (command == null) return;
+
+        Push(command);
+    }
+
+    private void Push(IUndoableCommand command)
+    {
         _undoStack.Push(command);
         _redoStack.Clear();
 

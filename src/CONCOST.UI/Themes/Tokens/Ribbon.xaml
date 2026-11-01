@@ -7,6 +7,7 @@
     <sys:Double x:Key="CONCOST.Ribbon.RowGap">1</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.ColumnWidth">70</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.GroupHeight">74</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.PanelTitleHeight">18</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.TabHeight">30</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.SeparatorWidth">9</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.LargeIconSize">28</sys:Double>

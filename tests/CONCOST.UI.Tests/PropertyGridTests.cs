@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
 using CONCOST.UI.Controls;
 
 namespace CONCOST.UI.Tests;
@@ -62,6 +64,31 @@ public class PropertyGridTests
             Assert.Equal(PropertyEditorType.Number, optional.EditorType);
             optional.Value = null;
             Assert.Null(model.OptionalCount);
+        });
+    }
+
+    [Fact]
+    public void PropertyGrid_KeepsHostSuppliedCategoriesWhenItHasNoSelectedObject()
+    {
+        RunOnSTA(() =>
+        {
+            var grid = new PropertyGrid();
+            var category = new PropertyCategoryGroup { CategoryName = "Constraints" };
+
+            category.Properties.Add(new PropertyItem { Name = "Height", DisplayName = "Height", Value = "3000" });
+            grid.Categories.Add(category);
+
+            // The first layout pass is what applies the template. With no SelectedObject to reflect
+            // over, that pass used to clear the collection the host had just filled — which is how a
+            // properties palette lost every row until the selection was made a second time.
+            var host = new Border { Child = grid };
+
+            host.Measure(new Size(300, 400));
+            host.Arrange(new Rect(0, 0, 300, 400));
+            host.UpdateLayout();
+
+            Assert.Single(grid.Categories);
+            Assert.Single(grid.Categories[0].Properties);
         });
     }
 

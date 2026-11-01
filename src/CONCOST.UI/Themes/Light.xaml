@@ -8,6 +8,15 @@
     <SolidColorBrush x:Key="CONCOST.Brush.SurfaceHover" Color="#E2E8F0" />
     <SolidColorBrush x:Key="CONCOST.Brush.SurfacePressed" Color="#CBD5E1" />
 
+    <!-- A panel that floats above the shell: a popover, an inspector, a hovered toolbar tile. The
+         paper is a touch cleaner than the shell and never a different hue, so the card reads as the
+         same material lifted, not as a second design system. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceElevated" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSunken" Color="#F1F5F9" />
+
+    <!-- Scrim behind a modal: dims the drawing behind it without pushing it grey-blue. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Overlay" Color="#5C0B0F19" />
+
     <SolidColorBrush x:Key="CONCOST.Brush.Border" Color="#E2E8F0" />
     <SolidColorBrush x:Key="CONCOST.Brush.BorderSecondary" Color="#CBD5E1" />
     <SolidColorBrush x:Key="CONCOST.Brush.BorderHover" Color="#94A3B8" />
@@ -24,7 +33,45 @@
     <SolidColorBrush x:Key="CONCOST.Brush.InputBorder" Color="#CBD5E1" />
     <SolidColorBrush x:Key="CONCOST.Brush.InputHoverBorder" Color="#94A3B8" />
 
-    <!-- Shadow -->
-    <Color x:Key="CONCOST.Color.Shadow">#15000000</Color>
+    <!-- Drawing surfaces. A plan grid is ink on paper, not a control border: the border greys are
+         dark enough that a thousand of them turn the viewport into graphite paper. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasGrid" Color="#EFF3F8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasGridMajor" Color="#DCE3EC" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasAxis" Color="#C7D2E0" />
+
+    <!-- ViewCube. Light grey faces with darker bevel lines, dark grey captions and the blue highlight
+         Autodesk uses, not the accent orange: a highlight on the cube means "this is what you will
+         click", and the accent is reserved for commands that are already chosen. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeFace" Color="#E9ECF1" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeEdge" Color="#C3CAD5" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeBorder" Color="#9BA5B4" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeText" Color="#5A6472" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeHighlight" Color="#2E86DE" />
+
+    <!-- Ribbon. The strip is a shade darker than the paper so the tabs read as chrome and the
+         selected tab merges into the panel below it. Hover and pressed are a light blue rather
+         than the neutral grey the cards use: on a ribbon the highlight has to say “this command”
+         at a glance, and the accent stays reserved for the selected tab. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.TabStrip" Color="#F1F5F9" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.TabSelected" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelBackground" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.Divider" Color="#E2E8F0" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelTitle" Color="#64748B" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemForeground" Color="#0F172A" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHover" Color="#EAF2FD" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHoverBorder" Color="#C7DCF7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressed" Color="#D6E6FA" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressedBorder" Color="#A9C8EE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemChecked" Color="#DCE9F8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemCheckedBorder" Color="#BBD3EF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemDisabledForeground" Color="#94A3B8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualAccent" Color="#2E86DE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipBackground" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipText" Color="#0F172A" />
+
+    <!-- Shadow: a whisper of ink under a card. The elevation behaviour feeds this colour to a
+         drop shadow and deepens it per level, so the token itself stays almost invisible. -->
+    <Color x:Key="CONCOST.Color.Shadow">#1A0F172A</Color>
+    <Color x:Key="CONCOST.Color.ShadowStrong">#330F172A</Color>
 
 </ResourceDictionary>

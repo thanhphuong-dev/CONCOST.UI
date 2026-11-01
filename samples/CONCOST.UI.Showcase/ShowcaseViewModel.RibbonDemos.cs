@@ -206,7 +206,7 @@ public partial class ShowcaseViewModel
             HorizontalAlignment = HorizontalAlignment.Left
         };
         minimize.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
-        minimize.Click += (_, _) => ribbon.IsMinimized = !ribbon.IsMinimized;
+        minimize.Click += (_, _) => ribbon.CycleState();
 
         var baseStack = new StackPanel();
         baseStack.Children.Add(ribbon);
@@ -322,6 +322,210 @@ public partial class ShowcaseViewModel
         root.Children.Add(BuildRibbonInputCard());
         root.Children.Add(BuildRibbonKeyboardCard());
         root.Children.Add(BuildRibbonExtendedCard());
+        root.Children.Add(BuildRibbonFoldCard());
+
+        return root;
+    }
+
+    /// <summary>
+    /// Card 8 — folding the ribbon, and the item types that only make sense once it folds: the
+    /// four display states, the overlay, contextual tabs, slide-outs, a radio group, a remembered
+    /// split button and the two-level tooltip.
+    /// </summary>
+    private UIElement BuildRibbonFoldCard()
+    {
+        var ribbon = new Ribbon { Margin = new Thickness(0, 0, 0, 12) };
+
+        var drawing = new RibbonGroup { Header = "Drawing" };
+        drawing.Items.Add(Cmd("Line", RibbonItemSize.Large, IconKind.Edit, "Draw a line"));
+        drawing.Items.Add(Cmd("Arc", RibbonItemSize.Large, IconKind.ChartLine));
+        drawing.Items.Add(new RibbonSeparator());
+        drawing.Items.Add(Cmd("Grid", RibbonItemSize.Small, IconKind.GridSquare));
+        drawing.Items.Add(Cmd("Ruler", RibbonItemSize.Small, IconKind.Ruler));
+
+        // A slide-out: the little arrow on the caption row opens a panel that would not fit inline.
+        drawing.SlideOut = new StackPanel
+        {
+            Children =
+            {
+                new TextBlock { Text = "Snap", FontSize = 11, Margin = new Thickness(0, 0, 0, 4) },
+                new TextBlock { Text = "Endpoint, midpoint, intersection", FontSize = 11 }
+            }
+        };
+
+        var scale = new RibbonRadioGroup { Header = "Scale" };
+        scale.Items.Add(new RibbonRadioButton { Header = "1:50", IsChecked = true });
+        scale.Items.Add(new RibbonRadioButton { Header = "1:100" });
+        scale.Items.Add(new RibbonRadioButton { Header = "1:200" });
+
+        var precision = new RibbonGroup { Header = "Precision" };
+        precision.Items.Add(new RibbonLabel { Header = "Text height" });
+        precision.Items.Add(scale);
+        precision.Items.Add(Cmd("Reload", RibbonItemSize.Small, IconKind.Refresh));
+
+        // The body runs whatever was picked last, the way Save turns into Save As.
+        var exportSplit = new RibbonSplitButton
+        {
+            Header = "Export",
+            Size = RibbonItemSize.Large,
+            Icon = RibbonIcon(IconKind.Save),
+            RememberLast = true,
+            ScreenTip = "Export the drawing"
+        };
+        exportSplit.Items.Add(RibbonMenuEntry("PDF", IconKind.File, "Ctrl+P"));
+        exportSplit.Items.Add(RibbonMenuEntry("Excel", IconKind.TableData));
+        exportSplit.Items.Add(RibbonMenuEntry("CSV", IconKind.File));
+
+        // Two-level tip: short line first, the long form after the pointer has rested.
+        var publish = new RibbonButton
+        {
+            Header = "Publish",
+            Size = RibbonItemSize.Large,
+            Icon = RibbonIcon(IconKind.Link),
+            ScreenTip = "Publish the sheet set.",
+            ExtendedScreenTip = "Publishes every sheet in the current set to the configured plotter, " +
+                                "then opens the output folder.",
+            ToolTipPreview = RibbonIcon(IconKind.File),
+            ToolTipFooter = "Press F1 for more help",
+            GestureText = "Ctrl+Shift+P"
+        };
+
+        var output = new RibbonGroup { Header = "Output" };
+        output.Items.Add(exportSplit);
+        output.Items.Add(publish);
+
+        var home = new RibbonTabItem { Header = "Home", Icon = RibbonIcon(IconKind.Folder) };
+        home.Content = new List<RibbonGroup> { drawing, precision, output };
+
+        var panels = new RibbonGroup { Header = "Panels" };
+        panels.Items.Add(Cmd("Layers", RibbonItemSize.Large, IconKind.Layers));
+        panels.Items.Add(Cmd("Ruler", RibbonItemSize.Small, IconKind.Ruler));
+
+        var viewTab = new RibbonTabItem { Header = "View", Icon = RibbonIcon(IconKind.GridSquare) };
+        viewTab.Content = new List<RibbonGroup> { panels };
+
+        // The contextual tab a host shows when something is selected.
+        var modify = new RibbonGroup { Header = "Wall" };
+        modify.Items.Add(Cmd("Edit", RibbonItemSize.Large, IconKind.Edit));
+        modify.Items.Add(Cmd("Copy", RibbonItemSize.Small, IconKind.Copy));
+
+        var contextual = new RibbonTabItem
+        {
+            Header = "Modify | Walls",
+            Id = "modify-walls",
+            ContextualGroup = "Modify",
+            Content = new List<RibbonGroup> { modify }
+        };
+
+        ribbon.ItemsSource = new List<RibbonTabItem> { home, viewTab };
+
+        // The status zone a ribbon keeps at the far right of its tab row.
+        var status = new TextBlock { Text = "3 objects selected", FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
+        status.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        ribbon.InfoCenter = status;
+
+        var modes = new ComboBox { Width = 220, Margin = new Thickness(0, 0, 8, 0) };
+        modes.ItemsSource = Enum.GetValues<RibbonDisplayMode>();
+        modes.SelectedItem = ribbon.DisplayMode;
+        modes.SelectionChanged += (_, _) =>
+        {
+            if (modes.SelectedItem is RibbonDisplayMode mode) ribbon.DisplayMode = mode;
+        };
+        ribbon.DisplayModeChanged += (_, _) => modes.SelectedItem = ribbon.DisplayMode;
+
+        var cycle = new Button { Content = "Cycle (4 trạng thái)", Padding = new Thickness(12, 6, 12, 6) };
+        cycle.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+        cycle.Click += (_, _) => ribbon.CycleState();
+
+        var showTab = new Button { Content = "Hiện tab ngữ cảnh", Padding = new Thickness(12, 6, 12, 6), Margin = new Thickness(8, 0, 0, 0) };
+        showTab.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+        showTab.Click += (_, _) => ribbon.ShowContextualTab(contextual);
+
+        var hideTab = new Button { Content = "Ẩn tab ngữ cảnh", Padding = new Thickness(12, 6, 12, 6), Margin = new Thickness(8, 0, 0, 0) };
+        hideTab.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+        hideTab.Click += (_, _) => ribbon.HideContextualTab("modify-walls");
+
+        var actions = new WrapPanel { Margin = new Thickness(0, 10, 0, 0) };
+        actions.Children.Add(modes);
+        actions.Children.Add(cycle);
+        actions.Children.Add(showTab);
+        actions.Children.Add(hideTab);
+
+        var stack = new StackPanel();
+        stack.Children.Add(ribbon);
+        stack.Children.Add(actions);
+
+        var root = new StackPanel();
+        root.Children.Add(DemoSection("Thu gọn và overlay", stack,
+            xaml: "<ribbon:Ribbon x:Name=\"rb\" DisplayMode=\"MinimizeToTabs\">\n" +
+                  "    <ribbon:Ribbon.InfoCenter>\n" +
+                  "        <TextBlock Text=\"3 objects selected\" />\n" +
+                  "    </ribbon:Ribbon.InfoCenter>\n" +
+                  "</ribbon:Ribbon>\n\n" +
+                  "<ribbon:RibbonGroup Header=\"Drawing\">\n" +
+                  "    <ribbon:RibbonGroup.SlideOut>\n" +
+                  "        <TextBlock Text=\"Snap options\" />\n" +
+                  "    </ribbon:RibbonGroup.SlideOut>\n" +
+                  "</ribbon:RibbonGroup>",
+            csharp: "rb.DisplayMode = RibbonDisplayMode.MinimizeToTabs;   // hoặc rb.CycleState()\n\n" +
+                    "rb.InfoCenter = new TextBlock { Text = \"3 objects selected\" };\n" +
+                    "rb.DisplayModeChanged += (_, _) => Trace.WriteLine(rb.DisplayMode);\n\n" +
+                    "rb.ShowContextualTab(new RibbonTabItem\n" +
+                    "{\n" +
+                    "    Header = \"Modify | Walls\",\n" +
+                    "    Id = \"modify-walls\",\n" +
+                    "    ContextualGroup = \"Modify\"\n" +
+                    "});\n" +
+                    "rb.HideContextualTab(\"modify-walls\");   // quay lại tab trước đó"));
+
+        // Second card: the item types and item-level tuning.
+        var ticked = new RibbonGroup { Header = "Options" };
+        ticked.Items.Add(new RibbonLabel { Header = "Snap mode" });
+        var snapGroup = new RibbonRadioGroup();
+        snapGroup.Items.Add(new RibbonRadioButton { Header = "Off", IsChecked = true });
+        snapGroup.Items.Add(new RibbonRadioButton { Header = "Node" });
+        snapGroup.Items.Add(new RibbonRadioButton { Header = "Edge" });
+        ticked.Items.Add(snapGroup);
+
+        var pinned = new RibbonGroup { Header = "Pinned" };
+        pinned.CollapsePriority = 0;   // this panel is never folded
+        var alwaysLarge = Cmd("Anchor", RibbonItemSize.Large, IconKind.Link);
+        alwaysLarge.CollapsePriority = 0;   // and this item never loses its large tile
+        pinned.Items.Add(alwaysLarge);
+
+        var options = new RibbonTabItem { Header = "Options", Icon = RibbonIcon(IconKind.Settings) };
+        options.Content = new List<RibbonGroup> { ticked, pinned };
+
+        var smallRibbon = new Ribbon { Width = 360, HorizontalAlignment = HorizontalAlignment.Left };
+        smallRibbon.ItemsSource = new List<RibbonTabItem> { options };
+
+        var label = new TextBlock
+        {
+            Text = "Kéo cửa sổ hẹp lại: tab này đi theo thứ tự lớn → nhỏ → ẩn nhãn → thu thành nút.",
+            FontSize = 11,
+            Margin = new Thickness(0, 8, 0, 0)
+        };
+        label.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+
+        var tuningStack = new StackPanel();
+        tuningStack.Children.Add(smallRibbon);
+        tuningStack.Children.Add(label);
+
+        root.Children.Add(DemoSection("Loại item và bậc thu gọn", tuningStack,
+            xaml: "<ribbon:RibbonGroup Header=\"Options\" CollapsePriority=\"0\">\n" +
+                  "    <ribbon:RibbonLabel Header=\"Snap mode\" />\n" +
+                  "    <ribbon:RibbonRadioGroup SelectedIndex=\"0\">\n" +
+                  "        <ribbon:RibbonRadioButton Header=\"Off\" />\n" +
+                  "        <ribbon:RibbonRadioButton Header=\"Node\" />\n" +
+                  "    </ribbon:RibbonRadioGroup>\n" +
+                  "    <ribbon:RibbonButton Header=\"Anchor\" Size=\"Large\" CollapsePriority=\"0\" />\n" +
+                  "</ribbon:RibbonGroup>",
+            csharp: "var radio = new RibbonRadioGroup { SelectedIndex = 0 };\n" +
+                    "radio.Items.Add(new RibbonRadioButton { Header = \"Off\" });\n" +
+                    "radio.Items.Add(new RibbonRadioButton { Header = \"Node\" });   // tự bỏ chọn cái kia\n\n" +
+                    "// CollapsePriority = 0: panel không bao giờ thu thành nút, item không bao giờ thu nhỏ\n" +
+                    "group.CollapsePriority = 0;\n" +
+                    "item.CollapsePriority = 0;"));
 
         return root;
     }

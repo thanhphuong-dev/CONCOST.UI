@@ -407,21 +407,57 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
         Padding="18,8" />`
             },
             {
-                title: "5. Nhóm VisualElement (Đổ Bóng Nổi & Phóng To Hover Scale)",
-                desc: "Tạo hiệu ứng vi tương tác (Micro-Interactions) nổi bật cho Card, Button, Image:",
+                title: "5. Nhóm VisualElement (Đổ Bóng, Vi Tương Tác & Trạng Thái)",
+                desc: "Bộ 'appearance pack' dùng chung cho mọi UIElement (Card, Button, Border, Image, Panel) mà không cần tự viết ControlTemplate. Bóng đổ được dựng lại từ token theme nên tự đổi màu khi chuyển Light ↔ Dark hoặc đổi AccentColor:",
                 table: [
-                    { token: "attached:VisualElement.Elevation", desc: "Mức độ đổ bóng 3D: 0, 1, 2, 3, 4" },
-                    { token: "attached:VisualElement.HoverScale", desc: "Tỉ lệ phóng to đàn hồi êm ái khi rê chuột (vd: HoverScale=\"1.05\")" }
+                    { token: "attached:VisualElement.Elevation", desc: "Độ nổi 0–4; shadow lấy từ token Shadow / ShadowStrong của theme" },
+                    { token: "attached:VisualElement.HoverElevation", desc: "Độ nổi khi rê chuột (thường = Elevation + 1 để thẻ 'nhấc lên')" },
+                    { token: "attached:VisualElement.HoverScale", desc: "Tỉ lệ phóng to đàn hồi khi rê chuột (vd: HoverScale=\"1.03\"); 1.0 = tắt" },
+                    { token: "attached:VisualElement.PressScale", desc: "Tỉ lệ thu nhỏ khi nhấn (vd: PressScale=\"0.97\") tạo cảm giác bấm thật" },
+                    { token: "attached:VisualElement.ScaleOrigin", desc: "Tâm phóng/thu theo tỉ lệ 0–1 (0.5 = giữa, 0 = góc trên-trái)" },
+                    { token: "attached:VisualElement.MotionDuration", desc: "Thời lượng animation (ms); đặt 0 để tắt chuyển động" },
+                    { token: "attached:VisualElement.ShadowColor", desc: "Ghi đè màu bóng (mặc định theo token theme)" },
+                    { token: "attached:VisualElement.Glow", desc: "Quầng sáng màu accent khi rê chuột: True/False" },
+                    { token: "attached:VisualElement.FocusRing", desc: "Vòng focus 2px màu accent, tự khôi phục khi tắt" },
+                    { token: "attached:VisualElement.DisabledOpacity", desc: "Độ mờ khi IsEnabled=False, tự khôi phục khi bật lại" }
                 ],
                 xaml: `<Border Background="{DynamicResource CONCOST.Brush.Surface}"
         attached:BorderElement.CornerRadius="12"
-        attached:VisualElement.HoverScale="1.04"
+        attached:VisualElement.Elevation="1"
+        attached:VisualElement.HoverElevation="3"
+        attached:VisualElement.HoverScale="1.03"
+        attached:VisualElement.PressScale="0.97"
+        attached:VisualElement.MotionDuration="160"
+        attached:VisualElement.Glow="True"
         Padding="20">
-    <TextBlock Text="Thẻ Dự Án Tự Phóng To Khi Rê Chuột" FontWeight="Bold"/>
+    <TextBlock Text="Thẻ Dự Án Tự Nổi Lên Khi Rê Chuột" FontWeight="Bold"/>
 </Border>`
             },
             {
-                title: "6. Nhóm ScrollViewerHelper (Cuộn Quán Tính Inertia & Tự Ẩn Thanh Cuộn)",
+                title: "6. Nhóm SurfaceElement (Skin Bề Mặt Theo Theme Trong 1 Dòng)",
+                desc: "Thay vì tự gán Background / BorderBrush / CornerRadius cho từng control, chỉ cần chọn vai trò bề mặt — màu nền, viền và bo góc sẽ bám theo token theme và tự đổi khi chuyển Light/Dark:",
+                table: [
+                    { token: "attached:SurfaceElement.Role", desc: "Vai trò bề mặt: Base, Secondary, Elevated, Sunken, Accent, AccentSoft, Danger" },
+                    { token: "attached:SurfaceElement.Border", desc: "Kiểu viền: Soft, Strong, Accent (None = bỏ viền)" },
+                    { token: "attached:SurfaceElement.Radius", desc: "Bo góc ghi đè (vd: Radius=\"10\" hoặc Radius=\"12,12,0,0\")" }
+                ],
+                xaml: `<!-- Chỉ khai báo vai trò, màu do theme quyết định -->
+<StackPanel Orientation="Horizontal">
+    <Border attached:SurfaceElement.Role="Elevated"
+            attached:SurfaceElement.Radius="10"
+            Padding="14,8" Margin="0,0,8,0">
+        <TextBlock Text="Elevated" />
+    </Border>
+    <Border attached:SurfaceElement.Role="AccentSoft"
+            attached:SurfaceElement.Border="Accent"
+            attached:SurfaceElement.Radius="10"
+            Padding="14,8">
+        <TextBlock Text="AccentSoft" />
+    </Border>
+</StackPanel>`
+            },
+            {
+                title: "7. Nhóm ScrollViewerHelper (Cuộn Quán Tính Inertia & Tự Ẩn Thanh Cuộn)",
                 desc: "Biến ScrollViewer thông thường thành bộ cuộn mượt mà như trình duyệt web:",
                 table: [
                     { token: "attached:ScrollViewerHelper.IsInertiaEnabled", desc: "Bật thuật toán cuộn quán tính mượt CubicEase: True/False" }
@@ -431,7 +467,7 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
 </ScrollViewer>`
             },
             {
-                title: "7. Nhóm PasswordBoxHelper (Binding MVVM 2 Chiều Cho Mật Khẩu)",
+                title: "8. Nhóm PasswordBoxHelper (Binding MVVM 2 Chiều Cho Mật Khẩu)",
                 desc: "Khắc phục nhược điểm không hỗ trợ TwoWay Binding của WPF PasswordBox nguyên bản:",
                 table: [
                     { token: "attached:PasswordBoxHelper.Attach", desc: "Kích hoạt cơ chế lắng nghe thay đổi mật khẩu: True" },
@@ -444,7 +480,7 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
              attached:InfoElement.Placeholder="Nhập mật khẩu truy cập CSDL..." />`
             },
             {
-                title: "8. Nhóm ProgressBarElement & DataGridElement",
+                title: "9. Nhóm ProgressBarElement & DataGridElement",
                 desc: "Tùy biến nhãn tiến trình phần trăm và khoảng cách dòng bảng dữ liệu:",
                 table: [
                     { token: "attached:ProgressBarElement.ShowText", desc: "Hiển thị nhãn số phần trăm % ngay trên thanh tiến trình" },
@@ -458,7 +494,7 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
              attached:ProgressBarElement.TextPattern="Tiến độ: {0:0}%" />`
             },
             {
-                title: "9. Nhóm DragDropHelper (Kéo Thả Sắp Xếp & Chuyển Danh Sách Chuẩn gong-wpf-dragdrop)",
+                title: "10. Nhóm DragDropHelper (Kéo Thả Sắp Xếp & Chuyển Danh Sách Chuẩn gong-wpf-dragdrop)",
                 desc: "Cho phép người dùng kéo thả sắp xếp lại thứ tự (Reorder) hoặc chuyển item giữa 2 ListBox / DataGrid / TreeView hoàn toàn bằng XAML thuần túy mà không cần viết code-behind phức tạp:",
                 table: [
                     { token: "attached:DragDropHelper.IsDragSource", desc: "Kích hoạt control là nguồn phát sự kiện kéo item (True/False)" },

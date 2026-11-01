@@ -34,6 +34,26 @@ public class RibbonGroup : HeaderedItemsControl
         DependencyProperty.Register(nameof(IsUserCollapsed), typeof(bool), typeof(RibbonGroup),
             new FrameworkPropertyMetadata(false, OnUserCollapsedChanged));
 
+    public static readonly DependencyProperty SlideOutProperty =
+        DependencyProperty.Register(nameof(SlideOut), typeof(object), typeof(RibbonGroup),
+            new FrameworkPropertyMetadata(null, OnSlideOutChanged));
+
+    public static readonly DependencyProperty SlideOutTemplateProperty =
+        DependencyProperty.Register(nameof(SlideOutTemplate), typeof(DataTemplate), typeof(RibbonGroup),
+            new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty IsSlideOutOpenProperty =
+        DependencyProperty.Register(nameof(IsSlideOutOpen), typeof(bool), typeof(RibbonGroup),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    public static readonly DependencyProperty IsTitleOnlyProperty =
+        DependencyProperty.Register(nameof(IsTitleOnly), typeof(bool), typeof(RibbonGroup),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    public static readonly DependencyProperty IsButtonOnlyProperty =
+        DependencyProperty.Register(nameof(IsButtonOnly), typeof(bool), typeof(RibbonGroup),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
     private static readonly DependencyPropertyKey IsLastInStripPropertyKey =
         DependencyProperty.RegisterReadOnly(nameof(IsLastInStrip), typeof(bool), typeof(RibbonGroup),
             new FrameworkPropertyMetadata(false));
@@ -121,6 +141,51 @@ public class RibbonGroup : HeaderedItemsControl
         set => SetValue(IsUserCollapsedProperty, value);
     }
 
+    /// <summary>
+    /// Extra content the panel keeps behind the arrow next to its title — the “slideout” of a
+    /// ribbon panel. Leave it null and the arrow is not drawn at all.
+    /// </summary>
+    public object? SlideOut
+    {
+        get => GetValue(SlideOutProperty);
+        set => SetValue(SlideOutProperty, value);
+    }
+
+    /// <summary>How <see cref="SlideOut"/> is drawn; optional, the default presenter is fine.</summary>
+    public DataTemplate? SlideOutTemplate
+    {
+        get => (DataTemplate?)GetValue(SlideOutTemplateProperty);
+        set => SetValue(SlideOutTemplateProperty, value);
+    }
+
+    /// <summary>Whether the slideout is showing. It closes when the pointer clicks elsewhere.</summary>
+    public bool IsSlideOutOpen
+    {
+        get => (bool)GetValue(IsSlideOutOpenProperty);
+        set => SetValue(IsSlideOutOpenProperty, value);
+    }
+
+    /// <summary>
+    /// Panel body hidden but title kept — the “minimise to panel titles” ribbon state. Set by the
+    /// owning <see cref="Ribbon"/>; a group never decides this for itself.
+    /// </summary>
+    public bool IsTitleOnly
+    {
+        get => (bool)GetValue(IsTitleOnlyProperty);
+        set => SetValue(IsTitleOnlyProperty, value);
+    }
+
+    /// <summary>
+    /// Group drawn as its single collapsed button — the “minimise to panel buttons” ribbon state.
+    /// Kept apart from <see cref="IsCollapsed"/> so the collapse ladder and the display mode never
+    /// undo each other's work.
+    /// </summary>
+    public bool IsButtonOnly
+    {
+        get => (bool)GetValue(IsButtonOnlyProperty);
+        set => SetValue(IsButtonOnlyProperty, value);
+    }
+
     protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
         new RibbonGroupAutomationPeer(this);
 
@@ -155,6 +220,28 @@ public class RibbonGroup : HeaderedItemsControl
     {
         if (d is RibbonGroup group) group.IsCollapsed = (bool)e.NewValue;
     }
+
+    /// <summary>
+    /// The slideout chevron lives in the title row, and an empty slideout must not leave a mark
+    /// there, so the template needs a boolean to switch on.
+    /// </summary>
+    private static void OnSlideOutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not RibbonGroup group) return;
+
+        group.SetValue(HasSlideOutPropertyKey, e.NewValue != null);
+        if (e.NewValue == null) group.IsSlideOutOpen = false;
+    }
+
+    private static readonly DependencyPropertyKey HasSlideOutPropertyKey =
+        DependencyProperty.RegisterReadOnly(nameof(HasSlideOut), typeof(bool), typeof(RibbonGroup),
+            new FrameworkPropertyMetadata(false));
+
+    /// <summary>True when <see cref="SlideOut"/> has content; the header arrow keys off it.</summary>
+    public static readonly DependencyProperty HasSlideOutProperty = HasSlideOutPropertyKey.DependencyProperty;
+
+    /// <summary>True when there is a slideout to open.</summary>
+    public bool HasSlideOut => (bool)GetValue(HasSlideOutProperty);
 
     /// <summary>
     /// Menu shown when the group is collapsed. It mirrors the group's items, because a collapsed

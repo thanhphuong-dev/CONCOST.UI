@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48;net8.0-windows;net10.0-windows</TargetFrameworks>
+    <!-- net10.0-windows is added only when the SDK can actually target it. Without the condition a
+         machine on SDK 8 or 9 fails restore with NETSDK1045 for *every* target, so the two targets
+         it does support become unbuildable too. -->
+    <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0'))">$(TargetFrameworks);net10.0-windows</TargetFrameworks>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>

@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/.NET-4.8%20%7C%208%20%7C%2010-512BD4" alt=".NET Framework 4.8, .NET 8, .NET 10">
     <img src="https://img.shields.io/badge/platform-Windows%20%C2%B7%20WPF-0078D4" alt="Windows và WPF">
     <img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="Giấy phép MIT">
-    <img src="https://img.shields.io/badge/docs-113%20trang-ff7900" alt="113 trang tài liệu">
+    <img src="https://img.shields.io/badge/docs-130%20trang-ff7900" alt="130 trang tài liệu">
   </p>
 
   <p>
@@ -35,8 +35,8 @@
 | --- | --- |
 | **Kỹ thuật & CAD** | `Spreadsheet` có engine công thức, `StackedHeaderDataGrid`, `ZoomableCanvas` + `Ruler`, biểu đồ nội lực, `RebarInput`, `CompassIndicator` |
 | **Dữ liệu & dashboard** | `StatisticCard`, `OdometerNumber`, `Sparkline`, `HeatmapCalendar`, `AvatarStack`, `Timeline`, `CardCarousel`, `DataPager`, `PropertyGrid` |
-| **Nhập liệu & form** | 15 control — `UnitBox` (giá trị + đơn vị + số lẻ), `NumericUpDown`, `OtpInput`, `PinBox`, `CheckComboBox`, `AutoCompleteTextBox`, `ColorPicker`, `RangeSlider`, `Rating`, `ToggleSwitch` |
-| **Điều hướng & khung** | `NavigationView`, `SideMenu`, `DrawerMenu`, `Breadcrumb`, `StepBar`, `Pagination`, `Transfer`, `TabControl`, `SplitButton`, `CONCOSTWindow` |
+| **Nhập liệu & form** | 17 control — `UnitBox` (giá trị + đơn vị + số lẻ), `NumericUpDown`, `OtpInput`, `PinBox`, `CheckComboBox`, `AutoCompleteTextBox`, `ColorPicker`, `RangeSlider`, `Rating`, `ToggleSwitch`, `TagInput`, `SignaturePad` |
+| **Điều hướng & khung** | `NavigationView`, `SideMenu`, `DrawerMenu`, `Breadcrumb`, `StepBar`, `Pagination`, `Transfer`, `TabControl`, `SplitButton`, `CONCOSTWindow`, `MasonryPanel`, `Wizard` |
 | **Ribbon** | `Ribbon` kiểu Office / AutoCAD trên lưới group 3 hàng với thang thu gọn, `RibbonApplicationMenu`, thanh Quick Access, tab ngữ cảnh, key tip (Alt), gallery, bảng màu, `RibbonMenuBar` và lưu trạng thái bằng JSON |
 | **Phản hồi & trạng thái** | `Dialog`, `Drawer`, toast `Growl`, loading indicator và overlay, `Skeleton` shimmer, `EmptyState`, `Watermark` |
 | **Hiệu ứng thị giác** | `SpotlightCard`, `TiltCard`, `MagneticHover`, `AuroraBackground`, `BorderBeam`, `ConfettiBurst`, `TypewriterText`, `ScrollReveal`, `ParallaxPanel`, `PulseRing`, `GradientText`… |
@@ -185,7 +185,7 @@ Tất cả đều vẽ trực tiếp nên gần như không tốn tài nguyên v
 
 [![Xem trước tài liệu](docs/assets/docs-preview.png)](https://thanhphuong-dev.github.io/CONCOST.UI/)
 
-Tài liệu là một wiki tĩnh — **113 trang**, song ngữ **Việt / Anh**, tìm kiếm bằng `Ctrl K`, mỗi trang có code inspector XAML ↔ C#. Chạy **offline hoàn toàn**: font, icon và syntax highlight đều tự host, không CDN.
+Tài liệu là một wiki tĩnh — **130 trang**, song ngữ **Việt / Anh**, tìm kiếm bằng `Ctrl K`, mỗi trang có code inspector XAML ↔ C#. Chạy **offline hoàn toàn**: font, icon và syntax highlight đều tự host, không CDN.
 
 - **Bản online:** <https://thanhphuong-dev.github.io/CONCOST.UI/>
 - [Mục lục tài liệu](docs/README.md) — bản đồ trang và quy trình bảo trì
@@ -203,9 +203,18 @@ dotnet restore CONCOST.UI.sln
 dotnet build   CONCOST.UI.sln --configuration Release
 dotnet test    tests/CONCOST.UI.Tests/CONCOST.UI.Tests.csproj --configuration Release
 dotnet run     --project samples/CONCOST.UI.Showcase/CONCOST.UI.Showcase.csproj
+dotnet run     --project samples/CONCOST.UI.RevitLike/CONCOST.UI.RevitLike.csproj
 ```
 
 App Showcase là cách nhanh nhất để xem toàn bộ: duyệt theo nhóm, đổi theme và màu accent, bấm **View XAML** / **View C#** ở bất kỳ demo nào để copy đúng đoạn code đang chạy.
+
+Mẫu **Revit-Like** ghép các control khung ứng dụng thành đúng thứ chúng được viết ra để làm: ribbon có tab ngữ cảnh *Modify*, backstage sau nút File, project browser, các tab mặt bằng và 3D với view cube trong viewport, bảng Properties, command line và thanh trạng thái kiểu CAD. Tường được vẽ trên mặt bằng với ràng buộc trực giao/cực, chọn bằng chuột, sửa trong bảng Properties, và mọi thay đổi đều đi qua transaction — nên nút Undo, `Ctrl+Z` và lệnh `UNDO` dùng chung một lịch sử.
+
+```powershell
+dotnet run --project samples/CONCOST.UI.RevitLike/CONCOST.UI.RevitLike.csproj
+```
+
+Gõ `HELP` trong command line để xem toàn bộ lệnh; công cụ tường là `WA`, view 3D là `F3`.
 
 ### Giữ tài liệu khớp với code
 
@@ -228,6 +237,7 @@ node   docs/tools/build-index.js     # dựng lại bản đồ trang và map tr
 │   ├── vendor/                  font, Font Awesome, Prism tự host (build offline)
 │   └── roadmap/                 roadmap hiện hành và kế hoạch lưu trữ
 ├── samples/CONCOST.UI.Showcase/ Bộ sưu tập control tương tác
+├── samples/CONCOST.UI.RevitLike/ Khung ứng dụng kiểu Revit (ribbon, backstage, bảng panel, viewport)
 ├── src/CONCOST.UI/              Thư viện WPF đa target
 ├── tests/CONCOST.UI.Tests/      Project test tự động
 ├── artifacts/                   gói phát hành và bản build demo (đã git-ignore)

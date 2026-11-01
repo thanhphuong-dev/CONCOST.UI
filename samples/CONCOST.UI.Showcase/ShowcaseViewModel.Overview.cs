@@ -152,7 +152,11 @@ public partial class ShowcaseViewModel
         var stats = new UniformGrid { Columns = 4, Margin = new Thickness(-4, 0, -4, 18) };
         var basicCount = AllItems.Count(x => x.Category == "Basic Controls");
         var customCount = AllItems.Count(x => x.Category == "Custom Controls");
-        AddStat(stats, $"{basicCount + customCount}", L("Showcase.Overview.Interactive", "INTERACTIVE COMPONENTS"), IconKind.Layers, "CONCOST.Brush.Info");
+        var guideCount = AllItems.Count(x => x.Category == "Getting Started");
+
+        // Every page except the guide pages is a live demo, so the count covers all six buckets
+        // instead of only the two that happen to have a card below.
+        AddStat(stats, $"{AllItems.Count - guideCount}", L("Showcase.Overview.Interactive", "INTERACTIVE COMPONENTS"), IconKind.Layers, "CONCOST.Brush.Info");
         AddStat(stats, $"{basicCount}", L("Showcase.Overview.Foundation", "FOUNDATION CONTROLS"), IconKind.Check, "CONCOST.Brush.Success");
         AddStat(stats, $"{customCount}", L("Showcase.Overview.Custom", "CUSTOM CONTROLS"), IconKind.TuneAdjust, "CONCOST.Brush.Warning");
         AddStat(stats, "Light + Dark", L("Showcase.Overview.RuntimeThemes", "RUNTIME THEMES"), IconKind.DarkMode, "CONCOST.Brush.Danger");

@@ -390,7 +390,11 @@ public class DockingTests
             bitmap.Render(host);
 
             var pixels = new byte[4];
-            bitmap.CopyPixels(new Int32Rect(203, 200, 1, 1), pixels, 4, 0);
+
+            // The hairline sits in the middle of the band, and the band's width is the manager's,
+            // so the probe follows the property instead of a number that drifts with the default.
+            int x = 200 + (int)Math.Floor(manager.SplitterThickness / 2);
+            bitmap.CopyPixels(new Int32Rect(x, 200, 1, 1), pixels, 4, 0);
 
             // Nothing else paints in the band, so a non-zero alpha proves the hairline is there.
             Assert.True(pixels[3] > 0, "the splitter band painted nothing — the divider is invisible");

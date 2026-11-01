@@ -28,6 +28,25 @@ const DOCS_NAV = [
         ]
     },
     {
+        title: "CAD & Drafting",
+        items: [
+            { id: "viewportcontrol", name: "ViewportControl", icon: "fa-vector-square", badge: "Mới", badgeEn: "New" },
+            { id: "viewcube", name: "ViewCube", icon: "fa-cube", badge: "Mới", badgeEn: "New" },
+            { id: "navigationbar", name: "NavigationBar", icon: "fa-compass-drafting", badge: "Mới", badgeEn: "New" },
+            { id: "viewcontrolbar", name: "ViewControlBar", icon: "fa-sliders", badge: "Mới", badgeEn: "New" },
+            { id: "commandline", name: "CommandLine", icon: "fa-terminal", badge: "Mới", badgeEn: "New" },
+            { id: "dynamicinput", name: "DynamicInput", icon: "fa-keyboard", badge: "Mới", badgeEn: "New" },
+            { id: "cadstatusbar", name: "CadStatusBar", icon: "fa-window-minimize", badge: "Mới", badgeEn: "New" },
+            { id: "projectbrowser", name: "ProjectBrowser", icon: "fa-folder-tree", badge: "Mới", badgeEn: "New" },
+            { id: "documentworkspace", name: "DocumentWorkspace", icon: "fa-window-restore", badge: "Mới", badgeEn: "New" },
+            { id: "propertiespalette", name: "PropertiesPalette", icon: "fa-table-list", badge: "Mới", badgeEn: "New" },
+            { id: "applicationtitlebar", name: "ApplicationTitleBar", icon: "fa-heading", badge: "Mới", badgeEn: "New" },
+            { id: "applicationinfobar", name: "ApplicationInfoBar", icon: "fa-circle-info", badge: "Mới", badgeEn: "New" },
+            { id: "backstageview", name: "BackstageView", icon: "fa-file-import", badge: "Mới", badgeEn: "New" },
+            { id: "fontpicker", name: "FontPicker", icon: "fa-font", badge: "Mới", badgeEn: "New" }
+        ]
+    },
+    {
         title: "Dữ liệu & Dashboard", titleEn: "Data & Dashboard",
         items: [
             { id: "datapager", name: "DataPager", icon: "fa-table-list" },
@@ -107,14 +126,32 @@ const DOCS_NAV = [
             { id: "ribboncommands", name: "Ribbon commands", icon: "fa-rectangle-list", badge: "Mới", badgeEn: "New" },
             { id: "statusbar", name: "StatusBar", icon: "fa-window-minimize", badge: "Mới", badgeEn: "New" },
             { id: "commandbar", name: "CommandBar", icon: "fa-bars", badge: "Mới", badgeEn: "New" },
-            { id: "quickaccesstoolbar", name: "QuickAccessToolbar", icon: "fa-bolt", badge: "Mới", badgeEn: "New" }
+            { id: "quickaccesstoolbar", name: "QuickAccessToolbar", icon: "fa-bolt", badge: "Mới", badgeEn: "New" },
+            { id: "masonrypanel", name: "MasonryPanel", icon: "fa-table-cells", badge: "Mới", badgeEn: "New" },
+            { id: "wizard", name: "Wizard", icon: "fa-shoe-prints", badge: "Mới", badgeEn: "New" }
         ]
     },
     {
         title: "Nhập liệu & Kéo thả", titleEn: "Input & Drag",
         items: [
             { id: "searchabletreepicker", name: "SearchableTreePicker", icon: "fa-magnifying-glass", badge: "Mới", badgeEn: "New" },
+            { id: "taginput", name: "TagInput", icon: "fa-tags", badge: "Mới", badgeEn: "New" },
+            { id: "signaturepad", name: "SignaturePad", icon: "fa-signature", badge: "Mới", badgeEn: "New" },
             { id: "dragdrop", name: "Drop zone & Drag", icon: "fa-folder-open", badge: "Mới", badgeEn: "New" }
+        ]
+    },
+    {
+        title: "Ứng dụng & Công cụ", titleEn: "App & Tooling",
+        items: [
+            { id: "scheduler", name: "Scheduler", icon: "fa-calendar-day", badge: "Mới", badgeEn: "New" },
+            { id: "kanbanboard", name: "KanbanBoard", icon: "fa-table-columns", badge: "Mới", badgeEn: "New" },
+            { id: "codeeditor", name: "CodeEditor", icon: "fa-code", badge: "Mới", badgeEn: "New" },
+            { id: "markdownviewer", name: "MarkdownViewer", icon: "fa-file-lines", badge: "Mới", badgeEn: "New" },
+            { id: "imageviewer", name: "ImageViewer", icon: "fa-image", badge: "Mới", badgeEn: "New" },
+            { id: "minimap", name: "MiniMap", icon: "fa-map", badge: "Mới", badgeEn: "New" },
+            { id: "modelviewer3d", name: "ModelViewer3D", icon: "fa-cube", badge: "Mới", badgeEn: "New" },
+            { id: "coachmark", name: "CoachMark", icon: "fa-hand-pointer", badge: "Mới", badgeEn: "New" },
+            { id: "splashscreen", name: "SplashScreen", icon: "fa-rocket", badge: "Mới", badgeEn: "New" }
         ]
     },
     {

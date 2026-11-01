@@ -141,8 +141,11 @@ public class RibbonGroupPanel : Panel
 
             RibbonItemSize size = (child as RibbonItem)?.Size ?? RibbonItemSize.Medium;
 
-            // The group's density caps what an item may ask for, unless the item opted out.
-            bool fixedSize = (child as RibbonItem)?.IsFixedSize ?? false;
+            // The group's density caps what an item may ask for, unless the item opted out. A zero
+            // CollapsePriority is the “keep me large whatever happens” flag — the same value the
+            // group uses to refuse the last rung of the ladder.
+            bool fixedSize = (child as RibbonItem) is { } itemShape &&
+                             (itemShape.IsFixedSize || itemShape.CollapsePriority <= 0);
 
             if (!fixedSize)
             {

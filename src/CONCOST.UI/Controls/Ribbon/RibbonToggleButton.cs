@@ -29,6 +29,12 @@ public class RibbonToggleButton : RibbonButton
         set => SetValue(IsCheckedProperty, value);
     }
 
+    /// <summary>
+    /// Raised when <see cref="IsChecked"/> changes. A <see cref="RibbonRadioGroup"/> listens to it
+    /// to learn which member the user picked, without having to hook every button by hand.
+    /// </summary>
+    public event System.EventHandler? IsCheckedChanged;
+
     /// <summary>Buttons sharing a non-empty group name behave as radio buttons.</summary>
     public string GroupName
     {
@@ -49,7 +55,11 @@ public class RibbonToggleButton : RibbonButton
     {
         base.OnPropertyChanged(e);
 
-        if (e.Property != IsCheckedProperty || !IsChecked || string.IsNullOrEmpty(GroupName)) return;
+        if (e.Property != IsCheckedProperty) return;
+
+        IsCheckedChanged?.Invoke(this, System.EventArgs.Empty);
+
+        if (!IsChecked || string.IsNullOrEmpty(GroupName)) return;
 
         // Radio behaviour: clear the siblings that share the group name.
         if (Parent is not RibbonGroup group) return;

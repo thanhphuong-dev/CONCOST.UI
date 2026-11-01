@@ -616,8 +616,8 @@ layer.Target = PageScroll;`
     ribbon: {
         title: "Ribbon — a tabbed command bar",
         badge: "Layout & Shell",
-        desc: "An Office / AutoCAD style ribbon: a tab strip on top, each tab holds groups, each group lays its commands out on a three-row grid. When space runs out it demotes command sizes and then collapses groups into a single button — a command never disappears.",
-        keywords: ["ribbon", "tab", "group", "toolbar", "office", "autocad"],
+        desc: "An Office / AutoCAD style ribbon: a tab strip on top, each tab holds groups, each group lays its commands out on a three-row grid. When space runs out it demotes command sizes, drops the captions and then collapses groups into a single button — a command never disappears. And when you need even more room back it folds into the four Office display states, including a tab strip whose body opens as an overlay.",
+        keywords: ["ribbon", "tab", "group", "toolbar", "office", "autocad", "display mode", "overlay"],
         sections: [
             {
                 title: "Declaring a ribbon",
@@ -664,31 +664,150 @@ ribbon.ItemsSource = new List<RibbonTabItem> { home };`,
             },
             {
                 title: "Automatic collapsing",
-                desc: "The ribbon measures the active tab and steps down: demote every Large to Medium, then everything to Small, then collapse groups into a single button one at a time. A collapsed group keeps all its commands in its flyout. When the window gets narrow enough that even the tabs stop fitting, the strip clips and a <b>»</b> button appears listing every tab — nothing becomes unreachable.",
+                desc: "The ribbon measures the active tab and steps down <b>one rung at a time</b>, stopping as soon as it fits: demote every Large to Medium → demote everything to Small → <b>drop the captions</b> so the Smalls become icons → collapse groups into a single button one by one. The caption rung is the cheapest of them: it gives width back without losing a single command, only the words. A collapsed group keeps all its commands in its flyout. When the window gets narrow enough that even the tabs stop fitting, the strip clips and a <b>»</b> button appears listing every tab — nothing becomes unreachable.",
                 csharp: `// Critical group: never collapses
 var review = new RibbonGroup { Header = "Review", CollapsePriority = 0 };
 
 // Secondary group: collapses first (lower number = earlier)
 var utilities = new RibbonGroup { Header = "Utilities", CollapsePriority = 10 };
 
-// Collapse the whole ribbon down to its tab strip
-ribbon.IsMinimized = true;`,
+// A pinned command: keeps its Large tile even when the group drops to Small
+var wall = new RibbonButton { Header = "Wall", Size = RibbonItemSize.Large, CollapsePriority = 0 };
+
+// Switch the caption rung off for the whole ribbon
+ribbon.SetValue(Ribbon.ShowItemLabelsProperty, false);
+ribbon.SetValue(Ribbon.ShowGroupLabelsProperty, false);`,
                 callout: {
                     type: "warn",
-                    body: "<code>CollapsePriority = 0</code> pins a group: it never collapses, however narrow the ribbon gets. Use it for commands that must stay reachable."
+                    body: "<code>CollapsePriority = 0</code> pins: that group never collapses and that command never demotes, however narrow the ribbon gets. Use it for commands that must stay reachable."
                 }
             },
             {
-                title: "Group flyout",
-                desc: "The arrow next to a group name opens a flyout with every command of that group — the same idea as AutoCAD's panel flyout. The flyout is at least as wide as the group and closes on Escape, on a click outside, or after a command runs.",
+                title: "Four folding states and the overlay",
+                desc: "Collapsing the whole ribbon is not a single switch. <code>DisplayMode</code> has four levels, and the caret at the right end of the tab strip (or a double-click on a tab) walks them in order through <code>CycleState()</code>: <code>Full</code> → <code>MinimizeToTabs</code> (tab strip only; clicking a tab raises the body as an <b>overlay</b> over your content, and running a command closes it again) → <code>MinimizeToPanelTitles</code> (strip plus each panel's caption, no body) → <code>MinimizeToPanelButtons</code> (each panel folds into one button that reopens it). The old <code>IsMinimized</code> flag is still there and always agrees with <code>DisplayMode</code>: setting <code>IsMinimized = false</code> goes straight back to <code>Full</code>.",
+                csharp: `// Walk the four states
+ribbon.CycleState();
+
+// Or set one directly
+ribbon.DisplayMode = RibbonDisplayMode.MinimizeToTabs;
+
+// Whether the overlay is up (only meaningful in MinimizeToTabs)
+ribbon.IsOverlayOpen = true;
+
+// Persist the state
+ribbon.DisplayModeChanged += (_, _) => Save(ribbon.DisplayMode);`,
+                callout: {
+                    type: "tip",
+                    body: "Both the caret and the <code>InfoCenter</code> slot can be switched off (<code>ShowMinimizeButton</code>, <code>ShowInfoCenter</code>) if you would rather draw your own chrome. In <code>MinimizeToTabs</code> the body is given a <b>zero height row</b> rather than <code>Collapsed</code>: hiding it outright would leave the overlay — which borrows that very element — unable to reappear."
+                }
+            },
+            {
+                title: "Contextual tabs",
+                desc: "A contextual tab is a tab that only means anything while something is selected — Revit's <b>Modify | Walls</b> tab. It does not live in <code>ItemsSource</code>: call <code>ShowContextualTab</code> when the user selects an object and <code>HideContextualTab</code> when they clear it. The tab is appended to the strip, selected for you, and hiding it sends the ribbon back to whichever tab was open before.",
+                csharp: `var modify = new RibbonTabItem
+{
+    Header = "Modify | Walls",
+    Id = "modify-walls",
+    ContextualGroup = "Modify",                     // the contextual group badge
+    Content = new List<RibbonGroup> { wallGroup }
+};
+
+ribbon.ShowContextualTab(modify);                   // show and select
+ribbon.ShowContextualTab(modify, activate: false);  // show without stealing focus
+ribbon.HideContextualTab("modify-walls");           // hide, restore the previous tab`,
+                callout: {
+                    type: "warn",
+                    body: "Give every contextual tab a stable <code>Id</code> of its own — <code>HideContextualTab</code> looks it up by id, and calling <code>ShowContextualTab</code> twice with the same tab does not duplicate it."
+                }
+            },
+            {
+                title: "RibbonLabel and RibbonRadioGroup",
+                desc: "<code>RibbonLabel</code> is one line of static text beside a cluster of controls (<i>Height</i>, <i>Scale</i>): it takes no focus, is not a tab stop and lets clicks fall through. <code>RibbonRadioGroup</code> holds <code>RibbonRadioButton</code>s and guarantees <b>exactly one</b> is ticked — ticking another clears the old one, and clicking the ticked one does not turn it off.",
+                xaml: `<ribbon:RibbonGroup Header="Text">
+    <ribbon:RibbonLabel Header="Height" />
+    <ribbon:RibbonTextBox Width="70" />
+
+    <ribbon:RibbonRadioGroup SelectedIndex="0">
+        <ribbon:RibbonRadioButton Header="1:1" />
+        <ribbon:RibbonRadioButton Header="1:2" />
+        <ribbon:RibbonRadioButton Header="1:5" />
+    </ribbon:RibbonRadioGroup>
+</ribbon:RibbonGroup>`,
+                csharp: `var scale = new RibbonRadioGroup { SelectedIndex = 0 };
+scale.Items.Add(new RibbonRadioButton { Header = "1:1" });
+scale.Items.Add(new RibbonRadioButton { Header = "1:2" });
+scale.Items.Add(new RibbonRadioButton { Header = "1:5" });
+
+// Read the choice back
+if (scale.SelectedItem is RibbonRadioButton picked) Apply(picked.Header);`,
+                callout: {
+                    type: "tip",
+                    body: "<code>RibbonRadioGroup</code> draws no caption of its own. At a 74 px group height a caption plus three 24 px rows would overflow — reach for <code>RibbonLabel</code> if you need a line of lead-in text."
+                }
+            },
+            {
+                title: "Two-level tooltips",
+                desc: "Ribbon tooltips have two levels, like Office: the short form shows at once, the long form after the pointer rests long enough. The long form only appears when there is actually something for it to say (<code>CanExpand</code>), and it is <b>appended</b> below the short description rather than replacing it — so a tip with only a preview, or only a footer, still reads. Put the long content straight on the item with <code>ExtendedScreenTip</code>, <code>ToolTipPreview</code> and <code>ToolTipFooter</code>, or build a full <code>RibbonToolTip</code> and assign it to <code>ToolTip</code>.",
+                csharp: `var wall = new RibbonButton
+{
+    Header = "Wall",
+    ScreenTip = "Draws a wall.",                  // short form
+    ExtendedScreenTip = "Draws a wall between two points, using the current wall type.",
+    ToolTipFooter = "Press F1 for more help",
+    ToolTipPreview = WallPreviewBitmap,            // preview image
+    GestureText = "WA"
+};
+
+// Or build the tip yourself when you also want a different delay
+wall.ToolTip = new RibbonToolTip
+{
+    Title = "Wall",
+    Description = "Draws a wall.",
+    ExpandedDescription = "The long form…",
+    ExpandDelay = 900                              // ms; the default is 1500
+};`,
+                callout: {
+                    type: "tip",
+                    body: "<code>ExpandDelay</code> is in milliseconds and only applies when <code>CanExpand</code> is true. A tip with no long content never grows, so skimming across the command bar does not make it twitch."
+                }
+            },
+            {
+                title: "Split buttons that remember",
+                desc: "By default the left half of a <code>RibbonSplitButton</code> runs its own <code>Command</code>. Set <code>RememberLast = true</code> and, once the user has picked an entry from the menu, the left half <b>replays that entry</b> and relabels itself (<code>BodyHeader</code>, <code>BodyIcon</code>) — exactly how Office turns <i>Save</i> into <i>Save As</i>.",
+                csharp: `var save = new RibbonSplitButton
+{
+    Header = "Save",
+    RememberLast = true,
+    Icon = (ImageSource)FindResource("Icon.Save")
+};
+save.Items.Add(new RibbonMenuItem { Header = "Save", Command = SaveCommand });
+save.Items.Add(new RibbonMenuItem { Header = "Save As", Command = SaveAsCommand });
+
+// Read it back to remember the choice across sessions
+if (save.LastUsedItem is RibbonMenuItem last) Persist(last.Header);`,
+                callout: {
+                    type: "warn",
+                    body: "Do not turn <code>RememberLast</code> on for a button whose entries all do the same thing — a body that keeps relabelling itself is just noise. Use it when the entries really are variants of one command."
+                }
+            },
+            {
+                title: "Group flyout and slideout",
+                desc: "The arrow next to a group name opens a <b>flyout</b> with every command of that group — the same idea as AutoCAD's panel flyout. The flyout is at least as wide as the group and closes on Escape, on a click outside, or after a command runs. A <b>slideout</b> is different: it is a panel whose content you supply. Assign anything to <code>SlideOut</code> and the ribbon grows a button for it right beside the group's dialog launcher.",
                 csharp: `// Open/close the flyout from code
 group.IsDropDownOpen = true;
 
 // The flyout content is a menu built from the group's items
-RibbonMenu flyout = group.CollapsedMenu;`,
+RibbonMenu flyout = group.CollapsedMenu;
+
+// Slideout: a content panel of your own, not a menu
+group.SlideOut = new StackPanel { Children = { myExtraOptions } };
+group.IsSlideOutOpen = true;      // or let the user click the button
+
+// HasSlideOut flips on by itself when SlideOut is not null
+Debug.Assert(group.HasSlideOut);`,
                 callout: {
                     type: "warn",
-                    body: "The flyout is currently a <b>command menu</b>, not a re-laid-out panel like AutoCAD — a WPF control can only have one visual parent, so the live items cannot be reparented into the popup."
+                    body: "The flyout (<code>IsDropDownOpen</code>) is a <b>command menu</b> rebuilt from the items, not a re-laid-out panel like AutoCAD — a WPF control can only have one visual parent, so the live items cannot be reparented into the popup. When you want that panel, use <code>SlideOut</code>: it shows the content you hand it instead of re-flowing the items."
                 }
             },
             {
@@ -1582,6 +1701,277 @@ summary.RefreshSummaries();`,
                 callout: {
                     type: "note",
                     body: "This is a standalone control, not a child of <code>Ribbon</code>. The ribbon keeps its own internal <code>RibbonQuickAccessToolBar</code> — same idea, different scope."
+                }
+            }
+        ]
+    },
+
+    masonrypanel: {
+        title: "MasonryPanel - the waterfall layout",
+        desc: "A panel that gives every child its natural height: tall items take the room they need and each one drops into the shortest column. No column heights to set, no splitters to wire up.",
+        sections: [
+            {
+                title: "Column count from the width",
+                desc: "Leave <code>Columns = 0</code> and <code>MinColumnWidth</code> decides: as many columns as fit at the minimum width. <code>GetColumnCount</code> / <code>GetColumnWidth</code> report that result before layout, which is what you need when sizing a child outside Measure.",
+                callout: {
+                    type: "tip",
+                    body: "Every child is measured at exactly one column wide, so <code>TextBlock</code> wraps and images shrink to the column - nothing has to be measured again outside the panel."
+                }
+            },
+            {
+                title: "Balanced or in reading order",
+                desc: "<code>IsBalanced=\"True\"</code> (the default) puts each child in the shortest column so the bottoms line up. Set it to <code>False</code> to fill in reading order - column one fills before column two - at the cost of a ragged bottom edge.",
+                callout: {
+                    type: "note",
+                    body: "Column heights are measured once in <code>MeasureOverride</code> and reused by Arrange, so nothing is measured twice."
+                }
+            }
+        ]
+    },
+
+    taginput: {
+        title: "TagInput - the chip box",
+        desc: "Every value becomes a chip with a close button; paste \"concrete, steel, formwork\" and the control splits it on the delimiter. Suggestions, a tag limit, and duplicate rejection that ignores accents.",
+        sections: [
+            {
+                title: "Pasting several values at once",
+                desc: "<code>Delimiter</code> defaults to a comma, so Enter and a pasted comma-separated string both produce several chips. <code>CommitText()</code> returns how many tags were actually added, and <code>AddTag</code> accepts either a string or an item.",
+                callout: {
+                    type: "tip",
+                    body: "Duplicates are compared after dropping accents and case, so \"thep CB400\" does not sneak in beside \"Thép CB400\"."
+                }
+            },
+            {
+                title: "Pick only from the list",
+                desc: "<code>AllowFreeText=\"False\"</code> turns it into a picker: a typed string is only accepted when it matches an entry in <code>SuggestionSource</code>. The suggestion filter ignores accents too - \"be tong\" still finds \"Bê tông B25\"."
+            },
+            {
+                title: "Writing back to the source",
+                desc: "When <code>ItemsSource</code> is an <code>IList</code> the control writes into it: an <code>ObservableCollection</code> raises <code>CollectionChanged</code> for the host, a plain <code>List</code> makes the control rebuild its chips. Either way <code>TagsChanged</code> reports <code>IsAdded</code>.",
+                callout: {
+                    type: "note",
+                    body: "The chip's close button calls the control's own <code>RemoveTagCommand</code>, so a hand-written chip template removes tags without any code-behind."
+                }
+            }
+        ]
+    },
+
+    signaturepad: {
+        title: "SignaturePad - ink sign-off",
+        desc: "The pad uses a real <code>StrokeCollection</code> from <code>System.Windows.Ink</code>: each stroke is a <code>Stroke</code>, so undo is dropping the last one, and the signature bitmap is re-rendered after each completed stroke.",
+        sections: [
+            {
+                title: "Sign and export",
+                desc: "<code>SignatureImage</code> is a frozen <code>BitmapSource</code> updated per completed stroke rather than per mouse move, so saving costs nothing on the drawing path. <code>Export</code> takes a pixel width and a background - pass <code>null</code> to keep it transparent for stamping onto a PDF.",
+                callout: {
+                    type: "tip",
+                    body: "<code>HasSignature</code> is read-only; binding it to the Save button's <code>IsEnabled</code> is all you need."
+                }
+            },
+            {
+                title: "Undo and clear",
+                desc: "<code>Undo()</code> drops the last stroke and returns <code>false</code> when there is nothing left, so it can drive its own button. Users get <code>Ctrl+Z</code> for undo and <code>Delete</code> to clear.",
+                callout: {
+                    type: "note",
+                    body: "Switching theme recolours the existing strokes from the new <code>StrokeBrush</code>, so a signature drawn earlier does not vanish into a dark surface."
+                }
+            }
+        ]
+    },
+
+    wizard: {
+        title: "Wizard - multi-step form",
+        desc: "Steps are children of the wizard, so a form reads as a form in XAML. Each step owns its <code>IsValid</code>; Next stays disabled until the current step is valid, and <code>Navigating</code> lets the host veto a move.",
+        sections: [
+            {
+                title: "Steps as children",
+                desc: "The <code>ContentProperty</code> is <code>Steps</code>, so declaring <code>WizardStep</code> elements is enough. The header draws the number, a tick for completed steps and an emphasis on the current one; <code>ShowHeader</code> / <code>ShowFooter</code> turn that chrome off when the wizard sits in a dialog that already has a title.",
+                callout: {
+                    type: "note",
+                    body: "A step is not in the visual tree, so the wizard observes <code>IsValid</code> through <code>DependencyPropertyDescriptor</code> instead of walking to its children."
+                }
+            },
+            {
+                title: "Forward, back and veto",
+                desc: "<code>Next()</code> only advances when the current step is valid and another step follows; <code>GoTo</code> obeys the same rule. <code>CanGoNext</code>, <code>CanGoBack</code> and <code>IsLastStep</code> are read-only, ready to bind to your own buttons when the footer is hidden.",
+                callout: {
+                    type: "tip",
+                    body: "On the last step the Next button becomes <code>FinishText</code> and raises <code>Finished</code> - no need to check <code>IsLastStep</code> in code-behind."
+                }
+            }
+        ]
+    },
+
+    scheduler: {
+        title: "Scheduler - the day timeline",
+        desc: "One day, one column of time: hour lines plus booking blocks that split into lanes when they overlap. Feed <code>SchedulerItem</code> objects to <code>ItemsSource</code> and the layout is done.",
+        sections: [
+            {
+                title: "Hour range and lanes",
+                desc: "<code>StartHour</code> / <code>EndHour</code> cut the working range and <code>HourHeight</code> sets the pixels per hour; holding <code>Ctrl</code> while scrolling changes it. Overlapping bookings are packed greedily, so 9-11 and 10-12 sit side by side instead of on top of each other."
+            },
+            {
+                title: "Selecting and changing days",
+                desc: "<code>SelectItem</code> raises <code>SelectionChanged</code> once per real change and a double click raises <code>ItemActivated</code>. <code>ChangeDay(±1)</code> moves the date and keeps the time of day.",
+                callout: {
+                    type: "note",
+                    body: "The now-line only draws when <code>Date</code> is today and <code>ShowNowLine</code> is on."
+                }
+            }
+        ]
+    },
+
+    kanbanboard: {
+        title: "KanbanBoard - the task board",
+        desc: "Columns of cards you can drag between. Each column is a <code>KanbanColumn</code> holding <code>KanbanCard</code> items, and the board reports <code>CardMoved</code> so the host can persist the change.",
+        sections: [
+            {
+                title: "Columns, cards and limits",
+                desc: "<code>Header</code> is the column title, <code>Count</code> updates itself and <code>Maximum</code> refuses drops once a column is full. <code>IsDropTarget</code> flips while a card hovers over the lane, so the template can highlight the frame."
+            },
+            {
+                title: "Moving cards from code",
+                desc: "<code>MoveCard(card, target, index)</code> covers both cross-column moves and reordering inside a column, returning <code>false</code> when nothing changed. <code>ColumnOf(card)</code> finds the owning lane.",
+                callout: {
+                    type: "note",
+                    body: "A card has to pass the system drag threshold before <code>DragDrop.DoDragDrop</code> starts, so a plain click still just selects."
+                }
+            }
+        ]
+    },
+
+    imageviewer: {
+        title: "ImageViewer - zoom and pan",
+        desc: "Shows a sheet with zoom, rotation and panning over a checkerboard so transparency is visible. Zooming keeps the pixel under the pointer still, which is what stops a drawing from sliding away.",
+        sections: [
+            {
+                title: "Anchored zoom",
+                desc: "<code>ZoomAt(anchor, factor)</code> scales and then adjusts <code>Offset</code> so the image point under <code>anchor</code> stays there. <code>Zoom</code> is coerced into <code>MinZoom</code>-<code>MaxZoom</code>."
+            },
+            {
+                title: "Pan and rotate",
+                desc: "Drag with the left button to pan and double-click to <code>Fit</code>. <code>RotateClockwise</code> turns in 90 degree steps, and panning still works after a rotation because the offset is inverse-transformed for the current angle.",
+                callout: {
+                    type: "note",
+                    body: "<code>Offset</code> is always in screen pixels rather than source pixels, so changing <code>Zoom</code> never changes what it means."
+                }
+            }
+        ]
+    },
+
+    codeeditor: {
+        title: "CodeEditor - the syntax box",
+        desc: "A code box with line numbers, tab handling and syntax colouring for C#, XAML, SQL and JSON. The tokenizer is a pure function, so it is testable without a window.",
+        sections: [
+            {
+                title: "Colouring by language",
+                desc: "<code>Syntax</code> selects the scanner: C# (keywords, strings, numbers, comments), XAML (tags, attributes, values), SQL (case-insensitive keywords) and JSON. <code>CodeHighlighter.Tokenize</code> returns <code>CodeToken</code> spans with <code>Start</code> and <code>Length</code>; everything between them stays plain.",
+                callout: {
+                    type: "note",
+                    body: "An unterminated string only paints to the end of its line, so one stray quote cannot swallow the file."
+                }
+            },
+            {
+                title: "Navigation and quick edits",
+                desc: "<code>LineCount</code> and <code>CaretLine</code> are read-only for binding into a status bar. <code>GoToLine</code> places the caret and <code>FindNext</code> wraps around from the current position. Re-colouring is scheduled 180 ms after the last keystroke, so fast typing does not stutter."
+            }
+        ]
+    },
+
+    markdownviewer: {
+        title: "MarkdownViewer - the docs page",
+        desc: "Turns Markdown into a <code>FlowDocument</code> that can be shown and printed. It supports the subset a help pane needs, and anything unrecognised degrades to plain text instead of throwing.",
+        sections: [
+            {
+                title: "Supported syntax",
+                desc: "Headings from <code>#</code> to <code>######</code>, paragraphs, bullet and ordered lists, quotes, fenced code, horizontal rules, plus <code>**bold**</code>, <code>*italic*</code>, <code>`code`</code> and <code>[text](url)</code> links inside a line.",
+                callout: {
+                    type: "tip",
+                    body: "Hard-wrapped lines are joined into one paragraph, so a README wrapped at 80 columns still reads as prose."
+                }
+            },
+            {
+                title: "Reusing the document",
+                desc: "<code>Document</code> is a read-only property holding the parsed <code>FlowDocument</code>, ready to hand to a <code>FlowDocumentReader</code> for printing or export. <code>LinkCount</code> lets a release check count links without walking the tree."
+            }
+        ]
+    },
+
+    coachmark: {
+        title: "CoachMark - the step callout",
+        desc: "A scrim plus a callout card pointing at the control being introduced. The card flips above the target when it sits near the bottom of the window.",
+        sections: [
+            {
+                title: "Placing the card",
+                desc: "<code>Target</code> accepts any <code>FrameworkElement</code> and <code>Placement</code> picks below/above/left/right, flipping when there is no room. <code>CardRect</code> reports where the card landed, handy for tests or for drawing your own arrow."
+            },
+            {
+                title: "Multi-step tours",
+                desc: "<code>Advance()</code> raises <code>Next</code> so the host can move to the next control, and <code>IsLastStep</code> switches the button caption to a finish label. <code>Dismiss()</code> hides the card and raises <code>Dismissed</code> exactly once.",
+                callout: {
+                    type: "tip",
+                    body: "Calling <code>Dismiss()</code> twice does not raise again; show the next step by setting <code>Visibility</code> back to <code>Visible</code>."
+                }
+            }
+        ]
+    },
+
+    minimap: {
+        title: "MiniMap - the overview map",
+        desc: "A thumbnail of the whole plan plus the current viewport, clickable to jump around. It works for drawings, diagrams and large images alike.",
+        sections: [
+            {
+                title: "World and map coordinates",
+                desc: "<code>ContentBounds</code> declares the data range while <code>WorldToMap</code> and <code>MapToWorld</code> convert both ways, so the host never does the scaling maths. <code>Fit()</code> picks a scale that fits and the viewport is clamped inside the bounds.",
+                callout: {
+                    type: "note",
+                    body: "The scale keeps the aspect ratio (letterboxed), so a floor plan is never stretched."
+                }
+            },
+            {
+                title: "Driving the viewport",
+                desc: "Dragging or clicking inside the map moves <code>Viewport</code> and raises <code>ViewportChanged</code> with the new rectangle - enough for the host to call <code>CameraController.Focus</code>."
+            }
+        ]
+    },
+
+    modelviewer3d: {
+        title: "ModelViewer3D - the wireframe preview",
+        desc: "Projects a set of 3D vertices and edges onto a 2D plane so a model can be previewed without a renderer - enough for thumbnails, icons and checking an export.",
+        sections: [
+            {
+                title: "Mesh and projection",
+                desc: "<code>Vertices</code> is an <code>ObservableCollection&lt;Point3D&gt;</code> and <code>Edges</code> holds index pairs. <code>SetMesh</code> loads both, or <code>LoadBox</code> gives you a reference box immediately.",
+                callout: {
+                    type: "note",
+                    body: "The perspective divide keeps the camera behind every vertex, so no point ever flips behind the viewer."
+                }
+            },
+            {
+                title: "Orbit, zoom and pan",
+                desc: "Dragging orbits through <code>Yaw</code> and <code>Pitch</code>, the wheel changes <code>Zoom</code> and the middle button pans. <code>ResetView()</code> restores the default angle; the axis gizmo stays in the lower left corner."
+            }
+        ]
+    },
+
+    splashscreen: {
+        title: "SplashScreen - the start-up card",
+        desc: "A start-up card with logo, application name, version and a status line, plus a progress bar. It is a normal control in the visual tree, so it works inside any window.",
+        sections: [
+            {
+                title: "Show, report, dismiss",
+                desc: "<code>Show()</code> brings the card back and clears any previous animation, <code>Report(percent, status)</code> updates both, and <code>Dismiss()</code> fades out before collapsing. <code>Progress</code> is coerced into 0-100.",
+                callout: {
+                    type: "tip",
+                    body: "Use <code>IsIndeterminate</code> for work with unknown duration, and <code>Dismiss(false)</code> when animations are switched off."
+                }
+            },
+            {
+                title: "Why not the WPF SplashScreen",
+                desc: "<code>System.Windows.SplashScreen</code> only takes an image and closes when the main window appears, so it cannot report progress. This control lives in the visual tree: it runs on the UI thread, follows the theme and can be tested.",
+                callout: {
+                    type: "note",
+                    body: "Both types share a name, so with <code>using System.Windows;</code> in scope write <code>CONCOST.UI.Controls.SplashScreen</code> in full."
                 }
             }
         ]

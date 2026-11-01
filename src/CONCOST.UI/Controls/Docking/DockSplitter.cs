@@ -183,7 +183,9 @@ public class DockSplitter : FrameworkElement
         if (next < Minimum) next = Minimum;
         if (next > Maximum) next = Maximum;
 
-        Value = next;
+        // SetCurrentValue, not the setter: Value is BindsTwoWayByDefault, and SetValue would replace
+        // the host's binding instead of pushing through it, so the binding died after one drag.
+        SetCurrentValue(ValueProperty, next);
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)

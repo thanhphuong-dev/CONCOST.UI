@@ -841,7 +841,7 @@ layer.Target = PageScroll;`
     ribbon: {
         title: "Ribbon — thanh lệnh nhiều tab",
         badge: "Layout & Shell",
-        desc: "Ribbon kiểu Office / AutoCAD: dải tab ở trên, mỗi tab chứa các group, mỗi group xếp lệnh trên lưới 3 hàng. Khi hẹp, ribbon tự hạ kích thước lệnh rồi gộp group thành một nút — không bao giờ cắt mất lệnh.",
+        desc: "Ribbon kiểu Office / AutoCAD: dải tab ở trên, mỗi tab chứa các group, mỗi group xếp lệnh trên lưới 3 hàng. Khi hẹp, ribbon tự hạ kích thước lệnh, ẩn nhãn rồi gộp group thành một nút — không bao giờ cắt mất lệnh. Khi cần tiết kiệm chỗ hơn nữa, ribbon thu về bốn trạng thái như Office, kể cả thu về dải tab với lớp phủ bật ra khi bấm tab.",
         keywords: ["ribbon", "tab", "group", "toolbar", "office", "autocad", "thanh lệnh"],
         sections: [
             {
@@ -902,31 +902,150 @@ ribbon.ItemsSource = new List<RibbonTabItem> { home };`,
             },
             {
                 title: "Tự thu gọn khi hẹp",
-                desc: "Ribbon đo tổng bề rộng của tab đang chọn rồi leo thang: hạ toàn bộ <code>Large</code> xuống Medium → hạ tiếp xuống Small → gộp từng group thành một nút. Group bị gộp vẫn giữ đủ lệnh trong flyout của nó. Hẹp đến mức dải tab cũng không vừa thì các tab bị cắt bớt và nút <b>»</b> hiện ra để liệt kê toàn bộ tab — không tab nào bị mất.",
+                desc: "Ribbon đo tổng bề rộng của tab đang chọn rồi leo thang <b>từng bậc một</b>, mỗi lần một bậc, dừng ngay khi vừa: hạ toàn bộ <code>Large</code> xuống Medium → hạ tiếp xuống Small → <b>ẩn nhãn</b> để Small chỉ còn icon → gộp từng group thành một nút. Bậc ẩn nhãn là bậc rẻ nhất: nó trả lại bề rộng mà không mất một lệnh nào, chỉ mất chữ. Group bị gộp vẫn giữ đủ lệnh trong flyout của nó. Hẹp đến mức dải tab cũng không vừa thì các tab bị cắt bớt và nút <b>»</b> hiện ra để liệt kê toàn bộ tab — không tab nào bị mất.",
                 csharp: `// Group quan trọng: không bao giờ bị gộp
 var review = new RibbonGroup { Header = "Review", CollapsePriority = 0 };
 
 // Group phụ: bị gộp trước tiên (số càng nhỏ càng gộp sớm)
 var utilities = new RibbonGroup { Header = "Utilities", CollapsePriority = 10 };
 
-// Thu gọn cả ribbon xuống chỉ còn dải tab
-ribbon.IsMinimized = true;`,
+// Lệnh ghim: giữ nguyên ô Large dù group đã hạ xuống Small
+var wall = new RibbonButton { Header = "Wall", Size = RibbonItemSize.Large, CollapsePriority = 0 };
+
+// Tắt hẳn bậc ẩn nhãn cho cả ribbon
+ribbon.SetValue(Ribbon.ShowItemLabelsProperty, false);
+ribbon.SetValue(Ribbon.ShowGroupLabelsProperty, false);`,
                 callout: {
                     type: "warn",
-                    body: "<code>CollapsePriority = 0</code> nghĩa là <b>ghim</b>: group đó không bao giờ bị gộp, kể cả khi ribbon rất hẹp. Dùng cho các lệnh không được phép biến mất."
+                    body: "<code>CollapsePriority = 0</code> nghĩa là <b>ghim</b>: group đó không bao giờ bị gộp, lệnh đó không bao giờ bị hạ kích thước — kể cả khi ribbon rất hẹp. Dùng cho các lệnh không được phép biến mất."
                 }
             },
             {
-                title: "Flyout của group",
-                desc: "Mũi tên cạnh tên group mở flyout chứa toàn bộ lệnh của group đó — giống panel flyout của AutoCAD. Flyout rộng tối thiểu bằng group và đóng khi bấm ra ngoài hoặc chọn một lệnh.",
+                title: "Bốn trạng thái thu gọn và lớp phủ",
+                desc: "Thu gọn cả ribbon không chỉ có một kiểu. <code>DisplayMode</code> có bốn mức, và nút mũi tên ở góc phải dải tab (hoặc double-click vào tab) đi đúng thứ tự đó qua <code>CycleState()</code>: <code>Full</code> → <code>MinimizeToTabs</code> (chỉ còn dải tab; bấm một tab thì thân ribbon hiện ra như <b>lớp phủ</b> đè lên nội dung, chạy xong một lệnh là tự đóng) → <code>MinimizeToPanelTitles</code> (dải tab cộng tên từng panel, không có thân) → <code>MinimizeToPanelButtons</code> (mỗi panel co thành một nút, bấm vào mở lại panel đó). <code>IsMinimized</code> cũ vẫn còn và luôn khớp với <code>DisplayMode</code>: đặt <code>IsMinimized = false</code> là về thẳng <code>Full</code>.",
+                csharp: `// Đi vòng qua bốn trạng thái
+ribbon.CycleState();
+
+// Hoặc đặt thẳng
+ribbon.DisplayMode = RibbonDisplayMode.MinimizeToTabs;
+
+// Lớp phủ đang mở hay không (chỉ có nghĩa ở MinimizeToTabs)
+ribbon.IsOverlayOpen = true;
+
+// Nghe trạng thái đổi để cất vào settings
+ribbon.DisplayModeChanged += (_, _) => Save(ribbon.DisplayMode);`,
+                callout: {
+                    type: "tip",
+                    body: "Nút thu gọn và ô <code>InfoCenter</code> đều tắt được (<code>ShowMinimizeButton</code>, <code>ShowInfoCenter</code>) để tự vẽ chrome của riêng bạn. Ở <code>MinimizeToTabs</code> thân ribbon bị đặt về <b>cao 0</b> chứ không <code>Collapsed</code>: nếu ẩn hẳn thì lớp phủ — vốn mượn chính element đó — sẽ không hiện lại được."
+                }
+            },
+            {
+                title: "Tab theo ngữ cảnh",
+                desc: "Tab ngữ cảnh là tab chỉ có nghĩa khi đang chọn một đối tượng — kiểu tab <b>Modify | Walls</b> của Revit. Nó không nằm sẵn trong <code>ItemsSource</code>: gọi <code>ShowContextualTab</code> khi người dùng chọn đối tượng và <code>HideContextualTab</code> khi bỏ chọn. Tab được chèn vào cuối dải, tự chọn, và khi ẩn đi thì ribbon quay về đúng tab đang mở trước đó.",
+                csharp: `var modify = new RibbonTabItem
+{
+    Header = "Modify | Walls",
+    Id = "modify-walls",
+    ContextualGroup = "Modify",                        // nhóm tab ngữ cảnh
+    Content = new List<RibbonGroup> { wallGroup }
+};
+
+ribbon.ShowContextualTab(modify);                    // hiện + chọn
+ribbon.ShowContextualTab(modify, activate: false);   // hiện nhưng không cướp tab
+ribbon.HideContextualTab("modify-walls");            // ẩn, trả lại tab cũ`,
+                callout: {
+                    type: "warn",
+                    body: "Mỗi tab ngữ cảnh nên có <code>Id</code> riêng và ổn định — <code>HideContextualTab</code> tìm theo <code>Id</code>, và gọi <code>ShowContextualTab</code> nhiều lần với cùng một tab cũng không nhân bản nó."
+                }
+            },
+            {
+                title: "RibbonLabel và RibbonRadioGroup",
+                desc: "<code>RibbonLabel</code> là một dòng chữ tĩnh đặt cạnh cụm điều khiển (<i>Height</i>, <i>Scale</i>): không nhận focus, không phải tab stop, click xuyên qua nó. <code>RibbonRadioGroup</code> gom các <code>RibbonRadioButton</code> và bảo đảm <b>luôn đúng một</b> mục được chọn — chọn mục khác thì mục cũ tự bỏ, còn bấm lại mục đang chọn thì nó không tắt.",
+                xaml: `<ribbon:RibbonGroup Header="Text">
+    <ribbon:RibbonLabel Header="Height" />
+    <ribbon:RibbonTextBox Width="70" />
+
+    <ribbon:RibbonRadioGroup SelectedIndex="0">
+        <ribbon:RibbonRadioButton Header="1:1" />
+        <ribbon:RibbonRadioButton Header="1:2" />
+        <ribbon:RibbonRadioButton Header="1:5" />
+    </ribbon:RibbonRadioGroup>
+</ribbon:RibbonGroup>`,
+                csharp: `var scale = new RibbonRadioGroup { SelectedIndex = 0 };
+scale.Items.Add(new RibbonRadioButton { Header = "1:1" });
+scale.Items.Add(new RibbonRadioButton { Header = "1:2" });
+scale.Items.Add(new RibbonRadioButton { Header = "1:5" });
+
+// Đọc lựa chọn
+if (scale.SelectedItem is RibbonRadioButton picked) Apply(picked.Header);`,
+                callout: {
+                    type: "tip",
+                    body: "<code>RibbonRadioGroup</code> không tự vẽ tiêu đề bên trong. Với chiều cao group 74 px, một dòng tiêu đề cộng ba hàng 24 px là tràn — cần chữ dẫn thì dùng <code>RibbonLabel</code>."
+                }
+            },
+            {
+                title: "Tooltip hai tầng",
+                desc: "Tooltip của ribbon có hai tầng như Office: tầng ngắn hiện ngay, tầng dài hiện sau khi rê chuột đủ lâu. Tầng dài chỉ xuất hiện khi thật sự có nội dung cho nó (<code>CanExpand</code>), và nội dung dài được <b>nối thêm</b> bên dưới mô tả ngắn chứ không thay thế — nhờ vậy tip chỉ có ảnh, hoặc chỉ có dòng chân, vẫn đọc được. Đặt nội dung dài trực tiếp trên item bằng <code>ExtendedScreenTip</code>, <code>ToolTipPreview</code>, <code>ToolTipFooter</code>; hoặc dựng <code>RibbonToolTip</code> đầy đủ và gán vào <code>ToolTip</code>.",
+                csharp: `var wall = new RibbonButton
+{
+    Header = "Wall",
+    ScreenTip = "Draws a wall.",                  // tầng ngắn
+    ExtendedScreenTip = "Draws a wall between two points, using the current wall type.",
+    ToolTipFooter = "Press F1 for more help",
+    ToolTipPreview = WallPreviewBitmap,            // ảnh xem trước
+    GestureText = "WA"
+};
+
+// Hoặc dựng tip đầy đủ để đổi cả độ trễ
+wall.ToolTip = new RibbonToolTip
+{
+    Title = "Wall",
+    Description = "Draws a wall.",
+    ExpandedDescription = "Chi tiết dài…",
+    ExpandDelay = 900                              // ms; mặc định 1500
+};`,
+                callout: {
+                    type: "tip",
+                    body: "<code>ExpandDelay</code> tính bằng mili giây và chỉ có tác dụng khi <code>CanExpand</code> là true. Tip không có nội dung dài thì không bao giờ nở, nên rê nhanh ngang thanh lệnh không bị giật."
+                }
+            },
+            {
+                title: "Split button nhớ lệnh cuối",
+                desc: "Mặc định nửa trái của <code>RibbonSplitButton</code> chạy <code>Command</code> của chính nó. Đặt <code>RememberLast = true</code> thì sau khi người dùng chọn một mục trong menu, nửa trái <b>chạy lại đúng mục đó</b> và nhãn của nó đổi theo (<code>BodyHeader</code>, <code>BodyIcon</code>) — đúng kiểu nút <i>Save</i> đổi thành <i>Save As</i> của Office.",
+                csharp: `var save = new RibbonSplitButton
+{
+    Header = "Save",
+    RememberLast = true,
+    Icon = (ImageSource)FindResource("Icon.Save")
+};
+save.Items.Add(new RibbonMenuItem { Header = "Save", Command = SaveCommand });
+save.Items.Add(new RibbonMenuItem { Header = "Save As", Command = SaveAsCommand });
+
+// Đọc trạng thái để ghi nhớ giữa các phiên
+if (save.LastUsedItem is RibbonMenuItem last) Persist(last.Header);`,
+                callout: {
+                    type: "warn",
+                    body: "Đừng đặt <code>RememberLast = true</code> cho nút mà mọi mục cùng một hành động — nửa trái đổi nhãn liên tục sẽ gây khó chịu. Chỉ dùng khi các mục thật sự là biến thể của cùng một lệnh."
+                }
+            },
+            {
+                title: "Flyout và slideout của group",
+                desc: "Mũi tên cạnh tên group mở <b>flyout</b> chứa toàn bộ lệnh của group đó — giống panel flyout của AutoCAD. Flyout rộng tối thiểu bằng group và đóng khi bấm ra ngoài hoặc chọn một lệnh. Khác với flyout, <b>slideout</b> là panel mở rộng do bạn tự đặt nội dung: gán bất cứ thứ gì vào <code>SlideOut</code> là ribbon tự hiện một nút mở panel ngay cạnh nút dialog launcher của group.",
                 csharp: `// Mở/đóng flyout bằng code
 group.IsDropDownOpen = true;
 
 // Nội dung flyout là menu dựng từ item của group
-RibbonMenu flyout = group.CollapsedMenu;`,
+RibbonMenu flyout = group.CollapsedMenu;
+
+// Slideout: panel nội dung tuỳ ý, không phải menu
+group.SlideOut = new StackPanel { Children = { myExtraOptions } };
+group.IsSlideOutOpen = true;      // hoặc để người dùng bấm nút
+
+// HasSlideOut tự bật khi SlideOut != null
+Debug.Assert(group.HasSlideOut);`,
                 callout: {
                     type: "warn",
-                    body: "Flyout hiện là <b>menu lệnh</b> (icon + tên), chưa phải bản panel mở rộng như AutoCAD — một control WPF chỉ có một cha trong visual tree nên không thể bê nguyên control đang hiển thị vào popup."
+                    body: "Flyout (<code>IsDropDownOpen</code>) là <b>menu lệnh</b> dựng lại từ item, chưa phải bản panel mở rộng như AutoCAD — một control WPF chỉ có một cha trong visual tree nên không thể bê nguyên control đang hiển thị vào popup. Cần đúng panel đó thì dùng <code>SlideOut</code>: nó hiện nội dung bạn đưa vào chứ không tái bố cục item."
                 }
             },
             {
@@ -2004,7 +2123,7 @@ IReadOnlyList<object> picked = picker.SelectedItems;`,
     ColorC="#EF9F27" ColorD="#D4537E"
     Speed="1" BlobOpacity="0.55" Spread="0.75" />`,
                 csharp: "mesh.Restart();          // quay lại frame đầu\n" +
-                        "mesh.IsAnimated = false; // đứng yên, vẫn vẽ",
+                    "mesh.IsAnimated = false; // đứng yên, vẫn vẽ",
                 callout: {
                     type: "note",
                     body: "Vẽ bằng radial gradient trong suốt ở viền, không dùng <code>BlurEffect</code> — rẻ hơn nhiều khi phủ cả cửa sổ."
@@ -2018,8 +2137,8 @@ IReadOnlyList<object> picked = picker.SelectedItems;`,
     <controls:CursorSpotlight Radius="130" SpotDim="0.62" />
 </Grid>`,
                 csharp: "spotlight.FollowCursor = false;\n" +
-                        "spotlight.SpotlightCenter = new Point(120, 80);\n\n" +
-                        "spotlight.SpotColor = Color.FromArgb(0x22, 0xFF, 0xFF, 0xFF);",
+                    "spotlight.SpotlightCenter = new Point(120, 80);\n\n" +
+                    "spotlight.SpotColor = Color.FromArgb(0x22, 0xFF, 0xFF, 0xFF);",
                 callout: {
                     type: "tip",
                     body: "Vẽ bằng <b>một</b> hình chữ nhật phủ toàn khung với gradient tuyệt đối và <code>SpreadMethod=Pad</code>. Chỉ vẽ hình ellipse sẽ ra vòng tối ở giữa — đúng ngược lại điều cần."
@@ -2045,8 +2164,8 @@ IReadOnlyList<object> picked = picker.SelectedItems;`,
         Tint="#66FFFFFF" />
 </Grid>`,
                 csharp: "glass.Source = backdrop;\n" +
-                        "glass.BlurRadius = 24;\n" +
-                        "glass.Tint = new SolidColorBrush(Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF));",
+                    "glass.BlurRadius = 24;\n" +
+                    "glass.Tint = new SolidColorBrush(Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF));",
                 callout: {
                     type: "warning",
                     body: "Bản sao đó được vẽ lại mỗi khi Source đổi, nên đây là control cho <b>vài tấm kính trên một hero</b> — không phải nền cho danh sách cuộn dài."
@@ -2083,7 +2202,7 @@ IReadOnlyList<object> picked = picker.SelectedItems;`,
          controls:StaggerAnimation.OffsetY="16"
          controls:StaggerAnimation.MaxItems="24" />`,
                 csharp: "StaggerAnimation.SetDelay(list, 70);\n" +
-                        "StaggerAnimation.SetMaxItems(list, 12);   // chặn trần độ trễ",
+                    "StaggerAnimation.SetMaxItems(list, 12);   // chặn trần độ trễ",
                 callout: {
                     type: "tip",
                     body: "<code>MaxItems</code> chặn độ trễ tăng mãi: danh sách 200 dòng sẽ không mất mười giây mới hiện xong."
@@ -2094,10 +2213,10 @@ IReadOnlyList<object> picked = picker.SelectedItems;`,
                 desc: "<code>SharedElementTransition</code> không animate layout — phần tử đã nằm đúng chỗ cuối, chỉ bị scale/dịch về hình chữ nhật cũ ở frame đầu rồi về identity. Nhờ vậy không có layout thrash và phần tử vẫn tương tác được trong suốt quá trình.",
                 xaml: `<!-- Không cần XAML: gọi khi đổi view -->`,
                 csharp: "SharedElementTransition.RunFrom(target, source);\n\n" +
-                        "// hoặc tự tính rect trong hệ của cha\n" +
-                        "var parent = (UIElement)VisualTreeHelper.GetParent(target);\n" +
-                        "var origin = source.TranslatePoint(new Point(0, 0), parent);\n" +
-                        "SharedElementTransition.Run(target, new Rect(origin, source.RenderSize));",
+                    "// hoặc tự tính rect trong hệ của cha\n" +
+                    "var parent = (UIElement)VisualTreeHelper.GetParent(target);\n" +
+                    "var origin = source.TranslatePoint(new Point(0, 0), parent);\n" +
+                    "SharedElementTransition.Run(target, new Rect(origin, source.RenderSize));",
                 callout: {
                     type: "note",
                     body: "Cả hai rect phải ở cùng hệ toạ độ — thường là cha của phần tử. Kết thúc thì <code>RenderTransform</code> được trả về như cũ để không phá hit-test."
@@ -2335,6 +2454,501 @@ var visible = qat.ItemsSource.Cast<QuickAccessItem>()
             }
         ],
         related: ["commandbar", "ribbon", "ribboncommands"]
+    },
+
+    masonrypanel: {
+        title: "MasonryPanel — bố cục thác nước",
+        badge: "Mới",
+        desc: "Panel trả lại chiều cao tự nhiên cho từng con: con nào cao thì chiếm chỗ ấy, và mỗi con rơi vào cột đang ngắn nhất. Không cần đặt chiều cao cho cột, không cần chia tay.",
+        keywords: ["masonry", "waterfall", "layout", "panel", "columns", "pinterest"],
+        sections: [
+            {
+                title: "Số cột tính từ bề rộng",
+                desc: "Để <code>Columns = 0</code> thì số cột do <code>MinColumnWidth</code> quyết định: đủ chỗ cho mấy cột tối thiểu thì bấy nhiêu cột. Hai hàm <code>GetColumnCount</code> / <code>GetColumnWidth</code> cho biết kết quả đó trước khi layout, dùng được khi cần đặt bề rộng cho con ngoài Measure.",
+                xaml: `<ui:MasonryPanel MinColumnWidth="190"
+               ColumnSpacing="14" RowSpacing="14">
+    <ui:Card Height="132" />
+    <ui:Card Height="168" />
+    <ui:Card Height="96" />
+</ui:MasonryPanel>`,
+                csharp: `// 0 = tự tính, hoặc ghim cứng số cột
+masonry.Columns = 0;
+
+int columns = masonry.GetColumnCount(availableWidth);
+double width = masonry.GetColumnWidth(availableWidth);`,
+                callout: {
+                    type: "tip",
+                    body: "Mọi con được đo với đúng bề rộng một cột, nên <code>TextBlock</code> tự wrap và ảnh tự co theo cột — không phải đo lại bên ngoài."
+                }
+            },
+            {
+                title: "Cân bằng hay theo thứ tự đọc",
+                desc: "<code>IsBalanced=\"True\"</code> (mặc định) xếp mỗi con vào cột ngắn nhất để đáy các cột gần phẳng. Đặt <code>False</code> thì các con được lấp theo thứ tự đọc — cột một đầy mới sang cột hai — đổi lại đáy so le.",
+                xaml: `<ui:MasonryPanel IsBalanced="False" MinColumnWidth="190" />`,
+                csharp: `// Đáy phẳng: bật (mặc định)
+masonry.IsBalanced = true;
+
+// Ưu tiên thứ tự đọc từ trên xuống, trái sang phải
+masonry.IsBalanced = false;`,
+                callout: {
+                    type: "note",
+                    body: "Chiều cao mỗi cột được đo một lần trong <code>MeasureOverride</code> và dùng lại khi arrange, nên Arrange không phải đo lại lần hai."
+                }
+            }
+        ],
+        related: ["adaptivepanel", "card", "divider"]
+    },
+
+    taginput: {
+        title: "TagInput — hộp thẻ",
+        badge: "Mới",
+        desc: "Mỗi giá trị là một chip có nút đóng; dán cả chuỗi \u201cbê tông, thép, cốp pha\u201d thì control tự tách theo dấu phẩy. Có gợi ý, có giới hạn số thẻ, và không cho trùng khi so sánh bỏ dấu.",
+        keywords: ["tag", "chip", "input", "token", "multi value", "suggest"],
+        sections: [
+            {
+                title: "Dán nhiều giá trị một lần",
+                desc: "<code>Delimiter</code> mặc định là dấu phẩy: Enter hoặc dán chuỗi có dấu phẩy đều tách thành nhiều thẻ. <code>CommitText()</code> trả về số thẻ thực sự được thêm, còn <code>AddTag</code> nhận cả chuỗi lẫn item.",
+                xaml: `<ui:TagInput ItemsSource="{Binding Materials}"
+             Placeholder="Gõ tên vật tư rồi Enter…"
+             MaxTags="6" />`,
+                csharp: `int added = tags.CommitText();
+
+// Từ chối: rỗng, trùng, quá MaxTags, hoặc free text khi AllowFreeText=False
+bool ok = tags.AddTag("Bê tông B30");`,
+                callout: {
+                    type: "tip",
+                    body: "Trùng nhau được so sau khi bỏ dấu và bỏ hoa thường, nên \u201cthep CB400\u201d không thêm lần thứ hai bên cạnh \u201cThép CB400\u201d."
+                }
+            },
+            {
+                title: "Chỉ chọn trong danh sách",
+                desc: "<code>AllowFreeText=\"False\"</code> biến control thành picker: chuỗi gõ tay chỉ được nhận khi khớp một mục trong <code>SuggestionSource</code>. Bộ lọc gợi ý cũng bỏ dấu — gõ \u201cbe tong\u201d vẫn thấy \u201cBê tông B25\u201d.",
+                xaml: `<ui:TagInput AllowFreeText="False" MaxTags="3"
+             SuggestionSource="{Binding Floors}" />`,
+                csharp: `// Gợi ý đang hiện (tối đa 6 dòng), đọc được để test hoặc log
+tags.SuggestionSource = AllMaterials;
+var visible = tags.Suggestions;
+
+// Đóng danh sách gợi ý theo ý host, kể cả khi chưa chọn gì
+tags.IsSuggestionOpen = false;`
+            },
+            {
+                title: "Ghi ngược vào nguồn dữ liệu",
+                desc: "<code>ItemsSource</code> là <code>IList</code> thì control ghi thẳng vào đó — <code>ObservableCollection</code> phát <code>CollectionChanged</code> cho host, <code>List</code> thì control tự dựng lại thẻ. Kèm theo là sự kiện <code>TagsChanged</code> với <code>IsAdded</code>.",
+                csharp: `tags.TagsChanged += (_, e) =>
+    Trace.WriteLine($"{(e.IsAdded ? "+" : "-")}{e.Text}");
+
+// Xoá hết hoặc bỏ một thẻ theo đối tượng
+tags.ClearTags();
+tags.RemoveTag(entry);`,
+                callout: {
+                    type: "note",
+                    body: "Nút đóng trên chip gọi <code>RemoveTagCommand</code> của control, nên template chip tự viết vẫn xoá được mà không cần code-behind."
+                }
+            }
+        ],
+        related: ["tag", "searchabletreepicker", "autocompletetextbox"]
+    },
+
+    signaturepad: {
+        title: "SignaturePad — chữ ký tay",
+        badge: "Mới",
+        desc: "Vùng ký dùng <code>StrokeCollection</code> thật của <code>System.Windows.Ink</code>: mỗi nét là một <code>Stroke</code>, nên huỷ nét chỉ là bỏ phần tử cuối, và ảnh chữ ký được dựng lại sau mỗi nét hoàn tất.",
+        keywords: ["signature", "ink", "sign off", "draw", "approval"],
+        sections: [
+            {
+                title: "Ký và xuất",
+                desc: "<code>SignatureImage</code> là <code>BitmapSource</code> đã freeze, cập nhật sau mỗi nét hoàn tất chứ không phải mỗi lần di chuột — nên lưu file không tốn gì trên đường vẽ. <code>Export</code> cho phép chọn bề rộng pixel và nền (truyền <code>null</code> để giữ nền trong suốt khi đóng dấu vào PDF).",
+                xaml: `<ui:SignaturePad Height="220"
+                 Placeholder="Ký vào đây"
+                 ShowGuideline="True" />`,
+                csharp: `BitmapSource png = pad.Export(1200, 0, Brushes.White);
+
+// Nền trong suốt để đóng lên trang tài liệu
+BitmapSource stamp = pad.Export(600, 0);`,
+                callout: {
+                    type: "tip",
+                    body: "<code>HasSignature</code> là read-only, bind thẳng vào <code>IsEnabled</code> của nút \u201cLưu\u201d là đủ."
+                }
+            },
+            {
+                title: "Huỷ nét và xoá hết",
+                desc: "<code>Undo()</code> bỏ nét cuối và trả về <code>false</code> khi không còn gì — gọi được từ nút riêng. Người dùng có sẵn <code>Ctrl+Z</code> để huỷ và <code>Delete</code> để xoá sạch.",
+                csharp: `if (!pad.Undo())
+    SetStatus("Không còn nét nào để huỷ.");
+
+pad.Clear();
+
+// Mọi thay đổi đều báo qua sự kiện
+pad.SignatureChanged += (_, _) =>
+    SaveButton.IsEnabled = pad.HasSignature;`,
+                callout: {
+                    type: "note",
+                    body: "Đổi theme thì nét cũ được tô lại theo <code>StrokeBrush</code> mới — chữ ký đã vẽ không chìm vào nền tối."
+                }
+            }
+        ],
+        related: ["magnifier", "compareslider", "filepicker"]
+    },
+
+    wizard: {
+        title: "Wizard — biểu mẫu nhiều bước",
+        badge: "Mới",
+        desc: "Các bước là con của wizard nên form đọc như form trong XAML. Mỗi bước tự giữ <code>IsValid</code>; nút Tiếp chỉ bật khi bước hiện tại hợp lệ, và <code>Navigating</code> cho host chặn lại lần nữa.",
+        keywords: ["wizard", "steps", "multi step", "form", "onboarding"],
+        sections: [
+            {
+                title: "Bước là con của wizard",
+                desc: "<code>ContentProperty</code> là <code>Steps</code>, nên thêm <code>WizardStep</code> trong XAML là đủ. Header vẽ số thứ tự, dấu tích cho bước đã qua và tô đậm bước hiện tại; <code>ShowHeader</code> / <code>ShowFooter</code> tắt được khi wizard nằm trong dialog đã có tiêu đề.",
+                xaml: `<ui:Wizard BackText="Quay lại" NextText="Tiếp" FinishText="Hoàn tất">
+    <ui:WizardStep Header="Thông tin dự án"
+                   Description="Tên công trình"
+                   IsValid="{Binding HasProjectName}">
+        <TextBox Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" />
+    </ui:WizardStep>
+    <ui:WizardStep Header="Xác nhận" IsValid="True">
+        <TextBlock Text="{Binding Summary}" />
+    </ui:WizardStep>
+</ui:Wizard>`,
+                csharp: `wizard.Steps.Add(new WizardStep
+{
+    Header = "Vật liệu",
+    Description = "Cấp bê tông và mác thép",
+    Content = materialForm,
+    IsValid = true
+});
+
+// Số thứ tự bước tự đánh lại khi thêm hoặc bỏ
+int number = step.Number;`,
+                callout: {
+                    type: "note",
+                    body: "Bước không nằm trong visual tree, nên wizard theo dõi <code>IsValid</code> qua <code>DependencyPropertyDescriptor</code> thay vì đi tìm con."
+                }
+            },
+            {
+                title: "Tiến, lùi và chặn",
+                desc: "<code>Next()</code> chỉ đi tiếp khi bước hiện tại hợp lệ và còn bước sau; <code>GoTo</code> cũng chịu đúng luật đó. <code>CanGoNext</code>, <code>CanGoBack</code>, <code>IsLastStep</code> là read-only để bind vào nút của host khi tắt footer.",
+                csharp: `wizard.Navigating += (_, e) =>
+{
+    if (e.ToIndex > 0 && !viewModel.Saved)
+        e.Cancel = true;          // giữ người dùng lại
+};
+
+wizard.StepChanged += (_, _) => LoadStep(wizard.CurrentStep);
+wizard.Finished += (_, _) => CreateRecord();
+
+wizard.GoTo(0);                   // hoặc wizard.CurrentIndex = 1;`,
+                callout: {
+                    type: "tip",
+                    body: "Trên bước cuối, nút Tiếp đổi nhãn thành <code>FinishText</code> và phát <code>Finished</code> — không cần tự kiểm tra <code>IsLastStep</code> ở code-behind."
+                }
+            }
+        ],
+        related: ["stepbar", "expander", "dialog"]
+    },
+
+    scheduler: {
+        title: "Scheduler - lịch theo ngày",
+        badge: "Mới",
+        desc: "Một cột thời gian cho một ngày: khung giờ, vạch giờ và các khối booking tự chia lane khi trùng giờ. Không cần dữ liệu mẫu - đưa <code>SchedulerItem</code> vào <code>ItemsSource</code> là đủ.",
+        keywords: ["scheduler", "calendar", "day view", "booking", "timeline"],
+        sections: [
+            {
+                title: "Khung giờ và lane",
+                desc: "<code>StartHour</code>/<code>EndHour</code> cắt vùng làm việc, <code>HourHeight</code> quyết định chiều cao mỗi giờ; lăn chuột khi giữ <code>Ctrl</code> để đổi <code>HourHeight</code>. Booking trùng giờ được xếp lane tham lam nên hai cuộc họp 9h-11h và 10h-12h nằm cạnh nhau thay vì chồng lên nhau.",
+                xaml: `<ui:Scheduler Date="{Binding SelectedDay}"
+             StartHour="7"
+             EndHour="19"
+             ItemsSource="{Binding Bookings}" />`,
+                csharp: `var booking = new SchedulerItem
+{
+    Title = "Họp kết cấu",
+    Start = day.AddHours(9),
+    End = day.AddHours(10.5),
+    Resource = "Phòng 2"
+};
+
+Rect bounds = scheduler.GetItemBounds(booking);   // Rect.Empty khi ngoài khung giờ`,
+            },
+            {
+                title: "Chọn và đổi ngày",
+                desc: "<code>SelectItem</code> phát <code>SelectionChanged</code> đúng một lần cho mỗi thay đổi thật; nhấp đúp phát <code>ItemActivated</code>. <code>ChangeDay(±1)</code> dời ngày và giữ nguyên giờ bắt đầu, nên nút Trước/Sau chỉ cần một dòng code-behind.",
+                csharp: `scheduler.SelectionChanged += (_, e) => details.DataContext = e.Item;
+scheduler.ItemActivated += (_, e) => OpenBooking(e.Item);
+
+scheduler.ChangeDay(-1);
+scheduler.ChangeDay(1);          // về hôm nay`,
+                callout: {
+                    type: "note",
+                    body: "Vạch \"bây giờ\" chỉ vẽ khi <code>Date</code> là hôm nay và <code>ShowNowLine</code> bật."
+                }
+            }
+        ],
+        related: ["timeline", "calendarwithclock", "clock"]
+    },
+
+    kanbanboard: {
+        title: "KanbanBoard - bảng công việc",
+        badge: "Mới",
+        desc: "Bảng nhiều cột, mỗi cột là một <code>KanbanColumn</code> chứa <code>KanbanCard</code>. Thẻ kéo được sang cột khác, và board phát <code>CardMoved</code> để host ghi lại.",
+        keywords: ["kanban", "board", "cards", "drag drop", "workflow"],
+        sections: [
+            {
+                title: "Cột, thẻ và giới hạn",
+                desc: "<code>KanbanColumn.Header</code> là tiêu đề, <code>Count</code> tự cập nhật, <code>Maximum</code> chặn thả thêm thẻ khi cột đã đầy. <code>IsDropTarget</code> bật lên khi có thẻ đang bay qua nên template tự tô viền.",
+                xaml: `<ui:KanbanBoard>
+    <ui:KanbanColumn Header="Cần làm" Maximum="5">
+        <ui:KanbanCard Title="Mặt bằng tầng 3" Chip="Kết cấu" />
+    </ui:KanbanColumn>
+    <ui:KanbanColumn Header="Đang làm" Accent="#F59E0B" />
+</ui:KanbanBoard>`,
+                callout: {
+                    type: "tip",
+                    body: "Lane mặc định được đóng khung rộng 228-320 px để bảng đọc được trên laptop 13\"."
+                }
+            },
+            {
+                title: "Di chuyển thẻ bằng code",
+                desc: "<code>MoveCard(card, target, index)</code> lo cả hai trường hợp đổi cột và đổi thứ tự trong cùng cột, trả về <code>false</code> khi vị trí không đổi. <code>ColumnOf(card)</code> tìm cột đang chứa thẻ.",
+                csharp: `board.CardMoved += (_, e) =>
+    taskService.Move(e.Card.Title, e.ToColumn.Header, e.ToIndex);
+
+if (board.MoveCard(card, doneColumn, 0))
+    status.Text = $"Đã chuyển: {card.Title}";`,
+                callout: {
+                    type: "note",
+                    body: "Thẻ phải kéo quá ngưỡng an toàn của hệ thống trước khi <code>DragDrop.DoDragDrop</code> chạy, nên một cú nhấp đơn vẫn chỉ là chọn thẻ."
+                }
+            }
+        ],
+        related: ["dragdrop", "card", "avatarstack"]
+    },
+
+    imageviewer: {
+        title: "ImageViewer - xem và zoom",
+        badge: "Mới",
+        desc: "Xem ảnh bản vẽ với zoom, xoay và kéo, có nền ca-rô để thấy vùng trong suốt. Phép zoom giữ điểm dưới con trỏ đứng yên nên bản vẽ không bị trượt khi lăn chuột.",
+        keywords: ["image", "viewer", "zoom", "pan", "rotate"],
+        sections: [
+            {
+                title: "Zoom giữ điểm neo",
+                desc: "<code>ZoomAt(anchor, factor)</code> nhân tỉ lệ rồi chỉnh <code>Offset</code> để điểm ảnh dưới <code>anchor</code> vẫn nằm dưới <code>anchor</code>. <code>Zoom</code> bị ép trong <code>MinZoom</code>-<code>MaxZoom</code>.",
+                xaml: `<ui:ImageViewer Source="{Binding SheetImage}"
+                 MinZoom="0.25"
+                 MaxZoom="8" />`,
+                csharp: `viewer.ZoomAt(e.GetPosition(viewer), e.Delta > 0 ? 1.2 : 1 / 1.2);
+// hoặc
+viewer.Fit();          // vừa khung
+viewer.Reset();        // 100%, không xoay
+viewer.RotateClockwise();`
+            },
+            {
+                title: "Kéo và xoay",
+                desc: "Giữ chuột trái để kéo ảnh, nhấp đúp để <code>Fit</code>. <code>Rotation</code> theo bước 90° khi dùng <code>RotateClockwise</code>, và kéo được cả khi đã xoay vì phép biến đổi đảo ngược theo góc hiện tại.",
+                callout: {
+                    type: "note",
+                    body: "<code>Offset</code> luôn ở toạ độ màn hình (điểm ảnh), không phải toạ độ ảnh gốc, nên đổi <code>Zoom</code> không làm thay đổi ý nghĩa của nó."
+                }
+            }
+        ],
+        related: ["magnifier", "compareslider", "minimap"]
+    },
+
+    codeeditor: {
+        title: "CodeEditor - khung sửa mã",
+        badge: "Mới",
+        desc: "Khung sửa mã có số dòng, phím Tab và tô màu cho C#, XAML, SQL và JSON. Bộ tô màu là một hàm thuần nên test được mà không cần mở cửa sổ.",
+        keywords: ["code", "editor", "syntax", "highlight", "sql"],
+        sections: [
+            {
+                title: "Tô màu theo ngôn ngữ",
+                desc: "<code>Syntax</code> chọn bộ quét: C# (từ khoá, chuỗi, số, chú thích), XAML (tag, thuộc tính, giá trị), SQL (từ khoá không phân biệt hoa thường) và JSON. <code>CodeHighlighter.Tokenize</code> trả về các <code>CodeToken</code> có <code>Start</code>/<code>Length</code>, phần chen giữa là chữ thường.",
+                xaml: `<ui:CodeEditor Syntax="CSharp"
+               Text="{Binding ScriptText, UpdateSourceTrigger=PropertyChanged}"
+               ShowLineNumbers="True"
+               TabSize="4" />`,
+                csharp: `foreach (var token in CodeHighlighter.Tokenize(code, CodeLanguage.Sql))
+{
+    // token.Kind: Keyword, String, Number, Comment, Tag, Attribute
+    Debug.WriteLine(token.Kind);
+}`,
+                callout: {
+                    type: "note",
+                    body: "Chuỗi không đóng dấu nháy chỉ tô đến cuối dòng, nên một dấu nháy lạc không biến cả tệp thành chuỗi."
+                }
+            },
+            {
+                title: "Điều hướng và sửa nhanh",
+                desc: "<code>LineCount</code> và <code>CaretLine</code> là read-only để bind vào thanh trạng thái. <code>GoToLine</code> đặt con trỏ, <code>FindNext</code> tìm vòng từ vị trí hiện tại. Việc tô màu được hẹn lại 180 ms sau lần gõ cuối nên gõ nhanh không làm giật.",
+                csharp: `editor.GoToLine(42);
+if (editor.FindNext("Rebar")) status.Text = "Đã tìm thấy";
+editor.Refresh();          // tô lại sau khi sửa Text bằng code`
+            }
+        ],
+        related: ["markdownviewer", "textbox", "spreadsheet"]
+    },
+
+    markdownviewer: {
+        title: "MarkdownViewer - trang tài liệu",
+        badge: "Mới",
+        desc: "Hiển thị Markdown thành <code>FlowDocument</code> để dùng lại được cho cả màn hình lẫn bản in. Chỉ hỗ trợ tập con cần cho tài liệu trợ giúp, và mọi cú pháp lạ đều rơi về chữ thường thay vì ném lỗi.",
+        keywords: ["markdown", "document", "readme", "help", "flowdocument"],
+        sections: [
+            {
+                title: "Cú pháp được hỗ trợ",
+                desc: "Tiêu đề <code>#</code> đến <code>######</code>, đoạn văn, danh sách dấu đầu dòng và danh sách số, trích dẫn <code>&gt;</code>, khối mã ba dấu huyền, đường kẻ ngang, và trong từng dòng có <code>**đậm**</code>, <code>*nghiêng*</code>, <code>`mã`</code>, liên kết <code>[chữ](url)</code>.",
+                xaml: `<ui:MarkdownViewer Markdown="{Binding ReleaseNotes}" />`,
+                csharp: `var document = MarkdownParser.Parse(text);
+viewer.Markdown = text;              // tự Rebuild
+viewer.Rebuild();                    // khi sửa text tại chỗ
+int links = viewer.LinkCount;`,
+                callout: {
+                    type: "tip",
+                    body: "Đoạn văn bị ngắt dòng bằng tay được gộp lại thành một đoạn, nên tệp README xuống dòng ở 80 cột vẫn đọc liền mạch."
+                }
+            },
+            {
+                title: "Dùng lại tài liệu",
+                desc: "<code>Document</code> là property read-only giữ <code>FlowDocument</code> đã parse, nên có thể gán vào <code>FlowDocumentReader</code> để in hoặc xuất, hoặc đếm liên kết để kiểm tra tài liệu trước khi phát hành.",
+                callout: {
+                    type: "note",
+                    body: "Liên kết dùng <code>Hyperlink.NavigateUri</code>, nên cần gắn <code>RequestNavigate</code> nếu muốn mở bằng trình duyệt hệ thống."
+                }
+            }
+        ],
+        related: ["textblock", "expander", "codeeditor"]
+    },
+
+    coachmark: {
+        title: "CoachMark - hướng dẫn theo bước",
+        badge: "Mới",
+        desc: "Lớp phủ tối và một thẻ chỉ dẫn trỏ vào control đang được giới thiệu. Thẻ tự lật lên trên khi target ở sát đáy cửa sổ.",
+        keywords: ["coach mark", "tour", "onboarding", "tooltip", "walkthrough"],
+        sections: [
+            {
+                title: "Đặt thẻ cạnh target",
+                desc: "<code>Target</code> nhận mọi <code>FrameworkElement</code>; <code>Placement</code> chọn dưới/trên/trái/phải và tự lật khi không đủ chỗ. <code>CardRect</code> cho biết thẻ đã đặt ở đâu, hữu ích cho test hoặc khi host muốn tự vẽ mũi tên.",
+                xaml: `<Grid>
+    <ui:CoachMark Target="{Binding ElementName=saveButton}"
+                  Title="Lưu bản vẽ"
+                  Placement="Below"
+                  StepIndex="1"
+                  StepCount="3" />
+</Grid>`,
+                csharp: `var mark = new CoachMark { Target = saveButton, Title = "Bắt đầu ở đây" };
+overlay.Children.Add(mark);
+
+Rect card = mark.ComputeCardRect(new Size(overlay.ActualWidth, overlay.ActualHeight));`,
+            },
+            {
+                title: "Tour nhiều bước",
+                desc: "<code>Advance()</code> phát <code>Next</code> để host chuyển sang control kế tiếp; <code>IsLastStep</code> đổi nhãn nút thành hoàn tất. <code>Dismiss()</code> ẩn thẻ và phát <code>Dismissed</code> đúng một lần.",
+                csharp: `mark.Next += (_, _) => ShowStep(++index);
+mark.Dismissed += (_, _) => tourOverlay.Children.Clear();`,
+                callout: {
+                    type: "tip",
+                    body: "Gọi <code>Dismiss()</code> nhiều lần không phát lại sự kiện; hiện bước mới bằng cách đặt <code>Visibility</code> về <code>Visible</code>."
+                }
+            }
+        ],
+        related: ["tooltip", "wizard", "commandpalette"]
+    },
+
+    minimap: {
+        title: "MiniMap - bản đồ thu nhỏ",
+        badge: "Mới",
+        desc: "Bản đồ thu nhỏ của toàn bộ mặt bằng kèm khung nhìn hiện tại. Click để nhảy tới vùng tương ứng - dùng chung cho bản vẽ, sơ đồ hay ảnh lớn.",
+        keywords: ["minimap", "overview", "viewport", "navigation", "canvas"],
+        sections: [
+            {
+                title: "Toạ độ thế giới và toạ độ bản đồ",
+                desc: "<code>ContentBounds</code> khai báo phạm vi dữ liệu, <code>WorldToMap</code> và <code>MapToWorld</code> chuyển đổi hai chiều nên host không phải tự tính tỉ lệ. <code>Fit()</code> chọn tỉ lệ vừa khung, <code>Clamp</code> giữ khung nhìn trong biên.",
+                xaml: `<ui:MiniMap ContentBounds="0,0,12000,8000"
+           Viewport="{Binding CameraRect}"
+           ItemsSource="{Binding FloorPlates}" />`,
+                csharp: `map.Fit();
+Point here = map.WorldToMap(new Point(2400, 1800));
+Point world = map.MapToWorld(here);
+map.CentreOn(new Point(6000, 4000));`,
+                callout: {
+                    type: "note",
+                    body: "Tỉ lệ giữ đúng tỉ lệ khung hình (letterbox) nên mặt bằng không bị méo."
+                }
+            },
+            {
+                title: "Điều khiển khung nhìn",
+                desc: "Kéo hoặc click trong bản đồ sẽ dời <code>Viewport</code> và phát <code>ViewportChanged</code> với hình chữ nhật mới, đủ để host gọi <code>CameraController.Focus</code>.",
+                csharp: `map.ViewportChanged += (_, e) => camera.Centre = e.Viewport;`
+            }
+        ],
+        related: ["zoomablecanvas", "imageviewer", "modelviewer3d"]
+    },
+
+    modelviewer3d: {
+        title: "ModelViewer3D - khung dây 3D",
+        badge: "Mới",
+        desc: "Chiếu một tập đỉnh/cạnh 3D lên mặt phẳng 2D để xem nhanh mô hình mà không cần renderer. Đủ cho preview, icon mô hình và kiểm tra kết quả xuất.",
+        keywords: ["3d", "wireframe", "model", "preview", "viewport"],
+        sections: [
+            {
+                title: "Mesh và phép chiếu",
+                desc: "<code>Vertices</code> là <code>ObservableCollection&lt;Point3D&gt;</code>, <code>Edges</code> giữ cặp chỉ số. <code>SetMesh</code> nạp cả hai, hoặc dùng <code>LoadBox</code> để có ngay một hộp chữ nhật tham chiếu.",
+                xaml: `<ui:ModelViewer3D Yaw="-35" Pitch="-20"
+                 Zoom="1"
+                 ShowAxes="True" />`,
+                csharp: `viewer.LoadBox(new Point3D(0, 0, 0), 10, 6, 4);
+viewer.SetMesh(points, edges);
+viewer.Project(point, out Point screen);`,
+                callout: {
+                    type: "note",
+                    body: "Phép chia phối cảnh giữ <code>camera</code> xa hơn mọi đỉnh, nên điểm không bao giờ lật ra sau lưng người xem."
+                }
+            },
+            {
+                title: "Orbit, zoom và pan",
+                desc: "Kéo chuột orbits theo <code>Yaw</code>/<code>Pitch</code>; lăn chuột đổi <code>Zoom</code>, giữ chuột giữa để <code>Pan</code>. <code>ResetView()</code> trả về góc mặc định, trục toạ độ luôn nằm ở góc dưới trái.",
+                csharp: `viewer.Orbit(dx: 12, dy: -6);
+viewer.Zoom = 1.8;
+viewer.ResetView();`
+            }
+        ],
+        related: ["minimap", "imageviewer", "radialgauge"]
+    },
+
+    splashscreen: {
+        title: "SplashScreen - màn hình khởi động",
+        badge: "Mới",
+        desc: "Thẻ khởi động có logo, tên ứng dụng, phiên bản và dòng trạng thái, kèm thanh tiến trình. Là control trong cây giao diện nên chạy được cả trong cửa sổ thường lẫn cửa sổ khởi động.",
+        keywords: ["splash", "startup", "loading", "boot", "progress"],
+        sections: [
+            {
+                title: "Hiện, báo tiến trình, đóng",
+                desc: "<code>Show()</code> đưa control về trạng thái hiện và xoá hiệu ứng cũ; <code>Report(phần trăm, trạng thái)</code> cập nhật cả hai; <code>Dismiss()</code> mờ dần rồi thu gọn. <code>Progress</code> bị ép trong 0-100.",
+                xaml: `<ui:SplashScreen AppName="CONCOST"
+                 Version="1.2.0"
+                 Logo="{StaticResource AppIcon}"
+                 Status="Đang tải mô hình..."
+                 Progress="40" />`,
+                csharp: `splash.Report(65, "Đang nạp bản vẽ");
+splash.ShowProgress = false;      // chế độ chờ không biết tiến độ
+splash.IsIndeterminate = true;
+splash.Dismiss();                // có hiệu ứng
+splash.Dismiss(animate: false);  // trong test hoặc khi tắt animation`,
+                callout: {
+                    type: "tip",
+                    body: "Demo hiệu ứng động ở Showcase, còn khi máy tắt animation thì <code>Dismiss(false)</code> đóng ngay."
+                }
+            },
+            {
+                title: "Vì sao không dùng SplashScreen của WPF",
+                desc: "<code>System.Windows.SplashScreen</code> chỉ nhận ảnh và tự đóng khi cửa sổ chính hiện, nên không báo được tiến trình. Control này nằm trong cây giao diện: chạy trên UI thread, đồng bộ theme và test được như mọi control khác.",
+                callout: {
+                    type: "note",
+                    body: "Cả hai cùng tên, nên khi vừa <code>using System.Windows;</code> vừa dùng control này thì viết đầy đủ <code>CONCOST.UI.Controls.SplashScreen</code>."
+                }
+            }
+        ],
+        related: ["loadingoverlay", "loadingindicator", "emptyState"]
     },
 
 };

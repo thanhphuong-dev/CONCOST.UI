@@ -201,9 +201,11 @@ public class RibbonExtendedPropertiesTests
     {
         RunOnSta(() =>
         {
+            // Three groups of three large buttons each. The window has to be narrower than the
+            // icon-only rung as well, otherwise the ladder stops one step short of folding a group.
             var groups = new[] { Group("One", 3), Group("Two", 3), Group("Three", 3) };
 
-            using var host = new Host(420, Tab("Home", "home", groups));
+            using var host = new Host(240, Tab("Home", "home", groups));
 
             for (int i = 0; i < 8; i++)
             {

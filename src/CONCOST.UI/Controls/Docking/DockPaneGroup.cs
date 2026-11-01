@@ -37,13 +37,10 @@ public enum DockGroupMode
 /// </remarks>
 public class DockPaneGroup : Panel
 {
-    private const double SplitterThickness = 6;
-    private const double TabStripThickness = 27;
-
     private DockTabStrip? _tabs;
     private readonly List<(Rect Rect, int Index, bool Vertical)> _bands = new();
     private Rect[] _bandRects = Array.Empty<Rect>();
-    private (int Index, double Start, Point Origin, bool Vertical)? _drag;
+    private (int Index, double First, double Pair, double PairPixels, Point Origin, bool Vertical)? _drag;
 
     // ---------------------------------------------------------------- properties
 
@@ -112,6 +109,64 @@ public class DockPaneGroup : Panel
 
     public static void SetProportion(DependencyObject element, double value) =>
         element.SetValue(ProportionProperty, value);
+
+    // ---------------------------------------------------------------- chrome
+
+    public static readonly DependencyProperty SplitterThicknessProperty =
+        DependencyProperty.Register(nameof(SplitterThickness), typeof(double), typeof(DockPaneGroup),
+            new FrameworkPropertyMetadata(5.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    /// <summary>
+    /// Thickness of the gutter between two slots of this group, in pixels. Default 5 — a constant in
+    /// the first version, so a manager that asked for a thinner gutter still got this one.
+    /// </summary>
+    public double SplitterThickness
+    {
+        get => (double)GetValue(SplitterThicknessProperty);
+        set => SetValue(SplitterThicknessProperty, value);
+    }
+
+    public static readonly DependencyProperty TabStripThicknessProperty =
+        DependencyProperty.Register(nameof(TabStripThickness), typeof(double), typeof(DockPaneGroup),
+            new FrameworkPropertyMetadata(26.0, FrameworkPropertyMetadataOptions.AffectsMeasure, OnTabChromeChanged));
+
+    /// <summary>Height reserved for the tab strip when <see cref="Mode"/> is tabs. Default 26.</summary>
+    public double TabStripThickness
+    {
+        get => (double)GetValue(TabStripThicknessProperty);
+        set => SetValue(TabStripThicknessProperty, value);
+    }
+
+    public static readonly DependencyProperty TabPlacementProperty =
+        DependencyProperty.Register(nameof(TabPlacement), typeof(DockTabPlacement), typeof(DockPaneGroup),
+            new FrameworkPropertyMetadata(DockTabPlacement.Bottom, FrameworkPropertyMetadataOptions.AffectsMeasure,
+                OnTabChromeChanged));
+
+    /// <summary>Which edge of the group its tab strip hugs. Default <see cref="DockTabPlacement.Bottom"/>.</summary>
+    public DockTabPlacement TabPlacement
+    {
+        get => (DockTabPlacement)GetValue(TabPlacementProperty);
+        set => SetValue(TabPlacementProperty, value);
+    }
+
+    public static readonly DependencyProperty SplitterBrushProperty =
+        DependencyProperty.Register(nameof(SplitterBrush), typeof(Brush), typeof(DockPaneGroup),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>Colour of the hairline in each gutter. Empty takes <c>CONCOST.Brush.Border</c>.</summary>
+    public Brush? SplitterBrush
+    {
+        get => (Brush?)GetValue(SplitterBrushProperty);
+        set => SetValue(SplitterBrushProperty, value);
+    }
+
+    private static void OnTabChromeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not DockPaneGroup group || group._tabs is null) return;
+
+        group._tabs.TabPlacement = group.TabPlacement;
+        group._tabs.TabHeight = group.TabStripThickness;
+    }
 
     // ---------------------------------------------------------------- children
 
@@ -243,12 +298,17 @@ public class DockPaneGroup : Panel
         {
             if (_tabs is null)
             {
-                _tabs = new DockTabStrip { TabPlacement = DockTabPlacement.Bottom };
+                _tabs = new DockTabStrip
+                {
+                    TabPlacement = TabPlacement,
+                    TabHeight = TabStripThickness,
+                    IconSize = Math.Max(8, TabStripThickness * 0.46)
+                };
+                _tabs.TabSelected += OnTabStripSelected;
                 Children.Add(_tabs);
             }
 
             _tabs.Panes = Children.OfType<ToolWindow>().ToList();
-            _tabs.TabSelected += (_, pane) => Activate(pane);
         }
         else if (_tabs is not null)
         {
@@ -256,6 +316,8 @@ public class DockPaneGroup : Panel
             _tabs = null;
         }
     }
+
+    private void OnTabStripSelected(object? sender, ToolWindow pane) => Activate(pane);
 
     private void Activate(ToolWindow pane)
     {
@@ -470,7 +532,7 @@ public class DockPaneGroup : Panel
 
         if (_bandRects.Length == 0) return;
 
-        var line = TryFindResource("CONCOST.Brush.Border") as Brush ?? Brushes.Gray;
+        var line = SplitterBrush ?? TryFindResource("CONCOST.Brush.Border") as Brush ?? Brushes.Gray;
 
         foreach (var band in _bandRects)
         {
@@ -501,12 +563,22 @@ public class DockPaneGroup : Panel
             var nodes = Nodes.ToList();
             if (band.Index + 1 >= nodes.Count) return;
 
-            double current = Math.Max(0.0001, GetProportion(nodes[band.Index]));
-            _drag = (band.Index, current, point, band.Vertical);
-
             CaptureMouse();
             Cursor = band.Vertical ? Cursors.SizeWE : Cursors.SizeNS;
             e.Handled = true;
+
+            // The two slots either side of the band keep their combined pixel extent for the whole
+            // drag, so only the divider moves and the remaining slots do not creep.
+            double total = band.Vertical ? ActualWidth : ActualHeight;
+            double usable = Math.Max(0, total - SplitterThickness * (nodes.Count - 1));
+
+            var weights = nodes.Select(n => Math.Max(0.0001, GetProportion(n))).ToList();
+            double sum = Math.Max(0.0001, weights.Sum());
+            double first = weights[band.Index];
+            double pair = first + weights[band.Index + 1];
+            double pairPixels = usable * pair / sum;
+
+            _drag = (band.Index, first, pair, pairPixels, point, band.Vertical);
             return;
         }
     }
@@ -519,8 +591,17 @@ public class DockPaneGroup : Panel
 
         if (_drag is null)
         {
-            var hit = _bands.FirstOrDefault(b => b.Rect.Contains(point));
-            Cursor = hit.Vertical ? Cursors.SizeWE : Cursors.SizeNS;
+            foreach (var band in _bands)
+            {
+                if (!band.Rect.Contains(point)) continue;
+
+                Cursor = band.Vertical ? Cursors.SizeWE : Cursors.SizeNS;
+                return;
+            }
+
+            // Clearing the local value restores inheritance, so pane content does not inherit a
+            // resize cursor just because the pointer crossed the group.
+            Cursor = null;
             return;
         }
 
@@ -530,16 +611,13 @@ public class DockPaneGroup : Panel
         if (_drag.Value.Index + 1 >= nodes.Count) return;
 
         double delta = _drag.Value.Vertical ? point.X - _drag.Value.Origin.X : point.Y - _drag.Value.Origin.Y;
+        double scale = _drag.Value.Pair / Math.Max(1, _drag.Value.PairPixels);
 
-        // Grow the first slot by the drag and take the same amount off its neighbour, so the rest of
-        // the group does not move.
-        double total = _drag.Value.Vertical ? ActualWidth : ActualHeight;
-        if (total <= 0) return;
-
-        double perPixel = Math.Max(0.0001, _drag.Value.Start) / Math.Max(1, total);
-        double next = Math.Max(0.02, _drag.Value.Start + delta * perPixel);
+        double min = _drag.Value.Pair * 0.05;
+        double next = Math.Min(_drag.Value.Pair - min, Math.Max(min, _drag.Value.First + delta * scale));
 
         SetProportion(nodes[_drag.Value.Index], next);
+        SetProportion(nodes[_drag.Value.Index + 1], _drag.Value.Pair - next);
     }
 
     protected override void OnMouseUp(MouseButtonEventArgs e)
@@ -549,7 +627,7 @@ public class DockPaneGroup : Panel
         if (_drag is null) return;
 
         _drag = null;
-        Cursor = Cursors.Arrow;
+        Cursor = null;
         ReleaseMouseCapture();
     }
 }

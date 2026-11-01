@@ -52,13 +52,50 @@ public class DockTabStrip : Control
 
     public static readonly DependencyProperty TabPlacementProperty =
         DependencyProperty.Register(nameof(TabPlacement), typeof(DockTabPlacement), typeof(DockTabStrip),
-            new PropertyMetadata(DockTabPlacement.Bottom));
+            new PropertyMetadata(DockTabPlacement.Bottom, OnTabPlacementChanged));
 
     /// <summary>Which edge of the group the tabs hug. Default <see cref="DockTabPlacement.Bottom"/>.</summary>
     public DockTabPlacement TabPlacement
     {
         get => (DockTabPlacement)GetValue(TabPlacementProperty);
         set => SetValue(TabPlacementProperty, value);
+    }
+
+    /// <summary>
+    /// Puts the accent rule on the side the content is: under a tab that hugs the bottom of a group,
+    /// above one that sits on top of it. Without this the underline stayed at the bottom and a top
+    /// strip read as if it were still below the pane.
+    /// </summary>
+    private static void OnTabPlacementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is DockTabStrip strip) strip.ApplyTabMetrics();
+    }
+
+    public static readonly DependencyProperty TabHeightProperty =
+        DependencyProperty.Register(nameof(TabHeight), typeof(double), typeof(DockTabStrip),
+            new FrameworkPropertyMetadata(26.0, FrameworkPropertyMetadataOptions.AffectsMeasure, OnMetricsChanged));
+
+    /// <summary>Height of one tab, in pixels. Default 26.</summary>
+    public double TabHeight
+    {
+        get => (double)GetValue(TabHeightProperty);
+        set => SetValue(TabHeightProperty, value);
+    }
+
+    public static readonly DependencyProperty IconSizeProperty =
+        DependencyProperty.Register(nameof(IconSize), typeof(double), typeof(DockTabStrip),
+            new FrameworkPropertyMetadata(12.0, FrameworkPropertyMetadataOptions.AffectsMeasure, OnMetricsChanged));
+
+    /// <summary>Size of the glyph in front of a tab's caption, in pixels. Default 12.</summary>
+    public double IconSize
+    {
+        get => (double)GetValue(IconSizeProperty);
+        set => SetValue(IconSizeProperty, value);
+    }
+
+    private static void OnMetricsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is DockTabStrip strip) strip.ApplyTabMetrics();
     }
 
     public static readonly DependencyProperty PanesProperty =
@@ -134,6 +171,33 @@ public class DockTabStrip : Control
             _host.Children.Add(button);
             _buttons.Add(button);
         }
+
+        ApplyTabMetrics();
+    }
+
+    /// <summary>Puts the height, the glyph size and the accent side on every tab.</summary>
+    private void ApplyTabMetrics()
+    {
+        var accent = TabPlacement == DockTabPlacement.Top
+            ? new Thickness(0, 2, 0, 0)
+            : new Thickness(0, 0, 0, 2);
+
+        foreach (var button in _buttons)
+        {
+            button.Height = TabHeight;
+            button.BorderThickness = accent;
+
+            if (button.Content is not StackPanel row) continue;
+
+            foreach (var child in row.Children)
+            {
+                if (child is Icon icon)
+                {
+                    icon.Width = IconSize;
+                    icon.Height = IconSize;
+                }
+            }
+        }
     }
 
     private static bool SamePanes(List<ToolWindow> a, List<ToolWindow> b)
@@ -168,7 +232,7 @@ public class DockTabStrip : Control
                 Kind = pane.Icon,
                 Width = 12,
                 Height = 12,
-                Margin = new Thickness(0, 0, 5, 0),
+                Margin = new Thickness(0, 0, 6, 0),
                 VerticalAlignment = VerticalAlignment.Center
             });
         }

@@ -1,4 +1,4 @@
-﻿<Window x:Class="CONCOST.UI.Showcase.MainWindow"
+<Window x:Class="CONCOST.UI.Showcase.MainWindow"
         Icon="Assets/AppIcon.png"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,8 +10,8 @@
         xmlns:attached="clr-namespace:CONCOST.UI.AttachedProperties;assembly=CONCOST.UI"
         xmlns:services="clr-namespace:CONCOST.UI.Services;assembly=CONCOST.UI"
         mc:Ignorable="d"
-        Title="{Binding Source={x:Static services:LocalizationManager.Current}, Path=[Showcase.WindowTitle]}" Height="960" Width="1540"
-        MinHeight="720" MinWidth="1120"
+        Title="{Binding Source={x:Static services:LocalizationManager.Current}, Path=[Showcase.WindowTitle]}" Height="800" Width="1380"
+        MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI, Inter, Roboto, Arial"
         Background="{DynamicResource CONCOST.Brush.Background}"
@@ -165,9 +165,9 @@
                             BorderBrush="{DynamicResource CONCOST.Brush.Border}"
                             BorderThickness="1"
                             CornerRadius="8"
-                            Padding="3"
+                            Padding="3,4"
                             Margin="0,0,0,14"
-                            Height="40">
+                            MinHeight="38">
                         <Grid>
                             <Grid.Resources>
                                 <Style x:Key="SegmentedTabItem" TargetType="{x:Type RadioButton}">
@@ -182,11 +182,12 @@
                                                 <Border x:Name="pillBorder"
                                                         Background="Transparent"
                                                         CornerRadius="6"
-                                                        Margin="1,0"
+                                                        Margin="1,1.5"
+                                                        Padding="6,3"
                                                         SnapsToDevicePixels="True">
                                                     <ContentPresenter HorizontalAlignment="Center"
                                                                       VerticalAlignment="Center"
-                                                                      Margin="4,0"/>
+                                                                      Margin="2,0"/>
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
@@ -207,7 +208,7 @@
                                 </Style>
                             </Grid.Resources>
 
-                            <WrapPanel Orientation="Horizontal">
+                            <UniformGrid Rows="2" Columns="4">
                                 <RadioButton Content="{Binding Source={x:Static services:LocalizationManager.Current}, Path=[Showcase.Filters.All]}"
                                              IsChecked="{Binding SelectedCategory, Converter={StaticResource SelectedCategoryConverter}, ConverterParameter=All, Mode=TwoWay}"
                                              GroupName="ShowcaseCategoryGroup"
@@ -250,7 +251,13 @@
                                              Command="{Binding SetCategoryCommand}"
                                              CommandParameter="Effects"
                                              Style="{StaticResource SegmentedTabItem}"/>
-                            </WrapPanel>
+                                <RadioButton Content="{Binding Source={x:Static services:LocalizationManager.Current}, Path=[Showcase.Filters.Cad]}"
+                                             IsChecked="{Binding SelectedCategory, Converter={StaticResource SelectedCategoryConverter}, ConverterParameter='CAD &amp; Drafting', Mode=TwoWay}"
+                                             GroupName="ShowcaseCategoryGroup"
+                                             Command="{Binding SetCategoryCommand}"
+                                             CommandParameter="CAD &amp; Drafting"
+                                             Style="{StaticResource SegmentedTabItem}"/>
+                            </UniformGrid>
                         </Grid>
                     </Border>
 
