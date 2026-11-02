@@ -208,6 +208,11 @@ public class ViewportControl : Grid
         nameof(SnapMarkerSize), typeof(double), typeof(ViewportControl),
         new FrameworkPropertyMetadata(5.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
+    /// <summary>Identifies the <see cref="ShowSnapMarker"/> property.</summary>
+    public static readonly DependencyProperty ShowSnapMarkerProperty = DependencyProperty.Register(
+        nameof(ShowSnapMarker), typeof(bool), typeof(ViewportControl),
+        new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
+
     /// <summary>Identifies the <see cref="ShowSnapLabel"/> property.</summary>
     public static readonly DependencyProperty ShowSnapLabelProperty = DependencyProperty.Register(
         nameof(ShowSnapLabel), typeof(bool), typeof(ViewportControl),
@@ -452,6 +457,16 @@ public class ViewportControl : Grid
     {
         get => (double)GetValue(SnapMarkerSizeProperty);
         set => SetValue(SnapMarkerSizeProperty, value);
+    }
+
+    /// <summary>
+    /// Whether the snap glyph is painted at the snapped point. The caption is a separate switch
+    /// (<see cref="ShowSnapLabel"/>), so a quiet surface can drop the shape and keep the word.
+    /// </summary>
+    public bool ShowSnapMarker
+    {
+        get => (bool)GetValue(ShowSnapMarkerProperty);
+        set => SetValue(ShowSnapMarkerProperty, value);
     }
 
     /// <summary>Draws the snap kind (ENDPOINT, MIDPOINT, GRID ...) beside the marker.</summary>
@@ -785,43 +800,48 @@ public class ViewportControl : Grid
     {
         if (Snap is not { } snap || SnapKind == SnapKind.None) return;
 
-        var brush = SnapMarkerBrush ?? accent;
-        var pen = new Pen(brush, 1.6);
-        double size = double.IsNaN(SnapMarkerSize) ? 5 : Math.Max(2, SnapMarkerSize);
-
-        switch (SnapKind)
+        // The glyph and its caption are two switches on purpose: a host that wants a quiet surface
+        // can drop the marker and keep the word, or keep the marker and drop the word.
+        if (ShowSnapMarker)
         {
-            case SnapKind.Endpoint:
-                dc.DrawRectangle(null, pen, new Rect(snap.X - size, snap.Y - size, size * 2, size * 2));
-                break;
+            var brush = SnapMarkerBrush ?? accent;
+            var pen = new Pen(brush, 1.6);
+            double size = double.IsNaN(SnapMarkerSize) ? 5 : Math.Max(2, SnapMarkerSize);
 
-            case SnapKind.Midpoint:
-                dc.DrawGeometry(null, pen, Triangle(new Point(snap.X, snap.Y - size - 1),
-                    new Point(snap.X + size + 1, snap.Y + size), new Point(snap.X - size - 1, snap.Y + size)));
-                break;
+            switch (SnapKind)
+            {
+                case SnapKind.Endpoint:
+                    dc.DrawRectangle(null, pen, new Rect(snap.X - size, snap.Y - size, size * 2, size * 2));
+                    break;
 
-            case SnapKind.Center:
-                dc.DrawEllipse(null, pen, snap, size + 1, size + 1);
-                break;
+                case SnapKind.Midpoint:
+                    dc.DrawGeometry(null, pen, Triangle(new Point(snap.X, snap.Y - size - 1),
+                        new Point(snap.X + size + 1, snap.Y + size), new Point(snap.X - size - 1, snap.Y + size)));
+                    break;
 
-            case SnapKind.Intersection:
-                dc.DrawLine(pen, new Point(snap.X - size, snap.Y - size), new Point(snap.X + size, snap.Y + size));
-                dc.DrawLine(pen, new Point(snap.X + size, snap.Y - size), new Point(snap.X - size, snap.Y + size));
-                break;
+                case SnapKind.Center:
+                    dc.DrawEllipse(null, pen, snap, size + 1, size + 1);
+                    break;
 
-            case SnapKind.Perpendicular:
-                dc.DrawLine(pen, new Point(snap.X - size, snap.Y - size), new Point(snap.X - size, snap.Y + size));
-                dc.DrawLine(pen, new Point(snap.X - size, snap.Y + size), new Point(snap.X + size, snap.Y + size));
-                break;
+                case SnapKind.Intersection:
+                    dc.DrawLine(pen, new Point(snap.X - size, snap.Y - size), new Point(snap.X + size, snap.Y + size));
+                    dc.DrawLine(pen, new Point(snap.X + size, snap.Y - size), new Point(snap.X - size, snap.Y + size));
+                    break;
 
-            case SnapKind.Nearest:
-                dc.DrawGeometry(brush, pen, Triangle(new Point(snap.X - size, snap.Y),
-                    new Point(snap.X + size, snap.Y), new Point(snap.X + size + 3, snap.Y - size * 2)));
-                break;
+                case SnapKind.Perpendicular:
+                    dc.DrawLine(pen, new Point(snap.X - size, snap.Y - size), new Point(snap.X - size, snap.Y + size));
+                    dc.DrawLine(pen, new Point(snap.X - size, snap.Y + size), new Point(snap.X + size, snap.Y + size));
+                    break;
 
-            default:
-                dc.DrawRectangle(brush, null, new Rect(snap.X - 2, snap.Y - 2, 4, 4));
-                break;
+                case SnapKind.Nearest:
+                    dc.DrawGeometry(brush, pen, Triangle(new Point(snap.X - size, snap.Y),
+                        new Point(snap.X + size, snap.Y), new Point(snap.X + size + 3, snap.Y - size * 2)));
+                    break;
+
+                default:
+                    dc.DrawRectangle(brush, null, new Rect(snap.X - 2, snap.Y - 2, 4, 4));
+                    break;
+            }
         }
 
         if (!ShowSnapLabel) return;
@@ -844,6 +864,9 @@ public class ViewportControl : Grid
             _camera.Pan(delta.X, delta.Y, RenderSize, isFinal: false);
             _panOrigin = point;
 
+            // The grid slides under the pointer during a pan; a snap taken before the drag would
+            // now sit on empty space.
+            ClearSnap();
             InvalidateVisual();
             return;
         }
@@ -860,6 +883,10 @@ public class ViewportControl : Grid
         base.OnMouseLeave(e);
 
         _pointer = null;
+
+        // The snap glyph follows the pointer. Leaving it behind pins the marker to the last
+        // intersection, so re-showing it later draws a stale glyph with no cursor under it.
+        ClearSnap();
         InvalidateVisual();
     }
 
@@ -923,16 +950,39 @@ public class ViewportControl : Grid
 
         // Zoom in means a factor below one, because the factor multiplies the distance.
         _camera.ZoomAt(e.GetPosition(this), RenderSize, e.Delta > 0 ? 1 / 1.15 : 1.15);
+
+        // The snap point is kept in surface pixels, so a zoom would leave the glyph floating
+        // between grid lines. Re-evaluate it under the pointer that did not move.
+        RefreshSnapAt(_pointer);
+
         InvalidateVisual();
         e.Handled = true;
+    }
+
+    /// <summary>Drops the live snap so the glyph is not left pinned to a stale intersection.</summary>
+    private void ClearSnap()
+    {
+        if (Snap is not null) Snap = null;
+        if (SnapKind != SnapKind.None) SnapKind = SnapKind.None;
+    }
+
+    /// <summary>Re-evaluates the snap for a pointer that stayed put while the camera moved.</summary>
+    private void RefreshSnapAt(Point? pointer)
+    {
+        if (pointer is not { } point)
+        {
+            ClearSnap();
+            return;
+        }
+
+        TrySnapToGrid(point, _camera.Unproject(point, RenderSize), out _);
     }
 
     private bool TrySnapToGrid(Point point, Point3D world, out Point3D snapped)
     {
         snapped = world;
 
-        Snap = null;
-        SnapKind = SnapKind.None;
+        ClearSnap();
 
         if (!SnapToGrid) return false;
 

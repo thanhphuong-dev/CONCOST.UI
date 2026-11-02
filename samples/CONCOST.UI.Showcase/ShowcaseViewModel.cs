@@ -2421,7 +2421,7 @@ public partial class ShowcaseViewModel : ObservableObject
         sec8Panel.Children.Add(dg8);
 
         // Add default grouping by FloorLevel
-        groupPanel.AddGroup("FloorLevel");
+        groupPanel.AddGroup("FloorLevel", "Floor Level");
 
         AddCardSection("8. Panel nhóm doanh nghiệp và tổng phụ (chuẩn Syncfusion/Telerik)", sec8Panel,
 @"<!-- Enterprise Grouping DataGrid with GroupPanel -->
@@ -2710,8 +2710,8 @@ public partial class ShowcaseViewModel : ObservableObject
         filterWrapper.Children.Add(filterPanel);
         filterWrapper.Children.Add(dgFilter);
 
-        AddCardSection("7. Filter Panel — live text filter per column", filterWrapper,
-@"<!-- DataGrid with Filter Panel -->
+        AddCardSection("7. Filter Panel — per-column operator + live text filter", filterWrapper,
+@"<!-- DataGrid with Filter Panel (operator selector on by default) -->
 <DataGrid x:Name=""filterGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
     <DataGrid.Columns>
         <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
@@ -2720,7 +2720,11 @@ public partial class ShowcaseViewModel : ObservableObject
         <DataGridTextColumn Header=""Rebar Layout"" Binding=""{Binding Rebar}"" Width=""1.5*"" />
     </DataGrid.Columns>
 </DataGrid>
-<controls:DataGridFilterPanel TargetGrid=""{Binding ElementName=filterGrid}"" />");
+<controls:DataGridFilterPanel TargetGrid=""{Binding ElementName=filterGrid}"" />
+
+<!-- Compact one-row variant: always Contains -->
+<controls:DataGridFilterPanel TargetGrid=""{Binding ElementName=filterGrid}""
+                              ShowOperatorSelector=""False"" />");
 
         // ==============================================================================?
         // SECTION 8: DataGrid Search Panel
@@ -2773,6 +2777,111 @@ public partial class ShowcaseViewModel : ObservableObject
     </DataGrid.Columns>
 </DataGrid>
 <controls:DataGridSummary TargetGrid=""{Binding ElementName=sumGrid}"" />");
+
+        // ==============================================================================
+        // SECTION 10: DataGrid Group Panel
+        // ==============================================================================
+        var dgGroup = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
+        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
+        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+
+        var groupPanel2 = new CONCOST.UI.Controls.DataGridGroupPanel { TargetGrid = dgGroup };
+        var groupWrapper = new StackPanel();
+        groupWrapper.Children.Add(groupPanel2);
+        groupWrapper.Children.Add(dgGroup);
+
+        AddCardSection("10. Group Panel — group rows by column with visual pills", groupWrapper,
+@"<!-- DataGrid with Group Panel -->
+<StackPanel>
+    <controls:DataGridGroupPanel TargetGrid=""{Binding ElementName=groupGrid}"" />
+    <DataGrid x:Name=""groupGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
+            <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
+            <DataGridTextColumn Header=""Depth (mm)"" Binding=""{Binding Height}"" Width=""*"" />
+            <DataGridTextColumn Header=""Rebar Layout"" Binding=""{Binding Rebar}"" Width=""1.5*"" />
+        </DataGrid.Columns>
+    </DataGrid>
+</StackPanel>");
+
+        // ==============================================================================
+        // SECTION 11: DataGrid Export Service
+        // ==============================================================================
+        var dgExport = new DataGrid { ItemsSource = sampleBeams, Height = 140 };
+        dgExport.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
+        dgExport.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgExport.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        dgExport.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+
+        var exportStatus = new TextBlock
+        {
+            Text = "Nothing exported yet.",
+            FontSize = 11.5,
+            Margin = new System.Windows.Thickness(0, 8, 0, 0),
+            TextWrapping = System.Windows.TextWrapping.Wrap,
+            Foreground = (Brush)App.Current.Resources["CONCOST.Brush.TextSecondary"]
+        };
+
+        var exportDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "CONCOST-Export");
+        System.IO.Directory.CreateDirectory(exportDir);
+
+        void Export(string label, Action<string> write, string extension)
+        {
+            try
+            {
+                var file = System.IO.Path.Combine(exportDir, $"beams-{label.ToLowerInvariant()}{extension}");
+                write(file);
+                exportStatus.Text = $"{label} written to {file}";
+            }
+            catch (Exception ex)
+            {
+                exportStatus.Text = $"{label} failed: {ex.Message}";
+            }
+        }
+
+        var exportButtons = new WrapPanel { Orientation = Orientation.Horizontal };
+        void AddExportButton(string label, string extension, Action<string> write)
+        {
+            var button = new Button { Content = $"Export {label}", Margin = new System.Windows.Thickness(0, 0, 8, 0) };
+            button.Click += (_, __) => Export(label, write, extension);
+            exportButtons.Children.Add(button);
+        }
+
+        AddExportButton("CSV", ".csv", f => CONCOST.UI.Services.DataGridExportService.ExportToCsv(dgExport, f));
+        AddExportButton("Excel XML", ".xml", f => CONCOST.UI.Services.DataGridExportService.ExportToExcelXml(dgExport, f, "Beams"));
+        AddExportButton("HTML", ".html", f => CONCOST.UI.Services.DataGridExportService.ExportToHtml(dgExport, f, "Beam Schedule"));
+
+        var exportWrapper = new StackPanel();
+        exportWrapper.Children.Add(dgExport);
+        exportWrapper.Children.Add(exportButtons);
+        exportWrapper.Children.Add(exportStatus);
+
+        AddCardSection("11. Export Service — CSV, Excel XML and HTML without third-party libraries", exportWrapper,
+@"<!-- No markup needed: the service reads the grid -->
+<DataGrid x:Name=""exportGrid"" ItemsSource=""{Binding BeamList}"" Height=""140"">
+    <DataGrid.Columns>
+        <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
+        <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
+        <DataGridTextColumn Header=""Depth (mm)"" Binding=""{Binding Height}"" Width=""*"" />
+        <DataGridTextColumn Header=""Rebar Layout"" Binding=""{Binding Rebar}"" Width=""1.5*"" />
+    </DataGrid.Columns>
+</DataGrid>
+
+<!-- Buttons -->
+<Button Content=""Export CSV""        Click=""OnExportCsv"" />
+<Button Content=""Export Excel XML""  Click=""OnExportExcel"" />
+<Button Content=""Export HTML""       Click=""OnExportHtml"" />",
+@"// Code-behind — visible columns and their bound values are what gets written
+private void OnExportCsv(object sender, RoutedEventArgs e) =>
+    DataGridExportService.ExportToCsv(exportGrid, ""beams.csv"");
+
+private void OnExportExcel(object sender, RoutedEventArgs e) =>
+    DataGridExportService.ExportToExcelXml(exportGrid, ""beams.xml"", ""Beams"");
+
+private void OnExportHtml(object sender, RoutedEventArgs e) =>
+    DataGridExportService.ExportToHtml(exportGrid, ""beams.html"", ""Beam Schedule"");");
 
         return mainSp;
     }
@@ -14206,7 +14315,7 @@ myGrid.EnableContextMenu = true; // default";
 
         var groupPanel = new DataGridGroupPanel
         {
-            EmptyMessage = "Drag a column header here to group by that column...",
+            EmptyText = "Drag a column header here to group by that column...",
             Margin = new System.Windows.Thickness(0, 0, 0, 10)
         };
 
@@ -14245,7 +14354,7 @@ myGrid.EnableContextMenu = true; // default";
         };
 
         groupedGrid.ItemsSource = boqData;
-        groupPanel.AddGroup("Category");
+        groupPanel.AddGroup("Category", "Category");
 
         sec5Sp.Children.Add(groupPanel);
         sec5Sp.Children.Add(groupedGrid);
@@ -14253,7 +14362,7 @@ myGrid.EnableContextMenu = true; // default";
         var sec5Xaml = @"<!-- Syncfusion/DevExpress-Grade Group DropZone & Hierarchical Grouping -->
 <controls:DataGridGroupPanel
     TargetGrid=""{Binding ElementName=groupedGrid}""
-    EmptyMessage=""Drag a column header here to group by that column..."" />
+    EmptyText=""Drag a column header here to group by that column..."" />
 
 <controls:StackedHeaderDataGrid
     x:Name=""groupedGrid""
@@ -14277,7 +14386,7 @@ public ObservableCollection<BoqGroupItem> BoqItems { get; } = new();
 
 // Code-Behind: Grouping via DataGridGroupPanel
 groupPanel.TargetGrid = groupedGrid;
-groupPanel.AddGroup(""Category"");
+groupPanel.AddGroup(""Category"", ""Category"");
 
 // Group programmatically using CollectionViewSource:
 var view = CollectionViewSource.GetDefaultView(groupedGrid.ItemsSource);

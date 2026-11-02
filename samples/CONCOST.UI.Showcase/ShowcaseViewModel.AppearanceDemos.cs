@@ -495,6 +495,15 @@ public partial class ShowcaseViewModel
 
     private static Grid AppearanceSlider(string label, double minimum, double maximum, double value, double tick, string format, Action<double> onChanged)
     {
+        // Call sites pass two kinds of format: a plain numeric one ("0", "0.00") and a composite one
+        // ("{0:0} px"). Handing a composite string to double.ToString treats it as a custom numeric
+        // format, so "{0:0} mm" printed "{0:500} mm" instead of "500 mm" — the braces and the colon
+        // were being rendered as literal characters. Route by shape instead of picking one.
+        static string Format(string format, double number) =>
+            format.Contains('{')
+                ? string.Format(System.Globalization.CultureInfo.CurrentCulture, format, number)
+                : number.ToString(format, System.Globalization.CultureInfo.CurrentCulture);
+
         var row = new Grid { Margin = new Thickness(0, 0, 0, 9), HorizontalAlignment = HorizontalAlignment.Left };
         row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(145) });
         row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(200) });
@@ -526,7 +535,7 @@ public partial class ShowcaseViewModel
 
         var readout = new TextBlock
         {
-            Text = value.ToString(format),
+            Text = Format(format, value),
             FontSize = 11,
             FontWeight = FontWeights.SemiBold,
             FontFamily = new FontFamily("Consolas, Courier New, monospace"),
@@ -550,7 +559,7 @@ public partial class ShowcaseViewModel
 
         slider.ValueChanged += (_, e) =>
         {
-            readout.Text = e.NewValue.ToString(format);
+            readout.Text = Format(format, e.NewValue);
             onChanged(e.NewValue);
         };
 

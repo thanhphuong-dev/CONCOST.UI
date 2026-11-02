@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,14 +9,23 @@ using System.Windows.Input;
 
 namespace CONCOST.UI.Controls;
 
+/// <summary>Comparison operators available for a <see cref="ColumnFilterItem"/>.</summary>
+public enum FilterOperator
+{
+    Contains,
+    Equals,
+    StartsWith,
+    EndsWith,
+    GreaterThan,
+    LessThan
+}
+
 /// <summary>
 /// A filter row that sits above a <see cref="DataGrid"/>: one box per column, aligned with the
-/// column it filters. Typing filters the grid live with a case-insensitive <c>Contains</c> match.
+/// column it filters. Each box can choose a comparison operator (Contains, Equals, etc.) and
+/// typing filters the grid live. The predicate is registered with <see cref="DataGridFilterChain"/>,
+/// so it composes with <see cref="DataGridSearchPanel"/> instead of replacing it.
 /// </summary>
-/// <remarks>
-/// The predicate is registered with <see cref="DataGridFilterChain"/>, so it composes with
-/// <see cref="DataGridSearchPanel"/> instead of replacing it — a row has to satisfy both.
-/// </remarks>
 public class DataGridFilterPanel : Control
 {
     static DataGridFilterPanel()
@@ -57,12 +67,36 @@ public class DataGridFilterPanel : Control
         DependencyProperty.Register(nameof(PlaceholderText), typeof(string), typeof(DataGridFilterPanel),
             new FrameworkPropertyMetadata("Filter…"));
 
-    /// <summary>Placeholder shown in a box whose column has no header text.</summary>
     public string PlaceholderText
     {
         get => (string)GetValue(PlaceholderTextProperty);
         set => SetValue(PlaceholderTextProperty, value);
     }
+
+    public static readonly DependencyProperty ShowOperatorSelectorProperty =
+        DependencyProperty.Register(nameof(ShowOperatorSelector), typeof(bool), typeof(DataGridFilterPanel),
+            new FrameworkPropertyMetadata(true));
+
+    /// <summary>
+    /// Whether each box shows a comparison-operator drop-down above it. Turn it off for a compact
+    /// one-row filter strip that always uses <see cref="FilterOperator.Contains"/>.
+    /// </summary>
+    public bool ShowOperatorSelector
+    {
+        get => (bool)GetValue(ShowOperatorSelectorProperty);
+        set => SetValue(ShowOperatorSelectorProperty, value);
+    }
+
+    /// <summary>Every operator, in menu order — bound by the template's drop-down.</summary>
+    public static readonly FilterOperator[] OperatorValues =
+    {
+        FilterOperator.Contains,
+        FilterOperator.Equals,
+        FilterOperator.StartsWith,
+        FilterOperator.EndsWith,
+        FilterOperator.GreaterThan,
+        FilterOperator.LessThan
+    };
 
     #endregion
 
@@ -112,8 +146,6 @@ public class DataGridFilterPanel : Control
 
         grid.Columns.CollectionChanged += OnGridColumnsChanged;
 
-        // A grid is usually bound after the panel, so the view can only be resolved once the
-        // ItemsSource actually arrives.
         _itemsSourceDescriptor = DependencyPropertyDescriptor.FromProperty(
             ItemsControl.ItemsSourceProperty, typeof(DataGrid));
         _itemsSourceDescriptor.AddValueChanged(grid, OnGridItemsSourceChanged);
@@ -196,7 +228,8 @@ public class DataGridFilterPanel : Control
                     Placeholder = string.IsNullOrEmpty(DataGridFilterChain.HeaderText(column))
                         ? PlaceholderText
                         : DataGridFilterChain.HeaderText(column),
-                    Width = _tracker?.WidthOf(column) ?? 140d
+                    Width = _tracker?.WidthOf(column) ?? 140d,
+                    Operator = FilterOperator.Contains
                 };
                 item.PropertyChanged += OnFilterItemChanged;
                 list.Add(item);
@@ -208,7 +241,11 @@ public class DataGridFilterPanel : Control
 
     private void OnFilterItemChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ColumnFilterItem.FilterText)) ApplyFilters();
+        if (e.PropertyName == nameof(ColumnFilterItem.FilterText) ||
+            e.PropertyName == nameof(ColumnFilterItem.Operator))
+        {
+            ApplyFilters();
+        }
     }
 
     /// <summary>Pushes the current box contents onto the grid's collection view.</summary>
@@ -258,7 +295,20 @@ public class DataGridFilterPanel : Control
 
                     var value = DataGridFilterChain.ReadCell(row, item.Column);
                     var cell = value?.ToString() ?? string.Empty;
-                    if (cell.IndexOf(text.Trim(), StringComparison.OrdinalIgnoreCase) < 0) return false;
+                    var query = text.Trim();
+
+                    bool match = item.Operator switch
+                    {
+                        FilterOperator.Contains => cell.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0,
+                        FilterOperator.Equals => string.Equals(cell, query, StringComparison.OrdinalIgnoreCase),
+                        FilterOperator.StartsWith => cell.StartsWith(query, StringComparison.OrdinalIgnoreCase),
+                        FilterOperator.EndsWith => cell.EndsWith(query, StringComparison.OrdinalIgnoreCase),
+                        FilterOperator.GreaterThan => TryCompare(value, query) > 0,
+                        FilterOperator.LessThan => TryCompare(value, query) < 0,
+                        _ => cell.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0
+                    };
+
+                    if (!match) return false;
                 }
 
                 return true;
@@ -268,12 +318,35 @@ public class DataGridFilterPanel : Control
         FiltersApplied?.Invoke(this, EventArgs.Empty);
     }
 
+    private static int TryCompare(object? value, string query)
+    {
+        if (value is null) return query.Length > 0 ? -1 : 0;
+
+        if (value is IComparable comparable)
+        {
+            try
+            {
+                var converted = Convert.ChangeType(query, comparable.GetType(), CultureInfo.InvariantCulture);
+                if (converted is IComparable other)
+                    return comparable.CompareTo(other);
+            }
+            catch { }
+        }
+
+        // Fallback to string comparison
+        return string.Compare(value.ToString(), query, StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>Empties every box and restores the unfiltered grid.</summary>
     public void ClearFilters()
     {
         if (Filters is not null)
         {
-            foreach (var item in Filters) item.FilterText = string.Empty;
+            foreach (var item in Filters)
+            {
+                item.FilterText = string.Empty;
+                item.Operator = FilterOperator.Contains;
+            }
         }
 
         ApplyFilters();
@@ -289,6 +362,7 @@ public class ColumnFilterItem : INotifyPropertyChanged
     private string _filterText = string.Empty;
     private string _placeholder = string.Empty;
     private double _width;
+    private FilterOperator _operator = FilterOperator.Contains;
 
     public string Header
     {
@@ -315,6 +389,13 @@ public class ColumnFilterItem : INotifyPropertyChanged
     {
         get => _width;
         set { _width = value; OnPropertyChanged(nameof(Width)); }
+    }
+
+    /// <summary>The comparison operator for this filter.</summary>
+    public FilterOperator Operator
+    {
+        get => _operator;
+        set { _operator = value; OnPropertyChanged(nameof(Operator)); }
     }
 
     /// <summary>The column this box filters.</summary>

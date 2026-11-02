@@ -68,10 +68,6 @@ public class Ribbon : Control
         DependencyProperty.Register(nameof(ShowTabStrip), typeof(bool), typeof(Ribbon),
             new FrameworkPropertyMetadata(true));
 
-    public static readonly DependencyProperty TabAlignmentProperty =
-        DependencyProperty.Register(nameof(TabAlignment), typeof(RibbonTabAlignment), typeof(Ribbon),
-            new FrameworkPropertyMetadata(RibbonTabAlignment.Left));
-
     public static readonly DependencyProperty SelectedTabIdProperty =
         DependencyProperty.Register(nameof(SelectedTabId), typeof(string), typeof(Ribbon),
             new FrameworkPropertyMetadata(string.Empty,
@@ -377,13 +373,6 @@ public class Ribbon : Control
     {
         get => (bool)GetValue(ShowTabStripProperty);
         set => SetValue(ShowTabStripProperty, value);
-    }
-
-    /// <summary>Where the tabs sit inside their row.</summary>
-    public RibbonTabAlignment TabAlignment
-    {
-        get => (RibbonTabAlignment)GetValue(TabAlignmentProperty);
-        set => SetValue(TabAlignmentProperty, value);
     }
 
     /// <summary>

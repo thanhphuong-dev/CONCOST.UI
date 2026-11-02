@@ -221,6 +221,92 @@ public class DataGridFeaturePanelsTests
         });
     }
 
+    [Fact]
+    public void Filter_operator_equals_matches_only_the_exact_cell()
+    {
+        RunOnSta(() =>
+        {
+            var beams = Beams();
+            var grid = Grid(beams, Text("Name", nameof(Beam.Name)));
+            var panel = new DataGridFilterPanel { TargetGrid = grid };
+
+            panel.Filters[0].Operator = FilterOperator.Equals;
+            panel.Filters[0].FilterText = "Beam B1";
+
+            Assert.Equal(1, VisibleRows(grid));
+        });
+    }
+
+    [Fact]
+    public void Filter_operator_starts_with_matches_the_prefix_only()
+    {
+        RunOnSta(() =>
+        {
+            var beams = Beams();
+            var grid = Grid(beams, Text("Name", nameof(Beam.Name)));
+            var panel = new DataGridFilterPanel { TargetGrid = grid };
+
+            panel.Filters[0].Operator = FilterOperator.StartsWith;
+            panel.Filters[0].FilterText = "Beam";
+
+            Assert.Equal(2, VisibleRows(grid));
+        });
+    }
+
+    [Fact]
+    public void Filter_operator_greater_than_compares_numerically()
+    {
+        RunOnSta(() =>
+        {
+            var beams = Beams();
+            var grid = Grid(beams, Text("Width", nameof(Beam.Width)));
+            var panel = new DataGridFilterPanel { TargetGrid = grid };
+
+            panel.Filters[0].Operator = FilterOperator.GreaterThan;
+            panel.Filters[0].FilterText = "350";
+
+            // 400 and 500 pass, 300 does not.
+            Assert.Equal(2, VisibleRows(grid));
+        });
+    }
+
+    [Fact]
+    public void Filter_operator_less_than_compares_numerically()
+    {
+        RunOnSta(() =>
+        {
+            var beams = Beams();
+            var grid = Grid(beams, Text("Depth", nameof(Beam.Depth)));
+            var panel = new DataGridFilterPanel { TargetGrid = grid };
+
+            panel.Filters[0].Operator = FilterOperator.LessThan;
+            panel.Filters[0].FilterText = "600";
+
+            // 500 passes, 600 and 700 do not.
+            Assert.Equal(1, VisibleRows(grid));
+        });
+    }
+
+    [Fact]
+    public void Clear_filters_resets_the_operator_to_contains()
+    {
+        RunOnSta(() =>
+        {
+            var beams = Beams();
+            var grid = Grid(beams, Text("Name", nameof(Beam.Name)));
+            var panel = new DataGridFilterPanel { TargetGrid = grid };
+
+            panel.Filters[0].Operator = FilterOperator.EndsWith;
+            panel.Filters[0].FilterText = "C1";
+            Assert.Equal(1, VisibleRows(grid));
+
+            panel.ClearFilters();
+
+            Assert.Equal(FilterOperator.Contains, panel.Filters[0].Operator);
+            Assert.Equal(3, VisibleRows(grid));
+        });
+    }
+
     #endregion
 
     #region Search panel

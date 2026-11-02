@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CONCOST.UI\CONCOST.UI.csproj" />
+    <ProjectReference Include="..\..\samples\CONCOST.UI.Showcase\CONCOST.UI.Showcase.csproj" />
   </ItemGroup>
 
 </Project>

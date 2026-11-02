@@ -7,7 +7,10 @@
     <sys:Double x:Key="CONCOST.Ribbon.RowGap">1</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.ColumnWidth">70</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.GroupHeight">74</sys:Double>
-    <sys:Double x:Key="CONCOST.Ribbon.PanelTitleHeight">18</sys:Double>
+    <!-- A GridLength, not a Double: its only consumer is the panel-caption RowDefinition, and a
+         Double handed to RowDefinition.Height throws InvalidCastException while the template loads,
+         which took the whole ribbon down with a XamlParseException. -->
+    <GridLength x:Key="CONCOST.Ribbon.PanelTitleHeight">18</GridLength>
     <sys:Double x:Key="CONCOST.Ribbon.TabHeight">30</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.SeparatorWidth">9</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.LargeIconSize">28</sys:Double>

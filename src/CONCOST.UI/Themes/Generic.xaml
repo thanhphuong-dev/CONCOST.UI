@@ -4,6 +4,8 @@
   <converters:PaddingToContentHostMarginConverter x:Key="CONCOST.Converter.PaddingToContentHostMargin" />
   <converters:NullToVisibilityConverter x:Key="CONCOST.Converter.NullToVisibility" />
   <converters:ExpanderCornerRadiusConverter x:Key="CONCOST.Converter.ExpanderCornerRadius" />
+  <converters:CountToVisibilityConverter x:Key="CountToVisibility" />
+  <converters:FilterOperatorLabelConverter x:Key="CONCOST.Converter.FilterOperatorLabel" />
   <Style x:Key="CONCOST.ScrollBar.RepeatButton.Transparent" TargetType="{x:Type RepeatButton}">
     <Setter Property="FrameworkElement.OverridesDefaultStyle" Value="True" />
     <Setter Property="Background" Value="#00FFFFFF" />
@@ -3823,57 +3825,6 @@
     </Setter>
   </Style>
   <Style x:Key="{x:Type controls:StackedHeaderDataGrid}" TargetType="{x:Type controls:StackedHeaderDataGrid}" BasedOn="{StaticResource CONCOST.StackedHeaderDataGrid.Base}" />
-  <Style x:Key="CONCOST.DataGridGroupPanel.Base" TargetType="{x:Type controls:DataGridGroupPanel}">
-    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="Padding" Value="10,8" />
-    <Setter Property="Margin" Value="0,0,0,8" />
-    <Setter Property="MinHeight" Value="42" />
-    <Setter Property="attached:BorderElement.CornerRadius" Value="8" />
-    <Setter Property="UIElement.SnapsToDevicePixels" Value="True" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type controls:DataGridGroupPanel}">
-          <Border Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" Padding="{TemplateBinding Control.Padding}" SnapsToDevicePixels="True">
-            <Grid>
-              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0" Visibility="{Binding GroupedPropertyNames.Count, Converter={x:Static controls:CountToVisibilityInvertedConverter.Instance}, RelativeSource={RelativeSource TemplatedParent}}">
-                <icons:Icon Kind="Layers" Width="16" Height="16" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="0,0,8,0" VerticalAlignment="Center" />
-                <TextBlock Text="{TemplateBinding controls:DataGridGroupPanel.EmptyMessage}" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" FontSize="12" VerticalAlignment="Center" />
-              </StackPanel>
-              <ItemsControl ItemsSource="{Binding GroupedPropertyNames, RelativeSource={RelativeSource TemplatedParent}}">
-                <ItemsControl.ItemsPanel>
-                  <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" />
-                  </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate>
-                    <Border Background="{DynamicResource CONCOST.Brush.Primary}" CornerRadius="6" Padding="10,4,8,4" Margin="0,0,8,0" VerticalAlignment="Center">
-                      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <icons:Icon Kind="Layers" Width="12" Height="12" Foreground="{DynamicResource CONCOST.Brush.White}" Margin="0,0,6,0" VerticalAlignment="Center" />
-                        <TextBlock Foreground="{DynamicResource CONCOST.Brush.White}" FontWeight="Normal" FontSize="11.5" VerticalAlignment="Center" Text="{Binding}" />
-                        <Button Width="16" Height="16" Margin="6,0,0,0" Cursor="Hand" Background="#00FFFFFF" BorderThickness="0" Command="{Binding Path=RemoveGroupCommand, RelativeSource={RelativeSource AncestorType=controls:DataGridGroupPanel}}" CommandParameter="{Binding}">
-                          <Control.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                              <Grid Background="#00FFFFFF">
-                                <icons:Icon Kind="Close" Width="10" Height="10" Foreground="{DynamicResource CONCOST.Brush.White}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                              </Grid>
-                            </ControlTemplate>
-                          </Control.Template>
-                        </Button>
-                      </StackPanel>
-                    </Border>
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
-            </Grid>
-          </Border>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-  <Style x:Key="{x:Type controls:DataGridGroupPanel}" TargetType="{x:Type controls:DataGridGroupPanel}" BasedOn="{StaticResource CONCOST.DataGridGroupPanel.Base}" />
   <Style x:Key="CONCOST.DataGridGroupItem.Base" TargetType="{x:Type GroupItem}">
     <Setter Property="Template">
       <Setter.Value>
@@ -6699,15 +6650,40 @@
               </ItemsControl.ItemsPanel>
               <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type controls:ColumnFilterItem}">
-                  <Border Width="{Binding Width}" Padding="4,5" ClipToBounds="True">
-                    <TextBox Height="26"
-                             MinHeight="26"
-                             Padding="8,0"
-                             FontSize="12"
-                             Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             attached:InfoElement.Placeholder="{Binding Placeholder}"
-                             attached:InfoElement.ShowClearButton="True" />
+                  <Border Width="{Binding Width}" Padding="4,4" ClipToBounds="True">
+                    <StackPanel>
+                      <!-- Operator selector: the comparison the box below applies. -->
+                      <ComboBox x:Name="operatorCombo"
+                                Height="24"
+                                MinHeight="24"
+                                Padding="6,0,22,0"
+                                Margin="0,0,0,3"
+                                FontSize="11"
+                                VerticalContentAlignment="Center"
+                                ItemsSource="{Binding Source={x:Static controls:DataGridFilterPanel.OperatorValues}}"
+                                SelectedItem="{Binding Operator, Mode=TwoWay}"
+                                Visibility="Collapsed">
+                        <ComboBox.ItemTemplate>
+                          <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource CONCOST.Converter.FilterOperatorLabel}}" FontSize="11" />
+                          </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                      </ComboBox>
+                      <TextBox Height="26"
+                               MinHeight="26"
+                               Padding="8,0"
+                               FontSize="12"
+                               Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                               attached:InfoElement.Placeholder="{Binding Placeholder}"
+                               attached:InfoElement.ShowClearButton="True" />
+                    </StackPanel>
                   </Border>
+                  <DataTemplate.Triggers>
+                    <DataTrigger Value="True"
+                                 Binding="{Binding ShowOperatorSelector, RelativeSource={RelativeSource AncestorType=controls:DataGridFilterPanel}}">
+                      <Setter TargetName="operatorCombo" Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+                  </DataTemplate.Triggers>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -6793,6 +6769,139 @@
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type controls:DataGridGroupPanel}" TargetType="{x:Type controls:DataGridGroupPanel}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+    <Setter Property="Padding" Value="10,6" />
+    <Setter Property="MinHeight" Value="40" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:DataGridGroupPanel}">
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}"
+                  ClipToBounds="True">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+
+              <!-- Label -->
+              <TextBlock Grid.Column="0"
+                         Text="{TemplateBinding HeaderText}"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"
+                         Foreground="{DynamicResource CONCOST.Brush.TextSecondary}"
+                         FontSize="12"
+                         FontWeight="SemiBold" />
+
+              <!-- Group pills or empty message -->
+              <ItemsControl Grid.Column="1"
+                            x:Name="PART_Items"
+                            ItemsSource="{TemplateBinding Groups}"
+                            VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="{x:Type controls:GroupDescriptor}">
+                    <Border Background="{DynamicResource CONCOST.Brush.Primary}"
+                            CornerRadius="12"
+                            Padding="10,4"
+                            Margin="0,0,6,0"
+                            SnapsToDevicePixels="True">
+                      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Header}"
+                                   Foreground="{DynamicResource CONCOST.Brush.White}"
+                                   FontSize="12"
+                                   VerticalAlignment="Center" />
+                        <Button Margin="6,0,0,0"
+                                Padding="2"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="{DynamicResource CONCOST.Brush.White}"
+                                Command="{x:Static controls:DataGridGroupPanel.RemoveGroupCommand}"
+                                CommandParameter="{Binding}"
+                                VerticalAlignment="Center"
+                                Cursor="Hand"
+                                Opacity="0.85">
+                          <Button.Template>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </ControlTemplate>
+                          </Button.Template>
+                          <icons:Icon Kind="Close" Width="12" Height="12" />
+                        </Button>
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Add group combo + button -->
+              <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <ComboBox x:Name="PART_ColumnCombo"
+                          Width="140"
+                          Margin="0,0,6,0"
+                          VerticalAlignment="Center"
+                          FontSize="12"
+                          ItemsSource="{TemplateBinding AvailableColumns}"
+                          SelectedItem="{Binding SelectedColumn, RelativeSource={RelativeSource TemplatedParent}}"
+                          DisplayMemberPath="Header"
+                          Visibility="{Binding AvailableColumns.Count, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibility}}" />
+                <Button Command="{x:Static controls:DataGridGroupPanel.AddGroupCommand}"
+                        Background="{DynamicResource CONCOST.Brush.Primary}"
+                        Foreground="{DynamicResource CONCOST.Brush.White}"
+                        BorderThickness="0"
+                        Padding="8,4"
+                        attached:BorderElement.CornerRadius="4"
+                        FontSize="12"
+                        Cursor="Hand"
+                        Visibility="{Binding AvailableColumns.Count, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibility}}">
+                  <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                      <Border Background="{TemplateBinding Background}"
+                              CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}"
+                              Padding="{TemplateBinding Padding}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                          <icons:Icon Kind="Add" Width="12" Height="12" Margin="0,0,4,0" />
+                          <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Border>
+                    </ControlTemplate>
+                  </Button.Template>
+                  Add
+                </Button>
+                <Button Command="{x:Static controls:DataGridGroupPanel.ClearGroupsCommand}"
+                        Background="Transparent"
+                        Foreground="{DynamicResource CONCOST.Brush.TextSecondary}"
+                        BorderThickness="0"
+                        Padding="6"
+                        FontSize="12"
+                        Cursor="Hand"
+                        Visibility="{Binding Groups.Count, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CountToVisibility}}"
+                        ToolTip="Clear all groups">
+                  <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </ControlTemplate>
+                  </Button.Template>
+                  <icons:Icon Kind="Close" Width="16" Height="16" />
+                </Button>
+              </StackPanel>
+            </Grid>
           </Border>
         </ControlTemplate>
       </Setter.Value>
@@ -10187,6 +10296,18 @@
             <Trigger Property="ApplicationMenu" Value="{x:Null}">
               <Setter TargetName="AppMenuHost" Property="Visibility" Value="Collapsed" />
               <Setter TargetName="AppMenuHost" Property="Margin" Value="0" />
+            </Trigger>
+            <!-- The File block can be dropped without removing the menu itself: a host that owns its
+                 own application chrome sets ShowApplicationMenu="False" and keeps the rest. -->
+            <Trigger Property="ShowApplicationMenu" Value="False">
+              <Setter TargetName="AppMenuHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="AppMenuHost" Property="Margin" Value="0" />
+            </Trigger>
+            <!-- No tab headers: the body still shows the selected tab, so a single-view ribbon keeps
+                 its commands without spending a whole row on one tab. -->
+            <Trigger Property="ShowTabStrip" Value="False">
+              <Setter TargetName="PART_TabScroll" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="TabOverflowButton" Property="Visibility" Value="Collapsed" />
             </Trigger>
             <!-- Docked into a host panel: the shell outline would double the panel's own border. -->
             <Trigger Property="ShowBorder" Value="False">

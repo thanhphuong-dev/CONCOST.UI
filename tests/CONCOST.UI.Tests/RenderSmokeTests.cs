@@ -126,7 +126,9 @@ public class RenderSmokeTests
         RunOnSTA(() =>
         {
             var card = new Card { Width = 240, Height = 120, Content = new TextBlock { Text = "Thẻ" } };
-            AssertRendersSomething(card, 0.005, 300, 180);
+            // The surface brush comes from the theme, so the host needs the theme dictionaries or
+            // the card is transparent and only its one-pixel border paints.
+            AssertRendersSomething(card, 0.005, 300, 180, themed: true);
         });
     }
 
@@ -361,7 +363,7 @@ public class RenderSmokeTests
     {
         RunOnSTA(() =>
         {
-            var viewer = new ModelViewer3D();
+            var viewer = new ModelViewer3D { Background = Brushes.Black };
             viewer.LoadBox(new Point3D(0, 0, 0), 10, 6, 4);
 
             AssertRendersSomething(viewer, 0.5, 300, 220);

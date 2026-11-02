@@ -298,6 +298,16 @@ public class RangeSlider : Control
         {
             if (e.Property == MinimumProperty || e.Property == MaximumProperty)
             {
+                // The two bounds follow each other: raising Minimum past Maximum lifts Maximum with
+                // it (and lowering Maximum past Minimum drops Minimum), so the range is never
+                // inverted. Without this the clamp below would receive min > max and produce a
+                // nonsense interval. The recursive call re-enters once and then finds the bounds
+                // already equal, so it stops there.
+                if (e.Property == MinimumProperty && slider.Minimum > slider.Maximum)
+                    slider.SetCurrentValue(MaximumProperty, slider.Minimum);
+                else if (e.Property == MaximumProperty && slider.Maximum < slider.Minimum)
+                    slider.SetCurrentValue(MinimumProperty, slider.Maximum);
+
                 slider.SetCurrentValue(StartValueProperty, NumericCompatibility.Clamp(slider.StartValue, slider.Minimum, slider.Maximum));
                 slider.SetCurrentValue(EndValueProperty, NumericCompatibility.Clamp(slider.EndValue, slider.Minimum, slider.Maximum));
                 if (slider.StartValue > slider.EndValue)

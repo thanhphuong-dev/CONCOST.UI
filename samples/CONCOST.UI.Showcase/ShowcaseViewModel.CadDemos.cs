@@ -1208,6 +1208,25 @@ bar.HideIsolateRequested += (sender, e) =>
         viewport.SetResourceReference(ViewportControl.AxisBrushProperty, "CONCOST.Brush.TextSecondary");
         viewport.SetResourceReference(ViewportControl.SelectionBrushProperty, "CONCOST.Brush.Primary");
 
+        // Đưa gốc toạ độ vào giữa khung ngay từ đầu. Trục X/Y được vẽ tại gốc thế giới, nên nếu
+        // camera mặc định để gốc ra ngoài khung thì mọi thuộc tính màu/nét trục đều trông như
+        // không có tác dụng — người dùng đổi màu mà không thấy gì đổi.
+        viewport.Camera.LookAt(new Point3D(0, 0, 0));
+        viewport.Camera.OrthographicHeight = 1600;
+
+        // Điểm bám mẫu: nếu không có, dấu bám chỉ hiện khi con trỏ tình cờ nằm trong bán kính
+        // SnapDistance quanh một giao lưới. Người dùng bật/tắt “Hiện dấu bám” / “Hiện nhãn bám”
+        // lúc đó sẽ không thấy gì đổi, và tưởng công tắc hỏng. Đặt sẵn một điểm trên giao lưới
+        // để hai công tắc có thứ để bật tắt ngay khi trang vừa mở.
+        viewport.Loaded += (_, _) =>
+        {
+            var sample = viewport.ToScreen(new Point3D(1000, 1000, 0));
+            if (double.IsNaN(sample.X) || double.IsNaN(sample.Y)) return;
+
+            viewport.Snap = sample;
+            viewport.SnapKind = SnapKind.Grid;
+        };
+
         // 1.1 Thêm chi tiết dầm, cột và kích thước kỹ thuật vào Overlay
         var overlay = viewport.Overlay;
 
@@ -1387,15 +1406,153 @@ bar.HideIsolateRequested += (sender, e) =>
         head1.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
         col1.Children.Add(head1);
 
+        // Hai panel định kiểu được khai báo trước để công tắc Hiện lưới / Trục tọa độ bật tắt
+        // được chúng: một thanh trượt đổi màu đường trục trong khi trục đang tắt là một control
+        // trông như hỏng, vì chẳng có gì trên khung nhìn để nó tác động vào.
+        StackPanel? axisStylePanel = null;
+        StackPanel? gridStylePanel = null;
+
         var gridToggles = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
-        gridToggles.Children.Add(AppearanceToggle("Hiện lưới (ShowGrid)", viewport.ShowGrid, v => viewport.ShowGrid = v));
-        gridToggles.Children.Add(AppearanceToggle("Trục tọa độ (ShowAxes)", viewport.ShowAxes, v => viewport.ShowAxes = v));
+        gridToggles.Children.Add(AppearanceToggle("Hiện lưới (ShowGrid)", viewport.ShowGrid, v =>
+        {
+            viewport.ShowGrid = v;
+            if (gridStylePanel is not null) gridStylePanel.IsEnabled = v;
+        }));
+        gridToggles.Children.Add(AppearanceToggle("Trục tọa độ (ShowAxes)", viewport.ShowAxes, v =>
+        {
+            viewport.ShowAxes = v;
+            if (axisStylePanel is not null) axisStylePanel.IsEnabled = v;
+        }));
         gridToggles.Children.Add(AppearanceToggle("Gốc tọa độ (Origin)", viewport.ShowOriginMarker, v => viewport.ShowOriginMarker = v));
         gridToggles.Children.Add(AppearanceToggle("Tâm ngắm (Crosshair)", viewport.ShowCrosshair, v => viewport.ShowCrosshair = v));
         gridToggles.Children.Add(AppearanceToggle("Ô ngắm (Aperture)", viewport.ShowAperture, v => viewport.ShowAperture = v));
         col1.Children.Add(gridToggles);
 
-        col1.Children.Add(AppearanceSlider("Bước lưới (GridStep)", 100, 2000, viewport.GridStep, 100, "{0:0} mm", v => { viewport.GridStep = v; hudText.Text = $"[Tỷ lệ: 1:100] [Lưới: {v:0} mm] [Snap: Grid / Endpoint] [WCS]"; }));
+        axisStylePanel = new StackPanel();
+
+        // ── Màu & nét của trục toạ độ ──────────────────────────────────────────
+        // Ba thuộc tính mở rộng của ViewportControl mà bản demo trước đây không hề lộ ra:
+        // AxisBrush (màu), AxisDashStyle (nét đứt / nét liền) và AxisThickness (độ dày).
+        var axisHead = new TextBlock
+        {
+            Text = "MÀU & NÉT TRỤC (AXIS STYLE)",
+            FontSize = 10.5,
+            FontWeight = FontWeights.SemiBold,
+            Margin = new Thickness(0, 4, 0, 6)
+        };
+        axisHead.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        axisStylePanel.Children.Add(axisHead);
+
+        // Ô màu: một Border nhỏ, bấm để gán. Border thay cho Button vì theme tô lại nền của Button
+        // khi hover, và một ô màu đổi màu khi trỏ vào thì không còn là ô màu nữa.
+        var axisSwatches = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
+
+        void AddSwatch(Panel host, Color color, string name, Action apply)
+        {
+            var swatch = new Border
+            {
+                Width = 22,
+                Height = 22,
+                Margin = new Thickness(0, 0, 6, 0),
+                CornerRadius = new CornerRadius(4),
+                Background = new SolidColorBrush(color),
+                BorderBrush = new SolidColorBrush(Color.FromArgb(0x66, 0x88, 0x88, 0x88)),
+                BorderThickness = new Thickness(1),
+                Cursor = Cursors.Hand,
+                ToolTip = name
+            };
+            swatch.MouseLeftButtonUp += (_, _) => apply();
+            host.Children.Add(swatch);
+        }
+
+        AddSwatch(axisSwatches, Color.FromRgb(0x8A, 0x8A, 0x8A), "Xám — theo theme", () =>
+            viewport.SetResourceReference(ViewportControl.AxisBrushProperty, "CONCOST.Brush.TextSecondary"));
+        AddSwatch(axisSwatches, Color.FromRgb(0xEF, 0x44, 0x44), "Đỏ", () =>
+            viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)));
+        AddSwatch(axisSwatches, Color.FromRgb(0x25, 0x63, 0xEB), "Xanh dương", () =>
+            viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0x25, 0x63, 0xEB)));
+        AddSwatch(axisSwatches, Color.FromRgb(0x16, 0xA3, 0x4A), "Xanh lá", () =>
+            viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0x16, 0xA3, 0x4A)));
+        AddSwatch(axisSwatches, Color.FromRgb(0x93, 0x33, 0xEA), "Tím", () =>
+            viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0x93, 0x33, 0xEA)));
+        AddSwatch(axisSwatches, Color.FromRgb(0xFB, 0x92, 0x3C), "Cam", () =>
+            viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0xFB, 0x92, 0x3C)));
+
+        axisStylePanel.Children.Add(axisSwatches);
+
+        var dashRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 6) };
+        var dashLabel = new TextBlock
+        {
+            Text = "Nét trục",
+            Width = 92,
+            FontSize = 11.5,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        dashLabel.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+
+        var dashCombo = new ComboBox { Width = 150, Height = 28, MinHeight = 28, FontSize = 11.5 };
+        foreach (var caption in new[] { "Nét đứt (Dash)", "Nét liền (Solid)", "Chấm (Dot)", "Gạch-chấm (DashDot)" })
+            dashCombo.Items.Add(new ComboBoxItem { Content = caption });
+
+        dashCombo.SelectedIndex = 0;
+        dashCombo.SelectionChanged += (_, _) =>
+        {
+            viewport.AxisDashStyle = dashCombo.SelectedIndex switch
+            {
+                1 => DashStyles.Solid,
+                2 => DashStyles.Dot,
+                3 => DashStyles.DashDot,
+                _ => DashStyles.Dash
+            };
+        };
+
+        dashRow.Children.Add(dashLabel);
+        dashRow.Children.Add(dashCombo);
+        axisStylePanel.Children.Add(dashRow);
+
+        axisStylePanel.Children.Add(AppearanceSlider("Độ dày trục (AxisThickness)", 0.5, 4, viewport.AxisThickness, 0.1, "{0:0.0}", v => viewport.AxisThickness = v));
+
+        axisStylePanel.IsEnabled = viewport.ShowAxes;
+        axisStylePanel.ToolTip = "Bật “Trục tọa độ (ShowAxes)” để thấy thay đổi trên khung nhìn.";
+        col1.Children.Add(axisStylePanel);
+
+        // Màu lưới: đặt cả nét mảnh lẫn nét đậm, nét đậm lấy cùng màu ở độ đậm cao hơn.
+        var gridHead = new TextBlock
+        {
+            Text = "MÀU LƯỚI (GRID)",
+            FontSize = 10.5,
+            FontWeight = FontWeights.SemiBold,
+            Margin = new Thickness(0, 6, 0, 6)
+        };
+        gridHead.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+
+        gridStylePanel = new StackPanel();
+        gridStylePanel.Children.Add(gridHead);
+
+        var gridSwatches = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
+
+        void SetGrid(Color color, byte minorAlpha, byte majorAlpha)
+        {
+            viewport.GridBrush = new SolidColorBrush(Color.FromArgb(minorAlpha, color.R, color.G, color.B));
+            viewport.GridMajorBrush = new SolidColorBrush(Color.FromArgb(majorAlpha, color.R, color.G, color.B));
+        }
+
+        AddSwatch(gridSwatches, Color.FromRgb(0x8A, 0x8A, 0x8A), "Xám — theo theme", () =>
+        {
+            viewport.ClearValue(ViewportControl.GridBrushProperty);
+            viewport.ClearValue(ViewportControl.GridMajorBrushProperty);
+        });
+        AddSwatch(gridSwatches, Color.FromRgb(0x25, 0x63, 0xEB), "Xanh dương", () => SetGrid(Color.FromRgb(0x25, 0x63, 0xEB), 0x30, 0x70));
+        AddSwatch(gridSwatches, Color.FromRgb(0x16, 0xA3, 0x4A), "Xanh lá", () => SetGrid(Color.FromRgb(0x16, 0xA3, 0x4A), 0x30, 0x70));
+        AddSwatch(gridSwatches, Color.FromRgb(0x93, 0x33, 0xEA), "Tím", () => SetGrid(Color.FromRgb(0x93, 0x33, 0xEA), 0x30, 0x70));
+        AddSwatch(gridSwatches, Color.FromRgb(0xEF, 0x44, 0x44), "Đỏ", () => SetGrid(Color.FromRgb(0xEF, 0x44, 0x44), 0x28, 0x60));
+
+        gridStylePanel.Children.Add(gridSwatches);
+        gridStylePanel.Children.Add(AppearanceSlider("Bước lưới (GridStep)", 100, 2000, viewport.GridStep, 100, "{0:0} mm", v => { viewport.GridStep = v; hudText.Text = $"[Tỷ lệ: 1:100] [Lưới: {v:0} mm] [Snap: Grid / Endpoint] [WCS]"; }));
+        gridStylePanel.IsEnabled = viewport.ShowGrid;
+        gridStylePanel.ToolTip = "Bật “Hiện lưới (ShowGrid)” để thấy thay đổi trên khung nhìn.";
+        col1.Children.Add(gridStylePanel);
+
         col1.Children.Add(AppearanceSlider("Cỡ marker bắt điểm (SnapMarkerSize)", 4, 16, viewport.SnapMarkerSize, 1, "{0:0} px", v => viewport.SnapMarkerSize = v));
         col1.Children.Add(AppearanceSlider("Độ mờ vùng chọn (SelectionOpacity)", 0, 0.4, viewport.SelectionFillOpacity, 0.05, "{0:0.00}", v => viewport.SelectionFillOpacity = v));
 
@@ -1416,8 +1573,54 @@ bar.HideIsolateRequested += (sender, e) =>
 
         var snapToggles = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
         snapToggles.Children.Add(AppearanceToggle("Bám lưới (SnapToGrid)", viewport.SnapToGrid, v => viewport.SnapToGrid = v));
+        snapToggles.Children.Add(AppearanceToggle("Hiện dấu bám (ShowSnapMarker)", viewport.ShowSnapMarker, v => viewport.ShowSnapMarker = v));
         snapToggles.Children.Add(AppearanceToggle("Hiện nhãn bám (ShowSnapLabel)", viewport.ShowSnapLabel, v => viewport.ShowSnapLabel = v));
         col2.Children.Add(snapToggles);
+
+        // Ô vuông cam trong khung nhìn chính là dấu bắt điểm (snap marker) — tô bằng
+        // SnapMarkerBrush, mặc định lấy màu accent của theme. Đổi màu tại đây.
+        var snapHead = new TextBlock
+        {
+            Text = "MÀU DẤU BẮT ĐIỂM (SNAP MARKER)",
+            FontSize = 10.5,
+            FontWeight = FontWeights.SemiBold,
+            Margin = new Thickness(0, 2, 0, 6)
+        };
+        snapHead.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        col2.Children.Add(snapHead);
+
+        var snapSwatches = new WrapPanel { Margin = new Thickness(0, 0, 0, 10) };
+
+        void AddSnapSwatch(Color color, string name, Action apply)
+        {
+            var swatch = new Border
+            {
+                Width = 22,
+                Height = 22,
+                Margin = new Thickness(0, 0, 6, 0),
+                CornerRadius = new CornerRadius(4),
+                Background = new SolidColorBrush(color),
+                BorderBrush = new SolidColorBrush(Color.FromArgb(0x66, 0x88, 0x88, 0x88)),
+                BorderThickness = new Thickness(1),
+                Cursor = Cursors.Hand,
+                ToolTip = name
+            };
+            swatch.MouseLeftButtonUp += (_, _) => apply();
+            snapSwatches.Children.Add(swatch);
+        }
+
+        AddSnapSwatch(Color.FromRgb(0xFB, 0x92, 0x3C), "Cam — màu accent (mặc định)", () =>
+            viewport.ClearValue(ViewportControl.SnapMarkerBrushProperty));
+        AddSnapSwatch(Color.FromRgb(0x22, 0xC5, 0x5E), "Xanh lá", () =>
+            viewport.SnapMarkerBrush = new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E)));
+        AddSnapSwatch(Color.FromRgb(0xEF, 0x44, 0x44), "Đỏ", () =>
+            viewport.SnapMarkerBrush = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)));
+        AddSnapSwatch(Color.FromRgb(0x25, 0x63, 0xEB), "Xanh dương", () =>
+            viewport.SnapMarkerBrush = new SolidColorBrush(Color.FromRgb(0x25, 0x63, 0xEB)));
+        AddSnapSwatch(Color.FromRgb(0x93, 0x33, 0xEA), "Tím", () =>
+            viewport.SnapMarkerBrush = new SolidColorBrush(Color.FromRgb(0x93, 0x33, 0xEA)));
+
+        col2.Children.Add(snapSwatches);
 
         // Nút thao tác nhanh
         var actRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
@@ -1433,6 +1636,14 @@ bar.HideIsolateRequested += (sender, e) =>
         {
             viewport.ToggleGrid();
             UpdateCallout($"Đã chuyển đổi trạng thái lưới: {(viewport.ShowGrid ? "BẬT" : "TẮT")}");
+        };
+
+        var btnOrigin = SecondaryButton("Về gốc toạ độ");
+        btnOrigin.Click += (_, _) =>
+        {
+            viewport.Camera.LookAt(new Point3D(0, 0, 0));
+            viewport.Camera.OrthographicHeight = 1600;
+            UpdateCallout("Đã đưa khung nhìn về gốc toạ độ — trục X/Y và vòng tròn gốc nằm giữa khung.");
         };
 
         var btnAddBeam = SecondaryButton("+ Thêm Dầm CAD");
@@ -1451,6 +1662,7 @@ bar.HideIsolateRequested += (sender, e) =>
 
         actRow.Children.Add(btnZoomExtents);
         actRow.Children.Add(btnToggleGrid);
+        actRow.Children.Add(btnOrigin);
         actRow.Children.Add(btnAddBeam);
         col2.Children.Add(actRow);
 
@@ -1473,7 +1685,19 @@ bar.HideIsolateRequested += (sender, e) =>
                     ShowAxes=""True""
                     ShowOriginMarker=""True""
                     CursorMoved=""OnCursorMoved""
-                    WorldClicked=""OnWorldClicked"" />";
+                    WorldClicked=""OnWorldClicked"" />
+
+<!-- Màu và nét của trục toạ độ: ba thuộc tính mở rộng, không cần template riêng -->
+<ui:ViewportControl ShowAxes=""True""
+                    AxisBrush=""#EF4444""
+                    AxisThickness=""2""
+                    AxisDashStyle=""Solid"" />
+
+<!-- Màu lưới: nét mảnh và nét đậm (mỗi GridMajorEvery ô) đặt riêng -->
+<ui:ViewportControl ShowGrid=""True""
+                    GridBrush=""#302563EB""
+                    GridMajorBrush=""#702563EB""
+                    GridMajorEvery=""5"" />";
 
         string csCode = @"// 1. Cấu hình lưới tọa độ & điểm bám CAD
 viewport.GridStep = 500;             // Bước lưới chính (500 mm)
@@ -1482,10 +1706,19 @@ viewport.SnapToGrid = true;          // Bắt điểm vào lưới
 viewport.ShowCrosshair = true;       // Tâm ngắm kỹ thuật
 viewport.ShowAperture = true;        // Ô ngắm vuông xung quanh tâm
 
-// 2. Thu phóng vừa khung hình bản vẽ
+// 2. Màu và nét của trục toạ độ
+viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+viewport.AxisThickness = 2;          // 0.5 – 4 px
+viewport.AxisDashStyle = DashStyles.Solid;   // Dash | Solid | Dot | DashDot
+
+// 3. Màu lưới: nét mảnh và nét đậm riêng, alpha quyết định độ đậm
+viewport.GridBrush = new SolidColorBrush(Color.FromArgb(0x30, 0x25, 0x63, 0xEB));
+viewport.GridMajorBrush = new SolidColorBrush(Color.FromArgb(0x70, 0x25, 0x63, 0xEB));
+
+// 4. Thu phóng vừa khung hình bản vẽ
 viewport.ZoomToFit(new Rect3D(0, 0, 0, 12000, 8000, 0));
 
-// 3. Tương tác con trỏ và bám điểm thời gian thực
+// 5. Tương tác con trỏ và bám điểm thời gian thực
 viewport.CursorMoved += (s, e) =>
 {
     Point3D worldPos = e.World;      // Tọa độ thực trong không gian CAD (mm)

@@ -562,8 +562,22 @@ public partial class ShowcaseViewModel
         var view = new RibbonTabItem { Header = "View", Id = "view", Icon = RibbonIcon(IconKind.GridSquare) };
         view.Content = new List<RibbonGroup> { viewGroup };
 
+        // A File block so ShowApplicationMenu has something to hide. Without one the switch
+        // would collapse a slot that is already empty and look broken.
+        var fileMenu = new RibbonApplicationMenu
+        {
+            Header = "File",
+            Items =
+            {
+                RibbonMenuEntry("New drawing", IconKind.File, "Ctrl+N"),
+                RibbonMenuEntry("Open…", IconKind.Folder, "Ctrl+O"),
+                RibbonMenuEntry("Save", IconKind.Save, "Ctrl+S")
+            }
+        };
+
         var extended = new Ribbon
         {
+            ApplicationMenu = fileMenu,
             EmptyContent = "Chưa mở không gian làm việc nào.",
             ItemsSource = new object[] { home, insert, view }
         };
@@ -571,6 +585,8 @@ public partial class ShowcaseViewModel
         var options = new WrapPanel();
 
         options.Children.Add(Option("Viền khung", true, on => extended.ShowBorder = on));
+        options.Children.Add(Option("Khối File", true, on => extended.ShowApplicationMenu = on));
+        options.Children.Add(Option("Dải tab", true, on => extended.ShowTabStrip = on));
         options.Children.Add(Option("Nhãn group", true, on => Ribbon.SetShowGroupLabels(extended, on)));
         options.Children.Add(Option("Gộp group khi hẹp", true, on => extended.IsGroupCollapseEnabled = on));
         options.Children.Add(Option("Cho tùy biến QAT", true, on => extended.IsQuickAccessCustomizable = on));
@@ -611,6 +627,8 @@ public partial class ShowcaseViewModel
                   "               IsGroupCollapseEnabled=\"False\"\n" +
                   "               IsQuickAccessCustomizable=\"False\"\n" +
                   "               IsKeyTipEnabled=\"False\"\n" +
+                  "               ShowApplicationMenu=\"True\"\n" +
+                  "               ShowTabStrip=\"True\"\n" +
                   "               SelectedTabId=\"{Binding ActiveTabId}\"\n" +
                   "               EmptyContent=\"No workspace open.\" />\n\n" +
                   "<!-- Caption row off for every group in the ribbon -->\n" +
@@ -626,6 +644,10 @@ public partial class ShowcaseViewModel
                     "// Docked into a panel: no outline, no caption row\n" +
                     "ribbon.ShowBorder = false;\n" +
                     "Ribbon.SetShowGroupLabels(ribbon, false);\n\n" +
+                    "// Hide the File block but keep the application menu itself\n" +
+                    "ribbon.ShowApplicationMenu = false;\n\n" +
+                    "// One-view ribbon: the body stays, the tab headers go\n" +
+                    "ribbon.ShowTabStrip = false;\n\n" +
                     "// Empty state\n" +
                     "ribbon.EmptyContent = \"No workspace open.\";   // IsEmpty is true with no tabs");
     }

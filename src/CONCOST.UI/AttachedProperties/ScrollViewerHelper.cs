@@ -30,6 +30,16 @@ namespace CONCOST.UI.AttachedProperties
             public bool IsRunningVertical;
             public bool IsRunningHorizontal;
             public Button? BackToTopButton;
+
+            /// <summary>
+            /// True once the template has been searched for <c>PART_BackToTop</c>. The search only
+            /// succeeds on a template that declares the part, and a stock <see cref="ScrollViewer"/>
+            /// — or any template that leaves it out — never will. Without this flag the "no button
+            /// yet, try again" branch in <see cref="UpdateBackToTopVisibility"/> re-entered
+            /// <see cref="SetupBackToTop"/> for ever and overflowed the stack the moment such a
+            /// viewer scrolled.
+            /// </summary>
+            public bool BackToTopSearched;
         }
 
         private static ScrollState GetState(ScrollViewer sv)
@@ -184,9 +194,13 @@ namespace CONCOST.UI.AttachedProperties
         private static void SetupBackToTop(ScrollViewer sv)
         {
             var state = GetState(sv);
-            if (state.BackToTopButton == null && sv.Template != null)
+            if (!state.BackToTopSearched)
             {
-                if (sv.Template.FindName("PART_BackToTop", sv) is Button btn)
+                // Search once, whatever the answer. A template that does not declare the part never
+                // will, and retrying on every scroll tick is what used to recurse through
+                // UpdateBackToTopVisibility until the stack ran out.
+                state.BackToTopSearched = true;
+                if (sv.Template?.FindName("PART_BackToTop", sv) is Button btn)
                 {
                     state.BackToTopButton = btn;
                     btn.Click += (_, _) => ScrollToTop(sv);
@@ -209,6 +223,9 @@ namespace CONCOST.UI.AttachedProperties
             var state = GetState(sv);
             if (state.BackToTopButton == null)
             {
+                // At most one attempt per viewer. Without this the call below came straight back
+                // here with the button still null and the pair recursed for ever.
+                if (state.BackToTopSearched) return;
                 SetupBackToTop(sv);
                 if (state.BackToTopButton == null) return;
             }
