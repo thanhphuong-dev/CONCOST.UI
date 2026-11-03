@@ -6,6 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **The backstage rail binds, resizes and reads at a glance.** `RibbonBackstageView.SelectedItem`
+  was a plain CLR property over a field, so a shell could not restore the page a session closed on
+  through a binding; it is a two-way dependency property now (same setter, same events). The rail
+  gained `RailWidth` (coerced to a usable 120 px floor — the page takes the rest) and `BackText`
+  (the caption was a hard-coded English "Back", the one string a Vietnamese backstage could not
+  translate). And the selected entry's glyph takes the accent, which is what makes the rail
+  scannable when the pressed surface and the rail share a colour. 4 tests in
+  `BackstageUpgradeTests` cover the bindable selection, the case-insensitive `Select`, the width
+  coerce and the localised caption.
 - **The CAD shell gives its two faces the states they were missing.** `ApplicationTitleBar` kept
   full strength when its window lost the foreground, so a screenshot of a background window read
   as live; the bar now dims to 55 % while the window is inactive and snaps back on activation

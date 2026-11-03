@@ -65,12 +65,49 @@ public class RibbonBackstageView : Grid
         nameof(ApplicationName), typeof(string), typeof(RibbonBackstageView),
         new FrameworkPropertyMetadata("CONCOST", OnApplicationNameChanged));
 
+    /// <summary>Identifies the <see cref="SelectedItem"/> property.</summary>
+    public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
+        nameof(SelectedItem), typeof(BackstageItem), typeof(RibbonBackstageView),
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedItemChanged));
+
+    /// <summary>Identifies the <see cref="RailWidth"/> property.</summary>
+    public static readonly DependencyProperty RailWidthProperty = DependencyProperty.Register(
+        nameof(RailWidth), typeof(double), typeof(RibbonBackstageView),
+        new FrameworkPropertyMetadata(216.0, OnRailWidthChanged, CoerceRailWidth));
+
+    /// <summary>Identifies the <see cref="BackText"/> property.</summary>
+    public static readonly DependencyProperty BackTextProperty = DependencyProperty.Register(
+        nameof(BackText), typeof(string), typeof(RibbonBackstageView),
+        new FrameworkPropertyMetadata("Back", OnBackTextChanged));
+
+    private static object CoerceRailWidth(DependencyObject d, object baseValue) =>
+        baseValue is double width && !double.IsNaN(width) ? Math.Max(120, width) : 216.0;
+
+    private static void OnRailWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RibbonBackstageView view) view.ColumnDefinitions[0].Width = new GridLength((double)e.NewValue);
+    }
+
+    private static void OnBackTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RibbonBackstageView view) view._backText.Text = (string)e.NewValue ?? string.Empty;
+    }
+
+    private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not RibbonBackstageView view) return;
+
+        view.ShowPage(view.SelectedItem);
+        view.HighlightSelection();
+
+        view.SelectedItemChanged?.Invoke(view, EventArgs.Empty);
+    }
+
     private readonly TextBlock _applicationName;
     private readonly StackPanel _rail;
     private readonly Border _page;
     private readonly Border _back;
-
-    private BackstageItem? _selected;
+    private readonly TextBlock _backText;
 
     public RibbonBackstageView()
     {
@@ -102,7 +139,7 @@ public class RibbonBackstageView : Grid
         var backIcon = new Icon { Kind = IconKind.ArrowLeft, Width = 12, Height = 12, VerticalAlignment = VerticalAlignment.Center };
         backIcon.SetResourceReference(Control.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
-        var backText = new TextBlock { Text = "Back", FontSize = 12, Margin = new Thickness(6, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+        var backText = _backText = new TextBlock { Text = "Back", FontSize = 12, Margin = new Thickness(6, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
         backText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
         backContent.Children.Add(backIcon);
@@ -148,21 +185,25 @@ public class RibbonBackstageView : Grid
         set => SetValue(ApplicationNameProperty, value);
     }
 
-    /// <summary>The entry whose page is showing.</summary>
+    /// <summary>The entry whose page is showing. Two-way bindable, so a shell can restore the page a session closed on.</summary>
     public BackstageItem? SelectedItem
     {
-        get => _selected;
-        set
-        {
-            if (ReferenceEquals(_selected, value)) return;
+        get => (BackstageItem?)GetValue(SelectedItemProperty);
+        set => SetValue(SelectedItemProperty, value);
+    }
 
-            _selected = value;
+    /// <summary>Width of the rail; the page takes the rest.</summary>
+    public double RailWidth
+    {
+        get => (double)GetValue(RailWidthProperty);
+        set => SetValue(RailWidthProperty, value);
+    }
 
-            ShowPage(value);
-            HighlightSelection();
-
-            SelectedItemChanged?.Invoke(this, EventArgs.Empty);
-        }
+    /// <summary>Caption of the back button; a host localises it like the rest of its shell.</summary>
+    public string BackText
+    {
+        get => (string)GetValue(BackTextProperty);
+        set => SetValue(BackTextProperty, value);
     }
 
     /// <summary>Raised when the open state changes.</summary>
@@ -250,8 +291,16 @@ public class RibbonBackstageView : Grid
     {
         foreach (var button in _rail.Children.OfType<Button>())
         {
-            if (ReferenceEquals(button.Tag, _selected)) button.SetResourceReference(BackgroundProperty, "CONCOST.Brush.SurfacePressed");
+            bool selected = ReferenceEquals(button.Tag, SelectedItem);
+
+            if (selected) button.SetResourceReference(BackgroundProperty, "CONCOST.Brush.SurfacePressed");
             else button.Background = Brushes.Transparent;
+
+            if (button.Content is StackPanel row && row.Children.Count > 0 && row.Children[0] is Icon glyph)
+            {
+                glyph.SetResourceReference(Control.ForegroundProperty,
+                    selected ? "CONCOST.Brush.Primary" : "CONCOST.Brush.TextSecondary");
+            }
         }
     }
 
@@ -294,7 +343,7 @@ public class RibbonBackstageView : Grid
 
         view.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
 
-        if (open && view._selected is null) view.SelectedItem = view.Items.FirstOrDefault();
+        if (open && view.SelectedItem is null) view.SelectedItem = view.Items.FirstOrDefault();
 
         view.IsOpenChanged?.Invoke(view, EventArgs.Empty);
     }
