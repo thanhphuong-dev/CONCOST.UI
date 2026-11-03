@@ -6233,7 +6233,10 @@
           </Grid>
           <ControlTemplate.Triggers>
             <Trigger Property="UIElement.IsMouseOver" Value="True">
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.InputHoverBorder}" Property="Border.BorderBrush" />
+            </Trigger>
+            <Trigger Property="UIElement.IsKeyboardFocusWithin" Value="True">
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.BorderFocused}" Property="Border.BorderBrush" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
