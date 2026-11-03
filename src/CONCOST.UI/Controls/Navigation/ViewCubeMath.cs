@@ -560,6 +560,47 @@ public static class ViewCubeMath
         return best;
     }
 
+    /// <summary>The human name of a region: a face reads as itself, a corner as the quadrant it sits in.</summary>
+    /// <remarks>
+    /// The labels follow the compass the widget draws — BACK is north and RIGHT is east — so a corner
+    /// on the TOP-FRONT-RIGHT diagonal announces itself as <c>NE Isometric</c> and one under the
+    /// equator as <c>Bottom SE Isometric</c>, the way an orientation list spells them. Edges and
+    /// faces keep their structural names.
+    /// </remarks>
+    public static string OrientationName(ViewCubeRegion region)
+    {
+        if (region.IsEmpty) return string.Empty;
+
+        switch (region.Kind)
+        {
+            case ViewCubeRegionKind.Face:
+            case ViewCubeRegionKind.Edge:
+                return region.Name;
+
+            default:
+                string[] parts = region.Name.Split('-');
+                string quadrant = QuadrantLetters(parts);
+                bool below = parts[0].Equals("BOTTOM", StringComparison.OrdinalIgnoreCase);
+                return (below ? "Bottom " : string.Empty) + quadrant + " Isometric";
+        }
+    }
+
+    private static string QuadrantLetters(string[] parts)
+    {
+        string northSouth = "S";
+        string eastWest = "E";
+
+        foreach (string part in parts)
+        {
+            if (part.Equals("BACK", StringComparison.OrdinalIgnoreCase)) northSouth = "N";
+            else if (part.Equals("FRONT", StringComparison.OrdinalIgnoreCase)) northSouth = "S";
+            else if (part.Equals("RIGHT", StringComparison.OrdinalIgnoreCase)) eastWest = "E";
+            else if (part.Equals("LEFT", StringComparison.OrdinalIgnoreCase)) eastWest = "W";
+        }
+
+        return northSouth + eastWest;
+    }
+
     /// <summary>The region closest to an orientation's view direction.</summary>
     public static ViewCubeRegion Closest(Quaternion rotation)
     {

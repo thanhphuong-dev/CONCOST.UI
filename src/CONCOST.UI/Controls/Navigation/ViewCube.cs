@@ -22,7 +22,9 @@ public enum ViewCubePart
     Home,
     Arrow,
     Roll,
-    Menu
+    Menu,
+    SavedView,
+    OrientationSelector
 }
 
 /// <summary>What was under the pointer on a <see cref="ViewCube"/>.</summary>
@@ -99,6 +101,10 @@ public sealed class ViewCubeHit
     internal static ViewCubeHit ForRoll(int direction) =>
         new(ViewCubePart.Roll, direction > 0 ? "ROLL+" : "ROLL-", roll: direction);
 
+    internal static ViewCubeHit ForSavedView(string name) => new(ViewCubePart.SavedView, name);
+
+    internal static ViewCubeHit ForOrientationSelector() => new(ViewCubePart.OrientationSelector, "ORIENTATION");
+
     internal static ViewCubeHit ForCompass(string label, Vector3D direction) =>
         new(ViewCubePart.Compass, label, compass: direction);
 
@@ -143,6 +149,29 @@ public class ProjectionModeEventArgs : EventArgs
 
     /// <summary>The projection the user picked.</summary>
     public ProjectionMode Mode { get; }
+}
+
+/// <summary>A named orientation a host stored on a <see cref="ViewCube"/>.</summary>
+/// <remarks>
+/// A saved view is a rotation, not a camera: the cube turns to it the same way it turns to a face,
+/// and whatever the host's camera does with the result stays the host's business.
+/// </remarks>
+public sealed class ViewCubeSavedView
+{
+    public ViewCubeSavedView(string name, Quaternion rotation)
+    {
+        Name = name;
+        Rotation = rotation;
+    }
+
+    /// <summary>Label shown in the orientation menu; replacing a view under the same name overwrites it.</summary>
+    public string Name { get; }
+
+    /// <summary>The orientation the camera takes when the view is activated.</summary>
+    public Quaternion Rotation { get; set; }
+
+    /// <inheritdoc />
+    public override string ToString() => Name;
 }
 
 /// <summary>
@@ -383,6 +412,26 @@ public partial class ViewCube : FrameworkElement
     private static object CoerceSensitivity(DependencyObject d, object baseValue) =>
         baseValue is double val ? Math.Max(0.1, Math.Min(3.0, val)) : 0.65;
 
+    public static readonly DependencyProperty ShowOrientationLabelProperty = DependencyProperty.Register(
+        nameof(ShowOrientationLabel), typeof(bool), typeof(ViewCube),
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty OrientationNameOverrideProperty = DependencyProperty.Register(
+        nameof(OrientationNameOverride), typeof(string), typeof(ViewCube),
+        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty ShowFocusRingProperty = DependencyProperty.Register(
+        nameof(ShowFocusRing), typeof(bool), typeof(ViewCube),
+        new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty AllowOrbitProperty = DependencyProperty.Register(
+        nameof(AllowOrbit), typeof(bool), typeof(ViewCube),
+        new FrameworkPropertyMetadata(true));
+
+    public static readonly DependencyProperty ShowTooltipsProperty = DependencyProperty.Register(
+        nameof(ShowTooltips), typeof(bool), typeof(ViewCube),
+        new FrameworkPropertyMetadata(false));
+
     /// <summary>Raised before a transition runs; cancellable, and the target may be replaced.</summary>
     public event EventHandler<ViewRequestedEventArgs>? ViewRequested;
 
@@ -404,11 +453,23 @@ public partial class ViewCube : FrameworkElement
     /// <summary>Raised by the "Options…" entry, for a host that owns a settings dialog.</summary>
     public event EventHandler? OptionsRequested;
 
+    /// <summary>Raised by "Save Current View…"; the host collects a name and calls <see cref="SaveCurrentView"/>.</summary>
+    public event EventHandler? SaveViewRequested;
+
+    /// <summary>Raised after <see cref="GoToSavedView"/> or a menu pick turned to a saved view.</summary>
+    public event EventHandler<ViewCubeSavedView>? SavedViewActivated;
+
     /// <summary>Creates a cube that shows the isometric corner until a host or a rotation is assigned.</summary>
     public ViewCube()
     {
+        // The keyboard paths — arrows to step, Home to return — need the widget to be able to take
+        // focus; a host that dislikes the cue turns ShowFocusRing off or Focusable off.
+        Focusable = true;
+
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
+        GotKeyboardFocus += (_, _) => InvalidateVisual();
+        LostKeyboardFocus += (_, _) => InvalidateVisual();
         ApplyOpacity();
         ApplyDock();
     }
@@ -661,6 +722,61 @@ public partial class ViewCube : FrameworkElement
         set => SetValue(DragSensitivityProperty, value);
     }
 
+    /// <summary>Draws the current orientation's name under the cube, the way an orientation selector does.</summary>
+    public bool ShowOrientationLabel
+    {
+        get => (bool)GetValue(ShowOrientationLabelProperty);
+        set => SetValue(ShowOrientationLabelProperty, value);
+    }
+
+    /// <summary>Text that replaces the computed orientation name; empty uses the computed one.</summary>
+    /// <remarks>
+    /// A host that works in its own terms — a view sheet name, a localised caption, the name of the
+    /// saved view that is showing — writes it here; the label never disagrees with the host.
+    /// </remarks>
+    public string OrientationNameOverride
+    {
+        get => (string)GetValue(OrientationNameOverrideProperty);
+        set => SetValue(OrientationNameOverrideProperty, value);
+    }
+
+    /// <summary>Draws a ring while the widget owns the keyboard focus.</summary>
+    public bool ShowFocusRing
+    {
+        get => (bool)GetValue(ShowFocusRingProperty);
+        set => SetValue(ShowFocusRingProperty, value);
+    }
+
+    /// <summary>When false a press-and-drag stays a click: the cube turns only by picking zones, arrows and the compass.</summary>
+    public bool AllowOrbit
+    {
+        get => (bool)GetValue(AllowOrbitProperty);
+        set => SetValue(AllowOrbitProperty, value);
+    }
+
+    /// <summary>Shows the name of the zone, letter or button under the pointer as a tooltip.</summary>
+    public bool ShowTooltips
+    {
+        get => (bool)GetValue(ShowTooltipsProperty);
+        set => SetValue(ShowTooltipsProperty, value);
+    }
+
+    /// <summary>The named orientations the host offers in the orientation menu and through <see cref="GoToSavedView"/>.</summary>
+    public System.Collections.ObjectModel.ObservableCollection<ViewCubeSavedView> SavedViews { get; } =
+        new();
+
+    /// <summary>The name of the orientation closest to the current view — <c>TOP</c>, <c>NE Isometric</c> — or the <see cref="OrientationNameOverride"/> when one is set.</summary>
+    public string OrientationName
+    {
+        get
+        {
+            string overridden = OrientationNameOverride;
+            if (!string.IsNullOrWhiteSpace(overridden)) return overridden;
+
+            return ViewCubeMath.OrientationName(ViewCubeMath.Closest(CurrentRotation));
+        }
+    }
+
     /// <summary>Animates the view back to the designated Home orientation.</summary>
     public void ResetToHome() => Request(ViewCubeHit.ForHome(), HomeRotation);
 
@@ -810,6 +926,106 @@ public partial class ViewCube : FrameworkElement
         if (Host is not null) Host.Projection = mode;
 
         ProjectionModeChanged?.Invoke(this, new ProjectionModeEventArgs(mode));
+    }
+
+    // ------------------------------------------------------------------ saved views
+
+    /// <summary>Stores the current orientation under <paramref name="name"/>, replacing a view that already carries it.</summary>
+    public ViewCubeSavedView SaveCurrentView(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("A saved view needs a name.", nameof(name));
+
+        var view = new ViewCubeSavedView(name.Trim(), CurrentRotation);
+
+        for (int i = 0; i < SavedViews.Count; i++)
+        {
+            if (string.Equals(SavedViews[i].Name, view.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                SavedViews[i] = view;
+                return view;
+            }
+        }
+
+        SavedViews.Add(view);
+        return view;
+    }
+
+    /// <summary>Drops a saved view; <c>false</c> when no view carried that name.</summary>
+    public bool RemoveSavedView(string name)
+    {
+        for (int i = 0; i < SavedViews.Count; i++)
+        {
+            if (string.Equals(SavedViews[i].Name, name, StringComparison.OrdinalIgnoreCase))
+            {
+                SavedViews.RemoveAt(i);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>Turns to a saved orientation the same way a face click does — animated, cancellable, reported.</summary>
+    public bool GoToSavedView(string name)
+    {
+        foreach (ViewCubeSavedView view in SavedViews)
+        {
+            if (!string.Equals(view.Name, name, StringComparison.OrdinalIgnoreCase)) continue;
+
+            Request(ViewCubeHit.ForSavedView(view.Name), view.Rotation);
+            SavedViewActivated?.Invoke(this, view);
+            return true;
+        }
+
+        return false;
+    }
+
+    // ------------------------------------------------------------------ keyboard
+
+    /// <inheritdoc />
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+
+        switch (e.Key)
+        {
+            case Key.Left:
+                StepOrRoll(ArrowDirection.Left, e.KeyboardDevice.Modifiers);
+                e.Handled = true;
+                break;
+
+            case Key.Right:
+                StepOrRoll(ArrowDirection.Right, e.KeyboardDevice.Modifiers);
+                e.Handled = true;
+                break;
+
+            case Key.Up:
+                StepOrRoll(ArrowDirection.Up, e.KeyboardDevice.Modifiers);
+                e.Handled = true;
+                break;
+
+            case Key.Down:
+                StepOrRoll(ArrowDirection.Down, e.KeyboardDevice.Modifiers);
+                e.Handled = true;
+                break;
+
+            case Key.Home:
+                GoHome();
+                e.Handled = true;
+                break;
+        }
+    }
+
+    /// <summary>Arrow keys step to the neighbouring face; with Ctrl they roll the camera a quarter turn instead.</summary>
+    private void StepOrRoll(ArrowDirection direction, ModifierKeys modifiers)
+    {
+        if (modifiers == ModifierKeys.Control)
+        {
+            RollBy(direction is ArrowDirection.Right or ArrowDirection.Down ? 1 : -1);
+            return;
+        }
+
+        StepToNeighbor(direction);
     }
 
     // ------------------------------------------------------------------ host plumbing
@@ -1026,6 +1242,15 @@ public partial class ViewCube : FrameworkElement
         menu.IsOpen = true;
     }
 
+    /// <summary>Opens the orientation selector: the 26 zones, then the saved views.</summary>
+    public void OpenOrientationMenu()
+    {
+        ContextMenu menu = BuildOrientationMenu();
+        menu.PlacementTarget = this;
+        menu.Placement = PlacementMode.Bottom;
+        menu.IsOpen = true;
+    }
+
     private ContextMenu BuildMenu()
     {
         var menu = new ContextMenu();
@@ -1051,6 +1276,9 @@ public partial class ViewCube : FrameworkElement
         menu.Items.Add(Item("Set Current View as Home", () => SetCurrentViewAsHome()));
         menu.Items.Add(Item("Set Current View as Front", () => SetCurrentViewAsFront()));
         menu.Items.Add(Item("Reset Front", () => ResetFront()));
+
+        AddSavedViewItems(menu);
+
         menu.Items.Add(new Separator());
 
         var compass = Item("Show Compass", () => ShowCompass = !ShowCompass);
@@ -1062,6 +1290,67 @@ public partial class ViewCube : FrameworkElement
         menu.Items.Add(Item("Options…", () => OptionsRequested?.Invoke(this, EventArgs.Empty)));
 
         return menu;
+    }
+
+    private ContextMenu BuildOrientationMenu()
+    {
+        var menu = new ContextMenu();
+
+        menu.Items.Add(Item("Go Home", () => GoHome()));
+        menu.Items.Add(new Separator());
+
+        foreach (ViewCubeRegion region in ViewCubeMath.Regions)
+        {
+            ViewCubeRegion captured = region;
+            var item = Item(ViewCubeMath.OrientationName(captured), () => GoTo(captured));
+            item.IsChecked = captured == ViewCubeMath.Closest(CurrentRotation);
+            menu.Items.Add(item);
+
+            bool lastOfKind = region.Kind != FindNextKind(captured);
+            if (!lastOfKind) continue;
+
+            menu.Items.Add(new Separator());
+        }
+
+        AddSavedViewItems(menu);
+
+        return menu;
+    }
+
+    /// <summary>The kind of the region that follows <paramref name="region"/> in the table, to place the separators between faces, edges and corners.</summary>
+    private static ViewCubeRegionKind FindNextKind(ViewCubeRegion region)
+    {
+        var regions = ViewCubeMath.Regions;
+        bool found = false;
+
+        foreach (ViewCubeRegion candidate in regions)
+        {
+            if (found) return candidate.Kind;
+            if (candidate == region) found = true;
+        }
+
+        return region.Kind;
+    }
+
+    private void AddSavedViewItems(ContextMenu menu)
+    {
+        if (SavedViews.Count == 0 && SaveViewRequested is null) return;
+
+        menu.Items.Add(new Separator());
+
+        foreach (ViewCubeSavedView view in SavedViews)
+        {
+            ViewCubeSavedView captured = view;
+            menu.Items.Add(Item(view.Name, () => ActivateSavedView(captured)));
+        }
+
+        menu.Items.Add(Item("Save Current View…", () => SaveViewRequested?.Invoke(this, EventArgs.Empty)));
+    }
+
+    private void ActivateSavedView(ViewCubeSavedView view)
+    {
+        Request(ViewCubeHit.ForSavedView(view.Name), view.Rotation);
+        SavedViewActivated?.Invoke(this, view);
     }
 
     private static string Describe(ProjectionMode mode) => mode switch
@@ -1154,22 +1443,28 @@ public partial class ViewCube : FrameworkElement
         Point point = e.GetPosition(this);
         ViewCubeHit hit = HitTest(point);
 
+        // Where the mouse goes the keyboard follows: a click on the widget hands it the arrows.
+        Focus();
+
         if (hit.IsEmpty)
         {
             double side = ControlSide;
             Point centre = Centre(side);
             double dx = point.X - centre.X;
             double dy = point.Y - centre.Y;
-            if (dx * dx + dy * dy > (side * 0.58) * (side * 0.58)) return;
+            if (AllowOrbit && dx * dx + dy * dy > (side * 0.58) * (side * 0.58)) return;
 
             _pressed = ViewCubeHit.Empty;
-            _drag = DragMode.Cube;
+            _drag = AllowOrbit ? DragMode.Cube : DragMode.None;
         }
         else
         {
-            // A press on a button is a click and nothing else; a press on the cube is a drag until it ends.
+            // A press on a button is a click and nothing else; a press on the cube is a drag until it
+            // ends — unless the host turned orbiting off, in which case every press stays a click.
             _pressed = hit;
-            _drag = hit.IsRegion ? DragMode.Cube : hit.Part == ViewCubePart.Compass ? DragMode.Compass : DragMode.None;
+            _drag = !AllowOrbit
+                ? DragMode.None
+                : hit.IsRegion ? DragMode.Cube : hit.Part == ViewCubePart.Compass ? DragMode.Compass : DragMode.None;
         }
         _dragStart = point;
         _dragRotation = CurrentRotation;
@@ -1255,7 +1550,25 @@ public partial class ViewCube : FrameworkElement
             case ViewCubePart.Menu:
                 OpenContextMenu();
                 break;
+
+            case ViewCubePart.SavedView:
+                ActivateSavedView(FindSavedView(hit.Label));
+                break;
+
+            case ViewCubePart.OrientationSelector:
+                OpenOrientationMenu();
+                break;
         }
+    }
+
+    private ViewCubeSavedView FindSavedView(string name)
+    {
+        foreach (ViewCubeSavedView view in SavedViews)
+        {
+            if (string.Equals(view.Name, name, StringComparison.OrdinalIgnoreCase)) return view;
+        }
+
+        throw new InvalidOperationException($"No saved view is named '{name}'.");
     }
 
     private void LookFromCompass(ViewCubeHit hit)
@@ -1351,7 +1664,23 @@ public partial class ViewCube : FrameworkElement
         _hover = hit;
         Cursor = hit.IsEmpty ? null : Cursors.Hand;
 
+        ToolTipService.SetToolTip(this, ShowTooltips ? DescribeHit(hit) : null);
+
         RegionHovered?.Invoke(this, new RegionHoverEventArgs(hit));
         InvalidateVisual();
     }
+
+    private static string? DescribeHit(ViewCubeHit hit) => hit.Part switch
+    {
+        ViewCubePart.Face or ViewCubePart.Edge or ViewCubePart.Corner => hit.IsRegion
+            ? ViewCubeMath.OrientationName(hit.Region)
+            : hit.Label,
+        ViewCubePart.Compass => $"Look {hit.Label}",
+        ViewCubePart.Home => "Home view",
+        ViewCubePart.Arrow => $"Turn {hit.Label.ToLowerInvariant()}",
+        ViewCubePart.Roll => hit.Roll > 0 ? "Roll clockwise" : "Roll counter-clockwise",
+        ViewCubePart.Menu => "View options",
+        ViewCubePart.OrientationSelector => "Pick an orientation",
+        _ => null
+    };
 }

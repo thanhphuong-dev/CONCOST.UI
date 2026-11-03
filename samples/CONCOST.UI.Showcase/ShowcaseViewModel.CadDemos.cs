@@ -101,12 +101,18 @@ public partial class ShowcaseViewModel
             Position = ViewCubePosition.TopRight,
             DockMargin = 16,
             ShowCompass = true,
+            ShowOrientationLabel = true,
+            ShowTooltips = true,
             SnapToClosestView = true,
             KeepSceneUpright = true,
             AnimatedTransitions = true,
             AnimationDuration = 450,
             InactiveOpacity = 70
         };
+
+        // Hai góc đã lưu mẫu: menu chuột phải và menu định hướng liệt kê chúng.
+        cube.SaveCurrentView("Isometric mặc định");
+        cube.SaveCurrentView("Nhìn từ trên");
 
         // ---------------------------------------------------------------------
         // 3. Hai chiều đồng bộ ViewCube và ModelViewer3D
@@ -130,7 +136,7 @@ public partial class ShowcaseViewModel
 
         var interactionHint = new TextBlock
         {
-            Text = "Sẵn sàng điều hướng. Bấm các mặt hoặc kéo chuột để xoay.",
+            Text = "Bấm 26 vùng, kéo để xoay, mũi tên ±90° (Ctrl+mũi tên: roll), Home về nhà.",
             FontSize = 11,
             VerticalAlignment = VerticalAlignment.Center
         };
@@ -165,6 +171,18 @@ public partial class ShowcaseViewModel
             ToastService.Info($"Chuyển góc nhìn: {e.Hit.Label}", "ViewCube 3D");
         };
 
+        cube.SaveViewRequested += (_, _) =>
+        {
+            string name = $"Góc đã lưu {cube.SavedViews.Count + 1}";
+            cube.SaveCurrentView(name);
+            ToastService.Success($"Đã lưu \"{name}\" — mở menu định hướng để quay lại.", "ViewCube 3D");
+        };
+
+        cube.SavedViewActivated += (_, view) =>
+        {
+            interactionHint.Text = $"Đang xem góc đã lưu: {view.Name}";
+        };
+
         cube.RegionHovered += (_, e) =>
         {
             if (e.Hit.IsEmpty)
@@ -176,6 +194,7 @@ public partial class ShowcaseViewModel
         cube.ViewTransitionCompleted += (_, _) =>
         {
             viewTelemetry.Text = $"Yaw: {camera.Yaw:0.#}° | Pitch: {camera.Pitch:0.#}° | Roll: {camera.Roll:0.#}°";
+            viewNameBadge.Text = $"Định hướng: {cube.OrientationName}";
             interactionHint.Text = "Chuyển hướng hoàn tất";
         };
 
@@ -281,6 +300,46 @@ public partial class ShowcaseViewModel
         quickViewsRow.Children.Add(MakeViewBtn("Mặt Sau (Back)", () => cube.GoToFace("BACK")));
         quickViewsRow.Children.Add(MakeViewBtn("Mặt Trái (Left)", () => cube.GoToFace("LEFT")));
         quickViewsRow.Children.Add(MakeViewBtn("🎯 Khung hình (Fit)", () => { viewer.ResetView(); camera.FitToView(); }));
+
+        // Góc đã lưu: menu định hướng của cube cũng liệt kê các góc này.
+        quickViewsRow.Children.Add(MakeViewBtn("💾 Lưu góc hiện tại", () =>
+        {
+            string name = $"Góc đã lưu {cube.SavedViews.Count + 1}";
+            cube.SaveCurrentView(name);
+            ToastService.Success($"Đã lưu \"{name}\".", "ViewCube 3D");
+        }));
+
+        var savedViewsLabel = CadHint("Góc đã lưu:");
+        savedViewsLabel.VerticalAlignment = VerticalAlignment.Center;
+        savedViewsLabel.Margin = new Thickness(6, 0, 10, 0);
+        quickViewsRow.Children.Add(savedViewsLabel);
+
+        var savedViewsHost = new StackPanel { Orientation = Orientation.Horizontal };
+        quickViewsRow.Children.Add(savedViewsHost);
+
+        void RefreshSavedViewButtons()
+        {
+            savedViewsHost.Children.Clear();
+
+            foreach (var view in cube.SavedViews)
+            {
+                var captured = view;
+                var chip = SecondaryButton(captured.Name);
+                chip.Margin = new Thickness(0, 0, 6, 0);
+                chip.Click += (_, _) => cube.GoToSavedView(captured.Name);
+                savedViewsHost.Children.Add(chip);
+            }
+
+            if (savedViewsHost.Children.Count == 0)
+            {
+                var empty = CadHint("(chưa có)");
+                empty.VerticalAlignment = VerticalAlignment.Center;
+                savedViewsHost.Children.Add(empty);
+            }
+        }
+
+        RefreshSavedViewButtons();
+        cube.SavedViewActivated += (_, _) => RefreshSavedViewButtons();
 
         // Row 2: Vị trí & Kích thước & Theme & Ngôn ngữ
         var configRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 4, 0, 10) };

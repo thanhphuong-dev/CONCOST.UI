@@ -6,6 +6,29 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **ViewCube speaks the keyboard and remembers where you have been.** The cube could only be driven
+  by the mouse; every one of its 26 zones, four arrows, roll buttons and the compass had no
+  keyboard path at all. Now: the widget takes focus (a click lands it there too), the arrow keys
+  turn to the neighbouring face the way the on-screen arrows do, **Ctrl+arrows** roll the camera a
+  quarter turn instead, and **Home** flies home — the ring is drawn dashed while the focus is
+  held, and a host that dislikes it turns `ShowFocusRing` off. Alongside:
+  - **Saved views.** `SaveCurrentView(name)` / `RemoveSavedView(name)` / `GoToSavedView(name)`
+    store named orientations in `SavedViews`; turning to one goes through the same animated,
+    cancellable `ViewRequested` pipeline as a face click, and `SavedViewActivated` reports it. The
+    context menu lists them, "Save Current View…" raises `SaveViewRequested` so a host collects the
+    name, and the new `OpenOrientationMenu()` — also the click target of the orientation label —
+    offers all 26 named zones with the current one ticked, then the saved views.
+  - **The orientation readout.** `ShowOrientationLabel` draws the current orientation's name under
+    the cube — `TOP`, `NE Isometric`, the Revit spelling with the compass the widget already draws
+    (BACK is north, so TOP-FRONT-RIGHT reads *SE Isometric*) — and `OrientationName` hands the same
+    string to a host. `OrientationNameOverride` replaces it where the host keeps its own names for
+    views.
+  - **Restraint switches.** `AllowOrbit = false` turns every press-and-drag back into a click (the
+    cube turns only by picking zones, arrows and the compass — for a locked plan view),
+    `ShowTooltips` names the zone, letter or button under the pointer, and `OrientationName`
+    respects a saved-view name through the override.
+  - 14 tests in `ViewCubeUpgradeTests`: the orientation-name table, the arrow/roll/home keyboard
+    paths as real key events, the saved-view round trip, the label's hit band and the tooltip.
 - **Four controls that shipped without a page — and two of them without a face — are real now.** The
   assembly carried `OtpInput`, `LoadingIndicator`, `CompassIndicator` and `UnitBox`, the wiki
   documented them, and none of them had a Showcase page; worse, two could not have earned one:

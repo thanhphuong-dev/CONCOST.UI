@@ -241,9 +241,56 @@ public partial class ViewCube
 
         if (compass is not null) DrawCompassLetters(dc, compass, palette);
 
+        if (ShowOrientationLabel) DrawOrientationLabel(dc, palette);
+
+        if (ShowFocusRing && IsKeyboardFocused) DrawFocusRing(dc, palette);
+
         if (!_pointerOver && !AlwaysShowTools && _drag == DragMode.None) return;
 
         DrawButtons(dc, zones, palette);
+    }
+
+    /// <summary>The band under the widget where the orientation name is drawn; also the click target that opens the selector.</summary>
+    private Rect OrientationLabelRect(double side)
+    {
+        double width = ActualWidth > 0 ? ActualWidth : side;
+        double height = ActualHeight > 0 ? ActualHeight : side;
+
+        return new Rect(0, height - Math.Max(16, side * 0.16), width, Math.Max(16, side * 0.16));
+    }
+
+    private void DrawOrientationLabel(DrawingContext dc, in Palette palette)
+    {
+        double side = ControlSide;
+        if (side < 8) return;
+
+        string name = OrientationName;
+        if (string.IsNullOrEmpty(name)) return;
+
+        Rect band = OrientationLabelRect(side);
+        double size = Math.Max(8, side * 0.085);
+        FormattedText text = Format(name, size, _hover.Part == ViewCubePart.OrientationSelector ? palette.Highlight : palette.Text);
+
+        if (text.Width > band.Width - 4)
+        {
+            size = Math.Max(7, size * (band.Width - 4) / text.Width);
+            text = Format(name, size, _hover.Part == ViewCubePart.OrientationSelector ? palette.Highlight : palette.Text);
+        }
+
+        dc.DrawText(text, new Point(band.Left + (band.Width - text.Width) / 2, band.Top + (band.Height - text.Height) / 2));
+    }
+
+    private void DrawFocusRing(DrawingContext dc, in Palette palette)
+    {
+        double width = ActualWidth > 0 ? ActualWidth : ControlSide;
+        double height = ActualHeight > 0 ? ActualHeight : ControlSide;
+
+        var pen = new Pen(FindBrush("CONCOST.Brush.Primary", palette.Highlight), 1.25)
+        {
+            DashStyle = DashStyles.Dash
+        };
+
+        dc.DrawRoundedRectangle(null, pen, new Rect(1.5, 1.5, Math.Max(3, width - 3), Math.Max(3, height - 3)), 6, 6);
     }
 
     /// <summary>
@@ -732,6 +779,10 @@ public partial class ViewCube
         double height = ActualHeight > 0 ? ActualHeight : side;
 
         if (point.X < 0 || point.Y < 0 || point.X > width || point.Y > height) return ViewCubeHit.Empty;
+
+        // The orientation label owns the bottom band: it reads as a selector, so it wins over the
+        // compass ring whose lowest point would otherwise land in the same pixels.
+        if (ShowOrientationLabel && OrientationLabelRect(side).Contains(point)) return ViewCubeHit.ForOrientationSelector();
 
         if (_pointerOver || AlwaysShowTools || _drag != DragMode.None)
         {
