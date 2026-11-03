@@ -30,6 +30,7 @@ public class Magnifier : Control
         Visibility = Visibility.Collapsed;
         Width = Radius * 2;
         Height = Radius * 2;
+        Effect = CreateShadow();
     }
 
     public static readonly DependencyProperty TargetProperty =
@@ -47,6 +48,22 @@ public class Magnifier : Control
     public static readonly DependencyProperty ShowCrosshairProperty =
         DependencyProperty.Register(nameof(ShowCrosshair), typeof(bool), typeof(Magnifier),
             new PropertyMetadata(true, OnVisualParamChanged));
+
+    public static readonly DependencyProperty CrosshairBrushProperty =
+        DependencyProperty.Register(nameof(CrosshairBrush), typeof(Brush), typeof(Magnifier),
+            new PropertyMetadata(null, OnVisualParamChanged));
+
+    public static readonly DependencyProperty ShowRimProperty =
+        DependencyProperty.Register(nameof(ShowRim), typeof(bool), typeof(Magnifier),
+            new PropertyMetadata(true, OnVisualParamChanged));
+
+    public static readonly DependencyProperty ShowShadowProperty =
+        DependencyProperty.Register(nameof(ShowShadow), typeof(bool), typeof(Magnifier),
+            new PropertyMetadata(true, OnShadowChanged));
+
+    public static readonly DependencyProperty FollowPointerProperty =
+        DependencyProperty.Register(nameof(FollowPointer), typeof(bool), typeof(Magnifier),
+            new PropertyMetadata(true));
 
     public static readonly DependencyProperty CenterProperty =
         DependencyProperty.Register(nameof(Center), typeof(Point), typeof(Magnifier),
@@ -80,6 +97,40 @@ public class Magnifier : Control
         set => SetValue(ShowCrosshairProperty, value);
     }
 
+    /// <summary>Colour of the crosshair and centre mark; the ring brush when unset.</summary>
+    public Brush? CrosshairBrush
+    {
+        get => (Brush?)GetValue(CrosshairBrushProperty);
+        set => SetValue(CrosshairBrushProperty, value);
+    }
+
+    /// <summary>
+    /// Draws a light inner rim between the ring and the image. On a drawing the zoomed content is
+    /// often the same colour as the ring, and the rim is what keeps the lens readable as a lens.
+    /// </summary>
+    public bool ShowRim
+    {
+        get => (bool)GetValue(ShowRimProperty);
+        set => SetValue(ShowRimProperty, value);
+    }
+
+    /// <summary>Draws a soft drop under the lens, so it reads as floating above the drawing.</summary>
+    public bool ShowShadow
+    {
+        get => (bool)GetValue(ShowShadowProperty);
+        set => SetValue(ShowShadowProperty, value);
+    }
+
+    /// <summary>
+    /// Moves the lens with the pointer. Turn it off when the host drives <see cref="Center"/> from
+    /// code — a digitizer, a camera feed, a scripted zoom — so the pointer stops fighting the host.
+    /// </summary>
+    public bool FollowPointer
+    {
+        get => (bool)GetValue(FollowPointerProperty);
+        set => SetValue(FollowPointerProperty, value);
+    }
+
     public Point Center
     {
         get => (Point)GetValue(CenterProperty);
@@ -100,6 +151,31 @@ public class Magnifier : Control
             m.InvalidateVisual();
         }
     }
+
+    private static void OnShadowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // DrawingContext has no Effect overload (only the legacy BitmapEffect), so the shadow is a
+        // control-level Effect — one frozen instance, swapped in and out with the switch.
+        if (d is not Magnifier m) return;
+
+        if ((bool)e.NewValue)
+        {
+            m.Effect ??= CreateShadow();
+        }
+        else
+        {
+            m.Effect = null;
+        }
+    }
+
+    private static System.Windows.Media.Effects.DropShadowEffect CreateShadow() =>
+        new()
+        {
+            BlurRadius = 12,
+            ShadowDepth = 3,
+            Direction = 270,
+            Opacity = 0.35
+        };
 
     private static object CoerceScale(DependencyObject d, object baseValue)
     {
@@ -165,22 +241,30 @@ public class Magnifier : Control
         if (_targetElement == null) return;
 
         Point pos = e.GetPosition(_targetElement);
-        Center = pos;
+
+        // A host driving the lens from code owns the Centre; the pointer only reports where it is.
+        if (FollowPointer) Center = pos;
+
         IsActive = true;
         Visibility = Visibility.Visible;
 
         var host = VisualTreeHelper.GetParent(this) as Visual ?? _targetElement;
-        try
+
+        if (FollowPointer)
         {
-            _lastPositionInHost = _targetElement.TransformToVisual(host).Transform(pos);
+            try
+            {
+                _lastPositionInHost = _targetElement.TransformToVisual(host).Transform(pos);
+            }
+            catch (InvalidOperationException)
+            {
+                // The target may not share a presentation source yet; use target-local coordinates until it is connected.
+                _lastPositionInHost = pos;
+            }
+
+            _hasPointerPosition = true;
+            UpdateLensSizeAndPosition();
         }
-        catch (InvalidOperationException)
-        {
-            // The target may not share a presentation source yet; use target-local coordinates until it is connected.
-            _lastPositionInHost = pos;
-        }
-        _hasPointerPosition = true;
-        UpdateLensSizeAndPosition();
 
         InvalidateVisual();
     }
@@ -209,27 +293,31 @@ public class Magnifier : Control
             viewboxSize
         );
 
-        // Draw zoomed circle
-        var borderBrush = BorderBrush;
-        if (borderBrush == null)
+        // Draw zoomed circle. The ring falls through the local brush, the theme's accent and a
+        // neutral fallback, in that order — never a hard-coded brand colour. The shadow is the
+        // control-level Effect, not a PushEffect: DrawingContext only takes the legacy kind.
+        var borderBrush = BorderBrush ?? TryFindResource("CONCOST.Brush.Primary") as Brush ?? Brushes.Orange;
+        double ringThickness = BorderThickness.Left > 0 ? BorderThickness.Left : 2.5;
+
+        dc.DrawEllipse(_visualBrush, new Pen(borderBrush, ringThickness), new Point(Radius, Radius), Radius, Radius);
+
+        // The rim: a light ring just inside the border, which is what keeps the lens readable when
+        // the zoomed drawing happens to be the same colour as the ring.
+        if (ShowRim)
         {
-            if (Application.Current != null && Application.Current.TryFindResource("CONCOST.Brush.Primary") is Brush appBrush)
-            {
-                borderBrush = appBrush;
-            }
-            else
-            {
-                borderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF7900"));
-            }
+            var rim = TryFindResource("CONCOST.Brush.Surface") as Brush ?? Brushes.White;
+            var rimPen = new Pen(rim, Math.Max(1.5, ringThickness * 0.6));
+
+            dc.DrawEllipse(null, rimPen, new Point(Radius, Radius), Radius - ringThickness * 0.8, Radius - ringThickness * 0.8);
         }
 
-        dc.DrawEllipse(_visualBrush, new Pen(borderBrush, BorderThickness.Left > 0 ? BorderThickness.Left : 2.5),
-            new Point(Radius, Radius), Radius, Radius);
-
-        // Draw crosshair center indicator if enabled
+        // Crosshair center indicator if enabled — its own brush, because the ring colour can vanish
+        // against a busy drawing and the crosshair is the part the eye actually steers by.
         if (ShowCrosshair)
         {
-            var crosshairPen = new Pen(borderBrush, 1.0);
+            var crosshair = CrosshairBrush ?? borderBrush;
+            var crosshairPen = new Pen(crosshair, 1.0);
+
             dc.DrawLine(crosshairPen, new Point(Radius - 8, Radius), new Point(Radius + 8, Radius));
             dc.DrawLine(crosshairPen, new Point(Radius, Radius - 8), new Point(Radius, Radius + 8));
             dc.DrawEllipse(null, crosshairPen, new Point(Radius, Radius), 3.5, 3.5);

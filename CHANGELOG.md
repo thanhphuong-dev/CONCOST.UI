@@ -6,6 +6,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **The two CAD magnification tools read like the rest of the shell.** The `Magnifier`'s ring fell
+  back to a hard-coded brand orange (`#FF7900` through `ColorConverter`) when no dictionary was
+  merged — the one literal of its kind left in the CAD set; it falls through the local brush, the
+  theme accent and a neutral fallback now, like every control beside it. The lens gained the
+  extended properties a drawing host asks for: `CrosshairBrush` (its own colour, because the ring
+  can vanish against a busy plan and the crosshair is the part the eye steers by), `ShowRim`
+  (a light inner ring that keeps the lens readable when the zoomed content happens to be the ring's
+  colour), `ShowShadow` (one frozen drop, so the lens floats above the sheet) and `FollowPointer`
+  (off, a host driving `Center` from a digitizer or a script owns the lens; the pointer only
+  reports). The `MiniMap`'s viewport rectangle painted the accent at full strength over the very
+  items it points at — the same burial the pick-box was cured of; the fill is a 18 % tint under a
+  full-strength stroke now, tunable through `ViewportFillOpacity`, and the map gained `CornerRadius`
+  (it rounds to the panel it docks into), `ShowBorder` (off when the host already frames it) and a
+  `SizeAll` cursor, since the whole map is a viewport handle. 7 tests across the two: pixel diffs
+  for the tint, the radius and the border, the opacity coerce table, the shadow swap and the
+  follow-pointer freeze.
 - **`Ribbon.ShowScreenTips` — the quiet-shell switch.** Every ribbon item built its hover tip the
   moment it had a header or a `ScreenTip`; a host docking the ribbon into a dense palette had no
   way to turn that off. The switch reaches the items by broadcast rather than by property

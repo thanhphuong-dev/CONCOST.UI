@@ -77,6 +77,21 @@ public class MiniMap : FrameworkElement
         nameof(ViewportBrush), typeof(Brush), typeof(MiniMap),
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
+    /// <summary>Identifies the <see cref="ViewportFillOpacity"/> property.</summary>
+    public static readonly DependencyProperty ViewportFillOpacityProperty = DependencyProperty.Register(
+        nameof(ViewportFillOpacity), typeof(double), typeof(MiniMap),
+        new FrameworkPropertyMetadata(0.18, FrameworkPropertyMetadataOptions.AffectsRender, null, CoerceOpacity));
+
+    /// <summary>Identifies the <see cref="CornerRadius"/> property.</summary>
+    public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+        nameof(CornerRadius), typeof(CornerRadius), typeof(MiniMap),
+        new FrameworkPropertyMetadata(new CornerRadius(6), FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>Identifies the <see cref="ShowBorder"/> property.</summary>
+    public static readonly DependencyProperty ShowBorderProperty = DependencyProperty.Register(
+        nameof(ShowBorder), typeof(bool), typeof(MiniMap),
+        new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
+
     private Point _dragOrigin;
     private Rect _dragStart;
     private bool _dragging;
@@ -118,6 +133,34 @@ public class MiniMap : FrameworkElement
         get => (Brush?)GetValue(ViewportBrushProperty);
         set => SetValue(ViewportBrushProperty, value);
     }
+
+    /// <summary>
+    /// Strength of the viewport rectangle's tint, 0–1. The rectangle sits over the very items the
+    /// user is looking for, and a full-strength fill paints over them; the stroke carries the accent
+    /// at full strength either way.
+    /// </summary>
+    public double ViewportFillOpacity
+    {
+        get => (double)GetValue(ViewportFillOpacityProperty);
+        set => SetValue(ViewportFillOpacityProperty, value);
+    }
+
+    /// <summary>Rounds the map's corners, to match the panel it docks into.</summary>
+    public CornerRadius CornerRadius
+    {
+        get => (CornerRadius)GetValue(CornerRadiusProperty);
+        set => SetValue(CornerRadiusProperty, value);
+    }
+
+    /// <summary>Draws the map's outline; off when a host already frames the panel it lives in.</summary>
+    public bool ShowBorder
+    {
+        get => (bool)GetValue(ShowBorderProperty);
+        set => SetValue(ShowBorderProperty, value);
+    }
+
+    private static object CoerceOpacity(DependencyObject d, object baseValue) =>
+        baseValue is double opacity && !double.IsNaN(opacity) ? Math.Max(0, Math.Min(1, opacity)) : 0.18;
 
     private static void OnMappingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -214,7 +257,10 @@ public class MiniMap : FrameworkElement
         var itemBrush = ItemBrush ?? TryFindResource("CONCOST.Brush.TextSecondary") as Brush ?? Brushes.Gray;
 
         var area = new Rect(RenderSize);
-        dc.DrawRectangle(surface, new Pen(border, 1), area);
+        dc.PushClip(new RectangleGeometry(area, CornerRadius.TopLeft, CornerRadius.TopRight));
+
+        dc.DrawRoundedRectangle(surface, ShowBorder ? new Pen(border, 1) : null, area,
+            CornerRadius.TopLeft, CornerRadius.TopLeft);
 
         double scale = Scale;
 
@@ -233,14 +279,28 @@ public class MiniMap : FrameworkElement
         if (viewport.Width > 0 && viewport.Height > 0)
         {
             var topLeft = WorldToMap(viewport.TopLeft);
+            var rect = new Rect(topLeft.X, topLeft.Y, viewport.Width * scale, viewport.Height * scale);
 
-            dc.DrawRectangle(accent, new Pen(accent, 1.5),
-                new Rect(topLeft.X, topLeft.Y, viewport.Width * scale, viewport.Height * scale));
+            // The tint first, softly; the stroke carries the accent at full strength. Both read as
+            // one colour, and the items under the rectangle stay legible.
+            dc.PushOpacity(ViewportFillOpacity);
+            dc.DrawRectangle(accent, null, rect);
+            dc.Pop();
+
+            dc.DrawRectangle(null, new Pen(accent, 1.5), rect);
         }
+
+        dc.Pop();
     }
 
     private IEnumerable<MiniMapItem> Items =>
         (ItemsSource as IEnumerable)?.OfType<MiniMapItem>() ?? Enumerable.Empty<MiniMapItem>();
+
+    public MiniMap()
+    {
+        // The whole map is a viewport handle: click recentres, drag pans. The cursor is the promise.
+        Cursor = Cursors.SizeAll;
+    }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
