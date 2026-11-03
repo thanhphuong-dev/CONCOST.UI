@@ -148,6 +148,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   nothing when left at their default; the Showcase's *Thuộc tính mở rộng* card drives them.
 
 ### Fixed
+- **Effects no longer pin their page to the application after it closes.** Every
+  `AnimatedEffectBase` instance — the fourteen frame-drawn effects, the loading glyphs, the
+  gauges — subscribed to the static `MotionSettings.Changed` in its constructor and never let
+  go. The static event outlives every subscriber, so one effect on a closed dialogue kept the
+  whole visual tree reachable for the rest of the session: the view model, the brushes, the
+  handlers, everything the collector had been promised. `AnimatedGradientBorder` carried the same
+  subscription as an unremovable lambda. Both now attach the subscription on load and drop it on
+  unload — the same lifetime contract the window handlers and the key tips already keep — so an
+  effect that left the tree stops tracking motion settings and becomes collectable. Three
+  `WeakReference` tests in `StaticEventLeakTests` build each control, show it, unload it, collect,
+  and require the instance to be gone; against the constructor subscription the target survives,
+  which is the failure the guard exists to catch.
 - **A ribbon removed from the tree no longer strands its body in the overlay.** `OnRibbonUnloaded`
   hid the key tips and detached the host-window handlers but left an open fold-away overlay — the
   popup that holds the reparented content host — open. The content stayed inside a popup whose

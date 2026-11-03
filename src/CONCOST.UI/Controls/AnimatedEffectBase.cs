@@ -54,10 +54,32 @@ public abstract class AnimatedEffectBase : FrameworkElement
     {
         IsHitTestVisible = false;
         ClipToBounds = true;
-        Loaded += (_, _) => { Hook(); SyncMotionState(); };
-        Unloaded += (_, _) => { Unhook(); };
+        Loaded += (_, _) => { EnsureMotionSubscription(); Hook(); SyncMotionState(); };
+        Unloaded += (_, _) => { Unhook(); DropMotionSubscription(); };
         IsVisibleChanged += (_, _) => SyncMotionState();
+    }
+
+    // The static motion event outlives every control that subscribes to it, so a subscription
+    // made in the constructor and never dropped pins the whole effect to the application for its
+    // remaining lifetime — one card in a closed dialogue keeps the page, its view model and the
+    // brush tree reachable. The subscription follows the element's lifetime instead: attached
+    // while the effect is loaded, dropped when it leaves the tree.
+    private bool _motionSubscriptionAttached;
+
+    private void EnsureMotionSubscription()
+    {
+        if (_motionSubscriptionAttached) return;
+
         MotionSettings.Changed += OnGlobalMotionChanged;
+        _motionSubscriptionAttached = true;
+    }
+
+    private void DropMotionSubscription()
+    {
+        if (!_motionSubscriptionAttached) return;
+
+        MotionSettings.Changed -= OnGlobalMotionChanged;
+        _motionSubscriptionAttached = false;
     }
 
     /// <summary>Called once per frame with the elapsed seconds (clamped).</summary>

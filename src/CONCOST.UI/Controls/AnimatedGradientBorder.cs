@@ -26,6 +26,7 @@ public class AnimatedGradientBorder : ContentControl
 {
     private Border? _frame;
     private RotateTransform? _rotate;
+    private bool _motionSubscriptionAttached;
 
     static AnimatedGradientBorder()
     {
@@ -35,9 +36,28 @@ public class AnimatedGradientBorder : ContentControl
 
     public AnimatedGradientBorder()
     {
-        MotionSettings.Changed += (_, _) => ApplyAnimation();
-        Unloaded += (_, _) => StopAnimation();
+        // The static motion event outlives every control that subscribes to it, so the
+        // subscription follows the element's lifetime — attached on load, dropped on unload — or
+        // one closed card keeps the whole page reachable for the rest of the application.
+        Loaded += (_, _) =>
+        {
+            if (_motionSubscriptionAttached) return;
+
+            MotionSettings.Changed += OnMotionSettingsChanged;
+            _motionSubscriptionAttached = true;
+        };
+        Unloaded += (_, _) =>
+        {
+            StopAnimation();
+
+            if (!_motionSubscriptionAttached) return;
+
+            MotionSettings.Changed -= OnMotionSettingsChanged;
+            _motionSubscriptionAttached = false;
+        };
     }
+
+    private void OnMotionSettingsChanged(object? sender, EventArgs e) => ApplyAnimation();
 
     public static readonly DependencyProperty ColorAProperty =
         DependencyProperty.Register(nameof(ColorA), typeof(Color), typeof(AnimatedGradientBorder),
