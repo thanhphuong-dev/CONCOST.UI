@@ -10,6 +10,49 @@ using System.Windows.Media;
 namespace CONCOST.UI.Controls;
 
 /// <summary>
+/// The colours a <see cref="MarkdownParser"/> paints its decorations with: rules, quote bars, code
+/// frames and inline code. A null brush means "use the theme default", which is what keeps a
+/// document pane on the right theme when the shell flips between light and dark.
+/// </summary>
+public sealed class MarkdownRenderTheme
+{
+    /// <summary>The horizontal rule.</summary>
+    public Brush? RuleBrush { get; set; }
+
+    /// <summary>The bar down the left of a block quote.</summary>
+    public Brush? QuoteBrush { get; set; }
+
+    /// <summary>The frame around a fenced code block.</summary>
+    public Brush? CodeBorderBrush { get; set; }
+
+    /// <summary>The wash behind a fenced code block; null draws no wash.</summary>
+    public Brush? CodeBackgroundBrush { get; set; }
+
+    /// <summary>The wash behind inline code.</summary>
+    public Brush? InlineCodeBackgroundBrush { get; set; }
+
+    /// <summary>The colour of hyperlinks.</summary>
+    public Brush? HyperlinkBrush { get; set; }
+
+    /// <summary>Resolves every brush from the <c>CONCOST.Brush.*</c> tokens in force.</summary>
+    public static MarkdownRenderTheme FromResources()
+    {
+        Brush Resolve(string key, Brush fallback) =>
+            Application.Current?.TryFindResource(key) as Brush ?? fallback;
+
+        return new MarkdownRenderTheme
+        {
+            RuleBrush = Resolve("CONCOST.Brush.Border", Brushes.Gray),
+            QuoteBrush = Resolve("CONCOST.Brush.Border", Brushes.Gray),
+            CodeBorderBrush = Resolve("CONCOST.Brush.Border", Brushes.Gray),
+            CodeBackgroundBrush = Resolve("CONCOST.Brush.SurfaceSecondary", Brushes.Gainsboro),
+            InlineCodeBackgroundBrush = Resolve("CONCOST.Brush.SurfaceSecondary", Brushes.Gainsboro),
+            HyperlinkBrush = Resolve("CONCOST.Brush.Primary", Brushes.DodgerBlue)
+        };
+    }
+}
+
+/// <summary>
 /// Renders a useful subset of Markdown into a <see cref="FlowDocument"/>: headings, paragraphs,
 /// emphasis, inline code, fenced code, lists, quotes, rules and links.
 /// </summary>
@@ -28,8 +71,16 @@ namespace CONCOST.UI.Controls;
 public static class MarkdownParser
 {
     /// <summary>Parses <paramref name="markdown"/> into a document ready for a viewer.</summary>
-    public static FlowDocument Parse(string? markdown)
+    public static FlowDocument Parse(string? markdown) => Parse(markdown, null);
+
+    /// <summary>
+    /// Parses with an explicit render theme; <c>null</c> reads the <c>CONCOST.Brush.*</c> tokens in
+    /// force, so the document matches the theme that is showing without the caller knowing about it.
+    /// </summary>
+    public static FlowDocument Parse(string? markdown, MarkdownRenderTheme? theme)
     {
+        MarkdownRenderTheme palette = theme ?? MarkdownRenderTheme.FromResources();
+
         var document = new FlowDocument { PagePadding = new Thickness(0) };
         var lines = (markdown ?? string.Empty).Replace("\r\n", "\n").Split('\n');
 
@@ -57,7 +108,7 @@ public static class MarkdownParser
                 }
 
                 i++;
-                document.Blocks.Add(CodeBlock(code.ToString()));
+                document.Blocks.Add(CodeBlock(code.ToString(), palette));
                 continue;
             }
 
@@ -66,7 +117,7 @@ public static class MarkdownParser
                 document.Blocks.Add(new Paragraph
                 {
                     Margin = new Thickness(0, 6, 0, 6),
-                    BorderBrush = Brushes.Gray,
+                    BorderBrush = palette.RuleBrush,
                     BorderThickness = new Thickness(0, 0, 0, 1)
                 });
 
@@ -76,7 +127,7 @@ public static class MarkdownParser
 
             if (HeadingLevel(line) is int level)
             {
-                document.Blocks.Add(Heading(line.TrimStart('#').Trim(), level));
+                document.Blocks.Add(Heading(line.TrimStart('#').Trim(), level, palette));
                 i++;
                 continue;
             }
@@ -91,10 +142,10 @@ public static class MarkdownParser
                     i++;
                 }
 
-                var quoteParagraph = Para(quote.ToString().TrimEnd());
+                var quoteParagraph = Para(quote.ToString().TrimEnd(), palette);
                 quoteParagraph.Margin = new Thickness(12, 4, 0, 4);
                 quoteParagraph.Padding = new Thickness(10, 6, 10, 6);
-                quoteParagraph.BorderBrush = Brushes.Gray;
+                quoteParagraph.BorderBrush = palette.QuoteBrush;
                 quoteParagraph.BorderThickness = new Thickness(3, 0, 0, 0);
                 quoteParagraph.FontStyle = FontStyles.Italic;
 
@@ -110,7 +161,7 @@ public static class MarkdownParser
                 while (i < lines.Length && IsOrderedItem(lines[i], out _))
                 {
                     int dot = lines[i].IndexOf('.');
-                    list.ListItems.Add(new ListItem(Para(lines[i].Substring(dot + 1).Trim())));
+                    list.ListItems.Add(new ListItem(Para(lines[i].Substring(dot + 1).Trim(), palette)));
                     i++;
                 }
 
@@ -124,7 +175,7 @@ public static class MarkdownParser
 
                 while (i < lines.Length && IsBulletItem(lines[i]))
                 {
-                    list.ListItems.Add(new ListItem(Para(lines[i].TrimStart('-', '*', '+', ' '))));
+                    list.ListItems.Add(new ListItem(Para(lines[i].TrimStart('-', '*', '+', ' '), palette)));
                     i++;
                 }
 
@@ -142,7 +193,7 @@ public static class MarkdownParser
                 i++;
             }
 
-            var body = Para(paragraphText.ToString());
+            var body = Para(paragraphText.ToString(), palette);
             body.Margin = new Thickness(0, 2, 0, 6);
             document.Blocks.Add(body);
         }
@@ -211,9 +262,9 @@ public static class MarkdownParser
         return int.TryParse(trimmed.Substring(0, digits), out number);
     }
 
-    private static Paragraph Heading(string text, int level)
+    private static Paragraph Heading(string text, int level, MarkdownRenderTheme palette)
     {
-        var paragraph = Para(text);
+        var paragraph = Para(text, palette);
         paragraph.Margin = new Thickness(0, level == 1 ? 10 : 8, 0, 4);
         paragraph.FontWeight = FontWeights.SemiBold;
 
@@ -222,7 +273,7 @@ public static class MarkdownParser
         return paragraph;
     }
 
-    private static Paragraph CodeBlock(string code)
+    private static Paragraph CodeBlock(string code, MarkdownRenderTheme palette)
     {
         var paragraph = new Paragraph(new Run(code.TrimEnd()))
         {
@@ -231,23 +282,33 @@ public static class MarkdownParser
             Margin = new Thickness(0, 4, 0, 8),
             Padding = new Thickness(10, 8, 10, 8),
             BorderThickness = new Thickness(1),
-            BorderBrush = Brushes.Gray
+            BorderBrush = palette.CodeBorderBrush,
+            Background = palette.CodeBackgroundBrush
         };
 
         return paragraph;
     }
 
-    private static Paragraph Para(string text)
+    private static Paragraph Para(string text) => Para(text, null);
+
+    private static Paragraph Para(string text, MarkdownRenderTheme? palette)
     {
         var paragraph = new Paragraph();
 
-        foreach (var inline in ParseInlines(text)) paragraph.Inlines.Add(inline);
+        foreach (var inline in ParseInlines(text, palette)) paragraph.Inlines.Add(inline);
 
         return paragraph;
     }
 
-    /// <summary>Turns one line into inlines, honouring code, bold, italic and links.</summary>
-    public static IEnumerable<Inline> ParseInlines(string? text)
+    /// <summary>Turns one line into inlines, honouring code, bold, italic and links. Reads the tokens in force.</summary>
+    public static IEnumerable<Inline> ParseInlines(string? text) => ParseInlines(text, MarkdownRenderTheme.FromResources());
+
+    /// <summary>
+    /// Parses inlines with the decorations a <see cref="MarkdownRenderTheme"/> carries: links dressed
+    /// in its accent instead of the system link blue, inline code on its wash. Null keeps the plain
+    /// system look.
+    /// </summary>
+    public static IEnumerable<Inline> ParseInlines(string? text, MarkdownRenderTheme? palette)
     {
         var inlines = new List<Inline>();
         if (text is null || text.Length == 0) return inlines;
@@ -275,7 +336,7 @@ public static class MarkdownParser
                     inlines.Add(new Run(text.Substring(i + 1, end - i - 1))
                     {
                         FontFamily = new FontFamily("Consolas, Courier New"),
-                        Background = Brushes.Gainsboro
+                        Background = palette?.InlineCodeBackgroundBrush
                     });
 
                     i = end + 1;
@@ -322,6 +383,10 @@ public static class MarkdownParser
 
                     var link = new Hyperlink(new Run(caption));
 
+                    // The system link blue is invisible on some themes; the accent is the one colour
+                    // every theme promises to be readable against its own surfaces.
+                    if (palette?.HyperlinkBrush is { } linkAccent) link.Foreground = linkAccent;
+
                     if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri)) link.NavigateUri = uri;
 
                     inlines.Add(link);
@@ -354,6 +419,16 @@ public class MarkdownViewer : Control
         nameof(Markdown), typeof(string), typeof(MarkdownViewer),
         new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender, OnMarkdownChanged));
 
+    /// <summary>Identifies the <see cref="RenderTheme"/> property.</summary>
+    public static readonly DependencyProperty RenderThemeProperty = DependencyProperty.Register(
+        nameof(RenderTheme), typeof(MarkdownRenderTheme), typeof(MarkdownViewer),
+        new FrameworkPropertyMetadata(null, OnRenderThemeChanged));
+
+    private static void OnRenderThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is MarkdownViewer viewer) viewer.Rebuild();
+    }
+
     private static readonly DependencyPropertyKey DocumentPropertyKey = DependencyProperty.RegisterReadOnly(
         nameof(Document), typeof(FlowDocument), typeof(MarkdownViewer), new PropertyMetadata(null));
 
@@ -378,6 +453,17 @@ public class MarkdownViewer : Control
         set => SetValue(MarkdownProperty, value);
     }
 
+    /// <summary>
+    /// The colours the decorations — rules, quotes, code frames, inline code, links — are drawn
+    /// with. Null reads the <c>CONCOST.Brush.*</c> tokens in force, which is what follows the theme
+    /// swap; a host that tints one panel differently sets its own.
+    /// </summary>
+    public MarkdownRenderTheme? RenderTheme
+    {
+        get => (MarkdownRenderTheme?)GetValue(RenderThemeProperty);
+        set => SetValue(RenderThemeProperty, value);
+    }
+
     /// <summary>The parsed document, ready to be shown or printed.</summary>
     public FlowDocument? Document => (FlowDocument?)GetValue(DocumentProperty);
 
@@ -392,7 +478,7 @@ public class MarkdownViewer : Control
     /// <summary>Re-parses <see cref="Markdown"/>; call it after mutating the text in place.</summary>
     public void Rebuild()
     {
-        var document = MarkdownParser.Parse(Markdown);
+        var document = MarkdownParser.Parse(Markdown, RenderTheme);
         SetValue(DocumentPropertyKey, document);
 
         int links = 0;

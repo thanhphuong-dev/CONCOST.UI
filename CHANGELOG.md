@@ -6,6 +6,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **`MarkdownViewer` stops painting fixed greys over a themed shell.** The four decorations — the
+  rule, the quote bar, the code frame, the inline-code wash — were hard-coded `Brushes.Gray` and
+  `Brushes.Gainsboro`, the exact bright-lines-on-a-dark-theme artefact the CAD pass has been
+  hunting down; a release-note pane on the dark theme drew grey frames over a dark surface. They
+  read the `CONCOST.Brush.*` tokens in force now, through the new `MarkdownRenderTheme`:
+  `MarkdownParser.Parse(text)` and `ParseInlines(text)` resolve the tokens (so the document follows
+  a theme swap when the viewer re-parses), an explicit palette overrides everything, and the
+  fenced code block gained the wash behind the frame that every web renderer puts there. Links
+  wear the theme accent instead of the system link blue, which is invisible on some surfaces. The
+  viewer exposes the palette as `RenderTheme` (null = tokens, a host tinting one panel differently
+  sets its own) and re-parses when it changes. 4 tests in `MarkdownRenderThemeTests` pin the
+  palette hand-through, the accent links and the re-parse.
 - **The backstage rail binds, resizes and reads at a glance.** `RibbonBackstageView.SelectedItem`
   was a plain CLR property over a field, so a shell could not restore the page a session closed on
   through a binding; it is a two-way dependency property now (same setter, same events). The rail
