@@ -447,7 +447,7 @@ DatabasePassword = string.Empty;`
 
         title: "OtpInput — mã xác thực nhiều ô",
         badge: "Nhập liệu & Form",
-        desc: "Ô nhập mã OTP nhiều ô, tự nhảy ô và gộp giá trị — phù hợp xác thực 2 lớp, mã kích hoạt bản quyền.",
+        desc: "Ô nhập mã OTP nhiều ô, tự nhảy ô và gộp giá trị — phù hợp xác thực 2 lớp, mã kích hoạt bản quyền. Từ 1.2.0: mỗi ký tự một ô thật sự — gõ tự sang ô, Backspace lùi ô trước, mũi tên/Home/End đi trong ô, dán mã phân bổ từ vị trí con trỏ, <code>NumericOnly</code> chặn chữ, <code>MaskCharacter</code> ẩn mã, event <code>Completed</code> bắn khi đủ ô.",
         keywords: ["otp", "mã xác thực", "2fa", "verification"],
         sections: [
             {
@@ -461,6 +461,15 @@ if (OtpCode?.Length == 6)
 {
     await authService.VerifyAsync(OtpCode);
 }`
+            },
+            {
+                title: "Ẩn mã và chặn ký tự",
+                desc: "<code>MaskCharacter=\"•\"</code> chỉ đổi màn hình — <code>Value</code> vẫn giữ ký tự thật; <code>NumericOnly=\"False\"</code> nhận cả chữ cho khoá kích hoạt.",
+                xaml: `<ui:OtpInput Length="6"
+              NumericOnly="False"
+              MaskCharacter="•" />`,
+                csharp: `otp.Completed += (_, _) => authService.VerifyAsync(otp.Value);
+otp.Clear();   // xoá trắng và về ô đầu tiên`
             }
         ],
         related: ["pinbox", "passwordinput", "numericupdown"]

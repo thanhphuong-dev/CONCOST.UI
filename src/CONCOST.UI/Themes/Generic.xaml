@@ -6018,28 +6018,19 @@
     <Setter Property="controls:Rating.ActiveBrush" Value="{DynamicResource CONCOST.Brush.Primary}" />
   </Style>
   <Style x:Key="CONCOST.OtpInput.Base" TargetType="{x:Type controls:OtpInput}">
-    <Setter Property="Height" Value="38" />
+    <Setter Property="Focusable" Value="False" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:OtpInput}">
-          <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="8" Padding="8,2">
-            <TextBox FontSize="17" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0" Background="#00FFFFFF" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-          </Border>
+          <StackPanel x:Name="PART_Panel" Orientation="Horizontal" />
         </ControlTemplate>
       </Setter.Value>
     </Setter>
   </Style>
   <Style x:Key="{x:Type controls:OtpInput}" TargetType="{x:Type controls:OtpInput}" BasedOn="{StaticResource CONCOST.OtpInput.Base}" />
   <Style x:Key="CONCOST.OtpInput.Pill" TargetType="{x:Type controls:OtpInput}" BasedOn="{StaticResource CONCOST.OtpInput.Base}">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type controls:OtpInput}">
-          <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Primary}" BorderThickness="1.5" CornerRadius="19" Padding="12,2">
-            <TextBox FontSize="17" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.Primary}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0" Background="#00FFFFFF" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-          </Border>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
+    <Setter Property="controls:OtpInput.ItemCornerRadius" Value="19" />
+    <Setter Property="controls:OtpInput.ItemWidth" Value="40" />
   </Style>
   <Style x:Key="CONCOST.Watermark.Base" TargetType="{x:Type controls:Watermark}">
     <Setter Property="UIElement.IsHitTestVisible" Value="False" />
@@ -6110,17 +6101,35 @@
   <Style x:Key="CONCOST.CompassIndicator.Base" TargetType="{x:Type controls:CompassIndicator}">
     <Setter Property="Width" Value="42" />
     <Setter Property="Height" Value="42" />
+    <Setter Property="controls:CompassIndicator.CardinalBrush" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    <Setter Property="controls:CompassIndicator.NorthBrush" Value="{DynamicResource CONCOST.Brush.Danger}" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:CompassIndicator}">
-          <Border BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1.5" CornerRadius="21" Background="{DynamicResource CONCOST.Brush.Surface}">
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-              <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="N" FontWeight="Normal" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.Danger}" HorizontalAlignment="Center" Margin="0,-2,0,0" />
-                <icons:Icon Kind="ChevronUp" Width="12" Height="12" Foreground="{DynamicResource CONCOST.Brush.Danger}" HorizontalAlignment="Center" Margin="0,-2,0,0" />
-              </StackPanel>
+          <Grid>
+            <Border BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1.5" CornerRadius="21" Background="{DynamicResource CONCOST.Brush.Surface}" />
+            <!-- The dial: needle and cardinal letters turn with the drawing. -->
+            <Grid Margin="6" RenderTransformOrigin="0.5,0.5">
+              <Grid.RenderTransform>
+                <RotateTransform Angle="{Binding Angle, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+              </Grid.RenderTransform>
+              <Line X1="0.5" Y1="0" X2="0.5" Y2="1" Stretch="Fill" StrokeThickness="1.5" Stroke="{TemplateBinding controls:CompassIndicator.NorthBrush}" StrokeStartLineCap="Round" StrokeEndLineCap="Triangle" HorizontalAlignment="Center" Margin="0,7,0,0" Opacity="0.85" />
+              <Grid x:Name="Cardinals">
+                <TextBlock Text="N" FontSize="10" FontWeight="SemiBold" Foreground="{TemplateBinding controls:CompassIndicator.NorthBrush}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-3,0,0" />
+                <TextBlock Text="E" FontSize="10" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-1,0" />
+                <TextBlock Text="S" FontSize="10" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-3" />
+                <TextBlock Text="W" FontSize="10" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-1,0,0,0" />
+              </Grid>
             </Grid>
-          </Border>
+            <!-- Fixed viewport marker: points at screen-up whatever the dial reads. -->
+            <Path Data="M 0,4 L 3.5,-2 L 7,4 Z" Fill="{TemplateBinding controls:CompassIndicator.NorthBrush}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,1.5,0,0" />
+            <Ellipse Width="3" Height="3" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="controls:CompassIndicator.ShowCardinals" Value="False">
+              <Setter Property="Visibility" Value="Collapsed" TargetName="Cardinals" />
+            </Trigger>
+          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -6190,28 +6199,36 @@
     </Setter>
   </Style>
   <Style x:Key="CONCOST.UnitBox.Base" TargetType="{x:Type controls:UnitBox}">
-    <Setter Property="Height" Value="34" />
+    <Setter Property="MinHeight" Value="34" />
     <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
     <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
     <Setter Property="FontSize" Value="13" />
     <Setter Property="attached:BorderElement.CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="0,3" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:UnitBox}">
-          <Border Name="Bd" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" SnapsToDevicePixels="True">
-            <Grid>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <controls:NumericUpDown BorderThickness="0" Background="#00FFFFFF" Foreground="{TemplateBinding Control.Foreground}" FontSize="{TemplateBinding Control.FontSize}" Height="{TemplateBinding FrameworkElement.Height}" Value="{Binding Value, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
-              <Border Grid.Column="1" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource CONCOST.Brush.Border}" Padding="10,0" attached:BorderElement.CornerRadius="0,5,5,0">
-                <TextBlock Text="{TemplateBinding controls:UnitBox.Unit}" FontSize="11.5" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.Primary}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-          </Border>
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Name="HeaderHost" Text="{TemplateBinding controls:UnitBox.Header}" FontSize="11.5" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="1,0,0,3" Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+            <Border Grid.Row="1" Name="Bd" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" SnapsToDevicePixels="True">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:NumericUpDown Name="Editor" BorderThickness="0" Background="#00FFFFFF" Foreground="{TemplateBinding Control.Foreground}" FontSize="{TemplateBinding Control.FontSize}" MinHeight="0" Value="{Binding Value, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" DecimalPlaces="{Binding DecimalPlaces, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" Increment="{Binding Increment, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" Minimum="{Binding Minimum, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" Maximum="{Binding Maximum, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" IsReadOnly="{Binding IsReadOnly, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+                <Border Grid.Column="1" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource CONCOST.Brush.Border}" Padding="10,0" attached:BorderElement.CornerRadius="0,5,5,0">
+                  <TextBlock Text="{TemplateBinding controls:UnitBox.Unit}" FontSize="11.5" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.Primary}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Border>
+              </Grid>
+            </Border>
+          </Grid>
           <ControlTemplate.Triggers>
             <Trigger Property="UIElement.IsMouseOver" Value="True">
               <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />

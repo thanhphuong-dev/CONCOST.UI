@@ -170,7 +170,7 @@ public class DataGridGroupPanel : Control
             list.Add(new ColumnGroupCandidate
             {
                 Header = DataGridFilterChain.HeaderText(column),
-                PropertyPath = path,
+                PropertyPath = path!,
                 Column = column
             });
         }

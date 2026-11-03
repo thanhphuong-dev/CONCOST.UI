@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 using CONCOST.UI.AttachedProperties;
 
@@ -44,6 +45,11 @@ public class PropertyReferencePicker : Grid
     public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(
         nameof(IsReadOnly), typeof(bool), typeof(PropertyReferencePicker),
         new FrameworkPropertyMetadata(false, OnReadOnlyChanged));
+
+    /// <summary>Identifies the <see cref="SearchPlaceholder"/> property.</summary>
+    public static readonly DependencyProperty SearchPlaceholderProperty = DependencyProperty.Register(
+        nameof(SearchPlaceholder), typeof(string), typeof(PropertyReferencePicker),
+        new FrameworkPropertyMetadata("Search"));
 
     private readonly TextBlock _display;
     private readonly Button _dropDown;
@@ -97,7 +103,8 @@ public class PropertyReferencePicker : Grid
 
         Children.Add(surface);
 
-        _search = new SearchBox { Height = 26, Margin = new Thickness(4), FontSize = 12, Placeholder = "Search" };
+        _search = new SearchBox { Height = 26, Margin = new Thickness(4), FontSize = 12 };
+        _search.SetBinding(SearchBox.PlaceholderProperty, new Binding(nameof(SearchPlaceholder)) { Source = this });
         _search.TextChanged += (_, _) => ApplyFilter();
 
         _list = new ListBox { Height = 220, BorderThickness = new Thickness(0), FontSize = 12 };
@@ -159,6 +166,13 @@ public class PropertyReferencePicker : Grid
     {
         get => (bool)GetValue(IsReadOnlyProperty);
         set => SetValue(IsReadOnlyProperty, value);
+    }
+
+    /// <summary>Watermark of the drop-down's search box; a host localises it like the rest of its shell.</summary>
+    public string SearchPlaceholder
+    {
+        get => (string)GetValue(SearchPlaceholderProperty);
+        set => SetValue(SearchPlaceholderProperty, value);
     }
 
     /// <summary>Raised when a different object is picked or the reference is cleared.</summary>

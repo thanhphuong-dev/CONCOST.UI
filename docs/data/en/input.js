@@ -36,9 +36,10 @@ Object.assign(DOCS_EN.pages, {
 
     otpinput: {
         title: "OtpInput — multi-cell verification code",
-        desc: "Multi-cell one-time-code input that advances automatically and exposes the joined value — for two-factor sign-in and licence activation.",
+        desc: "Multi-cell one-time-code input: typing advances, Backspace retreats, paste fills the cells from the caret, <code>NumericOnly</code> filters, <code>MaskCharacter</code> hides the code and <code>Completed</code> fires when the last cell fills — for two-factor sign-in and licence activation.",
         sections: [
-            { title: "Six-digit verification code", desc: "<code>Length</code> sets the number of cells; <code>Value</code> is the joined string, two-way bound." }
+            { title: "Six-digit verification code", desc: "<code>Length</code> sets the number of cells; <code>Value</code> is the joined string, two-way bound." },
+            { title: "Masked licence key", desc: "<code>NumericOnly=\"False\"</code> accepts letters, <code>MaskCharacter=\"•\"</code> changes only what is shown — <code>Value</code> keeps the real characters." }
         ]
     },
 

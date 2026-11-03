@@ -2940,11 +2940,18 @@ Dùng cho ký duyệt hồ sơ kỹ thuật điện tử.
 
 So sánh hai phương án thiết kế / trước-sau chỉnh sửa.
 
-## 107.11 OTP / PIN Input
+## 107.11 OTP / PIN Input — ✅ ĐÃ XONG trong 1.2.0 (làm lại từ đầu)
 
 ```xml
 <ui:OtpInput Length="6" Value="{Binding Code}"/>
 ```
+
+> ⚠️ **Lịch sử:** control cũ chỉ là một `TextBox` trong viền bo — `Length` không đi tới đâu, không
+> có ô chữ số riêng. Bản 1.2.0 dựng lại thật: một ô một ký tự, gõ để sang ô, Backspace lùi, mũi tên
+> và Home/End đi trong ô, dán mã phân bổ từ vị trí con trỏ, `NumericOnly`, `MaskCharacter`, event
+> `Completed` và `IsCompleted` chỉ đọc, `Length` ép trong 1–10 (thu ngắn sẽ cắt `Value` theo). Nhập
+> bí mật (ẩn khi gõ) dùng `PinBox`; `OtpInput` giữ mã hiển thị rõ để đối chiếu với tin nhắn. Có
+> trang Showcase riêng và 9 test trong `OtpInputTests`.
 
 ## 107.12 Mention / Tag Input — ✅ ĐÃ XONG trong 1.2.0
 
@@ -3034,13 +3041,19 @@ Wrap nhẹ quanh thư viện 3D có sẵn (ví dụ HelixToolkit) để xem nhan
 <ui:MiniMap Target="{Binding ElementName=MainCanvas}"/>
 ```
 
-## 107.20 Compass / North Indicator
+## 107.20 Compass / North Indicator — ✅ ĐÃ XONG trong 1.2.0 (làm lại từ đầu)
 
 ```xml
 <ui:CompassIndicator Angle="{Binding NorthAngle}"/>
 ```
 
 Dùng cho bản vẽ mặt bằng, quy hoạch — chỉ hướng Bắc.
+
+> ⚠️ **Lịch sử:** ba bản phát hành đầu, template vẽ chữ N và mũi tên cứng ở đỉnh — `Angle` được đăng
+> ký nhưng template không bao giờ đọc, kim không bao giờ quay. Bản 1.2.0: mặt số (kim + chữ N/E/S/W)
+> quay theo `Angle` (ép về 0–360, NaN/∞ về 0) dưới một marker cố định theo màn hình;
+> `ShowCardinals` ẩn bốn chữ mà vẫn giữ kim; `NorthBrush`/`CardinalBrush` đổi màu. Có trang
+> Showcase và test pixel so sánh bitmap ở 0° với 137°.
 
 ## 107.21 Splash Screen Control
 

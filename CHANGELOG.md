@@ -6,6 +6,52 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **Four controls that shipped without a page — and two of them without a face — are real now.** The
+  assembly carried `OtpInput`, `LoadingIndicator`, `CompassIndicator` and `UnitBox`, the wiki
+  documented them, and none of them had a Showcase page; worse, two could not have earned one:
+  `OtpInput` was a single `TextBox` in a rounded border (its `Length` property reached nothing) and
+  `LoadingIndicator` had no style anywhere in `Generic.xaml`, so it rendered as blank space. The
+  rebuilds, each with its own page and test file:
+  - **`OtpInput`** is the verification-code field the MFA dialog needs: one cell per digit, typing
+    advances, Backspace on an empty cell clears the previous one and retreats, the arrow keys and
+    Home/End walk the cells, a pasted code fills the cells from wherever the caret stands, and
+    Delete shifts the tail left. `NumericOnly` (default `true`) rejects letters, `MaskCharacter`
+    displays a dot without touching the value, `Completed` fires when the last cell fills and the
+    read-only `IsCompleted` reports it, and `Length` is coerced into a 1–10 band — shrinking it
+    trims the value to match. The default `Value` is now the empty string instead of a leftover
+    `1234`. For secret entry (mask as you type) `PinBox` stays the control; `OtpInput` keeps the
+    code readable, because a verification code is meant to be checked against a message on the same
+    screen.
+  - **`LoadingIndicator`** is rebuilt on `AnimatedEffectBase` — the same base as `ParticleField` and
+    `RadialGauge` — and paints its four looks (`ThreeDotsWave`, `CircularDotsRing`, `LinePulse`,
+    `PulseCircle`) in `OnRender`, so it measures its own natural size per type, takes
+    `DotSize`/`Foreground`, and obeys the motion contract for free: Windows "Show animations" off or
+    `MotionSettings.ForceDisabled` parks it on its first frame instead of burning frames nobody
+    asked for, and `IsAnimated = false` pauses it without hiding it. The old storyboard-in-template
+    design would have fought the namescope; the frame loop is what the library's other effects use.
+  - **`CompassIndicator`** carried an `Angle` property its template never read — the N and the
+    chevron were hard-coded at the top and nothing rotated, for three releases. The dial now turns
+    with the drawing: needle and the N/E/S/W letters rotate by `Angle` (coerced into 0–360, `NaN`
+    and the infinities read 0) under a fixed screen-up marker, `ShowCardinals = false` folds the
+    letters while the needle keeps telling the angle, and `NorthBrush`/`CardinalBrush` recolour the
+    pair.
+  - **`UnitBox`** had a `Header` property the template never showed and no way to step. The header
+    is a real label row now (collapsed when empty, so a bare field keeps its height), `Increment`
+    drives the arrow keys and the inner spin buttons, `Minimum`/`Maximum`/`IsReadOnly` pass through
+    to the editor, and the inner `NumericUpDown`'s `ValueChanged` is re-raised as the UnitBox's own
+    routed event — a different `RoutedEvent` instance, so bubbling alone never matched a host's
+    handler. `Value` stays in the unit `Unit` names; converting between units is the model's
+    concern, not the control's.
+- **`PropertyReferencePicker` stops hard-coding English.** The drop-down's search watermark was a
+  literal `"Search"` in the constructor, the one string a Vietnamese shell could not translate. It
+  is the `SearchPlaceholder` property now, bound live so changing it mid-session updates the box.
+- **31 tests pin the rebuilds.** `OtpInputTests` drives real `PreviewTextInput`/`PreviewKeyDown`
+  events through a shown window (typing, retreat, filter, completion, mask, the length trim),
+  `CompassIndicatorTests` covers the coerce table and pixel-diffs the dial at 0° vs 137°,
+  `LoadingIndicatorTests` pins the natural sizes, the four distinct glyphs and the phase arithmetic,
+  and `UnitBoxTests` covers the header row, the range/step passthrough and the re-raised value
+  event. The four Showcase pages (`OtpInput`, `UnitBox`, `CompassIndicator`, `LoadingIndicator`)
+  ride the `ShowcasePagesTests` guard like every other page.
 - **The ribbon can give back the chrome a host already owns.** Two switches now cover the parts
   of the top row a shell may want to draw itself: `Ribbon.ShowApplicationMenu` hides the File
   block without dropping `ApplicationMenu` (so the menu can still open from a host button), and
@@ -14,6 +60,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   nothing when left at their default; the Showcase's *Thuộc tính mở rộng* card drives them.
 
 ### Fixed
+- **The nullable warnings the export service arrived with are gone.** `DataGridExportService` and
+  `DataGridGroupPanel` checked `string.IsNullOrEmpty(path)` and then used `path` bare — sound
+  logic, but the .NET Framework 4.8 reference assemblies do not carry the `NotNullWhen` annotation,
+  so the net48 build emitted six CS8602/CS8601/CS8604 warnings and broke the "0 warnings" gate the
+  project builds under. The two spots now carry the null-forgiving operator the annotation was
+  standing in for.
 - **A snap marker no longer outlives the pointer that placed it.** `ViewportControl` kept
   `Snap`/`SnapKind` after the pointer left the surface, after a wheel zoom and during a pan. The
   glyph is stored in surface pixels, so re-checking *Hiện dấu bám* (`ShowSnapMarker`) after moving

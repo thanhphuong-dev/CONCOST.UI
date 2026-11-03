@@ -189,7 +189,7 @@ public static class DataGridExportService
             if (string.IsNullOrEmpty(path)) return string.Empty;
 
             object? current = row;
-            foreach (var part in path.Split('.'))
+            foreach (var part in path!.Split('.'))
             {
                 if (current is null) return string.Empty;
                 current = ReadProperty(current, part);
@@ -202,7 +202,7 @@ public static class DataGridExportService
             var path = (check.Binding as Binding)?.Path?.Path;
             if (!string.IsNullOrEmpty(path))
             {
-                var value = ReadProperty(row, path);
+                var value = ReadProperty(row, path!);
                 return value is true ? "Yes" : "No";
             }
         }
