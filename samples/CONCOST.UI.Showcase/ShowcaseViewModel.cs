@@ -2887,6 +2887,85 @@ private void OnExportExcel(object sender, RoutedEventArgs e) =>
 private void OnExportHtml(object sender, RoutedEventArgs e) =>
     DataGridExportService.ExportToHtml(exportGrid, ""beams.html"", ""Beam Schedule"");");
 
+        // ==============================================================================?
+        // SECTION 12: Large-data switches (DataGridPerformance)
+        // ==============================================================================?
+        var largeRows = Enumerable.Range(0, 100_000)
+            .Select(i => new BenchmarkGridItem
+            {
+                Id = i,
+                ElementCode = $"BM-L{i:D5}",
+                Width = 200 + i % 17 * 25,
+                Height = 300 + i % 23 * 20,
+                RebarWeight = 250 + i % 31 * 12.5
+            })
+            .ToList();
+
+        var dgLarge = new DataGrid
+        {
+            ItemsSource = largeRows,
+            Height = 260,
+            CanUserAddRows = false,
+            AutoGenerateColumns = false
+        };
+        dgLarge.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Base");
+        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Element", Binding = new System.Windows.Data.Binding("ElementCode"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
+        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(110) });
+        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(110) });
+        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Rebar (kg)", Binding = new System.Windows.Data.Binding("RebarWeight"), Width = new DataGridLength(1.2, DataGridLengthUnitType.Star) });
+
+        DataGridPerformance.SetCachePages(dgLarge, 1);
+        DataGridPerformance.SetDeferredScrolling(dgLarge, true);
+
+        var largeToggles = new StackPanel { Orientation = Orientation.Horizontal, Margin = new System.Windows.Thickness(0, 8, 0, 0) };
+
+        var deferredToggle = new CheckBox { Content = "Deferred scrolling (kéo thanh cuộn chỉ hiện vị trí, thả mới vẽ)", IsChecked = true, VerticalAlignment = VerticalAlignment.Center, Margin = new System.Windows.Thickness(0, 0, 18, 0) };
+        deferredToggle.Click += (_, _) => DataGridPerformance.SetDeferredScrolling(dgLarge, deferredToggle.IsChecked == true);
+
+        var cacheLabel = new TextBlock { Text = "Cache (trang mỗi bên):", VerticalAlignment = VerticalAlignment.Center, Margin = new System.Windows.Thickness(0, 0, 6, 0) };
+        cacheLabel.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        var cacheBox = new NumericUpDown { Width = 96, Minimum = 0, Maximum = 5, DecimalPlaces = 0, Increment = 1, Value = 1, VerticalAlignment = VerticalAlignment.Center, Margin = new System.Windows.Thickness(0, 0, 18, 0) };
+        cacheBox.ValueChanged += (_, e) => DataGridPerformance.SetCachePages(dgLarge, e.NewValue);
+
+        var jumpLabel = new TextBlock { Text = "Nhảy tới dòng:", VerticalAlignment = VerticalAlignment.Center, Margin = new System.Windows.Thickness(0, 0, 6, 0) };
+        jumpLabel.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        var jumpBox = new NumericUpDown { Width = 130, Minimum = 0, Maximum = 99_999, DecimalPlaces = 0, Increment = 1, Value = 99_999, VerticalAlignment = VerticalAlignment.Center, Margin = new System.Windows.Thickness(0, 0, 8, 0) };
+        var jumpButton = new Button { Content = "Go" };
+        jumpButton.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+        jumpButton.Click += (_, _) => DataGridPerformance.ScrollToIndex(dgLarge, (int)jumpBox.Value);
+
+        largeToggles.Children.Add(deferredToggle);
+        largeToggles.Children.Add(cacheLabel);
+        largeToggles.Children.Add(cacheBox);
+        largeToggles.Children.Add(jumpLabel);
+        largeToggles.Children.Add(jumpBox);
+        largeToggles.Children.Add(jumpButton);
+
+        var largeCaption = new TextBlock { Text = "100.000 dòng — hàng được tái sử dụng (recycling), chỉ các hàng quanh khung nhìn được tạo.", Margin = new System.Windows.Thickness(0, 8, 0, 0) };
+        largeCaption.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+
+        var largeWrapper = new StackPanel();
+        largeWrapper.Children.Add(dgLarge);
+        largeWrapper.Children.Add(largeToggles);
+        largeWrapper.Children.Add(largeCaption);
+
+        AddCardSection("12. Dữ liệu lớn — cuộn hoãn, cache trang và nhảy tới dòng", largeWrapper,
+@"<!-- Two attached switches; the grid stays a plain DataGrid -->
+<DataGrid x:Name=""largeGrid"" ItemsSource=""{Binding TenThousandRows}"" Height=""260""
+          controls:DataGridPerformance.DeferredScrolling=""True""
+          controls:DataGridPerformance.CachePages=""1"">
+    <DataGrid.Columns>
+        <DataGridTextColumn Header=""Element"" Binding=""{Binding Name}"" Width=""2*"" />
+    </DataGrid.Columns>
+</DataGrid>",
+@"// Jump to a row through the virtualized panel — only the rows around
+// the target are realised, so the jump is instant at any index.
+private void OnJumpClick(object sender, RoutedEventArgs e) =>
+    DataGridPerformance.ScrollToIndex(largeGrid, (int)rowBox.Value);
+
+// Zero hands the cache back to the theme default.
+DataGridPerformance.SetCachePages(largeGrid, 0);");
+
         return mainSp;
     }
 

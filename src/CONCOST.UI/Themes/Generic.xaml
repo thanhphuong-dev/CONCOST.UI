@@ -3780,6 +3780,8 @@
     <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
     <Setter Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="True" />
     <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
+    <Setter Property="VirtualizingPanel.CacheLength" Value="1,1" />
+    <Setter Property="VirtualizingPanel.CacheLengthUnit" Value="Page" />
     <Setter Property="DataGrid.EnableRowVirtualization" Value="True" />
     <Setter Property="DataGrid.EnableColumnVirtualization" Value="True" />
     <Setter Property="attached:BorderElement.CornerRadius" Value="8" />

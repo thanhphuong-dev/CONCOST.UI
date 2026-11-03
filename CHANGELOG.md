@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **`DataGridPerformance` — the switches a grid over ten thousand rows needs, attached to the grid you already have.** The base style virtualized from day one (recycling, pixel scroll, cache-while-grouping); what a hundred-thousand-row session was missing was the controls around the scroll:
+  - **`DeferredScrolling="True"`** drags the thumb showing a position read-out and repaints the rows when it is released. A grid at fifty thousand rows redraws a page of cells per frame otherwise, which nothing keeps up with when the thumb is dragged end to end. The flag is not inherited and the grid is not a ScrollViewer, so the attached property lands it on the template's `DG_ScrollViewer` (falling back to the first viewer below), re-applies on every load and unloads cleanly.
+  - **`CachePages="1"`** pre-materialises a page of rows on each side of the viewport, so a fast scroll reuses the recycled row for the cell about to arrive instead of flashing the gap where it will be. The theme now defaults the grid to one cached page as well. Zero restores the framework default — and because WPF couples the `VirtualizingPanel.CacheLength`/`CacheLengthUnit` pair (a length write re-asserts the unit, a clear leaves the last unit behind), the reset is written explicitly rather than cleared.
+  - **`ScrollToItem` / `ScrollToIndex`** reach a row through the virtualized panel — instant at any index, `false` for an out-of-range ask instead of an exception.
+  - The Showcase DataGrid page gained section 12: a live hundred-thousand-row grid with the deferred toggle, the cache spinner and a jump-to-row box. 4 tests in `DataGridPerformanceTests` cover the attached forwards and a fifty-thousand-row smoke: the far rows are not realised until asked for, the scroll helpers reach them, and the realised set moves with the viewport.
 - **ViewCube speaks the keyboard and remembers where you have been.** The cube could only be driven
   by the mouse; every one of its 26 zones, four arrows, roll buttons and the compass had no
   keyboard path at all. Now: the widget takes focus (a click lands it there too), the arrow keys
