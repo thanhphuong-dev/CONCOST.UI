@@ -113,6 +113,19 @@ public abstract class RibbonItem : HeaderedContentControl
 
     public static readonly DependencyProperty EffectiveSizeProperty = EffectiveSizePropertyKey.DependencyProperty;
 
+    // The ribbon's ShowScreenTips switch, mirrored by the ribbon's broadcast rather than by property
+    // inheritance: the inheritance walk does not cross the presenters the ribbon template builds its
+    // rows from. A tip a host assigned by hand is never touched — the auto tip suspends first.
+    private bool _showScreenTips = true;
+
+    internal void ApplyShowScreenTips(bool show)
+    {
+        if (_showScreenTips == show) return;
+
+        _showScreenTips = show;
+        UpdateAutoToolTip();
+    }
+
     static RibbonItem()
     {
         // A ribbon item is enabled by its command, not by whoever sets IsEnabled last.
@@ -365,6 +378,22 @@ public abstract class RibbonItem : HeaderedContentControl
         if (ToolTip != null && !ReferenceEquals(ToolTip, _autoTip))
         {
             _autoTipSuspended = true;
+            return;
+        }
+
+        // An item the tree received after the switch moved catches up here: the broadcast only
+        // reaches what was enumerable at the time.
+        if (IsLoaded)
+        {
+            Ribbon? ribbon = FindRibbon();
+            if (ribbon != null) _showScreenTips = ribbon.ShowScreenTips;
+        }
+
+        // A host that switched the tips off at the ribbon gets a quiet shell; their own hand-written
+        // tip never reaches this line, because that branch suspended the auto tip above.
+        if (!_showScreenTips)
+        {
+            ToolTip = null;
             return;
         }
 

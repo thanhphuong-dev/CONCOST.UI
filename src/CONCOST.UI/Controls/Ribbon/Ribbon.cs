@@ -82,6 +82,21 @@ public class Ribbon : Control
         DependencyProperty.Register(nameof(IsKeyTipEnabled), typeof(bool), typeof(Ribbon),
             new FrameworkPropertyMetadata(true, OnIsKeyTipEnabledChanged));
 
+    public static readonly DependencyProperty ShowScreenTipsProperty = DependencyProperty.Register(
+        nameof(ShowScreenTips), typeof(bool), typeof(Ribbon),
+        new FrameworkPropertyMetadata(true, OnShowScreenTipsChanged));
+
+    private static void OnShowScreenTipsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // The switch reaches the items by broadcast: property inheritance does not cross the
+        // presenters the ribbon template builds its rows from, and the tips the items already
+        // built have to fold the moment the switch moves.
+        if (d is not Ribbon ribbon) return;
+
+        foreach (RibbonItem item in ribbon.AllItems) item.ApplyShowScreenTips((bool)e.NewValue);
+        foreach (RibbonItem item in ribbon._pinned) item.ApplyShowScreenTips((bool)e.NewValue);
+    }
+
     public static readonly DependencyProperty IsQuickAccessCustomizableProperty =
         DependencyProperty.Register(nameof(IsQuickAccessCustomizable), typeof(bool), typeof(Ribbon),
             new FrameworkPropertyMetadata(true, OnIsQuickAccessCustomizableChanged));
@@ -321,6 +336,18 @@ public class Ribbon : Control
     {
         get => (bool)GetValue(ShowQuickAccessToolBarProperty);
         set => SetValue(ShowQuickAccessToolBarProperty, value);
+    }
+
+    /// <summary>
+    /// Shows the built-in screen tips on every ribbon item. Turning it off is the quiet-shell
+    /// switch: the item keeps its caption and its key tip, only the hover tip goes. The value is
+    /// inherited, so one setting on the ribbon reaches every item inside it; a tip a host assigned
+    /// by hand is theirs and stays.
+    /// </summary>
+    public bool ShowScreenTips
+    {
+        get => (bool)GetValue(ShowScreenTipsProperty);
+        set => SetValue(ShowScreenTipsProperty, value);
     }
 
     /// <summary>
@@ -874,6 +901,11 @@ public class Ribbon : Control
     private void OnRibbonUnloaded(object sender, RoutedEventArgs e)
     {
         _keyTips?.Hide();
+
+        // The overlay holds the reparented content host; leaving it open with the ribbon out of the
+        // tree strands that content in the popup, and the next load re-applies the template around a
+        // host that is still inside the old popup. Folding it first puts the host back in the body.
+        if (IsOverlayOpen) SetCurrentValue(IsOverlayOpenProperty, false);
 
         if (_hostWindow == null) return;
 

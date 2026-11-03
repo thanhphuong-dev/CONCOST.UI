@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **`Ribbon.ShowScreenTips` — the quiet-shell switch.** Every ribbon item built its hover tip the
+  moment it had a header or a `ScreenTip`; a host docking the ribbon into a dense palette had no
+  way to turn that off. The switch reaches the items by broadcast rather than by property
+  inheritance — the inheritance walk does not cross the presenters the ribbon template builds its
+  rows from, which is the same reason `ShowItemLabels` is read per item at layout time. One
+  setting on the ribbon folds every tip already built and every one built after it (items joining
+  the tree later catch up the first time they build a tip); captions and key tips stay, a
+  hand-assigned `ToolTip` is the host's and is never touched.
 - **`DataGridPerformance` — the switches a grid over ten thousand rows needs, attached to the grid you already have.** The base style virtualized from day one (recycling, pixel scroll, cache-while-grouping); what a hundred-thousand-row session was missing was the controls around the scroll:
   - **`DeferredScrolling="True"`** drags the thumb showing a position read-out and repaints the rows when it is released. A grid at fifty thousand rows redraws a page of cells per frame otherwise, which nothing keeps up with when the thumb is dragged end to end. The flag is not inherited and the grid is not a ScrollViewer, so the attached property lands it on the template's `DG_ScrollViewer` (falling back to the first viewer below), re-applies on every load and unloads cleanly.
   - **`CachePages="1"`** pre-materialises a page of rows on each side of the viewport, so a fast scroll reuses the recycled row for the cell about to arrive instead of flashing the gap where it will be. The theme now defaults the grid to one cached page as well. Zero restores the framework default — and because WPF couples the `VirtualizingPanel.CacheLength`/`CacheLengthUnit` pair (a length write re-asserts the unit, a clear leaves the last unit behind), the reset is written explicitly rather than cleared.
@@ -88,6 +96,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   nothing when left at their default; the Showcase's *Thuộc tính mở rộng* card drives them.
 
 ### Fixed
+- **A ribbon removed from the tree no longer strands its body in the overlay.** `OnRibbonUnloaded`
+  hid the key tips and detached the host-window handlers but left an open fold-away overlay — the
+  popup that holds the reparented content host — open. The content stayed inside a popup whose
+  owner was gone, and the next load re-applied the template around a host still living in the old
+  popup. The unload folds the overlay first, which is the same path a click outside takes, so the
+  host lands back in the body before anything is torn down.
 - **The nullable warnings the export service arrived with are gone.** `DataGridExportService` and
   `DataGridGroupPanel` checked `string.IsNullOrEmpty(path)` and then used `path` bare — sound
   logic, but the .NET Framework 4.8 reference assemblies do not carry the `NotNullWhen` annotation,

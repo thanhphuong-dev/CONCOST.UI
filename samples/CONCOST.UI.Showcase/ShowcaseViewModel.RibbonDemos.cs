@@ -588,6 +588,7 @@ public partial class ShowcaseViewModel
         options.Children.Add(Option("Khối File", true, on => extended.ShowApplicationMenu = on));
         options.Children.Add(Option("Dải tab", true, on => extended.ShowTabStrip = on));
         options.Children.Add(Option("Nhãn group", true, on => Ribbon.SetShowGroupLabels(extended, on)));
+        options.Children.Add(Option("Screen tip", true, on => extended.ShowScreenTips = on));
         options.Children.Add(Option("Gộp group khi hẹp", true, on => extended.IsGroupCollapseEnabled = on));
         options.Children.Add(Option("Cho tùy biến QAT", true, on => extended.IsQuickAccessCustomizable = on));
         options.Children.Add(Option("Bật key tip (Alt)", true, on => extended.IsKeyTipEnabled = on));
@@ -632,7 +633,9 @@ public partial class ShowcaseViewModel
                   "               SelectedTabId=\"{Binding ActiveTabId}\"\n" +
                   "               EmptyContent=\"No workspace open.\" />\n\n" +
                   "<!-- Caption row off for every group in the ribbon -->\n" +
-                  "<ribbon:Ribbon ShowGroupLabels=\"False\" />",
+                  "<ribbon:Ribbon ShowGroupLabels=\"False\" />\n\n" +
+                  "<!-- Quiet shell: no hover tips, captions and key tips stay -->\n" +
+                  "<ribbon:Ribbon ShowScreenTips=\"False\" />",
             csharp: "// Select by id instead of by index\n" +
                     "ribbon.SelectedTabId = \"insert\";\n\n" +
                     "// Drop the last rung: a group never becomes a single button\n" +
@@ -648,6 +651,8 @@ public partial class ShowcaseViewModel
                     "ribbon.ShowApplicationMenu = false;\n\n" +
                     "// One-view ribbon: the body stays, the tab headers go\n" +
                     "ribbon.ShowTabStrip = false;\n\n" +
+                    "// Hide every built-in screen tip at once\n" +
+                    "ribbon.ShowScreenTips = false;\n\n" +
                     "// Empty state\n" +
                     "ribbon.EmptyContent = \"No workspace open.\";   // IsEmpty is true with no tabs");
     }
