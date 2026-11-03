@@ -107,6 +107,11 @@ public class Scheduler : FrameworkElement
         nameof(ShowNowLine), typeof(bool), typeof(Scheduler),
         new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
 
+    /// <summary>Identifies the <see cref="NowLineBrush"/> property.</summary>
+    public static readonly DependencyProperty NowLineBrushProperty = DependencyProperty.Register(
+        nameof(NowLineBrush), typeof(Brush), typeof(Scheduler),
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
     /// <summary>Raised when the selected booking changes; the item is <c>null</c> when cleared.</summary>
     public event EventHandler<SchedulerSelectionChangedEventArgs>? SelectionChanged;
 
@@ -167,6 +172,13 @@ public class Scheduler : FrameworkElement
     {
         get => (bool)GetValue(ShowNowLineProperty);
         set => SetValue(ShowNowLineProperty, value);
+    }
+
+    /// <summary>Colour of the now line; null reads <c>CONCOST.Brush.Danger</c> from the theme in force.</summary>
+    public Brush? NowLineBrush
+    {
+        get => (Brush?)GetValue(NowLineBrushProperty);
+        set => SetValue(NowLineBrushProperty, value);
     }
 
     /// <summary>
@@ -416,9 +428,10 @@ public class Scheduler : FrameworkElement
             double now = DateTime.Now.TimeOfDay.TotalHours;
             if (now >= StartHour && now <= EndHour)
             {
+                var nowBrush = NowLineBrush ?? TryFindResource("CONCOST.Brush.Danger") as Brush ?? Brushes.IndianRed;
                 double y = HeaderHeight + (now - StartHour) * HourHeight;
-                dc.DrawLine(new Pen(Brushes.IndianRed, 1.5), new Point(GutterWidth, y), new Point(RenderSize.Width, y));
-                dc.DrawEllipse(Brushes.IndianRed, null, new Point(GutterWidth, y), 3, 3);
+                dc.DrawLine(new Pen(nowBrush, 1.5), new Point(GutterWidth, y), new Point(RenderSize.Width, y));
+                dc.DrawEllipse(nowBrush, null, new Point(GutterWidth, y), 3, 3);
             }
         }
     }

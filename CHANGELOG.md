@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **The scheduler's now line follows the theme.** The line and its dot were hard-coded
+  `Brushes.IndianRed` — the last literal of its kind on the control — so a shell that restyles
+  danger could not follow, and a host could not recolour the marker at all. They read
+  `CONCOST.Brush.Danger` from the theme in force now, overridable through the new
+  `NowLineBrush`. 2 pixel tests pin the recolour and the hide.
 - **`MarkdownViewer` stops painting fixed greys over a themed shell.** The four decorations — the
   rule, the quote bar, the code frame, the inline-code wash — were hard-coded `Brushes.Gray` and
   `Brushes.Gainsboro`, the exact bright-lines-on-a-dark-theme artefact the CAD pass has been
