@@ -6,6 +6,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- **The CAD shell gives its two faces the states they were missing.** `ApplicationTitleBar` kept
+  full strength when its window lost the foreground, so a screenshot of a background window read
+  as live; the bar now dims to 55 % while the window is inactive and snaps back on activation
+  (`DimOnInactive`, on by default, hooks the host window the way the ribbon hooks Alt and lets go
+  on unload so a re-host starts bright). The dim is driven by the read-only `IsWindowActive` —
+  the bar keeps it in step with the window by itself, and a bar used outside a window (a designer
+  surface) can set it from code. `ApplicationInfoBar` gained `ShowIcon`: the bold lead-in already
+  reads the severity through its tint, so a host pairing the bar with a louder message can drop
+  the glyph without touching the words. 4 tests in `CadShellPolishTests` cover the dim ladder, the
+  opt-out, the unload restore and the icon drop.
 - **The two CAD magnification tools read like the rest of the shell.** The `Magnifier`'s ring fell
   back to a hard-coded brand orange (`#FF7900` through `ColorConverter`) when no dictionary was
   merged — the one literal of its kind left in the CAD set; it falls through the local brush, the

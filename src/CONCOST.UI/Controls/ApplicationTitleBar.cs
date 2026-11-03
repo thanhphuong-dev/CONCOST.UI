@@ -112,6 +112,27 @@ public class ApplicationTitleBar : Grid
         nameof(ShowUserAccount), typeof(bool), typeof(ApplicationTitleBar),
         new FrameworkPropertyMetadata(false, OnUserAccountVisibilityChanged));
 
+    public static readonly DependencyProperty DimOnInactiveProperty = DependencyProperty.Register(
+        nameof(DimOnInactive), typeof(bool), typeof(ApplicationTitleBar),
+        new FrameworkPropertyMetadata(true, OnDimOnInactiveChanged));
+
+    private static readonly DependencyPropertyKey IsWindowActivePropertyKey = DependencyProperty.RegisterReadOnly(
+        nameof(IsWindowActive), typeof(bool), typeof(ApplicationTitleBar),
+        new FrameworkPropertyMetadata(true, OnIsWindowActiveChanged));
+
+    /// <summary>Identifies the <see cref="IsWindowActive"/> read-only property.</summary>
+    public static readonly DependencyProperty IsWindowActiveProperty = IsWindowActivePropertyKey.DependencyProperty;
+
+    private static void OnDimOnInactiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ApplicationTitleBar bar) bar.ApplyInactiveDim();
+    }
+
+    private static void OnIsWindowActiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ApplicationTitleBar bar) bar.ApplyInactiveDim();
+    }
+
     public static readonly DependencyProperty SubtitleProperty = DependencyProperty.Register(
         nameof(Subtitle), typeof(string), typeof(ApplicationTitleBar),
         new FrameworkPropertyMetadata(null, OnTitleChanged));
@@ -283,8 +304,52 @@ public class ApplicationTitleBar : Grid
         Children.Add(_windowButtons);
 
         MouseLeftButtonDown += OnBarMouseDown;
+        Loaded += OnBarLoaded;
+        Unloaded += OnBarUnloaded;
         UpdateTitle();
         ApplyVisualProperties();
+    }
+
+    private Window? _hostWindow;
+
+    private void OnBarLoaded(object sender, RoutedEventArgs e)
+    {
+        // A title bar that forgot its window keeps the dim of a session nobody ended, so the
+        // handlers are removed again on unload — the same contract the ribbon keeps with Alt.
+        _hostWindow = Window.GetWindow(this);
+        if (_hostWindow is null) return;
+
+        _hostWindow.Activated += OnHostActivated;
+        _hostWindow.Deactivated += OnHostDeactivated;
+    }
+
+    private void OnBarUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (_hostWindow is null) return;
+
+        _hostWindow.Activated -= OnHostActivated;
+        _hostWindow.Deactivated -= OnHostDeactivated;
+        _hostWindow = null;
+
+        SetWindowActive(true);
+    }
+
+    private void OnHostActivated(object? sender, EventArgs e) => SetWindowActive(true);
+
+    private void OnHostDeactivated(object? sender, EventArgs e) => SetWindowActive(false);
+
+    /// <summary>Whether the window the bar rides on currently owns the foreground; the dim reads this.</summary>
+    public bool IsWindowActive => (bool)GetValue(IsWindowActiveProperty);
+
+    /// <summary>
+    /// Drives the inactive dim from code. The bar keeps the value in step with the host window by
+    /// itself; a bar used outside a window — a designer surface, a preview host — can set it here.
+    /// </summary>
+    public void SetWindowActive(bool active) => SetValue(IsWindowActivePropertyKey, active);
+
+    private void ApplyInactiveDim()
+    {
+        Opacity = IsWindowActive || !DimOnInactive ? 1 : 0.55;
     }
 
     public ObservableCollection<TitleBarAction> QuickAccess { get; } = new();
@@ -395,6 +460,17 @@ public class ApplicationTitleBar : Grid
     {
         get => (bool)GetValue(ShowUserAccountProperty);
         set => SetValue(ShowUserAccountProperty, value);
+    }
+
+    /// <summary>
+    /// Dims the whole bar while the host window has lost the foreground — the cue every title bar
+    /// gives, and the one that keeps a screenshot of a background window from reading as live.
+    /// The drag area dims with the buttons; the window is not interactive then anyway.
+    /// </summary>
+    public bool DimOnInactive
+    {
+        get => (bool)GetValue(DimOnInactiveProperty);
+        set => SetValue(DimOnInactiveProperty, value);
     }
 
     public string? Subtitle

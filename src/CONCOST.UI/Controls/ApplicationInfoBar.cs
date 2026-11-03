@@ -44,6 +44,11 @@ public class ApplicationInfoBar : Border
         nameof(IsClosable), typeof(bool), typeof(ApplicationInfoBar),
         new FrameworkPropertyMetadata(true, OnClosableChanged));
 
+    /// <summary>Identifies the <see cref="ShowIcon"/> property.</summary>
+    public static readonly DependencyProperty ShowIconProperty = DependencyProperty.Register(
+        nameof(ShowIcon), typeof(bool), typeof(ApplicationInfoBar),
+        new FrameworkPropertyMetadata(true, OnShowIconChanged));
+
     private readonly Grid _row;
     private readonly Icon _icon;
     private readonly TextBlock _title;
@@ -155,6 +160,16 @@ public class ApplicationInfoBar : Border
     {
         get => (bool)GetValue(IsClosableProperty);
         set => SetValue(IsClosableProperty, value);
+    }
+
+    /// <summary>
+    /// Draws the severity icon at the left end. The bold title already reads the severity through
+    /// its tint, so a host that pairs the bar with a spoken message can drop the glyph.
+    /// </summary>
+    public bool ShowIcon
+    {
+        get => (bool)GetValue(ShowIconProperty);
+        set => SetValue(ShowIconProperty, value);
     }
 
     /// <summary>Raised when the action button is pressed.</summary>
@@ -275,5 +290,13 @@ public class ApplicationInfoBar : Border
         {
             bar._close.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
         }
+    }
+
+    private static void OnShowIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not ApplicationInfoBar bar) return;
+
+        bar._icon.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
+        bar._icon.Margin = (bool)e.NewValue ? new Thickness(10, 0, 8, 0) : default;
     }
 }
