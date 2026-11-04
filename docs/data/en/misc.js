@@ -171,6 +171,36 @@ Object.assign(DOCS_EN.pages, {
         ]
     },
 
+    calendar: {
+        title: "Calendar",
+        desc: "A fully restyled month view — <code>CalendarItem</code>, <code>CalendarDayButton</code> and <code>CalendarButton</code> — in four variants, keeping the stock WPF <code>Calendar</code> API.",
+        variants: [
+            { desc: "Flat surface, today outlined in the accent." },
+            { desc: "The selected day filled with the accent." },
+            { desc: "Wrapped in a raised card with a shadow." },
+            { desc: "Dense grid, 26px cells, for narrow panels." }
+        ],
+        sections: [
+            { title: "Pick a date and constrain the range", desc: "<code>SelectedDate</code> binds two ways. <code>DisplayDateStart</code> / <code>DisplayDateEnd</code> fence the selectable range — the shape a construction programme calendar wants." },
+            { title: "Compact calendar for narrow panels", desc: "The <code>Compact</code> variant drops each cell to 26px and trims the <code>CalendarItem</code> padding, leaving room for the digits and the marker dot." }
+        ]
+    },
+
+    datepicker: {
+        title: "DatePicker",
+        desc: "A date field with a dropdown calendar, restyling both the <code>DatePickerTextBox</code> and the <code>Calendar</code> inside it, in four size and surface variants.",
+        variants: [
+            { desc: "34px field with a calendar button." },
+            { desc: "28px field for toolbars and data tables." },
+            { desc: "Fully rounded (pill)." },
+            { desc: "SurfaceSecondary background, no border." }
+        ],
+        sections: [
+            { title: "Pick a milestone date", desc: "<code>SelectedDate</code> is a <code>DateTime?</code> — leave it null and the field shows its watermark. <code>SelectedDateFormat</code> switches between <code>Short</code> and <code>Long</code>." },
+            { title: "Size and surface variants", desc: "The four variants differ only in <code>Height</code>, <code>CornerRadius</code> and <code>Background</code>; the dropdown calendar is unchanged." }
+        ]
+    },
+
     checkbox: {
         title: "CheckBox",
         desc: "CheckBox with three variants (default, button, outlined button), tri-state support and label metadata through attached properties.",

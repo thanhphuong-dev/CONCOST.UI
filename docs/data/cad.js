@@ -629,6 +629,7 @@ Status.Notify(new CadNotification(
             { name: "FilterText", type: "string", default: "string.Empty", desc: "Chuỗi tìm hiện tại (chỉ đọc) — đổi qua <code>SetSearchText</code>." },
             { name: "VisibleNodes", type: "IReadOnlyList<ProjectTreeNode>", default: "rỗng", desc: "Đúng những node đang hiển thị sau khi lọc, nhóm và sắp xếp." },
             { name: "Variant", type: "ProjectBrowserVariant", default: "Seamless", desc: "Ai vẽ viền: <code>Seamless</code> cho palette của host, <code>Card</code> khi đứng riêng, <code>Floating</code> khi nổi trên bản vẽ." },
+            { name: "TreeStyle", type: "ProjectBrowserTreeStyle", default: "Modern", desc: "<code>Modern</code> là pill bo tròn + chevron; <code>Classic</code> là kiểu Revit — dòng dày, ô +/− có viền, dòng chọn tô hết bề ngang, và bỏ luôn hàng công cụ, hai combobox cùng dòng đếm." },
             { name: "ControlHeight", type: "double", default: "24", desc: "Cao của ô tìm, hai combobox và nút công cụ. Control tự đặt <code>MinHeight = 0</code> trước, vì style combo có sàn 34 px." },
             { name: "IconSize", type: "double", default: "13", desc: "Cỡ glyph trong nút công cụ và icon của từng node." },
             { name: "CornerRadius", type: "CornerRadius", default: "8", desc: "Bo góc của tấm nền." },
@@ -680,6 +681,23 @@ browser.Elevation = 3;                              // chỉ Floating mới dùn
 // Style combo có sàn 34 px — control tự đưa sàn về 0 rồi mới gán cao
 browser.ControlHeight = 24;
 browser.IconSize = 13;`
+            },
+            {
+                title: "Cây kiểu Revit — biến thể của riêng phần dòng",
+                desc: "<code>TreeStyle=\"Classic\"</code> đổi cách vẽ từng dòng chứ không đổi tấm nền: ô +/− có viền thay cho chevron, dòng thấp hơn, và dòng đang chọn tô một dải hết bề ngang thay vì pill bo tròn quanh chữ. Cây cũng tắt cuộn ngang — có cuộn ngang thì panel được đo ở bề rộng vô hạn, mỗi dòng co theo đúng độ dài chữ của nó và dải chọn dừng giữa cây. Tên dài bị cắt ở mép, đúng như Revit. Hàng công cụ, bộ lọc loại, sắp xếp và dòng đếm đều ẩn, vì palette của Revit chỉ có ô tìm kiếm trên một danh sách.",
+                xaml: `<ui:ProjectBrowser TreeStyle="Classic"
+                    Variant="Card"
+                    SearchPlaceholder="Search" />`,
+                csharp: `// Cùng một control, hai cách đọc: cây để duyệt, hay danh sách để tra
+browser.TreeStyle = ProjectBrowserTreeStyle.Classic;
+
+// Các công tắc vẫn giữ nguyên giá trị, nên quay lại Modern là chúng hiện lại
+browser.ShowToolbar = true;
+browser.TreeStyle = ProjectBrowserTreeStyle.Modern;`,
+                callout: {
+                    type: "tip",
+                    body: "Hai trục độc lập: <code>TreeStyle</code> quyết định dòng, <code>Variant</code> quyết định tấm nền. Một cây cổ điển vẫn có thể nằm trong tấm <code>Floating</code>."
+                }
             },
             {
                 title: "Tìm, nhóm và sắp xếp",

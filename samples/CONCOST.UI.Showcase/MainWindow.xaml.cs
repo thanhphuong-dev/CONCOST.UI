@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Threading;
 using CONCOST.UI.Controls;
 using CONCOST.UI.Core.Helpers;
@@ -15,6 +14,15 @@ namespace CONCOST.UI.Showcase;
 
 public partial class MainWindow : Window
 {
+    /// <summary>
+    /// Badge text for the title bar, read from the assembly so it can never drift away from
+    /// <c>Directory.Build.props</c> the way a literal did.
+    /// </summary>
+    public static string AppVersion { get; } =
+        typeof(MainWindow).Assembly.GetName().Version is { } v
+            ? $"v{v.Major}.{v.Minor}.{v.Build}"
+            : "v1.0.0";
+
     public MainWindow()
     {
         InitializeComponent();
@@ -64,28 +72,12 @@ public partial class MainWindow : Window
 
     private void OnPaletteButtonClick(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is string hex && !string.IsNullOrEmpty(hex))
+        if (sender is Button button && button.Tag is string hex && hex.Length > 0)
         {
-            Point clickPoint = btn.TransformToAncestor(this).Transform(new Point(btn.ActualWidth / 2.0, btn.ActualHeight / 2.0));
+            Point clickPoint = button.TransformToAncestor(this).Transform(new Point(button.ActualWidth / 2.0, button.ActualHeight / 2.0));
             ThemeAnimationHelper.AnimateThemeChange(this, clickPoint, () =>
-            {
-                ThemeManager.Current.AccentColor = ColorHelper.FromHex(hex);
-            });
+                ThemeManager.Current.AccentColor = ColorHelper.FromHex(hex));
         }
     }
 
-    private void OnDarkModeTogglePreviewMouseDown(object sender, MouseButtonEventArgs e)
-    {
-        if (DataContext is ShowcaseViewModel vm)
-        {
-            Point clickPoint = ToggleDarkSwitch.TransformToAncestor(this).Transform(new Point(ToggleDarkSwitch.ActualWidth / 2.0, ToggleDarkSwitch.ActualHeight / 2.0));
-            bool newIsDark = !vm.IsDarkMode;
-
-            ThemeAnimationHelper.AnimateThemeChange(this, clickPoint, () =>
-            {
-                vm.IsDarkMode = newIsDark;
-            });
-            e.Handled = true;
-        }
-    }
 }

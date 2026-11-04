@@ -122,7 +122,10 @@ public class ProjectBrowserChromeTests
     private static FrameworkElement FirstNodeIcon(ProjectBrowser browser)
     {
         var item = (TreeViewItem)Tree(browser).Items[0];
-        var header = (StackPanel)item.Header;
+
+        // The header is a Grid so the caption has a width to ellipsize against; the icon is its
+        // first cell either way.
+        var header = (Panel)item.Header;
 
         return (FrameworkElement)header.Children[0];
     }

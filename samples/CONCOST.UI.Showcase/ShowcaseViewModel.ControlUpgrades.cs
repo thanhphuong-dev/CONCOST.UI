@@ -189,17 +189,33 @@ public partial class ShowcaseViewModel
             StringFormat = "Góc quay bản vẽ: {0:0}°"
         });
 
+        var appearance = new StackPanel { Margin = new Thickness(0, 2, 0, 8) };
+        appearance.Children.Add(AppearanceSlider(Loc.T("Độ dày kim", "Needle thickness"), 0.5, 4, compass.NeedleThickness, 0.25, "{0:0.00} px", value => compass.NeedleThickness = value));
+        appearance.Children.Add(AppearanceSlider(Loc.T("Cỡ chữ hướng", "Cardinal font size"), 6, 16, compass.CardinalFontSize, 1, "{0:0} px", value => compass.CardinalFontSize = value));
+        appearance.Children.Add(AppearanceSlider(Loc.T("Độ dày viền", "Dial border thickness"), 0, 3, compass.DialBorderThickness, 0.25, "{0:0.00} px", value => compass.DialBorderThickness = value));
+        appearance.Children.Add(AppearanceToggle(Loc.T("Hiện tâm kim", "Show center marker"), compass.ShowCenterMarker, value => compass.ShowCenterMarker = value));
+
         var live = new StackPanel();
         live.Children.Add(compass);
         live.Children.Add(slider);
         live.Children.Add(readout);
+        live.Children.Add(appearance);
 
         root.Children.Add(DemoSection(
             "Kim bám góc bản vẽ — chữ N chỉ hướng bắc thật của mặt cắt",
             live,
-            xaml: "<controls:CompassIndicator Angle=\"{Binding ViewRotation}\" />\n\n" +
-                  "<!-- Angle %= 360, số âm quy về dương -->",
+            xaml: "<controls:CompassIndicator Width=\"96\" Height=\"96\"\n" +
+                  "    Angle=\"{Binding ViewRotation}\" ShowCardinals=\"True\"\n" +
+                  "    DialBrush=\"#FFFFFF\" DialBorderBrush=\"#DCE3EC\"\n" +
+                  "    DialBorderThickness=\"1\" DialInset=\"7\"\n" +
+                  "    NorthBrush=\"#EF4444\" CardinalBrush=\"#64748B\"\n" +
+                  "    NeedleThickness=\"1.5\" CardinalFontSize=\"9\"\n" +
+                  "    CenterMarkerSize=\"4\" ShowCenterMarker=\"True\" />",
             csharp: "compass.Angle = viewport.ViewRotation;\n" +
+                    "compass.NeedleThickness = 1.5;\n" +
+                    "compass.CardinalFontSize = 9;\n" +
+                    "compass.DialBorderThickness = 1;\n" +
+                    "compass.CenterMarkerSize = 4;\n" +
                     "viewport.ViewRotationChanged += (_, a) => compass.Angle = a;"));
 
         // Section 2: quiet variants.

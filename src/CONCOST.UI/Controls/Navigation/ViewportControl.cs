@@ -193,6 +193,21 @@ public class ViewportControl : Grid
         nameof(CrosshairBrush), typeof(Brush), typeof(ViewportControl),
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
+    /// <summary>Identifies the <see cref="CrosshairThickness"/> property.</summary>
+    public static readonly DependencyProperty CrosshairThicknessProperty = DependencyProperty.Register(
+        nameof(CrosshairThickness), typeof(double), typeof(ViewportControl),
+        new FrameworkPropertyMetadata(0.7, FrameworkPropertyMetadataOptions.AffectsRender, null, CoerceCrosshairThickness));
+
+    /// <summary>Identifies the <see cref="CrosshairDashStyle"/> property.</summary>
+    public static readonly DependencyProperty CrosshairDashStyleProperty = DependencyProperty.Register(
+        nameof(CrosshairDashStyle), typeof(DashStyle), typeof(ViewportControl),
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>Identifies the <see cref="CrosshairExtent"/> property.</summary>
+    public static readonly DependencyProperty CrosshairExtentProperty = DependencyProperty.Register(
+        nameof(CrosshairExtent), typeof(double), typeof(ViewportControl),
+        new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender, null, CoerceCrosshairExtent));
+
     /// <summary>Identifies the <see cref="ShowAperture"/> property.</summary>
     public static readonly DependencyProperty ShowApertureProperty = DependencyProperty.Register(
         nameof(ShowAperture), typeof(bool), typeof(ViewportControl),
@@ -237,6 +252,16 @@ public class ViewportControl : Grid
     public static readonly DependencyProperty FitMarginProperty = DependencyProperty.Register(
         nameof(FitMargin), typeof(double), typeof(ViewportControl),
         new FrameworkPropertyMetadata(1.1));
+
+    private static object CoerceCrosshairThickness(DependencyObject _, object value) =>
+        value is double thickness && double.IsFinite(thickness)
+            ? Math.Max(0.25, Math.Min(8, thickness))
+            : 0.7;
+
+    private static object CoerceCrosshairExtent(DependencyObject _, object value) =>
+        value is double extent && double.IsFinite(extent)
+            ? Math.Max(0, Math.Min(1, extent))
+            : 1.0;
 
     private readonly System.Windows.Controls.Canvas _overlay;
 
@@ -436,6 +461,27 @@ public class ViewportControl : Grid
     {
         get => (Brush?)GetValue(CrosshairBrushProperty);
         set => SetValue(CrosshairBrushProperty, value);
+    }
+
+    /// <summary>Stroke width of each crosshair line, in device-independent pixels. Values are clamped to 0.25–8.</summary>
+    public double CrosshairThickness
+    {
+        get => (double)GetValue(CrosshairThicknessProperty);
+        set => SetValue(CrosshairThicknessProperty, value);
+    }
+
+    /// <summary>Dash pattern for the crosshair. Null uses the default dotted pattern.</summary>
+    public DashStyle? CrosshairDashStyle
+    {
+        get => (DashStyle?)GetValue(CrosshairDashStyleProperty);
+        set => SetValue(CrosshairDashStyleProperty, value);
+    }
+
+    /// <summary>Fraction of the viewport spanned by each crosshair line, from 0 to 1.</summary>
+    public double CrosshairExtent
+    {
+        get => (double)GetValue(CrosshairExtentProperty);
+        set => SetValue(CrosshairExtentProperty, value);
     }
 
     /// <summary>Draws the small box at the pointer that marks "here" when no snap has been taken.</summary>
@@ -784,10 +830,17 @@ public class ViewportControl : Grid
 
         var brush = CrosshairBrush ?? FindBrush("CONCOST.Brush.TextSecondary", Brushes.Gray);
         var point = _pointer.Value;
-        var pen = new Pen(brush, 0.7) { DashStyle = DashStyles.Dot };
+        var pen = new Pen(brush, CrosshairThickness) { DashStyle = CrosshairDashStyle ?? DashStyles.Dot };
 
-        dc.DrawLine(pen, new Point(0, point.Y), new Point(RenderSize.Width, point.Y));
-        dc.DrawLine(pen, new Point(point.X, 0), new Point(point.X, RenderSize.Height));
+        double halfWidth = RenderSize.Width * CrosshairExtent / 2;
+        double halfHeight = RenderSize.Height * CrosshairExtent / 2;
+        double left = CrosshairExtent >= 1 ? 0 : Math.Max(0, point.X - halfWidth);
+        double right = CrosshairExtent >= 1 ? RenderSize.Width : Math.Min(RenderSize.Width, point.X + halfWidth);
+        double top = CrosshairExtent >= 1 ? 0 : Math.Max(0, point.Y - halfHeight);
+        double bottom = CrosshairExtent >= 1 ? RenderSize.Height : Math.Min(RenderSize.Height, point.Y + halfHeight);
+
+        dc.DrawLine(pen, new Point(left, point.Y), new Point(right, point.Y));
+        dc.DrawLine(pen, new Point(point.X, top), new Point(point.X, bottom));
 
         if (!ShowAperture) return;
 

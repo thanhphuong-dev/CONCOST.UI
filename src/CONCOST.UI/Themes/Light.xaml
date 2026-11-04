@@ -45,11 +45,17 @@
     <!-- ViewCube. Light grey faces with darker bevel lines, dark grey captions and the blue highlight
          Autodesk uses, not the accent orange: a highlight on the cube means "this is what you will
          click", and the accent is reserved for commands that are already chosen. -->
-    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeFace" Color="#E9ECF1" />
-    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeEdge" Color="#C3CAD5" />
-    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeBorder" Color="#9BA5B4" />
-    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeText" Color="#5A6472" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeFace" Color="#E2E6EC" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeEdge" Color="#AEB7C4" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeBorder" Color="#7F8A9A" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeText" Color="#3E4753" />
     <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeHighlight" Color="#2E86DE" />
+    <SolidColorBrush x:Key="CONCOST.Code.Keyword" Color="#0B69C7" />
+    <SolidColorBrush x:Key="CONCOST.Code.String" Color="#B45309" />
+    <SolidColorBrush x:Key="CONCOST.Code.Comment" Color="#3F7A3F" />
+    <SolidColorBrush x:Key="CONCOST.Code.Number" Color="#7C3AED" />
+    <SolidColorBrush x:Key="CONCOST.Code.Tag" Color="#0B69C7" />
+    <SolidColorBrush x:Key="CONCOST.Code.Attribute" Color="#475569" />
 
     <!-- Ribbon. The strip is a shade darker than the paper so the tabs read as chrome and the
          selected tab merges into the panel below it. Hover and pressed are a light blue rather
@@ -71,6 +77,17 @@
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualAccent" Color="#2E86DE" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipBackground" Color="#FFFFFF" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipText" Color="#0F172A" />
+
+    <!-- Classic project tree. The selection is a band across the row, the way Explorer and
+         Revit draw it, so it is its own pair rather than the accent used by a pill selection. -->
+
+    <!-- One tint per node kind. All-grey glyphs at 13 px are indistinguishable, which is why
+         a schedule and a level read as the same little square. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.View" Color="#2563EB" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Sheet" Color="#059669" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Schedule" Color="#7C3AED" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Family" Color="#D97706" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Level" Color="#0D9488" />
 
     <!-- Shadow: a whisper of ink under a card. The elevation behaviour feeds this colour to a
          drop shadow and deepens it per level, so the token itself stays almost invisible. -->

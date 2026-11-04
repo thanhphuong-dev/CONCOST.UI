@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,7 +21,7 @@ public partial class ShowcaseViewModel
 
         var label = new TextBlock
         {
-            Text = "Xuất báo cáo",
+            Text = Loc.T("Xuất báo cáo", "Export report"),
             Foreground = Brushes.White,
             FontSize = 14,
             FontWeight = FontWeights.SemiBold,
@@ -33,23 +33,23 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             host,
             xaml: "<Grid Width=\"320\" Height=\"52\">\n" +
                   "    <Border CornerRadius=\"10\" Background=\"#101828\" />\n" +
-                  "    <TextBlock Text=\"Xuất báo cáo\" Foreground=\"White\"\n" +
+                  Loc.T("    <TextBlock Text=\"Xuất báo cáo\" Foreground=\"White\"\n", "    <TextBlock Text=\"Export report\" Foreground=\"White\"\n") +
                   "               HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\" />\n" +
                   "    <ui:SheenSweep Speed=\"0.35\" PauseSeconds=\"0.8\" PeakOpacity=\"0.45\" />\n" +
                   "</Grid>",
             csharp: "var sheen = new SheenSweep\n" +
                     "{\n" +
-                    "    Speed = 0.35,          // số lần quét / giây\n" +
-                    "    PauseSeconds = 0.8,    // nghỉ giữa hai lần quét\n" +
-                    "    BandWidth = 0.22,      // bề rộng vệt sáng theo % chiều rộng\n" +
+                    Loc.T("    Speed = 0.35,          // số lần quét / giây\n", "    Speed = 0.35,          // sweeps per second\n") +
+                    Loc.T("    PauseSeconds = 0.8,    // nghỉ giữa hai lần quét\n", "    PauseSeconds = 0.8,    // rest between two sweeps\n") +
+                    Loc.T("    BandWidth = 0.22,      // bề rộng vệt sáng theo % chiều rộng\n", "    BandWidth = 0.22,      // sheen width as a share of the width\n") +
                     "    Angle = 24,\n" +
                     "    PeakOpacity = 0.45\n" +
                     "};\n\n" +
-                    "// Tạm dừng khi cần\n" +
+                    Loc.T("// Tạm dừng khi cần\n", "// Pause when needed") +
                     "sheen.IsActive = false;"));
 
         return root;
@@ -63,15 +63,15 @@ public partial class ShowcaseViewModel
         badge.Children.Add(ring);
 
         var text = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 0, 0, 0) };
-        var title = new TextBlock { Text = "Đang đồng bộ cloud", FontSize = 13, FontWeight = FontWeights.SemiBold };
+        var title = new TextBlock { Text = Loc.T("Đang đồng bộ cloud", "Syncing to the cloud"), FontSize = 13, FontWeight = FontWeights.SemiBold };
         title.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
         text.Children.Add(title);
-        text.Children.Add(DemoCaption("3 bản vẽ đang được tải lên", 2));
+        text.Children.Add(DemoCaption(Loc.T("3 bản vẽ đang được tải lên", "3 drawings uploading"), 2));
         badge.Children.Add(text);
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             badge,
             xaml: "<ui:PulseRing MaxRadius=\"46\" Width=\"110\" Height=\"110\"\n" +
                   "              RingCount=\"3\" Duration=\"2.2\" DotRadius=\"6\" />",
@@ -79,11 +79,11 @@ public partial class ShowcaseViewModel
                     "{\n" +
                     "    MaxRadius = 46,\n" +
                     "    RingCount = 3,\n" +
-                    "    Duration = 2.2,        // giây cho một vòng lan\n" +
+                    Loc.T("    Duration = 2.2,        // giây cho một vòng lan\n", "    Duration = 2.2,        // seconds per ripple\n") +
                     "    RingThickness = 2,\n" +
                     "    RingBrush = Brushes.SeaGreen\n" +
                     "};\n\n" +
-                    "// Tắt khi mất kết nối\n" +
+                    Loc.T("// Tắt khi mất kết nối\n", "// Turn off when the connection drops") +
                     "pulse.IsActive = false;"));
 
         return root;
@@ -98,7 +98,7 @@ public partial class ShowcaseViewModel
 
         var caption = new TextBlock
         {
-            Text = "Phân vùng tải trọng",
+            Text = Loc.T("Phân vùng tải trọng", "Load zones"),
             FontSize = 15,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(18, 14, 0, 0),
@@ -113,7 +113,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             host,
             xaml: "<Grid Height=\"120\" ClipToBounds=\"True\">\n" +
                   "    <Border Background=\"{DynamicResource CONCOST.Brush.SurfaceSecondary}\" />\n" +
@@ -123,10 +123,10 @@ public partial class ShowcaseViewModel
             csharp: "var wave = new WaveDivider\n" +
                     "{\n" +
                     "    Height = 70,\n" +
-                    "    Amplitude = 10,        // biên độ sóng (px)\n" +
-                    "    Wavelength = 180,      // độ dài bước sóng\n" +
-                    "    Speed = 18,            // px / giây\n" +
-                    "    ShowBackWave = true    // thêm lớp sóng phía sau\n" +
+                    Loc.T("    Amplitude = 10,        // biên độ sóng (px)\n", "    Amplitude = 10,        // wave amplitude (px)\n") +
+                    Loc.T("    Wavelength = 180,      // độ dài bước sóng\n", "    Wavelength = 180,      // wavelength\n") +
+                    Loc.T("    Speed = 18,            // px / giây\n", "    Speed = 18,            // px / second\n") +
+                    Loc.T("    ShowBackWave = true    // thêm lớp sóng phía sau\n", "    ShowBackWave = true    // adds a second wave behind\n") +
                     "};"));
 
         return root;
@@ -141,7 +141,7 @@ public partial class ShowcaseViewModel
             HorizontalAlignment = HorizontalAlignment.Left
         };
 
-        var sub = DemoCaption("Chữ tô gradient động — dùng cho hero headline, badge phiên bản.", 4);
+        var sub = DemoCaption(Loc.T("Chữ tô gradient động — dùng cho hero headline, badge phiên bản.", "Animated gradient text — for hero headlines and version badges."), 4);
 
         var content = new StackPanel();
         content.Children.Add(headline);
@@ -149,7 +149,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             content,
             xaml: "<ui:GradientText Text=\"CONCOST UI\" FontSize=\"34\"\n" +
                   "                 StartColor=\"#FF7900\" EndColor=\"#0284C7\" Speed=\"0.35\" />",
@@ -159,9 +159,9 @@ public partial class ShowcaseViewModel
                     "    FontSize = 34,\n" +
                     "    StartColor = Color.FromRgb(0xFF, 0x79, 0x00),\n" +
                     "    EndColor = Color.FromRgb(0x02, 0x84, 0xC7),\n" +
-                    "    Speed = 0.35           // chu kỳ gradient / giây\n" +
+                    Loc.T("    Speed = 0.35           // chu kỳ gradient / giây\n", "    Speed = 0.35           // gradient cycles per second\n") +
                     "};\n\n" +
-                    "// Chữ tĩnh, không chạy gradient\n" +
+                    Loc.T("// Chữ tĩnh, không chạy gradient\n", "// Static text, no gradient") +
                     "headline.IsAnimated = false;"));
 
         return root;

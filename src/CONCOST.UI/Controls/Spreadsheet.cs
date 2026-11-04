@@ -170,6 +170,16 @@ public class Spreadsheet : Control
     public static readonly DependencyProperty SelectionBorderBrushProperty =
         DependencyProperty.Register(nameof(SelectionBorderBrush), typeof(Brush), typeof(Spreadsheet), new PropertyMetadata(null));
 
+    /// <summary>Identifies the <see cref="CellContextMenu"/> property.</summary>
+    public static readonly DependencyProperty CellContextMenuProperty =
+        DependencyProperty.Register(nameof(CellContextMenu), typeof(ContextMenu), typeof(Spreadsheet),
+            new PropertyMetadata(null, OnCellContextMenuChanged));
+
+    /// <summary>Identifies the <see cref="ReadyText"/> property.</summary>
+    public static readonly DependencyProperty ReadyTextProperty =
+        DependencyProperty.Register(nameof(ReadyText), typeof(string), typeof(Spreadsheet),
+            new PropertyMetadata("Ready", OnReadyTextChanged));
+
     public SpreadsheetSheet? ActiveSheet
     {
         get => (SpreadsheetSheet?)GetValue(ActiveSheetProperty);
@@ -270,6 +280,20 @@ public class Spreadsheet : Control
     {
         get => (Brush?)GetValue(SelectionBorderBrushProperty);
         set => SetValue(SelectionBorderBrushProperty, value);
+    }
+
+    /// <summary>Replaces the built-in cell context menu, so a host can rename or extend its items. Null keeps the default.</summary>
+    public ContextMenu? CellContextMenu
+    {
+        get => (ContextMenu?)GetValue(CellContextMenuProperty);
+        set => SetValue(CellContextMenuProperty, value);
+    }
+
+    /// <summary>Status text shown while a single cell is selected. "Ready" by default.</summary>
+    public string ReadyText
+    {
+        get => (string)GetValue(ReadyTextProperty);
+        set => SetValue(ReadyTextProperty, value);
     }
 
     public ICommand AddSheetCommand { get; }
@@ -448,7 +472,7 @@ public class Spreadsheet : Control
             _gridPresenter.MouseMove += OnGridMouseMove;
             _gridPresenter.MouseLeftButtonUp += OnGridMouseUp;
             _gridPresenter.MouseRightButtonDown += OnGridRightMouseDown;
-            _gridPresenter.ContextMenu = CreateGridContextMenu();
+            _gridPresenter.ContextMenu = CellContextMenu ?? CreateGridContextMenu();
         }
 
         if (_inPlaceEditor != null)
@@ -2515,7 +2539,7 @@ public class Spreadsheet : Control
 
         if (SelectionRange.IsSingleCell)
         {
-            _selectionStatsTextBlock.Text = "Ready";
+            _selectionStatsTextBlock.Text = ReadyText;
             return;
         }
 
@@ -2618,6 +2642,17 @@ public class Spreadsheet : Control
         {
             sp._formulaTextBox.Text = (string)e.NewValue ?? string.Empty;
         }
+    }
+
+    private static void OnCellContextMenuChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Spreadsheet sheet && sheet._gridPresenter != null)
+            sheet._gridPresenter.ContextMenu = (ContextMenu?)e.NewValue ?? sheet.CreateGridContextMenu();
+    }
+
+    private static void OnReadyTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Spreadsheet sheet) sheet.UpdateSelectionStats();
     }
 
     private ContextMenu CreateGridContextMenu()

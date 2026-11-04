@@ -246,10 +246,29 @@ public class CommandBar : OverflowToolbar
     }
 }
 
+/// <summary>How a <see cref="QuickAccessToolbar"/> paints the strip it sits on.</summary>
+public enum QuickAccessToolbarVariant
+{
+    /// <summary>No plate at all: the icons sit straight on whatever the host put them on. The ribbon
+    /// uses this, because the ribbon already owns the chrome behind them.</summary>
+    Plain,
+
+    /// <summary>A hairline plate, for a strip that has to read as one control on a busy surface.</summary>
+    Outlined,
+
+    /// <summary>A surface plate with a shadow, for a strip that floats over a document.</summary>
+    Elevated
+}
+
 /// <summary>
 /// The compact strip of icon-only commands above a ribbon — the standalone version of the ribbon's
 /// quick-access toolbar, usable in a plain window.
 /// </summary>
+/// <remarks>
+/// The strip carries its own metrics rather than borrowing the ribbon's: a host that puts it in a
+/// 20 px title bar and a host that floats it over a drawing need different hit targets and glyph
+/// sizes, and neither should have to retemplate the control to get them.
+/// </remarks>
 public class QuickAccessToolbar : OverflowToolbar
 {
     static QuickAccessToolbar()
@@ -268,4 +287,64 @@ public class QuickAccessToolbar : OverflowToolbar
         get => (bool)GetValue(IsCustomizableProperty);
         set => SetValue(IsCustomizableProperty, value);
     }
+
+    public static readonly DependencyProperty ButtonSizeProperty =
+        DependencyProperty.Register(nameof(ButtonSize), typeof(double), typeof(QuickAccessToolbar),
+            new PropertyMetadata(24.0));
+
+    /// <summary>Side of one square hit target, in pixels. Default 24 — a title-bar strip, not a
+    /// touch target; 30-34 is what a floating strip over a drawing wants.</summary>
+    public double ButtonSize
+    {
+        get => (double)GetValue(ButtonSizeProperty);
+        set => SetValue(ButtonSizeProperty, value);
+    }
+
+    public static readonly DependencyProperty IconSizeProperty =
+        DependencyProperty.Register(nameof(IconSize), typeof(double), typeof(QuickAccessToolbar),
+            new PropertyMetadata(14.0));
+
+    /// <summary>Glyph size inside a button, in pixels. Default 14, which keeps roughly 5 px of air
+    /// inside a 24 px target.</summary>
+    public double IconSize
+    {
+        get => (double)GetValue(IconSizeProperty);
+        set => SetValue(IconSizeProperty, value);
+    }
+
+    public static readonly DependencyProperty ShowSeparatorsProperty =
+        DependencyProperty.Register(nameof(ShowSeparators), typeof(bool), typeof(QuickAccessToolbar),
+            new PropertyMetadata(true));
+
+    /// <summary>Draw the rules an item marks with <see cref="QuickAccessItem.IsSeparator"/>. Turn it
+    /// off to keep the grouping in the data while the strip stays a run of plain icons.</summary>
+    public bool ShowSeparators
+    {
+        get => (bool)GetValue(ShowSeparatorsProperty);
+        set => SetValue(ShowSeparatorsProperty, value);
+    }
+
+    public static readonly DependencyProperty VariantProperty =
+        DependencyProperty.Register(nameof(Variant), typeof(QuickAccessToolbarVariant), typeof(QuickAccessToolbar),
+            new PropertyMetadata(QuickAccessToolbarVariant.Plain));
+
+    /// <summary>Chrome painted behind the icons. Default <see cref="QuickAccessToolbarVariant.Plain"/>.</summary>
+    public QuickAccessToolbarVariant Variant
+    {
+        get => (QuickAccessToolbarVariant)GetValue(VariantProperty);
+        set => SetValue(VariantProperty, value);
+    }
+
+    public static readonly DependencyProperty OverflowToolTipProperty =
+        DependencyProperty.Register(nameof(OverflowToolTip), typeof(string), typeof(QuickAccessToolbar),
+            new PropertyMetadata("Customize"));
+
+    /// <summary>Tooltip of the overflow chevron. The default is English so the library ships no
+    /// hard-coded culture; a localized host sets its own.</summary>
+    public string OverflowToolTip
+    {
+        get => (string)GetValue(OverflowToolTipProperty);
+        set => SetValue(OverflowToolTipProperty, value);
+    }
 }
+

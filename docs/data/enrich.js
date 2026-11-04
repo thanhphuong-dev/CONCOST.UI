@@ -3,6 +3,26 @@
 const DOCS_ENRICH = {
 
     /* ---------------- props for the new basic pages ---------------- */
+
+    /* ---------------- QuickAccessToolbar: its own metrics ---------------- */
+    quickaccesstoolbar: {
+
+        className: "QuickAccessToolbar",
+        props: [
+            { name: "ItemsSource", type: "IEnumerable", default: "null", desc: "Danh sách <code>QuickAccessItem</code> — icon, tooltip, command, hoặc một mục <code>IsSeparator</code>." },
+            { name: "IsCustomizable", type: "bool", default: "true", desc: "Hiện chevron tuỳ chỉnh. Tắt đi thì chevron chỉ còn hiện khi thật sự có lệnh bị tràn." },
+            { name: "ButtonSize", type: "double", default: "24", desc: "Cạnh vùng bấm của mỗi nút (px). Dải cao theo giá trị này, không còn cố định 28 px." },
+            { name: "IconSize", type: "double", default: "14", desc: "Cỡ glyph bên trong nút (px)." },
+            { name: "Spacing", type: "double", default: "2", desc: "Khoảng cách giữa hai nút (px), do <code>OverflowPanel</code> áp dụng." },
+            { name: "ShowSeparators", type: "bool", default: "true", desc: "Vẽ vạch cho mục <code>IsSeparator</code>. Tắt đi thì dữ liệu vẫn giữ nhóm, chỉ mất vạch." },
+            { name: "Variant", type: "QuickAccessToolbarVariant", default: "Plain", desc: "<code>Plain</code> không nền, <code>Outlined</code> viền mảnh, <code>Elevated</code> nền + bóng." },
+            { name: "OverflowToolTip", type: "string", default: "\"Customize\"", desc: "Tooltip của chevron tràn." },
+            { name: "HasOverflow", type: "bool", default: "false", readonly: true, desc: "Có ít nhất một lệnh không vừa. Do layout đo, không đặt được." },
+            { name: "OverflowItems", type: "IEnumerable", default: "rỗng", readonly: true, desc: "Đúng những lệnh bị đẩy vào menu, theo thứ tự." },
+            { name: "IsOverflowOpen", type: "bool", default: "false", desc: "Menu tràn đang mở; bind hai chiều được." }
+        ]
+    },
+
     checkbox: {
 
         className: "CheckBox",
@@ -258,5 +278,38 @@ if (DocumentTabs.SelectedItem is TabItem tab)
 // Chuyển sang màu cảnh báo khi gần đầy
 SolveProgress.Style = (Style)FindResource(
     Percent > 90 ? "CONCOST.ProgressBar.Warning" : "CONCOST.ProgressBar.Success");`
-    }
+    },
+    calendar: {
+
+        className: "Calendar",
+        props: [
+            { name: "SelectedDate", type: "DateTime?", default: "null", desc: "Ngày đang chọn; <code>null</code> khi chưa chọn." },
+            { name: "SelectedDates", type: "IList&lt;DateTime&gt;", default: "rỗng", desc: "Toàn bộ ngày đang chọn — nhiều hơn một khi <code>SelectionMode</code> cho phép." },
+            { name: "DisplayDate", type: "DateTime", default: "hôm nay", desc: "Tháng đang hiển thị trên lưới." },
+            { name: "DisplayDateStart", type: "DateTime?", default: "null", desc: "Cận dưới của khoảng chọn được." },
+            { name: "DisplayDateEnd", type: "DateTime?", default: "null", desc: "Cận trên của khoảng chọn được." },
+            { name: "SelectionMode", type: "CalendarSelectionMode", default: "SingleDate", desc: "<code>SingleDate</code>, <code>SingleRange</code> hoặc <code>MultipleRange</code>." },
+            { name: "BlackoutDates", type: "CalendarDateRangeCollection", default: "rỗng", desc: "Các khoảng ngày bị khoá, không chọn được." },
+            { name: "IsTodayHighlighted", type: "bool", default: "true", desc: "Làm nổi ô của ngày hôm nay." },
+            { name: "FirstDayOfWeek", type: "DayOfWeek", default: "Monday", desc: "Ngày bắt đầu tuần." }
+        ]
+    },
+
+    datepicker: {
+
+        className: "DatePicker",
+        props: [
+            { name: "SelectedDate", type: "DateTime?", default: "null", desc: "Ngày đang chọn; <code>null</code> thì ô hiện watermark." },
+            { name: "DisplayDate", type: "DateTime", default: "hôm nay", desc: "Tháng mở ra khi bấm nút lịch." },
+            { name: "DisplayDateStart", type: "DateTime?", default: "null", desc: "Cận dưới của khoảng chọn được." },
+            { name: "DisplayDateEnd", type: "DateTime?", default: "null", desc: "Cận trên của khoảng chọn được." },
+            { name: "SelectedDateFormat", type: "DatePickerFormat", default: "Short", desc: "<code>Short</code> hoặc <code>Long</code> — quyết định chuỗi hiển thị trong ô." },
+            { name: "IsDropDownOpen", type: "bool", default: "false", desc: "Lịch thả xuống đang mở." },
+            { name: "IsTodayHighlighted", type: "bool", default: "true", desc: "Làm nổi ô của ngày hôm nay trong lịch." },
+            { name: "CalendarStyle", type: "Style", default: "CONCOST.Calendar.Base", desc: "Style áp cho <code>Calendar</code> bên trong — đổi sang biến thể <code>Primary</code> / <code>Compact</code>." },
+            { name: "BlackoutDates", type: "CalendarDateRangeCollection", default: "rỗng", desc: "Các khoảng ngày bị khoá." },
+            { name: "Text", type: "string", default: "string.Empty", desc: "Chuỗi đang hiển thị; gõ tay được khi <code>IsEnabled</code> bật." }
+        ]
+    },
+
 };

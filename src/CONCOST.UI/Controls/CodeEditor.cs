@@ -339,6 +339,37 @@ public class CodeEditor : Control
     public static readonly DependencyProperty ShowLineNumbersProperty = DependencyProperty.Register(
         nameof(ShowLineNumbers), typeof(bool), typeof(CodeEditor), new PropertyMetadata(true));
 
+    /// <summary>Identifies the <see cref="KeywordBrush"/> property.</summary>
+    public static readonly DependencyProperty KeywordBrushProperty = DependencyProperty.Register(
+        nameof(KeywordBrush), typeof(Brush), typeof(CodeEditor),
+        new PropertyMetadata(null, OnColorAffectingChanged));
+
+    /// <summary>Identifies the <see cref="StringBrush"/> property.</summary>
+    public static readonly DependencyProperty StringBrushProperty = DependencyProperty.Register(
+        nameof(StringBrush), typeof(Brush), typeof(CodeEditor),
+        new PropertyMetadata(null, OnColorAffectingChanged));
+
+    /// <summary>Identifies the <see cref="CommentBrush"/> property.</summary>
+    public static readonly DependencyProperty CommentBrushProperty = DependencyProperty.Register(
+        nameof(CommentBrush), typeof(Brush), typeof(CodeEditor),
+        new PropertyMetadata(null, OnColorAffectingChanged));
+
+    /// <summary>Identifies the <see cref="NumberBrush"/> property.</summary>
+    public static readonly DependencyProperty NumberBrushProperty = DependencyProperty.Register(
+        nameof(NumberBrush), typeof(Brush), typeof(CodeEditor),
+        new PropertyMetadata(null, OnColorAffectingChanged));
+
+    /// <summary>Identifies the <see cref="TagBrush"/> property.</summary>
+    public static readonly DependencyProperty TagBrushProperty = DependencyProperty.Register(
+        nameof(TagBrush), typeof(Brush), typeof(CodeEditor),
+        new PropertyMetadata(null, OnColorAffectingChanged));
+
+    /// <summary>Identifies the <see cref="AttributeBrush"/> property.</summary>
+    public static readonly DependencyProperty AttributeBrushProperty = DependencyProperty.Register(
+        nameof(AttributeBrush), typeof(Brush), typeof(CodeEditor),
+        new PropertyMetadata(null, OnColorAffectingChanged));
+
+
     /// <summary>Identifies the <see cref="TabSize"/> property.</summary>
     public static readonly DependencyProperty TabSizeProperty = DependencyProperty.Register(
         nameof(TabSize), typeof(int), typeof(CodeEditor), new PropertyMetadata(4, null, CoerceTabSize));
@@ -397,6 +428,49 @@ public class CodeEditor : Control
         get => (bool)GetValue(ShowLineNumbersProperty);
         set => SetValue(ShowLineNumbersProperty, value);
     }
+
+    /// <summary>Overrides the keyword colour. Null follows the theme token.</summary>
+    public Brush? KeywordBrush
+    {
+        get => (Brush?)GetValue(KeywordBrushProperty);
+        set => SetValue(KeywordBrushProperty, value);
+    }
+
+    /// <summary>Overrides the string literal colour. Null follows the theme token.</summary>
+    public Brush? StringBrush
+    {
+        get => (Brush?)GetValue(StringBrushProperty);
+        set => SetValue(StringBrushProperty, value);
+    }
+
+    /// <summary>Overrides the comment colour. Null follows the theme token.</summary>
+    public Brush? CommentBrush
+    {
+        get => (Brush?)GetValue(CommentBrushProperty);
+        set => SetValue(CommentBrushProperty, value);
+    }
+
+    /// <summary>Overrides the number colour. Null follows the theme token.</summary>
+    public Brush? NumberBrush
+    {
+        get => (Brush?)GetValue(NumberBrushProperty);
+        set => SetValue(NumberBrushProperty, value);
+    }
+
+    /// <summary>Overrides the tag colour. Null follows the theme token.</summary>
+    public Brush? TagBrush
+    {
+        get => (Brush?)GetValue(TagBrushProperty);
+        set => SetValue(TagBrushProperty, value);
+    }
+
+    /// <summary>Overrides the attribute colour. Null follows the theme token.</summary>
+    public Brush? AttributeBrush
+    {
+        get => (Brush?)GetValue(AttributeBrushProperty);
+        set => SetValue(AttributeBrushProperty, value);
+    }
+
 
     /// <summary>Spaces a tab inserts.</summary>
     public int TabSize
@@ -695,6 +769,19 @@ public class CodeEditor : Control
 
     private Brush BrushFor(CodeTokenKind kind)
     {
+        // A host can recolour one token kind without retemplating the editor.
+        Brush? custom = kind switch
+        {
+            CodeTokenKind.Keyword => KeywordBrush,
+            CodeTokenKind.String => StringBrush,
+            CodeTokenKind.Comment => CommentBrush,
+            CodeTokenKind.Number => NumberBrush,
+            CodeTokenKind.Tag => TagBrush,
+            _ => AttributeBrush
+        };
+
+        if (custom is not null) return custom;
+
         string key = kind switch
         {
             CodeTokenKind.Keyword => "CONCOST.Code.Keyword",

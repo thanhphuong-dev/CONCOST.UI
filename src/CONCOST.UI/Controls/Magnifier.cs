@@ -12,6 +12,9 @@ namespace CONCOST.UI.Controls;
 /// </summary>
 public class Magnifier : Control
 {
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
+        new MagnifierAutomationPeer(this);
+
     private FrameworkElement? _targetElement;
     private VisualBrush? _visualBrush;
     private Point _lastPositionInHost;
@@ -49,10 +52,6 @@ public class Magnifier : Control
         DependencyProperty.Register(nameof(ShowCrosshair), typeof(bool), typeof(Magnifier),
             new PropertyMetadata(true, OnVisualParamChanged));
 
-    public static readonly DependencyProperty CrosshairBrushProperty =
-        DependencyProperty.Register(nameof(CrosshairBrush), typeof(Brush), typeof(Magnifier),
-            new PropertyMetadata(null, OnVisualParamChanged));
-
     public static readonly DependencyProperty ShowRimProperty =
         DependencyProperty.Register(nameof(ShowRim), typeof(bool), typeof(Magnifier),
             new PropertyMetadata(true, OnVisualParamChanged));
@@ -72,6 +71,10 @@ public class Magnifier : Control
     public static readonly DependencyProperty IsActiveProperty =
         DependencyProperty.Register(nameof(IsActive), typeof(bool), typeof(Magnifier),
             new PropertyMetadata(false));
+
+    public static readonly DependencyProperty CrosshairBrushProperty =
+        DependencyProperty.Register(nameof(CrosshairBrush), typeof(Brush), typeof(Magnifier),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnVisualParamChanged));
 
     public FrameworkElement? Target
     {

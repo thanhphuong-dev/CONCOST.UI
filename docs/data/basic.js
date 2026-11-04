@@ -134,6 +134,93 @@ OpacitySlider.AddHandler(Thumb.DragCompletedEvent,
         related: ["rangeslider", "progressbar", "numericupdown"]
     },
 
+    calendar: {
+
+        title: "Calendar — lịch chọn ngày",
+        badge: "Controls cơ bản",
+        desc: "Lịch tháng được restyle toàn bộ — <code>CalendarItem</code>, <code>CalendarDayButton</code> và <code>CalendarButton</code> — với 4 biến thể, giữ nguyên API <code>Calendar</code> của WPF.",
+        keywords: ["calendar", "lịch", "chọn ngày", "tiến độ", "date"],
+        variants: [
+            { key: "CONCOST.Calendar.Base", desc: "Bề mặt phẳng, hôm nay có viền accent." },
+            { key: "CONCOST.Calendar.Primary", desc: "Ngày đang chọn tô đặc màu accent." },
+            { key: "CONCOST.Calendar.Card", desc: "Bọc trong thẻ nổi có đổ bóng." },
+            { key: "CONCOST.Calendar.Compact", desc: "Lưới dày, ô 26px cho panel hẹp." }
+        ],
+        sections: [
+            {
+                title: "Chọn ngày và giới hạn khoảng",
+                desc: "<code>SelectedDate</code> bind hai chiều. <code>DisplayDateStart</code> / <code>DisplayDateEnd</code> chặn khoảng chọn — hợp cho lịch tiến độ thi công.",
+                xaml: `<Calendar Style="{DynamicResource CONCOST.Calendar.Primary}"
+          SelectedDate="{Binding StartDate, Mode=TwoWay}"
+          DisplayDateStart="{Binding ProjectStart}"
+          DisplayDateEnd="{Binding ProjectEnd}"
+          IsTodayHighlighted="True" />`,
+                csharp: `// Ngày nghỉ công trường: chặn bằng CalendarDateRange
+var holidays = new CalendarDateRange(
+    new DateTime(2026, 9, 2), new DateTime(2026, 9, 3));
+ScheduleCalendar.BlackoutDates.Add(holidays);
+
+// Đọc khoảng người dùng chọn
+if (ScheduleCalendar.SelectedDates.Count > 1)
+{
+    DateTime from = ScheduleCalendar.SelectedDates.Min();
+    DateTime to = ScheduleCalendar.SelectedDates.Max();
+}`
+            },
+            {
+                title: "Lịch gọn trong panel hẹp",
+                desc: "Biến thể <code>Compact</code> hạ chiều cao mỗi ô xuống 26px và giảm padding của <code>CalendarItem</code> — vẫn đủ chỗ cho chữ số và chấm đánh dấu.",
+                xaml: `<Calendar Style="{DynamicResource CONCOST.Calendar.Compact}"
+          SelectionMode="SingleDate"
+          FirstDayOfWeek="Monday"
+          Width="220" />`
+            }
+        ],
+        related: ["datepicker", "calendarwithclock", "clock"]
+    },
+
+    datepicker: {
+
+        title: "DatePicker — chọn ngày thả xuống",
+        badge: "Controls cơ bản",
+        desc: "Ô nhập ngày kèm lịch thả xuống, restyle cả <code>DatePickerTextBox</code> lẫn <code>Calendar</code> bên trong, với 4 biến thể kích thước và bề mặt.",
+        keywords: ["datepicker", "chọn ngày", "lịch", "ngày tháng", "date"],
+        variants: [
+            { key: "CONCOST.DatePicker.Base", desc: "Ô nhập 34px kèm nút lịch." },
+            { key: "CONCOST.DatePicker.Small", desc: "Ô 28px cho toolbar và bảng dữ liệu." },
+            { key: "CONCOST.DatePicker.Round", desc: "Bo tròn hoàn toàn (pill)." },
+            { key: "CONCOST.DatePicker.Filled", desc: "Nền SurfaceSecondary, không viền." }
+        ],
+        sections: [
+            {
+                title: "Chọn mốc tiến độ",
+                desc: "<code>SelectedDate</code> là <code>DateTime?</code> — để trống thì ô hiện watermark. <code>SelectedDateFormat</code> đổi giữa <code>Short</code> và <code>Long</code>.",
+                xaml: `<DatePicker Style="{DynamicResource CONCOST.DatePicker.Base}"
+            SelectedDate="{Binding MilestoneDate, Mode=TwoWay}"
+            SelectedDateFormat="Short"
+            IsTodayHighlighted="True"
+            Width="200" />`,
+                csharp: `// Lịch thả xuống dùng chung style với Calendar
+MilestoneDatePicker.CalendarStyle =
+    (Style)FindResource("CONCOST.Calendar.Primary");
+
+// Chặn ngày đã qua
+MilestoneDatePicker.BlackoutDates.Add(
+    new CalendarDateRange(DateTime.MinValue, DateTime.Today.AddDays(-1)));`
+            },
+            {
+                title: "Biến thể kích thước và bề mặt",
+                desc: "Bốn biến thể chỉ khác <code>Height</code>, <code>CornerRadius</code> và <code>Background</code>; phần lịch thả xuống giữ nguyên.",
+                xaml: `<StackPanel Orientation="Horizontal" Margin="24">
+    <DatePicker Style="{DynamicResource CONCOST.DatePicker.Small}" Width="160" Margin="0,0,10,0" />
+    <DatePicker Style="{DynamicResource CONCOST.DatePicker.Round}" Width="180" Margin="0,0,10,0" />
+    <DatePicker Style="{DynamicResource CONCOST.DatePicker.Filled}" Width="180" />
+</StackPanel>`
+            }
+        ],
+        related: ["calendar", "calendarwithclock", "clock"]
+    },
+
     scrollviewer: {
 
         title: "ScrollViewer — vùng cuộn & quán tính",

@@ -565,6 +565,62 @@ pattern.OffsetY = scrollOffset * 0.08;`,
         related: ["textbox", "growl", "numericupdown"]
     },
 
+    themeauto: {
+
+        title: "Theme Auto — bám theo theme của host",
+        badge: "Theme",
+        desc: "Plugin Revit/AutoCAD không có <code>Application</code> riêng, nên theme phải đọc từ cửa sổ chủ. <code>AppTheme.Auto</code> dò màu nền gần nhất quanh root rồi tự cập nhật khi host đổi sáng/tối.",
+        keywords: ["theme", "auto", "revit", "autocad", "plugin", "dark", "light", "detect"],
+        sections: [
+            {
+                title: "Gắn theme tự động cho root của plugin",
+                desc: "Gọi một lần sau khi root đã vào visual tree. Không cần <code>Application.Current</code> — đúng cách một add-in chạy trong tiến trình của host.",
+                xaml: `<UserControl x:Class="MyAddin.PluginRoot"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:CONCOST.UI.Controls;assembly=CONCOST.UI">
+    <Border Background="{DynamicResource CONCOST.Brush.Surface}" Padding="16">
+        <ui:Button Content="Rebar schedule" Style="{DynamicResource CONCOST.Button.Primary}" />
+    </Border>
+</UserControl>`,
+                csharp: `// Root của add-in: dò theme từ window chủ rồi bám theo
+PluginRoot.Loaded += (_, _) =>
+    ThemeManager.Current.ApplyTheme(PluginRoot, AppTheme.Auto);`
+            },
+            {
+                title: "API của ThemeManager",
+                desc: "Bốn thuộc tính cấp ứng dụng và bốn lời gọi theo từng root. Mọi lời gọi phải chạy trên dispatcher thread của root.",
+                table: [
+                    { token: "ThemeManager.Current", desc: "Singleton — cùng một instance cho cả tiến trình, kể cả khi host nạp nhiều add-in." },
+                    { token: "ThemeManager.Current.ApplyTheme(root, AppTheme.Auto)", desc: "Gắn theme cho một root cụ thể. <code>Auto</code> dò màu nền của phần tử cha gần nhất có nền đặc." },
+                    { token: "ThemeManager.Current.RefreshAutoTheme(root)", desc: "Gọi lại sau khi host đổi theme. Root đã đặt <code>Light</code>/<code>Dark</code> tường minh thì bị bỏ qua." },
+                    { token: "ThemeManager.DetectTheme(root)", desc: "Trả về <code>AppTheme</code> mà host đang hiển thị, không áp dụng gì — dùng khi cần rẽ nhánh logic." },
+                    { token: "ThemeManager.Current.ApplyAccentColor(root, color)", desc: "Đặt màu accent riêng cho một root mà không đụng tới phần còn lại của host." },
+                    { token: "ThemeManager.Current.ApplySurfaceStyle(root, SurfaceStyle)", desc: "Chọn bề mặt phẳng / nổi / kính mờ cho root đó." },
+                    { token: "ThemeManager.Current.Theme / Preset / AccentColor", desc: "Trạng thái toàn cục, dùng khi ứng dụng là chủ sở hữu <code>Application</code>." }
+                ]
+            },
+            {
+                title: "Cập nhật khi host đổi theme",
+                desc: "<code>RefreshAutoTheme</code> chỉ tác động root đang ở <code>AppTheme.Auto</code>, nên có thể gọi không điều kiện mỗi khi Revit/AutoCAD phát sự kiện đổi theme.",
+                csharp: `// Revit/AutoCAD vừa chuyển sáng-tối
+ThemeManager.Current.RefreshAutoTheme(PluginRoot);
+
+// Hoặc hỏi trước khi cần quyết định
+AppTheme hostTheme = ThemeManager.DetectTheme(PluginRoot);
+bool hostIsDark = hostTheme == AppTheme.Dark;`
+            },
+            {
+                title: "Theme tường minh vẫn thắng",
+                desc: "Đặt <code>AppTheme.Light</code> hoặc <code>AppTheme.Dark</code> thì <code>RefreshAutoTheme</code> bỏ qua root đó — hữu ích cho cửa sổ xem trước bản in hoặc bảng màu.",
+                csharp: `// Cửa sổ xem trước luôn sáng, bất kể host đang tối
+ThemeManager.Current.ApplyTheme(PrintPreviewRoot, AppTheme.Light);`,
+                callout: { type: "tip", body: "Nếu panel của plugin vẫn ra màu sai, kiểm tra root có <code>Background</code> trong suốt hay không: <code>DetectTheme</code> đi ngược lên tới phần tử đầu tiên thực sự tô nền, nên một panel trong suốt sẽ đọc theme của window chủ — thường đúng ý." }
+            }
+        ],
+        related: ["theming", "brutaltheme", "reducedmotion"]
+    },
+
     brutaltheme: {
         title: "ThemePreset.Brutal — neo-brutalism",
         badge: "Bắt đầu",
@@ -2420,8 +2476,8 @@ bar.Invoke(bar.ItemsSource.First());`,
     quickaccesstoolbar: {
         title: "QuickAccessToolbar — dải icon trên cùng",
         badge: "Mới",
-        desc: "Bản rời của thanh truy cập nhanh trong ribbon: chỉ icon, cao 28px, đặt được ở bất kỳ cửa sổ nào không cần cả ribbon.",
-        keywords: ["quick access", "qat", "toolbar", "icon", "shell"],
+        desc: "Bản rời của thanh truy cập nhanh trong ribbon: chỉ icon, tự co theo kích thước nút, đặt được ở bất kỳ cửa sổ nào không cần cả ribbon.",
+        keywords: ["quick access", "qat", "toolbar", "icon", "shell", "variant"],
         sections: [
             {
                 title: "Icon, tooltip, hết",
@@ -2440,13 +2496,48 @@ bar.Invoke(bar.ItemsSource.First());`,
                 }
             },
             {
-                title: "Tràn xuống menu",
-                desc: "Cùng cơ chế với <code>CommandBar</code>: hết chỗ thì mục thừa rơi vào popup, không bị cắt.",
+                title: "Ba kiểu nền — Plain, Outlined, Elevated",
+                desc: "<code>Variant</code> quyết định có tấm nền nào phía sau icon hay không. <code>Plain</code> để icon nằm thẳng trên bề mặt host — ribbon dùng kiểu này vì nó đã có chrome riêng. <code>Outlined</code> thêm một đường viền mảnh cho bề mặt bận rộn, <code>Elevated</code> thêm nền và bóng cho dải trôi trên bản vẽ.",
                 xaml: `<ui:QuickAccessToolbar ItemsSource="{Binding QuickCommands}"
-                        IsOverflowOpen="{Binding IsQatMoreOpen, Mode=TwoWay}" />`,
-                csharp: `// Lưu bố cục người dùng tự sắp
-var visible = qat.ItemsSource.Cast<QuickAccessItem>()
-                  .Take(qat.ItemsSource.Cast<QuickAccessItem>().Count() - qat.OverflowItems.Cast<object>().Count());`,
+                        Variant="Outlined" />`,
+                csharp: `// Plain   — không nền, ribbon dùng kiểu này
+// Outlined— viền mảnh, đọc thành một control
+// Elevated— nền + bóng, trôi trên bản vẽ
+qat.Variant = QuickAccessToolbarVariant.Elevated;`,
+                callout: {
+                    type: "note",
+                    body: "Tấm nền do control tự vẽ nên host không phải bọc nó trong một <code>Border</code> — kiểu bọc đó thường lệch một hai pixel so với vùng bấm thật."
+                }
+            },
+            {
+                title: "Kích thước nằm trong tay host",
+                desc: "Bốn số đo của dải đều là DependencyProperty: <code>ButtonSize</code>, <code>IconSize</code>, <code>Spacing</code> và <code>ShowSeparators</code>. Dải không còn cao cố định 28 px — nó cao bằng <code>ButtonSize</code> cộng phần nền, nên đặt nút 34 px thì hàng cũng cao lên theo.",
+                xaml: `<ui:QuickAccessToolbar ItemsSource="{Binding QuickCommands}"
+                        ButtonSize="30"
+                        IconSize="16"
+                        Spacing="4"
+                        ShowSeparators="True" />`,
+                csharp: `qat.ButtonSize = 30;            // 24 mặc định: dải trong title bar
+qat.IconSize = 16;
+qat.Spacing = 4;
+qat.ShowSeparators = false;     // giữ nhóm trong dữ liệu, chỉ ẩn vạch`,
+                callout: {
+                    type: "tip",
+                    body: "Vạch phân cách giãn theo <code>ButtonSize</code> chứ không có chiều cao riêng, nên không phải chỉnh lần thứ hai khi đổi cỡ nút."
+                }
+            },
+            {
+                title: "Tràn xuống menu",
+                desc: "Cùng cơ chế với <code>CommandBar</code>: hết chỗ thì mục thừa rơi vào popup, không bị cắt. <code>OverflowItems</code> đọc lại đúng những gì layout không xếp được.",
+                xaml: `<ui:QuickAccessToolbar ItemsSource="{Binding QuickCommands}"
+                        Width="150"
+                        IsCustomizable="False"
+                        OverflowToolTip="Lệnh không vừa" />`,
+                csharp: `// Chevron tự hiện khi panel báo có lệnh không vừa
+qat.IsCustomizable = false;
+
+foreach (QuickAccessItem hidden in qat.OverflowItems)
+    Debug.WriteLine(hidden.ToolTip);`,
                 callout: {
                     type: "note",
                     body: "Đây là control độc lập, không phải con của <code>Ribbon</code>. Ribbon vẫn dùng <code>RibbonQuickAccessToolBar</code> nội bộ của nó — hai thứ cùng ý tưởng, khác phạm vi."

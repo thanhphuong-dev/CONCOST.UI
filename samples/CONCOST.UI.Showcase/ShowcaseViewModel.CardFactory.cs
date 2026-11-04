@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -115,12 +115,12 @@ public partial class ShowcaseViewModel
             // Detect if xaml snippet is actually C# code
             bool isVi = LocalizationManager.Current.Culture.TwoLetterISOLanguageName.Equals("vi", StringComparison.OrdinalIgnoreCase);
             bool xamlLooksLikeXaml = !string.IsNullOrWhiteSpace(xaml) && xaml.TrimStart().StartsWith("<");
-            string xamlBtnText = isVi ? (xamlLooksLikeXaml ? "Xem XAML" : "Xem mã") : (xamlLooksLikeXaml ? "View XAML" : "View Code");
+            string xamlBtnText = isVi ? (xamlLooksLikeXaml ? "Xem XAML" : Loc.T("Xem mã", "View code")) : (xamlLooksLikeXaml ? "View XAML" : "View Code");
             string csBtnText = isVi ? "Xem C#" : "View C#";
-            string xamlBadgeText = isVi ? (xamlLooksLikeXaml ? "Mã XAML" : "Đoạn mã") : (xamlLooksLikeXaml ? "XAML Code" : "Code Snippet");
-            string csBadgeText = isVi ? "Mã C#" : "C# Code";
-            string copyText = isVi ? "Sao chép" : "Copy";
-            string copiedText = isVi ? "Đã chép!" : "Copied!";
+            string xamlBadgeText = isVi ? (xamlLooksLikeXaml ? Loc.T("Mã XAML", "XAML") : Loc.T("Đoạn mã", "Snippet")) : (xamlLooksLikeXaml ? "XAML Code" : "Code Snippet");
+            string csBadgeText = isVi ? Loc.T("Mã C#", "C#") : "C# Code";
+            string copyText = isVi ? Loc.T("Sao chép", "Copy") : "Copy";
+            string copiedText = isVi ? Loc.T("Đã chép!", "Copied!") : "Copied!";
 
             FrameworkElement? xamlView = string.IsNullOrEmpty(xaml) ? null : CreateXamlSyntaxHighlighter(xaml!);
             FrameworkElement? csView = string.IsNullOrEmpty(csharp) ? null : CreatePlainCodeView(csharp!);

@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**153 pages · 1238 documented properties · 124 controls mapped to source · 2 languages (VI / EN).**
+**156 pages · 1410 documented properties · 125 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -28,6 +28,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Giới thiệu & Cài đặt](index.html#intro) | CONCOST.UI là bộ thư viện giao diện WPF tối ưu cho phần mềm kết cấu, BIM, CAD và ứng dụng desktop kỹ thuật. Thư viện đi kèm hệ thống design tokens tự  |
 | [Plugin DLL (Revit/AutoCAD)](index.html#class-library) | Hướng dẫn chuyên sâu kiến trúc phát triển giao diện WPF khi đóng gói dưới dạng Class Library (.DLL) hoặc Plugins cho các phần mềm CAD/BIM chuyên nghiệ |
 | [Theme & Design Tokens](index.html#theming) | Toàn bộ bảng màu và phong cách giao diện của CONCOST.UI được quản lý thông qua DynamicResource, cho phép ứng dụng chuyển đổi mượt mà giữa Dark và Ligh |
+| [Theme Auto (host)](index.html#themeauto) | Plugin Revit/AutoCAD không có Application riêng, nên theme phải đọc từ cửa sổ chủ. AppTheme.Auto dò màu nền gần nhất quanh root rồi tự cập nhật khi ho |
 | [Preset Brutal](index.html#brutaltheme) | Preset thứ bảy của ThemeManager: nền kem #FFFDF5, viền mực #111111, accent vàng điện #FFE14D — tinh thần neo-brutalism nhưng vẫn đọc được trong app ng |
 | [Reduced motion](index.html#reducedmotion) | Mọi hiệu ứng của thư viện đọc MotionSettings.AnimationsEnabled, mặc định lấy từ Windows “Show animations” (SystemParameters.ClientAreaAnimation). Ngườ |
 | [Attached Properties](index.html#attached-props) | Hệ thống thuộc tính đính kèm phong phú của CONCOST.UI cho phép bạn 'thổi hồn' công nghệ hiện đại vào bất kỳ control WPF nguyên bản nào (Button, TextBo |
@@ -148,7 +149,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Ribbon commands](index.html#ribboncommands) | Bộ lệnh đặt trong ribbon: nút thường, toggle, radio, split button hai vùng, dropdown và menu lồng nhau. Tất cả đều theo ICommand: IsEnabled tự bám Can |
 | [StatusBar](index.html#statusbar) | Dải thông tin dưới đáy cửa sổ. Mỗi ô là một StatusBarItem; ô khai Alignment="Right" bám mép phải, phần giữa co giãn theo cửa sổ. |
 | [CommandBar](index.html#commandbar) | Thanh công cụ một dòng: nút có icon + nhãn, và khi hết chỗ thì phần thừa rơi vào menu xổ xuống thay vì bị cắt cụt. |
-| [QuickAccessToolbar](index.html#quickaccesstoolbar) | Bản rời của thanh truy cập nhanh trong ribbon: chỉ icon, cao 28px, đặt được ở bất kỳ cửa sổ nào không cần cả ribbon. |
+| [QuickAccessToolbar](index.html#quickaccesstoolbar) | Bản rời của thanh truy cập nhanh trong ribbon: chỉ icon, tự co theo kích thước nút, đặt được ở bất kỳ cửa sổ nào không cần cả ribbon. |
 | [MasonryPanel](index.html#masonrypanel) | Panel trả lại chiều cao tự nhiên cho từng con: con nào cao thì chiếm chỗ ấy, và mỗi con rơi vào cột đang ngắn nhất. Không cần đặt chiều cao cho cột, k |
 | [Wizard](index.html#wizard) | Các bước là con của wizard nên form đọc như form trong XAML. Mỗi bước tự giữ IsValid; nút Tiếp chỉ bật khi bước hiện tại hợp lệ, và Navigating cho hos |
 
@@ -237,6 +238,8 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | Page | Nội dung |
 | --- | --- |
 | [Clock](index.html#clock) | Đồng hồ tròn phong cách Material để chọn Giờ / Phút / Giây. Cần chọn cả ngày thì dùng CalendarWithClock — trang riêng trong nhóm Thời gian. |
+| [Calendar](index.html#calendar) | Lịch tháng được restyle toàn bộ — CalendarItem, CalendarDayButton và CalendarButton — với 4 biến thể, giữ nguyên API Calendar của WPF. |
+| [DatePicker](index.html#datepicker) | Ô nhập ngày kèm lịch thả xuống, restyle cả DatePickerTextBox lẫn Calendar bên trong, với 4 biến thể kích thước và bề mặt. |
 | [CalendarWithClock](index.html#calendarwithclock) | Lịch chọn ngày kết hợp đồng hồ chọn giờ/phút/giây — dùng cho mốc nghiệm thu, thời điểm quan trắc, lịch thi công. |
 
 ## How this documentation is maintained

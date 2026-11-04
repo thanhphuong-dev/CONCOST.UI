@@ -52,6 +52,9 @@ public enum DockingManagerVariant
 /// </remarks>
 public class DockingManager : Panel
 {
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
+        new DockingManagerAutomationPeer(this);
+
     private sealed class LayoutResult
     {
         public readonly Dictionary<UIElement, Rect> Nodes = new();

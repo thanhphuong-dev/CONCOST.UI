@@ -41,7 +41,7 @@ public partial class ViewCube
     private const double LetterReach = 0.12;
 
     /// <summary>Gap, in pixels, kept between a compass letter and the solid it names.</summary>
-    private const double LetterMargin = 6;
+    private const double LetterMargin = 8;
 
     /// <summary>
     /// Elevation, in degrees, below which the dial is not drawn. Seen edge on the ring collapses onto
@@ -109,9 +109,15 @@ public partial class ViewCube
     /// <summary>Pixels per world unit: the cube's edge, since the cube is a unit cube.</summary>
     private static double Unit(double side) => Math.Max(1, (side - 2 * Pad) / (2 * WorstRadius));
 
-    private Point Centre(double side) => new(
-        ActualWidth > 0 ? ActualWidth / 2 : side / 2,
-        ActualHeight > 0 ? ActualHeight / 2 : side / 2);
+    private Point Centre(double side)
+    {
+        double width = ActualWidth > 0 ? ActualWidth : side;
+        double height = ActualHeight > 0 ? ActualHeight : side;
+
+        // Keep the cube and compass clear of the orientation caption at the bottom of the widget.
+        double labelOffset = ShowOrientationLabel ? side * 0.08 : 0;
+        return new Point(width / 2, height / 2 - labelOffset);
+    }
 
     private void DropProjection() => _cache = null;
 
@@ -228,14 +234,31 @@ public partial class ViewCube
         foreach (ProjectedZone zone in ordered)
         {
             bool hovered = _hover.IsRegion && _hover.Region == zone.Region;
-
             Brush fill = hovered ? palette.Highlight : palette.Face;
-            Pen? pen = zone.Visible ? new Pen(hovered ? palette.Highlight : palette.Edge, hovered ? 1.4 : 1) : null;
+            dc.DrawGeometry(hovered ? palette.Highlight : palette.Face, null, zone.Shape);
 
-            dc.DrawGeometry(fill, pen, zone.Shape);
+            // The 26 regions are interaction targets. Outlining every one made the cube look split
+            // into loose tiles, so bevel facets get a light tint and only the actual cube is outlined.
+            if (zone.Visible && !zone.Region.IsFace && !hovered)
+            {
+                dc.PushOpacity(0.18);
+                dc.DrawGeometry(palette.Edge, null, zone.Shape);
+                dc.Pop();
+            }
 
+            if (hovered)
+                dc.DrawGeometry(null, new Pen(palette.Highlight, 1.25), zone.Shape);
+        }
+
+        Geometry silhouette = BuildSilhouette(ordered);
+        dc.DrawGeometry(null, new Pen(palette.Edge, 0.8), silhouette);
+
+        foreach (ProjectedZone zone in ordered)
+        {
             if (!zone.Visible || !zone.Region.IsFace) continue;
 
+            bool hovered = _hover.IsRegion && _hover.Region == zone.Region;
+            dc.DrawGeometry(null, new Pen(hovered ? palette.Highlight : palette.Edge, 0.75), zone.Shape);
             DrawCaption(dc, zone, basis, unit, hovered ? palette.OnHighlight : palette.Text);
         }
 
@@ -245,7 +268,7 @@ public partial class ViewCube
 
         if (ShowFocusRing && IsKeyboardFocused) DrawFocusRing(dc, palette);
 
-        if (!_pointerOver && !AlwaysShowTools && _drag == DragMode.None) return;
+        if (!_pointerOver && !_toolsVisibleAfterLeave && !AlwaysShowTools && _drag == DragMode.None) return;
 
         DrawButtons(dc, zones, palette);
     }
@@ -670,11 +693,13 @@ public partial class ViewCube
         dc.DrawRectangle(Brushes.Transparent, null, rect);
         dc.DrawRoundedRectangle(null, new Pen(hovered ? palette.Highlight : palette.Border, 1), rect, 3, 3);
 
-        // A house, drawn as a path rather than a glyph so it needs no icon font.
+        // Draw a closed house outline rather than a font glyph so the home action is recognizable
+        // at this small size on every machine.
         double left = rect.X + 3;
         double right = rect.Right - 3;
         double bottom = rect.Bottom - 3;
         double middle = rect.Y + rect.Height / 2;
+        double centreX = rect.X + rect.Width / 2;
 
         var roof = new StreamGeometry();
 
@@ -685,11 +710,13 @@ public partial class ViewCube
             context.LineTo(new Point(right + 0.5, middle), true, false);
             context.LineTo(new Point(right, bottom), true, false);
             context.LineTo(new Point(left, bottom), true, false);
+            context.LineTo(new Point(left - 0.5, middle), true, false);
         }
 
         roof.Freeze();
 
         dc.DrawGeometry(null, new Pen(brush, 1), roof);
+        dc.DrawLine(new Pen(brush, 1), new Point(centreX, bottom), new Point(centreX, bottom - 2.5));
     }
 
     private void DrawMenuButton(DrawingContext dc, Rect rect, in Palette palette)
@@ -784,7 +811,7 @@ public partial class ViewCube
         // compass ring whose lowest point would otherwise land in the same pixels.
         if (ShowOrientationLabel && OrientationLabelRect(side).Contains(point)) return ViewCubeHit.ForOrientationSelector();
 
-        if (_pointerOver || AlwaysShowTools || _drag != DragMode.None)
+        if (_pointerOver || _toolsVisibleAfterLeave || AlwaysShowTools || _drag != DragMode.None)
         {
             if (GetHomeRect(side).Contains(point)) return ViewCubeHit.ForHome();
             if (GetMenuRect(side).Contains(point)) return ViewCubeHit.ForMenu();
@@ -934,6 +961,40 @@ public partial class ViewCube
 
         geometry.Freeze();
         return geometry;
+    }
+
+    private static Geometry BuildSilhouette(IEnumerable<ProjectedZone> zones)
+    {
+        List<Point> points = zones
+            .Where(zone => zone.Visible)
+            .SelectMany(zone => zone.Points)
+            .Distinct()
+            .OrderBy(point => point.X)
+            .ThenBy(point => point.Y)
+            .ToList();
+
+        if (points.Count < 3) return Geometry.Empty;
+
+        static double Cross(Point origin, Point first, Point second) =>
+            (first.X - origin.X) * (second.Y - origin.Y) - (first.Y - origin.Y) * (second.X - origin.X);
+
+        var hull = new List<Point>();
+        foreach (Point point in points)
+        {
+            while (hull.Count >= 2 && Cross(hull[^2], hull[^1], point) <= 0) hull.RemoveAt(hull.Count - 1);
+            hull.Add(point);
+        }
+
+        int lowerCount = hull.Count;
+        for (int i = points.Count - 2; i >= 0; i--)
+        {
+            Point point = points[i];
+            while (hull.Count > lowerCount && Cross(hull[^2], hull[^1], point) <= 0) hull.RemoveAt(hull.Count - 1);
+            hull.Add(point);
+        }
+
+        if (hull.Count > 1) hull.RemoveAt(hull.Count - 1);
+        return hull.Count >= 3 ? Polygon(hull.ToArray()) : Geometry.Empty;
     }
 
     private FormattedText Format(string caption, double size, Brush brush) =>

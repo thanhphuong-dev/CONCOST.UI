@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -158,7 +158,7 @@ public partial class ShowcaseViewModel
         card.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.SpotlightCard.Base");
 
         var inner = new StackPanel();
-        inner.Children.Add(DemoCaption("Tổng khối lượng bê tông"));
+        inner.Children.Add(DemoCaption(Loc.T("Tổng khối lượng bê tông", "Total concrete volume")));
 
         var number = new OdometerNumber { Value = 1284.6, Format = "N1", Suffix = " m³", Margin = new Thickness(0, 2, 0, 8) };
         number.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.OdometerNumber.Hero");
@@ -178,28 +178,28 @@ public partial class ShowcaseViewModel
             (Color)ColorConverter.ConvertFromString("#FF7900"),
             (Color)ColorConverter.ConvertFromString("#0284C7"),
             45);
-        glass.Content = DemoCaption("Di chuột qua thẻ để thấy vệt sáng và viền gradient.");
+        glass.Content = DemoCaption(Loc.T("Di chuột qua thẻ để thấy vệt sáng và viền gradient.", "Hover the card to see the spotlight and the gradient border."));
 
         var row = new WrapPanel();
         row.Children.Add(card);
         row.Children.Add(glass);
 
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             row,
             xaml: "<ui:SpotlightCard Width=\"300\" Style=\"{DynamicResource CONCOST.SpotlightCard.Base}\">\n" +
                   "    <StackPanel>\n" +
-                  "        <TextBlock Text=\"Tổng khối lượng bê tông\" Style=\"{DynamicResource CONCOST.TextBlock.Caption}\" />\n" +
+                  Loc.T("        <TextBlock Text=\"Tổng khối lượng bê tông\" Style=\"{DynamicResource CONCOST.TextBlock.Caption}\" />\n", "        <TextBlock Text=\"Total concrete volume\" Style=\"{DynamicResource CONCOST.TextBlock.Caption}\" />\n") +
                   "        <ui:OdometerNumber Value=\"1284.6\" Format=\"N1\" Suffix=\" m³\"\n" +
                   "                           Style=\"{DynamicResource CONCOST.OdometerNumber.Hero}\" />\n" +
                   "        <ui:Sparkline Values=\"{Binding ConcreteTrend}\" Height=\"38\" />\n" +
                   "    </StackPanel>\n" +
                   "</ui:SpotlightCard>",
-            csharp: "// Viền gradient khi hover\n" +
+            csharp: Loc.T("// Viền gradient khi hover\n", "// Gradient border on hover") +
                     "card.BorderGradient = new LinearGradientBrush(\n" +
                     "    Color.FromRgb(0xFF, 0x79, 0x00),\n" +
                     "    Color.FromRgb(0x02, 0x84, 0xC7), 45);\n\n" +
-                    "// Tắt hiệu ứng trên danh sách dài để giữ 60 FPS\n" +
+                    Loc.T("// Tắt hiệu ứng trên danh sách dài để giữ 60 FPS\n", "// Turn the effect off on long lists to hold 60 FPS") +
                     "foreach (var item in ItemsPanel.Children.OfType<SpotlightCard>())\n" +
                     "    item.IsSpotlightEnabled = false;"));
 
@@ -224,7 +224,7 @@ public partial class ShowcaseViewModel
         row.Children.Add(mid);
         row.Children.Add(compact);
 
-        var run = new Button { Content = "Chạy lại số liệu", Padding = new Thickness(12, 6, 12, 6), HorizontalAlignment = HorizontalAlignment.Left };
+        var run = new Button { Content = Loc.T("Chạy lại số liệu", "Replay the numbers"), Padding = new Thickness(12, 6, 12, 6), HorizontalAlignment = HorizontalAlignment.Left };
         run.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         run.Click += (_, _) =>
         {
@@ -239,17 +239,17 @@ public partial class ShowcaseViewModel
         content.Children.Add(run);
 
         root.Children.Add(DemoSection(
-            "Ba kích thước",
+            Loc.T("Ba kích thước", "Three sizes"),
             content,
             xaml: "<ui:OdometerNumber Value=\"{Binding ConcreteM3}\" Format=\"N1\" Suffix=\" m³\"\n" +
                   "                   Style=\"{DynamicResource CONCOST.OdometerNumber.Hero}\" />\n" +
                   "<ui:OdometerNumber Value=\"{Binding SteelKg}\" Format=\"N0\" Suffix=\" kg\"\n" +
                   "                   Prefix=\"+\" Duration=\"0:0:1.2\" />",
-            csharp: "// Cập nhật giá trị — control tự chạy từ số cũ sang số mới\n" +
+            csharp: Loc.T("// Cập nhật giá trị — control tự chạy từ số cũ sang số mới\n", "// Assign a value — the control runs from the old number to the new one") +
                     "ConcreteM3 = summary.ConcreteM3;\n\n" +
-                    "// Hiện ngay, không chạy animation\n" +
+                    Loc.T("// Hiện ngay, không chạy animation\n", "// Show immediately, no animation") +
                     "SteelKgNumber.Duration = new Duration(TimeSpan.Zero);\n\n" +
-                    "// Bỏ animation cho lần load đầu\n" +
+                    Loc.T("// Bỏ animation cho lần load đầu\n", "// Skip the animation on first load") +
                     "SteelKgNumber.AnimateOnLoad = false;"));
 
         return root;
@@ -279,12 +279,12 @@ public partial class ShowcaseViewModel
             grid.Children.Add(cell);
         }
 
-        AddCell("Khối lượng theo tuần", new double[] { 12, 18, 15, 24, 22, 31, 29, 38 }, Brushes.SteelBlue, true);
-        AddCell("Độ lún quan trắc", new double[] { 8, 7.6, 7.9, 7.2, 6.8, 6.9, 6.1 }, Brushes.SeaGreen, true);
-        AddCell("Chênh lệch tiến độ", new double[] { 4, 6, 3, 7, 5, 9, 12, 10, 14 }, Brushes.IndianRed, false);
+        AddCell(Loc.T("Khối lượng theo tuần", "Weekly volume"), new double[] { 12, 18, 15, 24, 22, 31, 29, 38 }, Brushes.SteelBlue, true);
+        AddCell(Loc.T("Độ lún quan trắc", "Settlement readings"), new double[] { 8, 7.6, 7.9, 7.2, 6.8, 6.9, 6.1 }, Brushes.SeaGreen, true);
+        AddCell(Loc.T("Chênh lệch tiến độ", "Schedule variance"), new double[] { 4, 6, 3, 7, 5, 9, 12, 10, 14 }, Brushes.IndianRed, false);
 
         root.Children.Add(DemoSection(
-            "Ba kiểu",
+            Loc.T("Ba kiểu", "Three styles"),
             grid,
             xaml: "<ui:Sparkline Values=\"{Binding Last7Days}\" Height=\"28\"\n" +
                   "              Smooth=\"True\" ShowArea=\"True\" ShowLastDot=\"True\"\n" +
@@ -323,18 +323,18 @@ public partial class ShowcaseViewModel
         };
 
         var content = new StackPanel();
-        content.Children.Add(DemoCaption("Nhóm kiểm tra — 6 người, hiện 4 + chip +2"));
+        content.Children.Add(DemoCaption(Loc.T("Nhóm kiểm tra — 6 người, hiện 4 + chip +2", "Inspection team — 6 people, 4 shown plus a +2 chip")));
         content.Children.Add(reviewers);
-        content.Children.Add(DemoCaption("Kích thước nhỏ cho bảng dữ liệu", 8));
+        content.Children.Add(DemoCaption(Loc.T("Kích thước nhỏ cho bảng dữ liệu", "Small size for data tables"), 8));
         content.Children.Add(compact);
 
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             content,
             xaml: "<ui:AvatarStack Items=\"{Binding Reviewers}\" MaxVisible=\"4\" Size=\"36\" Overlap=\"12\" />",
-            csharp: "// Chuỗi → tự lấy chữ cái đầu (\"Nguyen Van A\" → \"NA\")\n" +
+            csharp: Loc.T("// Chuỗi → tự lấy chữ cái đầu (\"Nguyen Van A\" → \"NA\")\n", "// From a string it takes the initials (\"Nguyen Van A\" → \"NA\")\n") +
                     "Reviewers = new[] { \"Nguyen Van A\", \"Tran Thi B\", \"Le C\", \"Pham D\", \"Hoang E\" };\n\n" +
-                    "// Ảnh cũng dùng được\n" +
+                    Loc.T("// Ảnh cũng dùng được\n", "// An image works too") +
                     "stack.Items = new object[] { new BitmapImage(new Uri(\"pack://application:,,,/Avatars/lead.png\")), \"Tran Thi B\" };"));
 
         return root;
@@ -356,7 +356,7 @@ public partial class ShowcaseViewModel
         };
 
         var legend = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-        legend.Children.Add(DemoCaption("Ít", 0));
+        legend.Children.Add(DemoCaption(Loc.T("Ít", "Sparse"), 0));
         foreach (double strength in new[] { 0.0, 0.25, 0.45, 0.70, 1.0 })
         {
             var swatch = new Border
@@ -372,21 +372,21 @@ public partial class ShowcaseViewModel
                 : new SolidColorBrush(Color.FromArgb(alpha, 0xFF, 0x79, 0x00));
             legend.Children.Add(swatch);
         }
-        legend.Children.Add(DemoCaption("Nhiều", 0));
+        legend.Children.Add(DemoCaption(Loc.T("Nhiều", "Dense"), 0));
 
         var content = new StackPanel();
-        content.Children.Add(DemoCaption("Số lượt đổ bê tông theo ngày (182 ngày gần nhất)"));
+        content.Children.Add(DemoCaption(Loc.T("Số lượt đổ bê tông theo ngày (182 ngày gần nhất)", "Concrete pours per day (last 182 days)")));
         content.Children.Add(heatmap);
         content.Children.Add(legend);
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             content,
             xaml: "<ui:HeatmapCalendar Values=\"{Binding PourCounts}\"\n" +
                   "                    StartDate=\"{Binding StartDate}\"\n" +
                   "                    CellSize=\"13\" CellGap=\"3\" />",
-            csharp: "// Mỗi phần tử là số lượng của một ngày, bắt đầu từ StartDate\n" +
+            csharp: Loc.T("// Mỗi phần tử là số lượng của một ngày, bắt đầu từ StartDate\n", "// Each entry is one day's count, starting at StartDate") +
                     "var counts = pours\n" +
                     "    .GroupBy(p => p.Date.Date)\n" +
                     "    .Select(g => g.Count())\n" +
@@ -406,7 +406,7 @@ public partial class ShowcaseViewModel
     {
         var ticker = new MarqueeTicker
         {
-            Text = "Công trường A — đổ bê tông sàn tầng 12 · 3 mũi thi công đang hoạt động · cảnh báo gió mạnh sau 15:00 · kiểm tra nghiệm thu lúc 16:30",
+            Text = Loc.T("Công trường A — đổ bê tông sàn tầng 12 · 3 mũi thi công đang hoạt động · cảnh báo gió mạnh sau 15:00 · kiểm tra nghiệm thu lúc 16:30", "Site A — level 12 slab pour · 3 crews active · high-wind warning after 15:00 · acceptance check at 16:30"),
             Speed = 55,
             Height = 30
         };
@@ -423,16 +423,16 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             host,
             xaml: "<ui:MarqueeTicker Text=\"{Binding SiteNotice}\" Speed=\"55\" Height=\"30\" />",
             csharp: "var ticker = new MarqueeTicker\n" +
                     "{\n" +
-                    "    Text = \"Công trường A — đổ bê tông sàn tầng 12 · 3 mũi thi công đang hoạt động\",\n" +
-                    "    Speed = 55,      // px / giây\n" +
+                    Loc.T("    Text = \"Công trường A — đổ bê tông sàn tầng 12 · 3 mũi thi công đang hoạt động\",\n", "    Text = \"Site A — level 12 slab pour · 3 crews active\",\n") +
+                    Loc.T("    Speed = 55,      // px / giây\n", "    Speed = 55,      // px / second\n") +
                     "    Separator = \"  •  \"\n" +
                     "};\n\n" +
-                    "// Tạm dừng khi cần\n" +
+                    Loc.T("// Tạm dừng khi cần\n", "// Pause when needed") +
                     "ticker.IsRunning = false;"));
 
         return root;

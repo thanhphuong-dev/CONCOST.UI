@@ -27,6 +27,9 @@ namespace CONCOST.UI.Controls;
 /// </remarks>
 public class SignaturePad : FrameworkElement
 {
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
+        new SignaturePadAutomationPeer(this);
+
     private readonly List<Point> _pending = new();
     private StylusPointCollection? _pendingPoints;
     private bool _isDrawing;

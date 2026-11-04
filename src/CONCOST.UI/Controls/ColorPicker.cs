@@ -36,6 +36,36 @@ public class ColorPicker : Control
         DependencyProperty.Register(nameof(ShowAlpha), typeof(bool), typeof(ColorPicker),
             new PropertyMetadata(true));
 
+    /// <summary>Identifies the <see cref="CornerRadius"/> property.</summary>
+    public static readonly DependencyProperty CornerRadiusProperty =
+        DependencyProperty.Register(nameof(CornerRadius), typeof(CornerRadius), typeof(ColorPicker),
+            new PropertyMetadata(new CornerRadius(10)));
+
+    /// <summary>Identifies the <see cref="ShowHexInput"/> property.</summary>
+    public static readonly DependencyProperty ShowHexInputProperty =
+        DependencyProperty.Register(nameof(ShowHexInput), typeof(bool), typeof(ColorPicker),
+            new PropertyMetadata(true));
+
+    /// <summary>Identifies the <see cref="ShowPresets"/> property.</summary>
+    public static readonly DependencyProperty ShowPresetsProperty =
+        DependencyProperty.Register(nameof(ShowPresets), typeof(bool), typeof(ColorPicker),
+            new PropertyMetadata(true));
+
+    /// <summary>Identifies the <see cref="PresetColumns"/> property.</summary>
+    public static readonly DependencyProperty PresetColumnsProperty =
+        DependencyProperty.Register(nameof(PresetColumns), typeof(int), typeof(ColorPicker),
+            new PropertyMetadata(5, null, CoercePresetColumns));
+
+    /// <summary>Identifies the <see cref="SwatchSize"/> property.</summary>
+    public static readonly DependencyProperty SwatchSizeProperty =
+        DependencyProperty.Register(nameof(SwatchSize), typeof(double), typeof(ColorPicker),
+            new PropertyMetadata(22.0));
+
+    /// <summary>Identifies the <see cref="FieldHeight"/> property.</summary>
+    public static readonly DependencyProperty FieldHeightProperty =
+        DependencyProperty.Register(nameof(FieldHeight), typeof(double), typeof(ColorPicker),
+            new PropertyMetadata(140.0));
+
     public Color SelectedColor
     {
         get => (Color)GetValue(SelectedColorProperty);
@@ -52,6 +82,54 @@ public class ColorPicker : Control
     {
         get => (bool)GetValue(ShowAlphaProperty);
         set => SetValue(ShowAlphaProperty, value);
+    }
+
+    /// <summary>Corner radius of the plate. 10 by default.</summary>
+    public CornerRadius CornerRadius
+    {
+        get => (CornerRadius)GetValue(CornerRadiusProperty);
+        set => SetValue(CornerRadiusProperty, value);
+    }
+
+    /// <summary>Shows the hex field under the sliders.</summary>
+    public bool ShowHexInput
+    {
+        get => (bool)GetValue(ShowHexInputProperty);
+        set => SetValue(ShowHexInputProperty, value);
+    }
+
+    /// <summary>Shows the preset palette under the hex field.</summary>
+    public bool ShowPresets
+    {
+        get => (bool)GetValue(ShowPresetsProperty);
+        set => SetValue(ShowPresetsProperty, value);
+    }
+
+    /// <summary>Columns used by the preset palette. 5 by default.</summary>
+    public int PresetColumns
+    {
+        get => (int)GetValue(PresetColumnsProperty);
+        set => SetValue(PresetColumnsProperty, value);
+    }
+
+    /// <summary>Edge length of one preset swatch, in pixels. 22 by default.</summary>
+    public double SwatchSize
+    {
+        get => (double)GetValue(SwatchSizeProperty);
+        set => SetValue(SwatchSizeProperty, value);
+    }
+
+    /// <summary>Height of the saturation/value field, in pixels. 140 by default.</summary>
+    public double FieldHeight
+    {
+        get => (double)GetValue(FieldHeightProperty);
+        set => SetValue(FieldHeightProperty, value);
+    }
+
+    private static object CoercePresetColumns(DependencyObject d, object baseValue)
+    {
+        int value = (int)baseValue;
+        return value < 1 ? 1 : value > 12 ? 12 : value;
     }
 
     public ObservableCollection<Color> PresetColors { get; } = new()

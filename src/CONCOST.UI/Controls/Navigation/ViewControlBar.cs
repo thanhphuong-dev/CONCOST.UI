@@ -7,6 +7,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using CONCOST.UI.AttachedProperties;
 using CONCOST.UI.Icons;
+using CONCOST.UI.Services;
 
 namespace CONCOST.UI.Controls;
 
@@ -207,7 +208,7 @@ public class ViewControlBar : Grid
 
         _toolButtons = new[] { _shadows, _crop, _reveal };
 
-        _toggles = new StackPanel();
+        _toggles = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         _toggles.Children.Add(_shadows);
         _toggles.Children.Add(_crop);
         _toggles.Children.Add(_reveal);
@@ -253,6 +254,11 @@ public class ViewControlBar : Grid
         _frame = new Border { Child = _strip };
 
         Children.Add(_frame);
+
+        _detail.ItemsSource = DetailCaptions();
+        _style.ItemsSource = VisualStyleCaptions();
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
 
         ApplyScales();
         ApplyCaption();
@@ -461,6 +467,44 @@ public class ViewControlBar : Grid
     private static void OnCaptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is ViewControlBar bar) bar.ApplyCaption();
+    }
+
+    private static string[] DetailCaptions() => new[]
+    {
+        LocalizationManager.Current.GetString("ViewControlBar.Detail.Coarse", "Coarse"),
+        LocalizationManager.Current.GetString("ViewControlBar.Detail.Medium", "Medium"),
+        LocalizationManager.Current.GetString("ViewControlBar.Detail.Fine", "Fine")
+    };
+
+    private static string[] VisualStyleCaptions() => new[]
+    {
+        LocalizationManager.Current.GetString("ViewControlBar.VisualStyle.Wireframe", "Wireframe"),
+        LocalizationManager.Current.GetString("ViewControlBar.VisualStyle.HiddenLine", "Hidden line"),
+        LocalizationManager.Current.GetString("ViewControlBar.VisualStyle.Shaded", "Shaded"),
+        LocalizationManager.Current.GetString("ViewControlBar.VisualStyle.Realistic", "Realistic")
+    };
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        LocalizationManager.Current.PropertyChanged -= OnLocalizationChanged;
+        LocalizationManager.Current.PropertyChanged += OnLocalizationChanged;
+        RefreshLocalizedItems();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e) =>
+        LocalizationManager.Current.PropertyChanged -= OnLocalizationChanged;
+
+    private void OnLocalizationChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not ("Culture" or "Item[]")) return;
+        RefreshLocalizedItems();
+    }
+
+    private void RefreshLocalizedItems()
+    {
+        _detail.ItemsSource = DetailCaptions();
+        _style.ItemsSource = VisualStyleCaptions();
+        SyncFromProperties();
     }
 
     /// <summary>Dresses the frame. Only this frame draws an outline; the toggles inside stay flat.</summary>

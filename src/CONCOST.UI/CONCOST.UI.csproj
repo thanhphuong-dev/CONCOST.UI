@@ -23,6 +23,7 @@
     <Page Include="Themes\Dark.xaml" />
     <Page Include="Themes\Generic.xaml" />
     <Page Include="Themes\Light.xaml" />
+    <Page Include="Themes\SoftLight.xaml" />
     <Page Include="Themes\ThemeResources.xaml" />
     <Page Include="Themes\Tokens\Colors.xaml" />
     <Page Include="Themes\Tokens\CornerRadius.xaml" />

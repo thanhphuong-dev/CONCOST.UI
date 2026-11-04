@@ -25,7 +25,7 @@
 ## Why teams pick it
 
 - **Three target frameworks, one API.** `net48`, `net8.0-windows`, `net10.0-windows` from the same source. A project reference picks the matching build automatically, so the same view compiles into a .NET Framework 4.8 AutoCAD plugin and a .NET 8 desktop app.
-- **Theming that respects the host.** `ThemeManager.ApplyTheme(this, …)` scopes light/dark, accent and preset to a single view — no `Application` instance, no global resource hijack. That is what makes the library usable inside a Revit add-in.
+- **A calmer light theme and host-aware theming.** Choose `AppTheme.Light`, `SoftLight` (cool-neutral surfaces with restrained blue-grey chrome), `Dark`, `System` or `Auto`; `ThemeManager.ApplyTheme(this, …)` scopes resources to one view, which keeps the library usable inside Revit and AutoCAD add-ins.
 - **Effects that stay cheap.** Every animation is drawn with `DrawingContext` or a transform — no shaders, no `BlurEffect`, no per-item visual trees — and all of them honour the Windows "Show animations" setting (WCAG 2.2.2).
 - **Documented from source.** Property tables and C# samples are generated from the real `DependencyProperty` declarations and validated against the compiled API, so the docs cannot drift from the code.
 

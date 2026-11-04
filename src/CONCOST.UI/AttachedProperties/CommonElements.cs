@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -161,7 +161,18 @@ public static class IconElement
 {
     public static readonly DependencyProperty KindProperty =
         DependencyProperty.RegisterAttached("Kind", typeof(IconKind), typeof(IconElement),
-            new FrameworkPropertyMetadata(IconKind.None, FrameworkPropertyMetadataOptions.Inherits));
+            new FrameworkPropertyMetadata(IconKind.None, FrameworkPropertyMetadataOptions.Inherits, OnKindChanged));
+
+    /// <summary>
+    /// An icon on a button means the glyph is the label. Every icon button style in the library
+    /// cannot be enumerated by hand, so the behaviour is switched on here: whichever style draws the
+    /// button, a button that is named by an icon gets its accessible name from its tooltip.
+    /// </summary>
+    private static void OnKindChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is System.Windows.Controls.Primitives.ButtonBase && e.NewValue is IconKind kind && kind != IconKind.None)
+            AccessibleName.SetFromToolTip(d, true);
+    }
 
     public static IconKind GetKind(DependencyObject obj) => (IconKind)obj.GetValue(KindProperty);
     public static void SetKind(DependencyObject obj, IconKind value) => obj.SetValue(KindProperty, value);

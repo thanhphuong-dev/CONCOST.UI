@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,11 +37,11 @@ public partial class ShowcaseViewModel
         var day = DateTime.Today;
         var bookings = new List<SchedulerItem>
         {
-            new() { Title = "Giao ban công trường", Start = day.AddHours(7.5), End = day.AddHours(8.5), Resource = "Phòng họp" },
-            new() { Title = "Duyệt bản vẽ kết cấu", Start = day.AddHours(9), End = day.AddHours(11), Resource = "Ban A" },
-            new() { Title = "Kiểm tra hiện trường", Start = day.AddHours(10), End = day.AddHours(11.5), Resource = "Khu B" },
-            new() { Title = "Họp chủ đầu tư", Start = day.AddHours(14), End = day.AddHours(15.5) },
-            new() { Title = "Nghiệm thu cốt thép", Start = day.AddHours(16), End = day.AddHours(17) }
+            new() { Title = Loc.T("Giao ban công trường", "Site handover meeting"), Start = day.AddHours(7.5), End = day.AddHours(8.5), Resource = Loc.T("Phòng họp", "Meeting room") },
+            new() { Title = Loc.T("Duyệt bản vẽ kết cấu", "Review structural drawings"), Start = day.AddHours(9), End = day.AddHours(11), Resource = "Ban A" },
+            new() { Title = Loc.T("Kiểm tra hiện trường", "Site inspection"), Start = day.AddHours(10), End = day.AddHours(11.5), Resource = "Khu B" },
+            new() { Title = Loc.T("Họp chủ đầu tư", "Client meeting"), Start = day.AddHours(14), End = day.AddHours(15.5) },
+            new() { Title = Loc.T("Nghiệm thu cốt thép", "Rebar acceptance"), Start = day.AddHours(16), End = day.AddHours(17) }
         };
 
         var scheduler = new Scheduler
@@ -55,49 +55,49 @@ public partial class ShowcaseViewModel
         };
 
         var status = DemoCaption();
-        status.Text = "Chọn một lịch hẹn để xem chi tiết bên dưới.";
+        status.Text = Loc.T("Chọn một lịch hẹn để xem chi tiết bên dưới.", "Select an appointment to see its details below.");
 
         scheduler.SelectionChanged += (_, e) =>
         {
             status.Text = e.Item is null
-                ? "Chưa chọn lịch hẹn nào."
+                ? Loc.T("Chưa chọn lịch hẹn nào.", "No appointment selected.")
                 : $"{e.Item.Start:HH:mm} - {e.Item.End:HH:mm}  {e.Item.Title}";
         };
 
         var actions = new WrapPanel();
-        actions.Children.Add(DemoButton("Hôm trước", (_, _) => scheduler.ChangeDay(-1)));
-        actions.Children.Add(DemoButton("Hôm nay", (_, _) => scheduler.ChangeDay(0)));
-        actions.Children.Add(DemoButton("Hôm sau", (_, _) => scheduler.ChangeDay(1)));
+        actions.Children.Add(DemoButton(Loc.T("Hôm trước", "Previous day"), (_, _) => scheduler.ChangeDay(-1)));
+        actions.Children.Add(DemoButton(Loc.T("Hôm nay", "Today"), (_, _) => scheduler.ChangeDay(0)));
+        actions.Children.Add(DemoButton(Loc.T("Hôm sau", "Next day"), (_, _) => scheduler.ChangeDay(1)));
 
         var root = new StackPanel();
         root.Children.Add(actions);
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Hai cuộc hẹn trùng giờ chia đôi cột thay vì chồng lên nhau",
+            Loc.T("Hai cuộc hẹn trùng giờ chia đôi cột thay vì chồng lên nhau", "Two overlapping appointments split the column instead of stacking"),
             scheduler,
             xaml: "<controls:Scheduler Date=\"{Binding SelectedDay}\"\n" +
                   "                    StartHour=\"7\" EndHour=\"18\"\n" +
                   "                    HourHeight=\"44\"\n" +
                   "                    ItemsSource=\"{Binding Bookings}\" />",
             csharp: "scheduler.SelectionChanged += (_, e) =>\n" +
-                    "    details.Text = e.Item is null ? \"chưa chọn\" : e.Item.Title;\n\n" +
+                    Loc.T("    details.Text = e.Item is null ? \"chưa chọn\" : e.Item.Title;\n\n", "    details.Text = e.Item is null ? \"nothing selected\" : e.Item.Title;\n\n") +
                     "scheduler.ChangeDay(-1);\n\n" +
-                    "Rect bounds = scheduler.GetItemBounds(booking);   // Rect.Empty khi ngoài khung giờ"));
+                    Loc.T("Rect bounds = scheduler.GetItemBounds(booking);   // Rect.Empty khi ngoài khung giờ", "Rect bounds = scheduler.GetItemBounds(booking);   // Rect.Empty outside the visible range")));
 
         return root;
     }
 
     private object CreateKanbanDemo()
     {
-        var todo = new KanbanColumn { Header = "Cần làm", Maximum = 6 };
-        var doing = new KanbanColumn { Header = "Đang làm", Accent = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)) };
-        var done = new KanbanColumn { Header = "Hoàn tất", Accent = new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E)) };
+        var todo = new KanbanColumn { Header = Loc.T("Cần làm", "To do"), Maximum = 6 };
+        var doing = new KanbanColumn { Header = Loc.T("Đang làm", "In progress"), Accent = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)) };
+        var done = new KanbanColumn { Header = Loc.T("Hoàn tất", "Done"), Accent = new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E)) };
 
-        todo.Items.Add(new KanbanCard { Title = "Mặt bằng tầng 3", Chip = "Kiến trúc" });
-        todo.Items.Add(new KanbanCard { Title = "Thống kê thép móng", Chip = "Kết cấu" });
-        doing.Items.Add(new KanbanCard { Title = "Chi tiết cầu thang", Chip = "Kết cấu" });
-        doing.Items.Add(new KanbanCard { Title = "Bảng tiến độ tháng 3", Chip = "Quản lý" });
-        done.Items.Add(new KanbanCard { Title = "Khảo sát địa hình", Chip = "Hiện trường", IsDone = true });
+        todo.Items.Add(new KanbanCard { Title = Loc.T("Mặt bằng tầng 3", "Level 3 plan"), Chip = Loc.T("Kiến trúc", "Architecture") });
+        todo.Items.Add(new KanbanCard { Title = Loc.T("Thống kê thép móng", "Foundation rebar schedule"), Chip = Loc.T("Kết cấu", "Structure") });
+        doing.Items.Add(new KanbanCard { Title = Loc.T("Chi tiết cầu thang", "Stair details"), Chip = Loc.T("Kết cấu", "Structure") });
+        doing.Items.Add(new KanbanCard { Title = Loc.T("Bảng tiến độ tháng 3", "March programme"), Chip = Loc.T("Quản lý", "Management") });
+        done.Items.Add(new KanbanCard { Title = Loc.T("Khảo sát địa hình", "Topographic survey"), Chip = Loc.T("Hiện trường", "Site"), IsDone = true });
 
         var board = new KanbanBoard { Height = 400 };
         board.Columns.Add(todo);
@@ -105,19 +105,19 @@ public partial class ShowcaseViewModel
         board.Columns.Add(done);
 
         var status = DemoCaption();
-        status.Text = "Kéo một thẻ sang cột khác, hoặc dùng nút bên dưới.";
+        status.Text = Loc.T("Kéo một thẻ sang cột khác, hoặc dùng nút bên dưới.", "Drag a card to another column, or use the buttons below.");
 
         board.CardMoved += (_, e) =>
-            status.Text = $"Đã chuyển \"{e.Card.Title}\": {e.FromColumn?.Header} -> {e.ToColumn.Header} (vị trí {e.ToIndex})";
+            status.Text = Loc.F("Đã chuyển \"{0}\": {1} -> {2} (vị trí {3})", "Moved \"{0}\": {1} -> {2} (position {3})", e.Card.Title, e.FromColumn?.Header, e.ToColumn.Header, e.ToIndex);
 
         var actions = new WrapPanel();
-        actions.Children.Add(DemoButton("Chuyển thẻ đầu tiên sang Hoàn tất", (_, _) =>
+        actions.Children.Add(DemoButton(Loc.T("Chuyển thẻ đầu tiên sang Hoàn tất", "Move the first card to Done"), (_, _) =>
         {
             if (todo.Items.Count == 0) return;
 
             if (todo.Items[0] is KanbanCard card) board.MoveCard(card, done, done.Items.Count);
         }));
-        actions.Children.Add(DemoButton("Xáo thứ tự cột Đang làm", (_, _) =>
+        actions.Children.Add(DemoButton(Loc.T("Xáo thứ tự cột Đang làm", "Shuffle the In-progress column"), (_, _) =>
         {
             if (doing.Items.Count < 2) return;
 
@@ -128,18 +128,18 @@ public partial class ShowcaseViewModel
         root.Children.Add(actions);
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Cột, thẻ và giới hạn",
+            Loc.T("Cột, thẻ và giới hạn", "Columns, cards and limits"),
             board,
             xaml: "<controls:KanbanBoard>\n" +
-                  "    <controls:KanbanColumn Header=\"Cần làm\" Maximum=\"6\">\n" +
-                  "        <controls:KanbanCard Title=\"Mặt bằng tầng 3\" Chip=\"Kiến trúc\" />\n" +
+                  Loc.T("    <controls:KanbanColumn Header=\"Cần làm\" Maximum=\"6\">\n", "    <controls:KanbanColumn Header=\"To do\" Maximum=\"6\">\n") +
+                  Loc.T("        <controls:KanbanCard Title=\"Mặt bằng tầng 3\" Chip=\"Kiến trúc\" />\n", "        <controls:KanbanCard Title=\"Level 3 plan\" Chip=\"Architecture\" />\n") +
                   "    </controls:KanbanColumn>\n" +
-                  "    <controls:KanbanColumn Header=\"Đang làm\" Accent=\"#F59E0B\" />\n" +
+                  Loc.T("    <controls:KanbanColumn Header=\"Đang làm\" Accent=\"#F59E0B\" />\n", "    <controls:KanbanColumn Header=\"In progress\" Accent=\"#F59E0B\" />\n") +
                   "</controls:KanbanBoard>",
             csharp: "board.CardMoved += (_, e) =>\n" +
                     "    taskService.Move(e.Card.Title, e.ToColumn.Header, e.ToIndex);\n\n" +
                     "if (board.MoveCard(card, doneColumn, 0))\n" +
-                    "    status.Text = \"đã chuyển\";"));
+                    Loc.T("    status.Text = \"đã chuyển\";", "    status.Text = \"moved\";")));
 
         return root;
     }
@@ -195,20 +195,20 @@ public partial class ShowcaseViewModel
         var viewer = new ImageViewer { Source = CreatePlanSheet(), Height = 380, MinZoom = 0.25, MaxZoom = 8 };
 
         var status = DemoCaption();
-        status.Text = "Lăn chuột để zoom tại con trỏ, giữ chuột trái để kéo.";
+        status.Text = Loc.T("Lăn chuột để zoom tại con trỏ, giữ chuột trái để kéo.", "Scroll to zoom at the cursor, hold the left button to pan.");
 
         viewer.MouseWheel += (_, e) => viewer.ZoomAt(e.GetPosition(viewer), e.Delta > 0 ? 1.2 : 1 / 1.2);
 
         var actions = new WrapPanel();
-        actions.Children.Add(DemoButton("Vừa khung", (_, _) => { viewer.Fit(); status.Text = $"Zoom {viewer.Zoom:P0}"; }));
+        actions.Children.Add(DemoButton(Loc.T("Vừa khung", "Fit"), (_, _) => { viewer.Fit(); status.Text = $"Zoom {viewer.Zoom:P0}"; }));
         actions.Children.Add(DemoButton("100%", (_, _) => { viewer.Reset(); status.Text = "Zoom 100%"; }));
-        actions.Children.Add(DemoButton("Xoay 90°", (_, _) => { viewer.RotateClockwise(); status.Text = $"Góc {viewer.Rotation}°"; }));
+        actions.Children.Add(DemoButton("Xoay 90°", (_, _) => { viewer.RotateClockwise(); status.Text = Loc.F("Góc {0}°", "Angle {0}°", viewer.Rotation); }));
 
         var root = new StackPanel();
         root.Children.Add(actions);
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Zoom giữ điểm dưới con trỏ đứng yên",
+            Loc.T("Zoom giữ điểm dưới con trỏ đứng yên", "Zoom keeps the point under the cursor fixed"),
             viewer,
             xaml: "<controls:ImageViewer Source=\"{Binding SheetImage}\"\n" +
                   "                    MinZoom=\"0.25\" MaxZoom=\"8\" />",
@@ -221,8 +221,8 @@ public partial class ShowcaseViewModel
 
     private object CreateCodeEditorDemo()
     {
-        const string sample =
-            "// Bảng khối lượng thép cho dầm D1\n" +
+        string sample =
+            Loc.T("// Bảng khối lượng thép cho dầm D1\n", "// Rebar schedule for beam D1") +
             "public sealed class RebarSchedule\n" +
             "{\n" +
             "    public decimal Weight(string grade, double diameter, double length)\n" +
@@ -242,20 +242,20 @@ public partial class ShowcaseViewModel
         };
 
         var status = DemoCaption();
-        status.Text = $"Dòng: {editor.LineCount}. Dùng nút bên dưới để nhảy tới dòng 6.";
+        status.Text = Loc.F("Dòng: {0}. Dùng nút bên dưới để nhảy tới dòng 6.", "Line: {0}. Use the button below to jump to line 6.", editor.LineCount);
 
         var actions = new WrapPanel();
-        actions.Children.Add(DemoButton("Tới dòng 6", (_, _) => { editor.GoToLine(6); status.Text = $"Dòng {editor.CaretLine}"; }));
+        actions.Children.Add(DemoButton(Loc.T("Tới dòng 6", "Go to line 6"), (_, _) => { editor.GoToLine(6); status.Text = Loc.F("Dòng {0}", "Line {0}", editor.CaretLine); }));
         actions.Children.Add(DemoButton("Sang SQL", (_, _) => editor.Syntax = CodeLanguage.Sql));
         actions.Children.Add(DemoButton("Sang XAML", (_, _) => editor.Syntax = CodeLanguage.Xaml));
-        actions.Children.Add(DemoButton("Tắt tô màu", (_, _) => editor.HighlightSyntax = false));
-        actions.Children.Add(DemoButton("Bật tô màu", (_, _) => editor.HighlightSyntax = true));
+        actions.Children.Add(DemoButton(Loc.T("Tắt tô màu", "Disable highlighting"), (_, _) => editor.HighlightSyntax = false));
+        actions.Children.Add(DemoButton(Loc.T("Bật tô màu", "Enable highlighting"), (_, _) => editor.HighlightSyntax = true));
 
         var root = new StackPanel();
         root.Children.Add(actions);
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Tô màu theo ngôn ngữ, số dòng và Tab",
+            Loc.T("Tô màu theo ngôn ngữ, số dòng và Tab", "Colouring by language, line numbers and Tab"),
             editor,
             xaml: "<controls:CodeEditor Syntax=\"CSharp\"\n" +
                   "                   Text=\"{Binding ScriptText, UpdateSourceTrigger=PropertyChanged}\"\n" +
@@ -270,44 +270,44 @@ public partial class ShowcaseViewModel
 
     private object CreateMarkdownViewerDemo()
     {
-        const string markdown =
-            "# Biên bản nghiệm thu\n" +
+        string markdown =
+            Loc.T("# Biên bản nghiệm thu\n", "# Acceptance record") +
             "\n" +
-            "**Công trình:** Chung cư An Phú - Lô B\n" +
-            "**Ngày:** 01/11/2026\n" +
+            Loc.T("**Công trình:** Chung cư An Phú - Lô B\n", "**Project:** An Phu Apartments - Block B") +
+            Loc.T("**Ngày:** 01/11/2026\n", "**Date:** 01/11/2026\n") +
             "\n" +
-            "## Nội dung kiểm tra\n" +
+            Loc.T("## Nội dung kiểm tra\n", "## Inspection items") +
             "\n" +
-            "1. Cao độ đáy móng so với thiết kế\n" +
-            "2. Đường kính và khoảng cách cốt thép\n" +
-            "3. Lớp bê tông bảo vệ\n" +
+            Loc.T("1. Cao độ đáy móng so với thiết kế\n", "1. Foundation base level against the design") +
+            Loc.T("2. Đường kính và khoảng cách cốt thép\n", "2. Rebar diameter and spacing") +
+            Loc.T("3. Lớp bê tông bảo vệ\n", "3. Concrete cover") +
             "\n" +
-            "> Sai lệch cho phép theo TCVN 4453:2012 là ±10 mm.\n" +
+            Loc.T("> Sai lệch cho phép theo TCVN 4453:2012 là ±10 mm.\n", "> The tolerance allowed by TCVN 4453:2012 is ±10 mm.\n") +
             "\n" +
             "```\n" +
             "D1: 8Ø20 + Ø8a150\n" +
             "D2: 6Ø18 + Ø8a200\n" +
             "```\n" +
             "\n" +
-            "Chi tiết xem tại [tiêu chuẩn nghiệm thu](https://example.com/tcvn4453).\n" +
+            Loc.T("Chi tiết xem tại [tiêu chuẩn nghiệm thu](https://example.com/tcvn4453).\n", "See the [acceptance standard](https://example.com/tcvn4453) for details.\n") +
             "\n" +
             "---\n" +
             "\n" +
-            "Kết luận: **đạt** yêu cầu nghiệm thu.";
+            Loc.T("Kết luận: **đạt** yêu cầu nghiệm thu.", "Conclusion: acceptance requirements **met**.");
 
         var viewer = new MarkdownViewer { Markdown = markdown, Height = 380 };
 
         var status = DemoCaption();
-        status.Text = $"{viewer.LinkCount} liên kết trong tài liệu.";
+        status.Text = Loc.F("{0} liên kết trong tài liệu.", "{0} links in the document.", viewer.LinkCount);
 
         var root = new StackPanel();
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Markdown thành FlowDocument",
+            Loc.T("Markdown thành FlowDocument", "Markdown to FlowDocument"),
             viewer,
             xaml: "<controls:MarkdownViewer Markdown=\"{Binding ReleaseNotes}\" />",
             csharp: "var document = MarkdownParser.Parse(text);\n" +
-                    "viewer.Markdown = text;      // tự rebuild\n" +
+                    Loc.T("viewer.Markdown = text;      // tự rebuild\n", "viewer.Markdown = text;      // rebuilds itself") +
                     "int links = viewer.LinkCount;"));
 
         return root;
@@ -319,7 +319,7 @@ public partial class ShowcaseViewModel
 
         var target = new Button
         {
-            Content = "Lưu bản vẽ",
+            Content = Loc.T("Lưu bản vẽ", "Save drawing"),
             Width = 120,
             Height = 34,
             HorizontalAlignment = HorizontalAlignment.Left,
@@ -333,7 +333,7 @@ public partial class ShowcaseViewModel
         var mark = new CoachMark
         {
             Target = target,
-            Title = "Nút lưu nằm ở đây",
+            Title = Loc.T("Nút lưu nằm ở đây", "The save button lives here"),
             StepIndex = 1,
             StepCount = 3,
             Placement = CoachMarkPlacement.Below
@@ -342,25 +342,25 @@ public partial class ShowcaseViewModel
         host.Children.Add(mark);
 
         var status = DemoCaption();
-        status.Text = "Thẻ tự lật lên trên khi target sát đáy.";
+        status.Text = Loc.T("Thẻ tự lật lên trên khi target sát đáy.", "The card flips above when the target is near the bottom.");
 
-        mark.Next += (_, _) => status.Text = "Next: host chuyển sang control kế tiếp.";
-        mark.Dismissed += (_, _) => status.Text = "Đã đóng hướng dẫn.";
+        mark.Next += (_, _) => status.Text = Loc.T("Next: host chuyển sang control kế tiếp.", "Next: the host moves to the next control.");
+        mark.Dismissed += (_, _) => status.Text = Loc.T("Đã đóng hướng dẫn.", "Guide dismissed.");
 
         var actions = new WrapPanel();
-        actions.Children.Add(DemoButton("Hiện lại", (_, _) => { mark.Visibility = Visibility.Visible; status.Text = "Đang hướng dẫn."; }));
-        actions.Children.Add(DemoButton("Bước tiếp", (_, _) => mark.Advance()));
+        actions.Children.Add(DemoButton(Loc.T("Hiện lại", "Show again"), (_, _) => { mark.Visibility = Visibility.Visible; status.Text = Loc.T("Đang hướng dẫn.", "Guide running."); }));
+        actions.Children.Add(DemoButton(Loc.T("Bước tiếp", "Next step"), (_, _) => mark.Advance()));
 
         var root = new StackPanel();
         root.Children.Add(actions);
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Thẻ chỉ dẫn bám theo target",
+            Loc.T("Thẻ chỉ dẫn bám theo target", "Coach mark anchored to its target"),
             host,
             xaml: "<Grid>\n" +
-                  "    <Button x:Name=\"saveButton\" Content=\"Lưu bản vẽ\" />\n" +
+                  Loc.T("    <Button x:Name=\"saveButton\" Content=\"Lưu bản vẽ\" />\n", "    <Button x:Name=\"saveButton\" Content=\"Save drawing\" />\n") +
                   "    <controls:CoachMark Target=\"{Binding ElementName=saveButton}\"\n" +
-                  "                        Title=\"Nút lưu nằm ở đây\"\n" +
+                  Loc.T("                        Title=\"Nút lưu nằm ở đây\"\n", "                        Title=\"The save button lives here\"\n") +
                   "                        StepIndex=\"1\" StepCount=\"3\" />\n" +
                   "</Grid>",
             csharp: "mark.Next += (_, _) => ShowStep(++index);\n" +
@@ -390,19 +390,19 @@ public partial class ShowcaseViewModel
         };
 
         var status = DemoCaption();
-        status.Text = "Click hoặc kéo trong bản đồ để dời khung nhìn.";
+        status.Text = Loc.T("Click hoặc kéo trong bản đồ để dời khung nhìn.", "Click or drag in the map to move the viewport.");
 
-        map.ViewportChanged += (_, e) => status.Text = $"Khung nhìn: {e.Viewport.X:0} , {e.Viewport.Y:0} — {e.Viewport.Width:0}×{e.Viewport.Height:0}";
+        map.ViewportChanged += (_, e) => status.Text = Loc.F("Khung nhìn: {0:0} , {1:0} — {2:0}×{3:0}", "Viewport: {0:0} , {1:0} — {2:0}×{3:0}", e.Viewport.X, e.Viewport.Y, e.Viewport.Width, e.Viewport.Height);
 
         var actions = new WrapPanel();
-        actions.Children.Add(DemoButton("Giữa công trình", (_, _) => map.CentreOn(new Point(6000, 4000))));
-        actions.Children.Add(DemoButton("Thu nhỏ khung nhìn", (_, _) => map.Viewport = new Rect(4000, 3200, 1800, 1200)));
+        actions.Children.Add(DemoButton(Loc.T("Giữa công trình", "Building centre"), (_, _) => map.CentreOn(new Point(6000, 4000))));
+        actions.Children.Add(DemoButton(Loc.T("Thu nhỏ khung nhìn", "Shrink viewport"), (_, _) => map.Viewport = new Rect(4000, 3200, 1800, 1200)));
 
         var root = new StackPanel();
         root.Children.Add(actions);
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Bản đồ thu nhỏ và khung nhìn",
+            Loc.T("Bản đồ thu nhỏ và khung nhìn", "Mini map and viewport"),
             map,
             xaml: "<controls:MiniMap ContentBounds=\"0,0,12000,8000\"\n" +
                   "                Viewport=\"{Binding CameraRect}\"\n" +
@@ -420,18 +420,18 @@ public partial class ShowcaseViewModel
         viewer.LoadBox(new Point3D(0, 0, 0), 12, 8, 5);
 
         var status = DemoCaption();
-        status.Text = "Kéo để orbit, lăn chuột để zoom.";
+        status.Text = Loc.T("Kéo để orbit, lăn chuột để zoom.", "Drag to orbit, scroll to zoom.");
 
         var actions = new WrapPanel();
-        actions.Children.Add(DemoButton("Góc mặc định", (_, _) => { viewer.ResetView(); status.Text = "Đã đặt lại góc nhìn."; }));
-        actions.Children.Add(DemoButton("Xoay trái", (_, _) => { viewer.Orbit(-15, 0); status.Text = $"Yaw {viewer.Yaw:0}°"; }));
-        actions.Children.Add(DemoButton("Xoay phải", (_, _) => { viewer.Orbit(15, 0); status.Text = $"Yaw {viewer.Yaw:0}°"; }));
+        actions.Children.Add(DemoButton(Loc.T("Góc mặc định", "Default angle"), (_, _) => { viewer.ResetView(); status.Text = Loc.T("Đã đặt lại góc nhìn.", "View reset."); }));
+        actions.Children.Add(DemoButton(Loc.T("Xoay trái", "Rotate left"), (_, _) => { viewer.Orbit(-15, 0); status.Text = $"Yaw {viewer.Yaw:0}°"; }));
+        actions.Children.Add(DemoButton(Loc.T("Xoay phải", "Rotate right"), (_, _) => { viewer.Orbit(15, 0); status.Text = $"Yaw {viewer.Yaw:0}°"; }));
 
         var root = new StackPanel();
         root.Children.Add(actions);
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Khung dây 3D chiếu phối cảnh",
+            Loc.T("Khung dây 3D chiếu phối cảnh", "3D wireframe with perspective projection"),
             viewer,
             xaml: "<controls:ModelViewer3D Yaw=\"-35\" Pitch=\"-20\"\n" +
                   "                    Zoom=\"1.1\" ShowAxes=\"True\" />",
@@ -451,41 +451,41 @@ public partial class ShowcaseViewModel
             HorizontalAlignment = HorizontalAlignment.Left,
             AppName = "CONCOST.UI",
             Version = "1.3.0",
-            Tagline = "Bộ control WPF cho ứng dụng xây dựng",
-            Status = "Đang nạp tài nguyên...",
+            Tagline = Loc.T("Bộ control WPF cho ứng dụng xây dựng", "WPF controls for construction apps"),
+            Status = Loc.T("Đang nạp tài nguyên...", "Loading resources..."),
             Progress = 20,
             Logo = CreatePlanSheet()
         };
 
         var status = DemoCaption();
-        status.Text = "Bấm Tiến trình để thấy thanh chạy.";
+        status.Text = Loc.T("Bấm Tiến trình để thấy thanh chạy.", "Press Progress to see the bar run.");
 
-        splash.Dismissed += (_, _) => status.Text = "Đã đóng - gọi Show() để hiện lại.";
+        splash.Dismissed += (_, _) => status.Text = Loc.T("Đã đóng - gọi Show() để hiện lại.", "Dismissed — call Show() to bring it back.");
 
         var actions = new WrapPanel();
-        actions.Children.Add(DemoButton("Tiến trình +20", (_, _) =>
+        actions.Children.Add(DemoButton(Loc.T("Tiến trình +20", "Progress +20"), (_, _) =>
         {
             double next = splash.Progress + 20;
-            splash.Report(next, next >= 100 ? "Hoàn tất khởi động" : "Đang nạp tài nguyên...");
-            status.Text = $"Tiến trình: {splash.Progress:0}%";
+            splash.Report(next, next >= 100 ? Loc.T("Hoàn tất khởi động", "Finish startup") : Loc.T("Đang nạp tài nguyên...", "Loading resources..."));
+            status.Text = Loc.F("Tiến trình: {0:0}%", "Progress: {0:0}%", splash.Progress);
         }));
-        actions.Children.Add(DemoButton("Chờ không rõ", (_, _) => { splash.IsIndeterminate = true; status.Text = "Chế độ chờ."; }));
-        actions.Children.Add(DemoButton("Đóng", (_, _) => splash.Dismiss()));
-        actions.Children.Add(DemoButton("Hiện lại", (_, _) => splash.Show()));
+        actions.Children.Add(DemoButton(Loc.T("Chờ không rõ", "Indeterminate"), (_, _) => { splash.IsIndeterminate = true; status.Text = Loc.T("Chế độ chờ.", "Busy mode."); }));
+        actions.Children.Add(DemoButton(Loc.T("Đóng", "Close"), (_, _) => splash.Dismiss()));
+        actions.Children.Add(DemoButton(Loc.T("Hiện lại", "Show again"), (_, _) => splash.Show()));
 
         var root = new StackPanel();
         root.Children.Add(actions);
         root.Children.Add(status);
         root.Children.Add(DemoSection(
-            "Thẻ khởi động có tiến trình",
+            Loc.T("Thẻ khởi động có tiến trình", "Splash screen with progress"),
             splash,
             xaml: "<controls:SplashScreen AppName=\"CONCOST.UI\"\n" +
                   "                   Version=\"1.3.0\"\n" +
-                  "                   Status=\"Đang nạp tài nguyên...\"\n" +
+                  Loc.T("                   Status=\"Đang nạp tài nguyên...\"\n", "                   Status=\"Loading resources...\"\n") +
                   "                   Progress=\"20\" />",
-            csharp: "splash.Report(65, \"Đang nạp bản vẽ\");\n" +
+            csharp: Loc.T("splash.Report(65, \"Đang nạp bản vẽ\");\n", "splash.Report(65, \"Loading the drawing\");\n") +
                     "splash.IsIndeterminate = true;\n" +
-                    "splash.Dismiss();      // hoặc Dismiss(false) khi tắt animation"));
+                    Loc.T("splash.Dismiss();      // hoặc Dismiss(false) khi tắt animation", "splash.Dismiss();      // or Dismiss(false) with animation off")));
 
         return root;
     }

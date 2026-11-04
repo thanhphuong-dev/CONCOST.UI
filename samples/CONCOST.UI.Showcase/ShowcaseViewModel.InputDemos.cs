@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,15 +16,15 @@ public partial class ShowcaseViewModel
         var zone = new FileDropZone
         {
             Filter = "*.dwg;*.dxf;*.xlsx",
-            Caption = "Kéo tệp bản vẽ vào đây",
-            Hint = "DWG, DXF hoặc XLSX — hoặc bấm để chọn",
+            Caption = Loc.T("Kéo tệp bản vẽ vào đây", "Drop a drawing file here"),
+            Hint = Loc.T("DWG, DXF hoặc XLSX — hoặc bấm để chọn", "DWG, DXF or XLSX — or click to browse"),
             Width = 330,
             HorizontalAlignment = HorizontalAlignment.Left
         };
 
         var count = new TextBlock
         {
-            Text = "Chưa có tệp nào.",
+            Text = Loc.T("Chưa có tệp nào.", "No files yet."),
             FontSize = 12,
             Margin = new Thickness(0, 0, 0, 8)
         };
@@ -41,13 +41,13 @@ public partial class ShowcaseViewModel
 
         zone.FilesDropped += (_, _) =>
         {
-            count.Text = $"Đã nhận {zone.Files.Count} tệp (lọc *.dwg;*.dxf;*.xlsx):";
+            count.Text = Loc.F("Đã nhận {0} tệp (lọc *.dwg;*.dxf;*.xlsx):", "Received {0} files (filter *.dwg;*.dxf;*.xlsx):", zone.Files.Count);
             log.Text = string.Join(Environment.NewLine, zone.Files.Select(System.IO.Path.GetFileName));
         };
 
         zone.BrowseRequested += (_, _) =>
         {
-            count.Text = "Host sẽ mở hộp chọn tệp ở đây rồi gọi zone.AddFiles(...).";
+            count.Text = Loc.T("Host sẽ mở hộp chọn tệp ở đây rồi gọi zone.AddFiles(...).", "The host opens a file dialog here and then calls zone.AddFiles(...).");
         };
 
         // The card is only a target: DropTargetHighlight draws the outline, while the card keeps
@@ -65,7 +65,7 @@ public partial class ShowcaseViewModel
 
         var cardText = new TextBlock
         {
-            Text = "Thẻ này chỉ sáng viền khi có tệp kéo qua — layout không đổi.",
+            Text = Loc.T("Thẻ này chỉ sáng viền khi có tệp kéo qua — layout không đổi.", "This card only lights its border while a file is dragged over it — the layout never moves."),
             FontSize = 11.5,
             TextWrapping = TextWrapping.Wrap
         };
@@ -85,7 +85,7 @@ public partial class ShowcaseViewModel
 
         ghostButton.Click += (_, _) =>
         {
-            DragGhost.Show("Dầm D1 (300×600)", IconKind.Layers);
+            DragGhost.Show(Loc.T("Dầm D1 (300×600)", "Beam D1 (300×600)"), IconKind.Layers);
             DragGhost.Move(ghostButton, new Point(ghostButton.ActualWidth, ghostButton.ActualHeight / 2));
 
             var timer = new System.Windows.Threading.DispatcherTimer
@@ -125,18 +125,18 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Vùng thả tệp, viền gợi ý và ghost",
+            Loc.T("Vùng thả tệp, viền gợi ý và ghost", "Drop zone, hint border and ghost"),
             body,
             xaml: "<controls:FileDropZone Filter=\"*.dwg;*.dxf\"\n" +
-                  "    Caption=\"Kéo tệp vào đây\"\n" +
+                  Loc.T("    Caption=\"Kéo tệp vào đây\"\n", "    Caption=\"Drop a file here\"\n") +
                   "    FilesDropped=\"OnFilesDropped\" />\n\n" +
-                  "<!-- Viền gợi ý cho bất kỳ phần tử nào -->\n" +
+                  Loc.T("<!-- Viền gợi ý cho bất kỳ phần tử nào -->\n", "<!-- Hint border for any element -->\n") +
                   "<Border controls:DropTargetHighlight.IsEnabled=\"True\" />",
             csharp: "zone.FilesDropped += (_, e) => Load(e.Files);\n\n" +
-                    "// Viền nét đứt khi có drag đi qua, không đổi layout\n" +
+                    Loc.T("// Viền nét đứt khi có drag đi qua, không đổi layout\n", "// Dashed border while a drag passes over, layout unchanged\n") +
                     "DropTargetHighlight.SetIsEnabled(card, true);\n\n" +
-                    "// Ghost theo con trỏ\n" +
-                    "DragGhost.Show(\"Dầm D1\", IconKind.Layers);\n" +
+                    Loc.T("// Ghost theo con trỏ\n", "// Ghost following the pointer\n") +
+                    Loc.T("DragGhost.Show(\"Dầm D1\", IconKind.Layers);\n", "DragGhost.Show(\"Beam D1\", IconKind.Layers);\n") +
                     "DragGhost.Move(this, e.GetPosition(this));\n" +
                     "DragGhost.Hide();"));
 

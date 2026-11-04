@@ -6,6 +6,7 @@ const DOCS_NAV = [
             { id: "intro", name: "Giới thiệu & Cài đặt", nameEn: "Introduction & Setup", icon: "fa-book-open" },
             { id: "class-library", name: "Plugin DLL (Revit/AutoCAD)", nameEn: "Plugin DLL (Revit/AutoCAD)", icon: "fa-puzzle-piece" },
             { id: "theming", name: "Theme & Design Tokens", icon: "fa-palette" },
+            { id: "themeauto", name: "Theme Auto (host)", nameEn: "Theme Auto (host)", icon: "fa-circle-half-stroke", badge: "Mới", badgeEn: "New" },
             { id: "brutaltheme", name: "Preset Brutal", icon: "fa-swatchbook", badge: "Mới", badgeEn: "New" },
             { id: "reducedmotion", name: "Reduced motion", icon: "fa-universal-access", badge: "Mới", badgeEn: "New" },
             { id: "attached-props", name: "Attached Properties", icon: "fa-wand-magic-sparkles" },
@@ -215,6 +216,8 @@ const DOCS_NAV = [
         title: "Thời gian", titleEn: "Time",
         items: [
             { id: "clock", name: "Clock", icon: "fa-clock" },
+            { id: "calendar", name: "Calendar", icon: "fa-calendar", badge: "Mới", badgeEn: "New" },
+            { id: "datepicker", name: "DatePicker", icon: "fa-calendar-check", badge: "Mới", badgeEn: "New" },
             { id: "calendarwithclock", name: "CalendarWithClock", icon: "fa-calendar-days", badge: "Mới", badgeEn: "New" }
         ]
     }

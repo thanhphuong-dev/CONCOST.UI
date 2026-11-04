@@ -41,11 +41,52 @@ public class PropertiesPalette : Grid
     private readonly Grid _typeRow;
     private readonly Grid _body;
     private readonly StackPanel _emptyState;
+    private readonly TextBlock _emptyHint;
     private readonly List<PropertyItem> _items = new();
 
     private object? _target;
     private PropertyItem? _lastTouched;
     private bool _syncing;
+
+    /// <summary>Identifies the <see cref="EmptyTitle"/> property.</summary>
+    public static readonly DependencyProperty EmptyTitleProperty =
+        DependencyProperty.Register(nameof(EmptyTitle), typeof(string), typeof(PropertiesPalette),
+            new PropertyMetadata("Nothing selected", OnChromeChanged));
+
+    /// <summary>Identifies the <see cref="EmptySubtitle"/> property.</summary>
+    public static readonly DependencyProperty EmptySubtitleProperty =
+        DependencyProperty.Register(nameof(EmptySubtitle), typeof(string), typeof(PropertiesPalette),
+            new PropertyMetadata("Select an element to edit its parameters.", OnChromeChanged));
+
+    /// <summary>Identifies the <see cref="EmptyHint"/> property.</summary>
+    public static readonly DependencyProperty EmptyHintProperty =
+        DependencyProperty.Register(nameof(EmptyHint), typeof(string), typeof(PropertiesPalette),
+            new PropertyMetadata("Pick a wall in the drawing to see its type, dimensions and constraints.", OnChromeChanged));
+
+    /// <summary>Identifies the <see cref="SearchPlaceholder"/> property.</summary>
+    public static readonly DependencyProperty SearchPlaceholderProperty =
+        DependencyProperty.Register(nameof(SearchPlaceholder), typeof(string), typeof(PropertiesPalette),
+            new PropertyMetadata("Search parameters", OnChromeChanged));
+
+    /// <summary>Identifies the <see cref="EditTypeText"/> property.</summary>
+    public static readonly DependencyProperty EditTypeTextProperty =
+        DependencyProperty.Register(nameof(EditTypeText), typeof(string), typeof(PropertiesPalette),
+            new PropertyMetadata("Edit type", OnChromeChanged));
+
+    /// <summary>Identifies the <see cref="TypeToolTip"/> property.</summary>
+    public static readonly DependencyProperty TypeToolTipProperty =
+        DependencyProperty.Register(nameof(TypeToolTip), typeof(string), typeof(PropertiesPalette),
+            new PropertyMetadata("Instance type", OnChromeChanged));
+
+    /// <summary>Identifies the <see cref="ResetToolTip"/> property.</summary>
+    public static readonly DependencyProperty ResetToolTipProperty =
+        DependencyProperty.Register(nameof(ResetToolTip), typeof(string), typeof(PropertiesPalette),
+            new PropertyMetadata("Reset the last edited parameter to its default", OnChromeChanged));
+
+    /// <summary>Identifies the <see cref="ShowSearch"/> property.</summary>
+    public static readonly DependencyProperty ShowSearchProperty =
+        DependencyProperty.Register(nameof(ShowSearch), typeof(bool), typeof(PropertiesPalette),
+            new PropertyMetadata(true, OnChromeChanged));
 
     /// <summary>Creates a palette over the shared services, or over the ones a host passes in.</summary>
     public PropertiesPalette(PropertyManager? properties = null, SelectionManager? selection = null)
@@ -60,18 +101,18 @@ public class PropertiesPalette : Grid
 
         _title = new TextBlock { FontSize = 13, FontWeight = FontWeights.SemiBold, TextTrimming = TextTrimming.CharacterEllipsis };
         _title.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-        _title.Text = "Nothing selected";
+        _title.Text = EmptyTitle;
 
         // One pixel of air: at eleven pixels the subtitle otherwise sits on the descenders of the
         // title and the pair reads as a single smudged line.
         _subtitle = new TextBlock { FontSize = 11, Margin = new Thickness(0, 1, 0, 0), TextTrimming = TextTrimming.CharacterEllipsis };
         _subtitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        _subtitle.Text = "Select an element to edit its parameters.";
+        _subtitle.Text = EmptySubtitle;
 
-        _typeSelector = new ComboBox { Height = 26, FontSize = 12, ToolTip = "Instance type" };
+        _typeSelector = new ComboBox { Height = 26, FontSize = 12, ToolTip = TypeToolTip };
         _typeSelector.SelectionChanged += OnTypeSelected;
 
-        _editType = new Button { Content = "Edit type", Height = 26, Padding = new Thickness(8, 0, 8, 0), FontSize = 11, Margin = new Thickness(4, 0, 0, 0) };
+        _editType = new Button { Content = EditTypeText, Height = 26, Padding = new Thickness(8, 0, 8, 0), FontSize = 11, Margin = new Thickness(4, 0, 0, 0) };
         _editType.SetResourceReference(StyleProperty, "CONCOST.Button.Secondary");
         _editType.Click += (_, _) => EditTypeRequested?.Invoke(this, EventArgs.Empty);
 
@@ -86,7 +127,7 @@ public class PropertiesPalette : Grid
         {
             Width = 24,
             Height = 24,
-            ToolTip = "Reset the last edited parameter to its default",
+            ToolTip = ResetToolTip,
             Margin = new Thickness(4, 0, 0, 0)
         };
 
@@ -109,7 +150,7 @@ public class PropertiesPalette : Grid
 
         _search = new SearchBox
         {
-            Placeholder = "Search parameters",
+            Placeholder = SearchPlaceholder,
             Height = 28,
             Margin = new Thickness(10, 0, 10, 6),
             FontSize = 12
@@ -170,9 +211,9 @@ public class PropertiesPalette : Grid
         emptyIcon.SetResourceReference(Control.ForegroundProperty, "CONCOST.Brush.TextSecondary");
         _emptyState.Children.Add(emptyIcon);
 
-        var emptyHint = new TextBlock
+        _emptyHint = new TextBlock
         {
-            Text = "Pick a wall in the drawing to see its type, dimensions and constraints.",
+            Text = EmptyHint,
             FontSize = 11,
             TextWrapping = TextWrapping.Wrap,
             TextAlignment = TextAlignment.Center,
@@ -180,8 +221,8 @@ public class PropertiesPalette : Grid
             Margin = new Thickness(0, 10, 0, 0)
         };
 
-        emptyHint.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        _emptyState.Children.Add(emptyHint);
+        _emptyHint.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        _emptyState.Children.Add(_emptyHint);
 
         SetRow(_emptyState, 2);
         Children.Add(_emptyState);
@@ -193,6 +234,62 @@ public class PropertiesPalette : Grid
         _properties.ValueChanged += (_, e) => OnValueChanged(e);
 
         Build(_selection.Primary);
+    }
+
+    /// <summary>Title shown when nothing is selected.</summary>
+    public string EmptyTitle
+    {
+        get => (string)GetValue(EmptyTitleProperty);
+        set => SetValue(EmptyTitleProperty, value);
+    }
+
+    /// <summary>Subtitle shown when nothing is selected.</summary>
+    public string EmptySubtitle
+    {
+        get => (string)GetValue(EmptySubtitleProperty);
+        set => SetValue(EmptySubtitleProperty, value);
+    }
+
+    /// <summary>Hint shown in the empty state.</summary>
+    public string EmptyHint
+    {
+        get => (string)GetValue(EmptyHintProperty);
+        set => SetValue(EmptyHintProperty, value);
+    }
+
+    /// <summary>Watermark of the parameter search box.</summary>
+    public string SearchPlaceholder
+    {
+        get => (string)GetValue(SearchPlaceholderProperty);
+        set => SetValue(SearchPlaceholderProperty, value);
+    }
+
+    /// <summary>Caption of the type-edit button.</summary>
+    public string EditTypeText
+    {
+        get => (string)GetValue(EditTypeTextProperty);
+        set => SetValue(EditTypeTextProperty, value);
+    }
+
+    /// <summary>Tooltip of the instance-type selector.</summary>
+    public string TypeToolTip
+    {
+        get => (string)GetValue(TypeToolTipProperty);
+        set => SetValue(TypeToolTipProperty, value);
+    }
+
+    /// <summary>Tooltip of the reset button.</summary>
+    public string ResetToolTip
+    {
+        get => (string)GetValue(ResetToolTipProperty);
+        set => SetValue(ResetToolTipProperty, value);
+    }
+
+    /// <summary>Shows the parameter search box.</summary>
+    public bool ShowSearch
+    {
+        get => (bool)GetValue(ShowSearchProperty);
+        set => SetValue(ShowSearchProperty, value);
     }
 
     /// <summary>The grid that renders the rows.</summary>
@@ -220,6 +317,29 @@ public class PropertiesPalette : Grid
     public event EventHandler<PropertyValueChangedEventArgs>? PropertyCommitted;
 
     /// <summary>Rebuilds the rows for <paramref name="target"/>; pass <c>null</c> for the empty state.</summary>
+    private static void OnChromeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is PropertiesPalette palette) palette.ApplyChrome();
+    }
+
+    private void ApplyChrome()
+    {
+        _emptyHint.Text = EmptyHint;
+        _search.Placeholder = SearchPlaceholder;
+        _editType.Content = EditTypeText;
+        _typeSelector.ToolTip = TypeToolTip;
+        _reset.ToolTip = ResetToolTip;
+
+        if (_target is null)
+        {
+            _title.Text = EmptyTitle;
+            _subtitle.Text = EmptySubtitle;
+            return;
+        }
+
+        _search.Visibility = ShowSearch ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     public void Build(object? target)
     {
         _syncing = true;
@@ -238,14 +358,14 @@ public class PropertiesPalette : Grid
 
             if (target is null)
             {
-                _title.Text = "Nothing selected";
-                _subtitle.Text = "Select an element to edit its parameters.";
+                _title.Text = EmptyTitle;
+                _subtitle.Text = EmptySubtitle;
                 _typeRow.Visibility = Visibility.Collapsed;
                 _search.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            _search.Visibility = Visibility.Visible;
+            _search.Visibility = ShowSearch ? Visibility.Visible : Visibility.Collapsed;
 
             string filter = _search.Text ?? string.Empty;
 

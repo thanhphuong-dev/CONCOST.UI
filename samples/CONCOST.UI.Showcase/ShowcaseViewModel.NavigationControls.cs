@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -233,7 +233,7 @@ private void OnRunAnalysisCommand()
     // Executes bound ICommand on SplitButton.Command
     ToastService.Success(""Analysis Completed Successfully"", ""FEA Solver"");
 }";
-        AddCardSection("1. Style ngữ nghĩa và biến thể bề mặt (Primary, Secondary, Success, Warning, Danger, Info, Outline, Ghost)", sec1Wp, sec1Code);
+        AddCardSection(Loc.T("1. Style ngữ nghĩa và biến thể bề mặt (Primary, Secondary, Success, Warning, Danger, Info, Outline, Ghost)", "1. Semantic styles and surface variants (Primary, Secondary, Success, Warning, Danger, Info, Outline, Ghost)"), sec1Wp, sec1Code);
 
         // =====================================================================
         // SECTION 2: Sizing Scale & Geometry Shapes
@@ -332,7 +332,7 @@ var sb = new SplitButton
     CornerRadius = new CornerRadius(8)
 };
 sb.SetResourceReference(SplitButton.StyleProperty, ""CONCOST.SplitButton.Large"");";
-        AddCardSection("2. Thang kích thước và hình dạng (Lớn 40px, mặc định 34px, nhỏ 28px | Pill, Rounded, Square)", sec2Sp, sec2Code);
+        AddCardSection(Loc.T("2. Thang kích thước và hình dạng (Lớn 40px, mặc định 34px, nhỏ 28px | Pill, Rounded, Square)", "2. Size scale and shape (Large 40px, default 34px, small 28px | Pill, Rounded, Square)"), sec2Sp, sec2Code);
 
         // =====================================================================
         // SECTION 3: Interaction Modes & Placement Options
@@ -456,7 +456,7 @@ private void OnDropDownOpened(object sender, RoutedEventArgs e)
 {
     ToastService.Info(""Dropdown opened via Hover"", ""Hover Engine"");
 }";
-        AddCardSection("3. Chế độ tương tác và vị trí (HitMode=DropDown, Chevron Left, HoverOpen, IconPlacement, Placement=Top)", sec3Wp, sec3Code);
+        AddCardSection(Loc.T("3. Chế độ tương tác và vị trí (HitMode=DropDown, Chevron Left, HoverOpen, IconPlacement, Placement=Top)", "3. Interaction mode and placement (HitMode=DropDown, Chevron Left, HoverOpen, IconPlacement, Placement=Top)"), sec3Wp, sec3Code);
 
         // =====================================================================
         // SECTION 4: Engineering & BIM Workflows (Interactive Checklists)
@@ -581,7 +581,7 @@ private void OnCalculateRebarClicked(object sender, RoutedEventArgs e)
 {
     ToastService.Success(""Rebar Calculation Run Complete"", ""Rebar Suite"");
 }";
-        AddCardSection("4. Quy trình kỹ thuật và BIM (checklist tương tác với AutoCloseOnClick=False, bộ thép, xuất CAD)", sec4Wp, sec4Code);
+        AddCardSection(Loc.T("4. Quy trình kỹ thuật và BIM (checklist tương tác với AutoCloseOnClick=False, bộ thép, xuất CAD)", "4. Engineering and BIM workflows (interactive checklist with AutoCloseOnClick=False, rebar set, CAD export)"), sec4Wp, sec4Code);
 
         return mainSp;
     }
@@ -685,7 +685,7 @@ private void OnCalculateRebarClicked(object sender, RoutedEventArgs e)
         <controls:SideMenuItem Icon=""Settings"" />
     </controls:SideMenu.Items>
 </controls:SideMenu>";
-        AddCardSection("1. Bộ điều hướng SideMenu và chế độ rail", sec1Grid, sec1Code);
+        AddCardSection(Loc.T("1. Bộ điều hướng SideMenu và chế độ rail", "1. SideMenu navigator and rail mode"), sec1Grid, sec1Code);
 
         return mainSp;
     }
@@ -790,7 +790,7 @@ timeline.Items.Add(new TimelineItem
     Type = TimelineItemType.Success,
     Icon = IconKind.CheckCircle
 });";
-        AddCardSection("1. Timeline quy trình ngữ nghĩa chuẩn", tl1, sec1Code);
+        AddCardSection(Loc.T("1. Timeline quy trình ngữ nghĩa chuẩn", "1. Standard semantic process timeline"), tl1, sec1Code);
 
         // ---------------------------------------------------------------------
         // SECTION 2: Card-Enclosed Timeline with Rich Interactive Content
@@ -861,7 +861,7 @@ timeline.Items.Add(new TimelineItem
                        Type=""Default""
                        Icon=""ShieldCheck"" />
 </dash:Timeline>";
-        AddCardSection("2. Timeline trong thẻ với nội dung lồng tuỳ biến", tlCard, sec2Code);
+        AddCardSection(Loc.T("2. Timeline trong thẻ với nội dung lồng tuỳ biến", "2. Timeline inside a card with custom nested content"), tlCard, sec2Code);
 
         return mainSp;
     }
@@ -1005,7 +1005,7 @@ carousel.SelectionChanged += (s, e) =>
 {
     Console.WriteLine($""Active Card Index: {e.NewValue}"");
 };";
-        AddCardSection("1. CardCarousel chiều sâu 3D cho mô hình dự án và workspace", carousel1, sec1Code);
+        AddCardSection(Loc.T("1. CardCarousel chiều sâu 3D cho mô hình dự án và workspace", "1. 3D-depth CardCarousel for project models and workspaces"), carousel1, sec1Code);
 
         return mainSp;
     }

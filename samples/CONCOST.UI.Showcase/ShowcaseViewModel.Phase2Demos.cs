@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -29,7 +29,7 @@ public partial class ShowcaseViewModel
             card.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
             card.Child = new TextBlock
             {
-                Text = $"Khối {i} — fade + slide khi cuộn tới",
+                Text = Loc.F("Khối {0} — fade + slide khi cuộn tới", "Block {0} — fade + slide on scroll", i),
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 12
             };
@@ -42,7 +42,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             scroller,
             xaml: "<ScrollViewer Height=\"200\">\n" +
                   "    <StackPanel>\n" +
@@ -51,11 +51,11 @@ public partial class ShowcaseViewModel
                   "                attached:ScrollReveal.Delay=\"0:0:0.12\">…</Border>\n" +
                   "    </StackPanel>\n" +
                   "</ScrollViewer>",
-            csharp: "// Bật cho từng phần tử; delay tăng dần để có hiệu ứng stagger\n" +
+            csharp: Loc.T("// Bật cho từng phần tử; delay tăng dần để có hiệu ứng stagger\n", "// Enable per element; a growing delay gives the stagger effect\n") +
                     "ScrollReveal.SetIsEnabled(card, true);\n" +
                     "ScrollReveal.SetOffset(card, 24);\n" +
                     "ScrollReveal.SetDelay(card, new Duration(TimeSpan.FromMilliseconds(120)));\n\n" +
-                    "// Tự tìm ScrollViewer cha; hiện một lần rồi thôi"));
+                    Loc.T("// Tự tìm ScrollViewer cha; hiện một lần rồi thôi", "// Finds the parent ScrollViewer itself; shows once and stops\n")));
 
         return root;
     }
@@ -75,7 +75,7 @@ public partial class ShowcaseViewModel
         front.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
         front.Child = new TextBlock
         {
-            Text = "Lớp trước (cuộn bình thường)",
+            Text = Loc.T("Lớp trước (cuộn bình thường)", "Front layer (normal scrolling)"),
             Foreground = Brushes.White,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
@@ -87,7 +87,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             scroller,
             xaml: "<Grid Height=\"320\">\n" +
                   "    <ui:ParallaxPanel Speed=\"0.45\" Height=\"120\" VerticalAlignment=\"Top\">\n" +
@@ -95,7 +95,7 @@ public partial class ShowcaseViewModel
                   "    </ui:ParallaxPanel>\n" +
                   "    <Border Height=\"90\" Background=\"{DynamicResource CONCOST.Brush.Primary}\" />\n" +
                   "</Grid>",
-            csharp: "// Speed < 1: lớp nền trôi chậm hơn nội dung (tạo độ sâu)\n" +
+            csharp: Loc.T("// Speed < 1: lớp nền trôi chậm hơn nội dung (tạo độ sâu)\n", "// Speed < 1: the background layer drifts slower than the content (adds depth)\n") +
                     "var layer = new ParallaxPanel\n" +
                     "{\n" +
                     "    Speed = 0.45,\n" +
@@ -109,12 +109,12 @@ public partial class ShowcaseViewModel
     {
         var typewriter = new TypewriterText
         {
-            Text = "Bóc tách khối lượng tự động từ mô hình BIM trong 12 giây.",
+            Text = Loc.T("Bóc tách khối lượng tự động từ mô hình BIM trong 12 giây.", "Automatic quantity take-off from the BIM model in 12 seconds."),
             FontSize = 15,
             Margin = new Thickness(0, 0, 0, 12)
         };
 
-        var again = new Button { Content = "Gõ lại", Padding = new Thickness(12, 6, 12, 6), HorizontalAlignment = HorizontalAlignment.Left };
+        var again = new Button { Content = Loc.T("Gõ lại", "Type it again"), Padding = new Thickness(12, 6, 12, 6), HorizontalAlignment = HorizontalAlignment.Left };
         again.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         again.Click += (_, _) =>
         {
@@ -127,13 +127,13 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             content,
-            xaml: "<ui:TypewriterText Text=\"Bóc tách khối lượng tự động...\"\n" +
+            xaml: Loc.T("<ui:TypewriterText Text=\"Bóc tách khối lượng tự động...\"\n", "<ui:TypewriterText Text=\"Automatic quantity take-off...\"\n") +
                   "                   CharsPerSecond=\"26\" ShowCaret=\"True\" />",
             csharp: "var typer = new TypewriterText\n" +
                     "{\n" +
-                    "    Text = \"Bóc tách khối lượng...\",\n" +
+                    Loc.T("    Text = \"Bóc tách khối lượng...\",\n", "    Text = \"Quantity take-off...\",\n") +
                     "    CharsPerSecond = 26,\n" +
                     "    StartDelay = 0.25,\n" +
                     "    ShowCaret = true,\n" +
@@ -147,14 +147,14 @@ public partial class ShowcaseViewModel
     {
         var reveal = new TextReveal
         {
-            Text = "Kết cấu chính xác, thi công an toàn",
+            Text = Loc.T("Kết cấu chính xác, thi công an toàn", "Precise structure, safe construction"),
             FontSize = 26,
             WordDelay = 0.08,
             WordDuration = 0.45,
             Margin = new Thickness(0, 0, 0, 12)
         };
 
-        var again = new Button { Content = "Chạy lại", Padding = new Thickness(12, 6, 12, 6), HorizontalAlignment = HorizontalAlignment.Left };
+        var again = new Button { Content = Loc.T("Chạy lại", "Replay"), Padding = new Thickness(12, 6, 12, 6), HorizontalAlignment = HorizontalAlignment.Left };
         again.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         again.Click += (_, _) =>
         {
@@ -167,15 +167,15 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             content,
-            xaml: "<ui:TextReveal Text=\"Kết cấu chính xác, thi công an toàn\"\n" +
+            xaml: Loc.T("<ui:TextReveal Text=\"Kết cấu chính xác, thi công an toàn\"\n", "<ui:TextReveal Text=\"Precise structure, safe construction\"\n") +
                   "                FontSize=\"26\" WordDelay=\"0.08\" />",
             csharp: "var reveal = new TextReveal\n" +
                     "{\n" +
-                    "    Text = \"Kết cấu chính xác, thi công an toàn\",\n" +
-                    "    WordDelay = 0.08,     // giãn cách giữa các từ\n" +
-                    "    WordDuration = 0.45,  // thời gian mỗi từ hiện lên\n" +
+                    Loc.T("    Text = \"Kết cấu chính xác, thi công an toàn\",\n", "    Text = \"Precise structure, safe construction\",\n") +
+                    Loc.T("    WordDelay = 0.08,     // giãn cách giữa các từ\n", "    WordDelay = 0.08,     // gap between words\n") +
+                    Loc.T("    WordDuration = 0.45,  // thời gian mỗi từ hiện lên\n", "    WordDuration = 0.45,  // time each word takes to appear\n") +
                     "    OffsetY = 14\n" +
                     "};"));
 

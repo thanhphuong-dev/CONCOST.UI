@@ -7,6 +7,9 @@ namespace CONCOST.UI.Controls.Canvas;
 
 public class RulerControl : Control
 {
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
+        new RulerControlAutomationPeer(this);
+
     static RulerControl()
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(RulerControl), new FrameworkPropertyMetadata(typeof(RulerControl)));

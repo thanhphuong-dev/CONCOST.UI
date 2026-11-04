@@ -185,7 +185,7 @@ public class Dialog : ContentControl
         return dlg;
     }
 
-    public static Task<bool> ShowConfirmAsync(string message, string title = "Confirm", string token = "")
+    public static Task<bool> ShowConfirmAsync(string message, string title = "Confirm", string token = "", string confirmText = "Confirm", string cancelText = "Cancel")
     {
         var tcs = new TaskCompletionSource<bool>();
 
@@ -208,7 +208,7 @@ public class Dialog : ContentControl
 
         var cancelBtn = new Button
         {
-            Content = "Cancel",
+            Content = cancelText,
             Width = 90,
             Height = 32,
             Margin = new Thickness(0, 0, 10, 0)
@@ -217,7 +217,7 @@ public class Dialog : ContentControl
 
         var okBtn = new Button
         {
-            Content = "Confirm",
+            Content = confirmText,
             Width = 90,
             Height = 32
         };
@@ -249,7 +249,7 @@ public class Dialog : ContentControl
         return tcs.Task;
     }
 
-    public static Task<string?> ShowInputAsync(string message, string defaultText = "", string title = "Input", string token = "")
+    public static Task<string?> ShowInputAsync(string message, string defaultText = "", string title = "Input", string token = "", string okText = "OK", string cancelText = "Cancel")
     {
         var tcs = new TaskCompletionSource<string?>();
 
@@ -278,7 +278,7 @@ public class Dialog : ContentControl
 
         var cancelBtn = new Button
         {
-            Content = "Cancel",
+            Content = cancelText,
             Width = 90,
             Height = 32,
             Margin = new Thickness(0, 0, 10, 0)
@@ -287,7 +287,7 @@ public class Dialog : ContentControl
 
         var okBtn = new Button
         {
-            Content = "OK",
+            Content = okText,
             Width = 90,
             Height = 32
         };

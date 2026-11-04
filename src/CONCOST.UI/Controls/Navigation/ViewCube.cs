@@ -233,6 +233,7 @@ public partial class ViewCube : FrameworkElement
     private ProjectionMode _projection = ProjectionMode.Perspective;
     private ViewCubeHit _hover = ViewCubeHit.Empty;
     private bool _pointerOver;
+    private bool _toolsVisibleAfterLeave;
 
     private DragMode _drag;
     private Point _dragStart;
@@ -242,6 +243,7 @@ public partial class ViewCube : FrameworkElement
     private ViewCubeHit _pressed = ViewCubeHit.Empty;
 
     private DispatcherTimer? _timer;
+    private DispatcherTimer? _toolsFadeTimer;
     private Quaternion _animationFrom;
     private Quaternion _animationTo;
     private long _animationStart;
@@ -407,7 +409,7 @@ public partial class ViewCube : FrameworkElement
     /// <summary>Identifies the <see cref="DragSensitivity"/> property.</summary>
     public static readonly DependencyProperty DragSensitivityProperty = DependencyProperty.Register(
         nameof(DragSensitivity), typeof(double), typeof(ViewCube),
-        new FrameworkPropertyMetadata(0.65, null, CoerceSensitivity));
+        new FrameworkPropertyMetadata(0.4, null, CoerceSensitivity));
 
     private static object CoerceSensitivity(DependencyObject d, object baseValue) =>
         baseValue is double val ? Math.Max(0.1, Math.Min(3.0, val)) : 0.65;
@@ -1056,6 +1058,8 @@ public partial class ViewCube : FrameworkElement
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
         StopAnimation();
+        StopToolsFadeTimer();
+        _toolsVisibleAfterLeave = false;
     }
 
     private static void OnInactiveOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
@@ -1255,7 +1259,7 @@ public partial class ViewCube : FrameworkElement
     {
         var menu = new ContextMenu();
 
-        menu.Items.Add(Item("Go Home", () => GoHome()));
+        menu.Items.Add(Item(MenuText("GoHome", "Go Home"), () => GoHome()));
         menu.Items.Add(new Separator());
 
         foreach (ProjectionMode mode in new[]
@@ -1273,21 +1277,21 @@ public partial class ViewCube : FrameworkElement
         }
 
         menu.Items.Add(new Separator());
-        menu.Items.Add(Item("Set Current View as Home", () => SetCurrentViewAsHome()));
-        menu.Items.Add(Item("Set Current View as Front", () => SetCurrentViewAsFront()));
-        menu.Items.Add(Item("Reset Front", () => ResetFront()));
+        menu.Items.Add(Item(MenuText("SetHome", "Set Current View as Home"), () => SetCurrentViewAsHome()));
+        menu.Items.Add(Item(MenuText("SetFront", "Set Current View as Front"), () => SetCurrentViewAsFront()));
+        menu.Items.Add(Item(MenuText("ResetFront", "Reset Front"), () => ResetFront()));
 
         AddSavedViewItems(menu);
 
         menu.Items.Add(new Separator());
 
-        var compass = Item("Show Compass", () => ShowCompass = !ShowCompass);
+        var compass = Item(MenuText("ShowCompass", "Show Compass"), () => ShowCompass = !ShowCompass);
         compass.IsCheckable = true;
         compass.IsChecked = ShowCompass;
         menu.Items.Add(compass);
 
         menu.Items.Add(new Separator());
-        menu.Items.Add(Item("Options…", () => OptionsRequested?.Invoke(this, EventArgs.Empty)));
+        menu.Items.Add(Item(MenuText("Options", "Options…"), () => OptionsRequested?.Invoke(this, EventArgs.Empty)));
 
         return menu;
     }
@@ -1296,7 +1300,7 @@ public partial class ViewCube : FrameworkElement
     {
         var menu = new ContextMenu();
 
-        menu.Items.Add(Item("Go Home", () => GoHome()));
+        menu.Items.Add(Item(MenuText("GoHome", "Go Home"), () => GoHome()));
         menu.Items.Add(new Separator());
 
         foreach (ViewCubeRegion region in ViewCubeMath.Regions)
@@ -1344,7 +1348,7 @@ public partial class ViewCube : FrameworkElement
             menu.Items.Add(Item(view.Name, () => ActivateSavedView(captured)));
         }
 
-        menu.Items.Add(Item("Save Current View…", () => SaveViewRequested?.Invoke(this, EventArgs.Empty)));
+        menu.Items.Add(Item(MenuText("SaveCurrentView", "Save Current View…"), () => SaveViewRequested?.Invoke(this, EventArgs.Empty)));
     }
 
     private void ActivateSavedView(ViewCubeSavedView view)
@@ -1355,10 +1359,13 @@ public partial class ViewCube : FrameworkElement
 
     private static string Describe(ProjectionMode mode) => mode switch
     {
-        ProjectionMode.Orthographic => "Orthographic",
-        ProjectionMode.Perspective => "Perspective",
-        _ => "Perspective with Ortho Faces"
+        ProjectionMode.Orthographic => MenuText("Orthographic", "Orthographic"),
+        ProjectionMode.Perspective => MenuText("Perspective", "Perspective"),
+        _ => MenuText("PerspectiveOrthoFaces", "Perspective with Ortho Faces")
     };
+
+    private static string MenuText(string key, string fallback) =>
+        LocalizationManager.Current.GetString($"ViewCube.Menu.{key}", fallback);
 
     private static MenuItem Item(string header, Action action)
     {
@@ -1382,6 +1389,9 @@ public partial class ViewCube : FrameworkElement
     {
         base.OnMouseEnter(e);
 
+        StopToolsFadeTimer();
+        _toolsVisibleAfterLeave = false;
+
         if (_pointerOver) return;
 
         _pointerOver = true;
@@ -1397,10 +1407,11 @@ public partial class ViewCube : FrameworkElement
         if (!_pointerOver) return;
 
         _pointerOver = false;
+        _toolsVisibleAfterLeave = true;
 
-        // A drag keeps the buttons up even if the pointer has left the square, because the capture keeps
-        // sending moves here and the arrows are what the user is aiming for.
-        if (_drag == DragMode.None) ApplyOpacity();
+        // Keep the tools visible briefly so the pointer can travel from the cube to a corner button.
+        // During a drag they stay visible until the captured interaction ends.
+        if (_drag == DragMode.None) ScheduleToolsFade();
 
         UpdateHover(ViewCubeHit.Empty);
         InvalidateVisual();
@@ -1495,7 +1506,7 @@ public partial class ViewCube : FrameworkElement
         _dragged = false;
         Cursor = null;
 
-        if (!_pointerOver) ApplyOpacity();
+        if (!_pointerOver) ScheduleToolsFade();
 
         if (dragged)
         {
@@ -1508,6 +1519,33 @@ public partial class ViewCube : FrameworkElement
 
         Activate(pressed);
         e.Handled = true;
+    }
+
+    private void ScheduleToolsFade()
+    {
+        StopToolsFadeTimer();
+        _toolsFadeTimer ??= new DispatcherTimer(DispatcherPriority.Input)
+        {
+            Interval = TimeSpan.FromMilliseconds(1000)
+        };
+        _toolsFadeTimer.Tick += OnToolsFadeTimerTick;
+        _toolsFadeTimer.Start();
+    }
+
+    private void StopToolsFadeTimer()
+    {
+        if (_toolsFadeTimer is null) return;
+        _toolsFadeTimer.Stop();
+        _toolsFadeTimer.Tick -= OnToolsFadeTimerTick;
+    }
+
+    private void OnToolsFadeTimerTick(object? sender, EventArgs e)
+    {
+        StopToolsFadeTimer();
+        if (_pointerOver || _drag != DragMode.None) return;
+        _toolsVisibleAfterLeave = false;
+        ApplyOpacity();
+        InvalidateVisual();
     }
 
     /// <inheritdoc />

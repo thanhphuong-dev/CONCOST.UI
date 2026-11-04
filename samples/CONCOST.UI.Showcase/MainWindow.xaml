@@ -1,4 +1,4 @@
-<Window x:Class="CONCOST.UI.Showcase.MainWindow"
+﻿<Window x:Class="CONCOST.UI.Showcase.MainWindow"
         Icon="Assets/AppIcon.png"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -252,7 +252,7 @@
                             <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
                                     BorderBrush="{DynamicResource CONCOST.Brush.BorderSubtle}" BorderThickness="1"
                                     CornerRadius="4" Padding="5,1" Margin="8,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="v1.0.1" FontSize="9.5" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+                                <TextBlock Text="{x:Static local:MainWindow.AppVersion}" FontSize="9.5" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
                             </Border>
                         </StackPanel>
                         <TextBlock Text="{Binding Source={x:Static services:LocalizationManager.Current}, Path=[Showcase.Brand.Caption]}" FontSize="9.5" FontWeight="Medium" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" Margin="0,1,0,0" />
@@ -284,7 +284,7 @@
                                  FontSize="12"
                                  VerticalAlignment="Center"
                                  Foreground="{DynamicResource CONCOST.Brush.TextPrimary}"
-                                 attached:InfoElement.Placeholder="Tìm kiếm thành phần trong thư viện..." />
+                                 attached:InfoElement.Placeholder="{local:Loc Showcase.Header.SearchPlaceholder}" />
                         <Border Grid.Column="2"
                                 Background="{DynamicResource CONCOST.Brush.Surface}"
                                 BorderBrush="{DynamicResource CONCOST.Brush.BorderSubtle}"
@@ -297,28 +297,29 @@
                     </Grid>
                 </Border>
 
-                <!-- 3. Right: Palette, Language, Dark Mode & Actions -->
+                <!-- 3. Right: Accent, Language, Theme & Actions -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- Compact Theme Accent Palette Strip -->
+                    <!-- Compact accent swatches stay centered with the adjacent header controls. -->
                     <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
                             BorderBrush="{DynamicResource CONCOST.Brush.Border}"
                             BorderThickness="1"
-                            CornerRadius="14"
-                            Padding="6,3"
+                            CornerRadius="10"
+                            Padding="6,0"
+                            Height="36"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
-                            ToolTip="Chọn màu sắc chủ đạo giao diện">
+                            ToolTip="{local:Loc Showcase.Header.PaletteTooltip}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button x:Name="BtnPalette1" Width="15" Height="15" Background="#FF7900" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#FF7900" ToolTip="Cam kỹ thuật (Default)" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette2" Width="15" Height="15" Background="#0284C7" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#0284C7" ToolTip="Xanh đại dương" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette3" Width="15" Height="15" Background="#16A34A" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#16A34A" ToolTip="Xanh lá công trình" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette4" Width="15" Height="15" Background="#DC2626" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#DC2626" ToolTip="Đỏ thẫm kết cấu" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette5" Width="15" Height="15" Background="#475569" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#475569" ToolTip="Xám CAD Slate" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette6" Width="15" Height="15" Background="#8B5CF6" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#8B5CF6" ToolTip="Tím hoàng hôn" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette7" Width="15" Height="15" Background="#0D9488" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#0D9488" ToolTip="Xanh ngọc Teal" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette8" Width="15" Height="15" Background="#D97706" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#D97706" ToolTip="Hổ phách Amber" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette9" Width="15" Height="15" Background="#DB2777" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#DB2777" ToolTip="Hồng hoa sen" attached:BorderElement.CornerRadius="7.5"/>
-                            <Button x:Name="BtnPalette10" Width="15" Height="15" Background="#3B82F6" BorderThickness="0" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#3B82F6" ToolTip="Xanh hoàng gia" attached:BorderElement.CornerRadius="7.5"/>
+                            <Button Width="14" Height="14" Background="#FF7900" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#FF7900" ToolTip="{local:Loc Showcase.Palette.TechnicalOrange}" AutomationProperties.Name="{local:Loc Showcase.Palette.TechnicalOrange}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#0284C7" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#0284C7" ToolTip="{local:Loc Showcase.Palette.OceanBlue}" AutomationProperties.Name="{local:Loc Showcase.Palette.OceanBlue}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#16A34A" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#16A34A" ToolTip="{local:Loc Showcase.Palette.SiteGreen}" AutomationProperties.Name="{local:Loc Showcase.Palette.SiteGreen}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#DC2626" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#DC2626" ToolTip="{local:Loc Showcase.Palette.StructuralRed}" AutomationProperties.Name="{local:Loc Showcase.Palette.StructuralRed}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#475569" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#475569" ToolTip="{local:Loc Showcase.Palette.CadSlate}" AutomationProperties.Name="{local:Loc Showcase.Palette.CadSlate}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#8B5CF6" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#8B5CF6" ToolTip="{local:Loc Showcase.Palette.DuskPurple}" AutomationProperties.Name="{local:Loc Showcase.Palette.DuskPurple}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#0D9488" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#0D9488" ToolTip="{local:Loc Showcase.Palette.JadeTeal}" AutomationProperties.Name="{local:Loc Showcase.Palette.JadeTeal}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#D97706" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#D97706" ToolTip="{local:Loc Showcase.Palette.Amber}" AutomationProperties.Name="{local:Loc Showcase.Palette.Amber}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#DB2777" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#DB2777" ToolTip="{local:Loc Showcase.Palette.LotusPink}" AutomationProperties.Name="{local:Loc Showcase.Palette.LotusPink}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
+                            <Button Width="14" Height="14" Background="#3B82F6" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" Margin="2,0" Cursor="Hand" Click="OnPaletteButtonClick" Tag="#3B82F6" ToolTip="{local:Loc Showcase.Palette.RoyalBlue}" AutomationProperties.Name="{local:Loc Showcase.Palette.RoyalBlue}" attached:BorderElement.CornerRadius="7" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
@@ -326,30 +327,35 @@
                     <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
                             BorderBrush="{DynamicResource CONCOST.Brush.Border}"
                             BorderThickness="1"
-                            CornerRadius="6"
-                            Padding="2"
+                            CornerRadius="10"
+                            Padding="4,0"
+                            Height="36"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center">
-                        <ComboBox x:Name="LanguageSelector" Width="116" Height="26" BorderThickness="0" Background="Transparent" SelectionChanged="OnLanguageSelectionChanged" SelectedIndex="1" ToolTip="Ngôn ngữ hiển thị">
+                        <ComboBox x:Name="LanguageSelector" Width="116" Height="28" Padding="8,0,28,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" BorderThickness="0" Background="Transparent" SelectionChanged="OnLanguageSelectionChanged" SelectedIndex="1" ToolTip="{local:Loc Showcase.Header.LanguageTooltip}" AutomationProperties.Name="{local:Loc Showcase.Header.LanguageTooltip}">
                             <ComboBoxItem Content="English" Tag="en-US" />
                             <ComboBoxItem Content="Tiếng Việt" Tag="vi-VN" />
                         </ComboBox>
                     </Border>
 
-                    <!-- Dark / Light Mode Switcher -->
+                    <!-- Theme selector -->
                     <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
                             BorderBrush="{DynamicResource CONCOST.Brush.Border}"
                             BorderThickness="1"
-                            CornerRadius="14"
-                            Padding="8,4"
+                            CornerRadius="10"
+                            Padding="4,0"
+                            Height="36"
                             Margin="0,0,10,0"
-                            VerticalAlignment="Center"
-                            ToolTip="Chuyển đổi giao diện Sáng / Tối">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <icons:Icon Kind="LightMode" Width="13" Height="13" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                            <ui:ToggleSwitch x:Name="ToggleDarkSwitch" IsChecked="{Binding IsDarkMode, Mode=TwoWay}" PreviewMouseLeftButtonDown="OnDarkModeTogglePreviewMouseDown" OnContent="" OffContent="" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                            <icons:Icon Kind="DarkMode" Width="13" Height="13" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" VerticalAlignment="Center"/>
-                        </StackPanel>
+                            VerticalAlignment="Center">
+                        <ComboBox Width="116" Height="28" Padding="8,0,28,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" BorderThickness="0" Background="Transparent"
+                                  SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}"
+                                  ToolTip="{local:Loc Showcase.Header.ThemeTooltip}"
+                                  AutomationProperties.Name="Interface theme">
+                            <ComboBoxItem Content="Light" />
+                            <ComboBoxItem Content="Soft Light" />
+                            <ComboBoxItem Content="Dark" />
+                            <ComboBoxItem Content="System" />
+                        </ComboBox>
                     </Border>
 
                     <!-- Ghost Toast Action Button -->
@@ -357,9 +363,12 @@
                             attached:BorderElement.CornerRadius="6"
                             attached:IconElement.Kind="Bell"
                             Command="{Binding ShowToastCommand}"
-                            ToolTip="Thử kích hoạt thông báo Toast"
-                            Padding="8,5"
-                            Height="30"
+                            ToolTip="{local:Loc Showcase.Header.ToastTooltip}"
+                            Padding="0"
+                            Width="36"
+                            Height="36"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
                             VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
@@ -395,22 +404,22 @@
                                      Command="{Binding SelectItemCommand}"
                                      CommandParameter="Overview"
                                      attached:IconElement.Kind="Home"
-                                     Content="Trang chủ &amp; Khám phá" />
+                                     Content="{local:Loc Showcase.Nav.Overview}" />
                         <RadioButton Style="{StaticResource Showcase.PinnedNavRadio}"
                                      IsChecked="{Binding IsDocumentationActive, Mode=OneWay}"
                                      Command="{Binding SelectItemCommand}"
                                      CommandParameter="Documentation"
                                      attached:IconElement.Kind="FileCode"
-                                     Content="Tài liệu &amp; Tokens" />
+                                     Content="{local:Loc Showcase.Nav.Documentation}" />
                     </StackPanel>
 
-                    <!-- 2. Section Header: Danh mục thành phần -->
+                    <!-- 2. Section Header: component catalog -->
                     <Grid Grid.Row="1" Margin="4,0,4,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="DANH MỤC THÀNH PHẦN" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" VerticalAlignment="Center" />
+                        <TextBlock Text="{local:Loc Showcase.Catalog.SectionTitle}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="1" Text="{Binding CatalogCountText}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" VerticalAlignment="Center" />
                     </Grid>
 
@@ -473,7 +482,7 @@
                             <!-- Breadcrumb Navigation -->
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <icons:Icon Kind="Home" Width="12" Height="12" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" Margin="0,0,4,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="Thư viện" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{local:Loc Showcase.Breadcrumb.Library}" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" VerticalAlignment="Center"/>
                                 <TextBlock Text=" / " FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding SelectedItem.DisplayCategory}" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" VerticalAlignment="Center"/>
                                 <TextBlock Text=" / " FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" VerticalAlignment="Center"/>

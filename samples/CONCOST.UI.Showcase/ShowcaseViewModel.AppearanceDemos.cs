@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -220,7 +220,7 @@ public partial class ShowcaseViewModel
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 12, 0, 0)
         };
-        hint.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextTertiary");
+        hint.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
         controls.Children.Add(hint);
 
         var layout = new Grid();
@@ -245,7 +245,7 @@ public partial class ShowcaseViewModel
                 "        attached:VisualElement.MotionDuration=\"160\"\n" +
                 "        attached:VisualElement.Glow=\"True\"\n" +
                 "        attached:VisualElement.FocusRing=\"True\"\n" +
-                "        Content=\"Áp dụng\" />",
+                Loc.T("        Content=\"Áp dụng\" />", "        Content=\"Apply\" />"),
             csharp:
                 "// The same behaviour from code, on any UIElement.\n" +
                 "VisualElement.SetElevation(button, 2);\n" +
@@ -314,7 +314,7 @@ public partial class ShowcaseViewModel
             new StackPanel { Children = { row, controls } },
             xaml:
                 "<Card Style=\"{StaticResource CONCOST.Card.Base}\"\n" +
-                "      Header=\"Dầm phụ D2\"\n" +
+                Loc.T("      Header=\"Dầm phụ D2\"\n", "      Header=\"Secondary beam D2\"\n") +
                 "      Icon=\"Layers\"\n" +
                 "      controls:Card.AccentBar=\"Left\"\n" +
                 "      controls:Card.AccentThickness=\"3\"\n" +
@@ -324,7 +324,7 @@ public partial class ShowcaseViewModel
             csharp:
                 "var card = new Card\n" +
                 "{\n" +
-                "    Header = \"Dầm phụ D2\",\n" +
+                Loc.T("    Header = \"Dầm phụ D2\",\n", "    Header = \"Secondary beam D2\",\n") +
                 "    Icon = IconKind.Layers,\n" +
                 "    AccentBar = CardAccent.Left,\n" +
                 "    AccentBrush = (Brush)FindResource(\"CONCOST.Brush.Success\"),\n" +
@@ -380,7 +380,7 @@ public partial class ShowcaseViewModel
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 6, 0, 0)
         };
-        caption.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextTertiary");
+        caption.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
         return DemoSection(
             t("Vai trò bề mặt có theme", "Themed surface roles"),
@@ -475,6 +475,7 @@ public partial class ShowcaseViewModel
         }
 
         ThemeButton(t("Sáng", "Light"), AppTheme.Light);
+        ThemeButton("Soft Light", AppTheme.SoftLight);
         ThemeButton(t("Tối", "Dark"), AppTheme.Dark);
         ThemeButton(t("Theo Windows", "Follow Windows"), AppTheme.System);
 
@@ -504,9 +505,11 @@ public partial class ShowcaseViewModel
                 ? string.Format(System.Globalization.CultureInfo.CurrentCulture, format, number)
                 : number.ToString(format, System.Globalization.CultureInfo.CurrentCulture);
 
-        var row = new Grid { Margin = new Thickness(0, 0, 0, 9), HorizontalAlignment = HorizontalAlignment.Left };
+        // The track takes whatever width the panel has: a fixed 200 px track left a band of empty
+        // panel to its right on every page whose panel was wider than the row.
+        var row = new Grid { Margin = new Thickness(0, 0, 0, 9), HorizontalAlignment = HorizontalAlignment.Stretch };
         row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(145) });
-        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(200) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(56) });
 
         var caption = new TextBlock
@@ -529,8 +532,8 @@ public partial class ShowcaseViewModel
             LargeChange = tick,
             IsSnapToTickEnabled = true,
             VerticalAlignment = VerticalAlignment.Center,
-            Width = 190,
-            HorizontalAlignment = HorizontalAlignment.Left
+            MinWidth = 140,
+            HorizontalAlignment = HorizontalAlignment.Stretch
         };
 
         var readout = new TextBlock

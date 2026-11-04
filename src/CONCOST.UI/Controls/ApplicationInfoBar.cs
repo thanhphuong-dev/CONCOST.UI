@@ -44,10 +44,25 @@ public class ApplicationInfoBar : Border
         nameof(IsClosable), typeof(bool), typeof(ApplicationInfoBar),
         new FrameworkPropertyMetadata(true, OnClosableChanged));
 
+    /// <summary>Identifies the <see cref="IconSize"/> property.</summary>
+    public static readonly DependencyProperty IconSizeProperty = DependencyProperty.Register(
+        nameof(IconSize), typeof(double), typeof(ApplicationInfoBar),
+        new FrameworkPropertyMetadata(14.0, OnIconSizeChanged));
+
     /// <summary>Identifies the <see cref="ShowIcon"/> property.</summary>
     public static readonly DependencyProperty ShowIconProperty = DependencyProperty.Register(
         nameof(ShowIcon), typeof(bool), typeof(ApplicationInfoBar),
         new FrameworkPropertyMetadata(true, OnShowIconChanged));
+
+    /// <summary>Identifies the <see cref="ActionMinWidth"/> property.</summary>
+    public static readonly DependencyProperty ActionMinWidthProperty = DependencyProperty.Register(
+        nameof(ActionMinWidth), typeof(double), typeof(ApplicationInfoBar),
+        new FrameworkPropertyMetadata(76.0, OnActionMinWidthChanged));
+
+    /// <summary>Identifies the <see cref="TextFontSize"/> property.</summary>
+    public static readonly DependencyProperty TextFontSizeProperty = DependencyProperty.Register(
+        nameof(TextFontSize), typeof(double), typeof(ApplicationInfoBar),
+        new FrameworkPropertyMetadata(12.0, OnTextFontSizeChanged));
 
     private readonly Grid _row;
     private readonly Icon _icon;
@@ -162,6 +177,13 @@ public class ApplicationInfoBar : Border
         set => SetValue(IsClosableProperty, value);
     }
 
+    /// <summary>Edge of the severity icon, in pixels. 14 by default.</summary>
+    public double IconSize
+    {
+        get => (double)GetValue(IconSizeProperty);
+        set => SetValue(IconSizeProperty, value);
+    }
+
     /// <summary>
     /// Draws the severity icon at the left end. The bold title already reads the severity through
     /// its tint, so a host that pairs the bar with a spoken message can drop the glyph.
@@ -170,6 +192,20 @@ public class ApplicationInfoBar : Border
     {
         get => (bool)GetValue(ShowIconProperty);
         set => SetValue(ShowIconProperty, value);
+    }
+
+    /// <summary>Minimum width of the action button, in pixels. 76 by default.</summary>
+    public double ActionMinWidth
+    {
+        get => (double)GetValue(ActionMinWidthProperty);
+        set => SetValue(ActionMinWidthProperty, value);
+    }
+
+    /// <summary>Font size of the title and message. 12 by default.</summary>
+    public double TextFontSize
+    {
+        get => (double)GetValue(TextFontSizeProperty);
+        set => SetValue(TextFontSizeProperty, value);
     }
 
     /// <summary>Raised when the action button is pressed.</summary>
@@ -282,6 +318,29 @@ public class ApplicationInfoBar : Border
 
         bar._action.Content = text;
         bar._action.Visibility = text.Length == 0 ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    private static void OnIconSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not ApplicationInfoBar bar) return;
+
+        double size = e.NewValue is double value && value > 0 ? value : 14;
+        bar._icon.Width = size;
+        bar._icon.Height = size;
+    }
+
+    private static void OnActionMinWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ApplicationInfoBar bar && e.NewValue is double width)
+            bar._action.MinWidth = width;
+    }
+
+    private static void OnTextFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not ApplicationInfoBar bar || e.NewValue is not double size) return;
+
+        bar._title.FontSize = size;
+        bar._message.FontSize = size;
     }
 
     private static void OnClosableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

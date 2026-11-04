@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -34,6 +35,42 @@ public class CompassIndicator : Control
         DependencyProperty.Register(nameof(NorthBrush), typeof(Brush), typeof(CompassIndicator),
             new PropertyMetadata(null));
 
+    public static readonly DependencyProperty DialBrushProperty =
+        DependencyProperty.Register(nameof(DialBrush), typeof(Brush), typeof(CompassIndicator),
+            new PropertyMetadata(null));
+
+    public static readonly DependencyProperty DialBorderBrushProperty =
+        DependencyProperty.Register(nameof(DialBorderBrush), typeof(Brush), typeof(CompassIndicator),
+            new PropertyMetadata(null));
+
+    public static readonly DependencyProperty DialBorderThicknessProperty =
+        DependencyProperty.Register(nameof(DialBorderThickness), typeof(double), typeof(CompassIndicator),
+            new PropertyMetadata(1.0, null, CoerceNonNegative));
+
+    public static readonly DependencyProperty DialInsetProperty =
+        DependencyProperty.Register(nameof(DialInset), typeof(Thickness), typeof(CompassIndicator),
+            new PropertyMetadata(new Thickness(7)));
+
+    public static readonly DependencyProperty NeedleThicknessProperty =
+        DependencyProperty.Register(nameof(NeedleThickness), typeof(double), typeof(CompassIndicator),
+            new PropertyMetadata(1.5, null, CoercePositive));
+
+    public static readonly DependencyProperty CardinalFontSizeProperty =
+        DependencyProperty.Register(nameof(CardinalFontSize), typeof(double), typeof(CompassIndicator),
+            new PropertyMetadata(9.0, null, CoercePositive));
+
+    public static readonly DependencyProperty CenterMarkerBrushProperty =
+        DependencyProperty.Register(nameof(CenterMarkerBrush), typeof(Brush), typeof(CompassIndicator),
+            new PropertyMetadata(null));
+
+    public static readonly DependencyProperty CenterMarkerSizeProperty =
+        DependencyProperty.Register(nameof(CenterMarkerSize), typeof(double), typeof(CompassIndicator),
+            new PropertyMetadata(4.0, null, CoerceNonNegative));
+
+    public static readonly DependencyProperty ShowCenterMarkerProperty =
+        DependencyProperty.Register(nameof(ShowCenterMarker), typeof(bool), typeof(CompassIndicator),
+            new PropertyMetadata(true));
+
     /// <summary>Rotation of the drawing under the indicator, in degrees clockwise.</summary>
     public double Angle
     {
@@ -61,6 +98,75 @@ public class CompassIndicator : Control
         get => (Brush?)GetValue(NorthBrushProperty);
         set => SetValue(NorthBrushProperty, value);
     }
+
+    /// <summary>Background brush of the circular dial. Null uses the theme surface brush.</summary>
+    public Brush? DialBrush
+    {
+        get => (Brush?)GetValue(DialBrushProperty);
+        set => SetValue(DialBrushProperty, value);
+    }
+
+    /// <summary>Outline brush of the dial. Null uses the theme border brush.</summary>
+    public Brush? DialBorderBrush
+    {
+        get => (Brush?)GetValue(DialBorderBrushProperty);
+        set => SetValue(DialBorderBrushProperty, value);
+    }
+
+    /// <summary>Outline width of the dial, in device-independent pixels.</summary>
+    public double DialBorderThickness
+    {
+        get => (double)GetValue(DialBorderThicknessProperty);
+        set => SetValue(DialBorderThicknessProperty, value);
+    }
+
+    /// <summary>Inset between the dial edge and its needle/cardinal content.</summary>
+    public Thickness DialInset
+    {
+        get => (Thickness)GetValue(DialInsetProperty);
+        set => SetValue(DialInsetProperty, value);
+    }
+
+    /// <summary>Stroke width of the north needle, in device-independent pixels.</summary>
+    public double NeedleThickness
+    {
+        get => (double)GetValue(NeedleThicknessProperty);
+        set => SetValue(NeedleThicknessProperty, value);
+    }
+
+    /// <summary>Font size of the cardinal letters, in device-independent pixels.</summary>
+    public double CardinalFontSize
+    {
+        get => (double)GetValue(CardinalFontSizeProperty);
+        set => SetValue(CardinalFontSizeProperty, value);
+    }
+
+    /// <summary>Brush of the centre marker. Null uses the theme secondary text brush.</summary>
+    public Brush? CenterMarkerBrush
+    {
+        get => (Brush?)GetValue(CenterMarkerBrushProperty);
+        set => SetValue(CenterMarkerBrushProperty, value);
+    }
+
+    /// <summary>Diameter of the centre marker, in device-independent pixels.</summary>
+    public double CenterMarkerSize
+    {
+        get => (double)GetValue(CenterMarkerSizeProperty);
+        set => SetValue(CenterMarkerSizeProperty, value);
+    }
+
+    /// <summary>Shows or hides the marker at the centre of the dial.</summary>
+    public bool ShowCenterMarker
+    {
+        get => (bool)GetValue(ShowCenterMarkerProperty);
+        set => SetValue(ShowCenterMarkerProperty, value);
+    }
+
+    private static object CoerceNonNegative(DependencyObject _, object value) =>
+        value is double number && NumericCompatibility.IsFinite(number) ? Math.Max(0, number) : 0d;
+
+    private static object CoercePositive(DependencyObject _, object value) =>
+        value is double number && NumericCompatibility.IsFinite(number) ? Math.Max(0.5, number) : 1d;
 
     private static object CoerceAngle(DependencyObject d, object value)
     {

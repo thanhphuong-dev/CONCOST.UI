@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -22,7 +22,7 @@ public partial class ShowcaseViewModel
 
         var label = new TextBlock
         {
-            Text = "Di chuột trong khung này",
+            Text = Loc.T("Di chuột trong khung này", "Move the pointer inside this frame"),
             Foreground = Brushes.White,
             FontSize = 13,
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -33,20 +33,20 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             host,
             xaml: "<Grid Height=\"170\" ClipToBounds=\"True\" Background=\"#101828\">\n" +
-                  "    <TextBlock Text=\"Di chuột trong khung này\" Foreground=\"White\"\n" +
+                  Loc.T("    <TextBlock Text=\"Di chuột trong khung này\" Foreground=\"White\"\n", "    <TextBlock Text=\"Move the pointer inside this frame\" Foreground=\"White\"\n") +
                   "               HorizontalAlignment=\"Center\" VerticalAlignment=\"Center\" />\n" +
                   "    <ui:CursorGlow GlowSize=\"240\" GlowOpacity=\"0.42\" />\n" +
                   "</Grid>",
             csharp: "var glow = new CursorGlow\n" +
                     "{\n" +
-                    "    GlowSize = 240,        // đường kính quầng sáng\n" +
+                    Loc.T("    GlowSize = 240,        // đường kính quầng sáng\n", "    GlowSize = 240,        // glow diameter\n") +
                     "    GlowOpacity = 0.42,\n" +
-                    "    FollowSpeed = 0.18     // 0 = bám ngay, 1 = không tới\n" +
+                    Loc.T("    FollowSpeed = 0.18     // 0 = bám ngay, 1 = không tới\n", "    FollowSpeed = 0.18     // 0 = snap, 1 = never arrives\n") +
                     "};\n\n" +
-                    "// Tắt khi cửa sổ không active\n" +
+                    Loc.T("// Tắt khi cửa sổ không active\n", "// Turn off while the window is inactive\n") +
                     "glow.IsAnimated = false;"));
 
         return root;
@@ -66,7 +66,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Chấm · Kẻ · Chữ thập",
+            Loc.T("Chấm · Kẻ · Chữ thập", "Dots · Lines · Crosses"),
             grid,
             xaml: "<ui:GridPattern Pattern=\"Dots\" CellSize=\"18\" PatternOpacity=\"0.55\" />\n" +
                   "<!-- Pattern: Dots | Lines | Cross -->",
@@ -77,7 +77,7 @@ public partial class ShowcaseViewModel
                     "    StrokeThickness = 1,\n" +
                     "    PatternOpacity = 0.55\n" +
                     "};\n\n" +
-                    "// Dịch pha để tạo parallax khi cuộn\n" +
+                    Loc.T("// Dịch pha để tạo parallax khi cuộn\n", "// Shift the phase to get parallax while scrolling\n") +
                     "pattern.OffsetX = scrollOffset * 0.15;"));
 
         return root;
@@ -98,12 +98,12 @@ public partial class ShowcaseViewModel
         field.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
         field.Child = new TextBlock
         {
-            Text = "Nhập chiều dài dầm (không hợp lệ)",
+            Text = Loc.T("Nhập chiều dài dầm (không hợp lệ)", "Enter a beam length (invalid)"),
             FontSize = 12,
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        var button = new Button { Content = "Kích hoạt shake", Padding = new Thickness(12, 6, 12, 6), Margin = new Thickness(0, 12, 0, 0), HorizontalAlignment = HorizontalAlignment.Left };
+        var button = new Button { Content = Loc.T("Kích hoạt shake", "Trigger shake"), Padding = new Thickness(12, 6, 12, 6), Margin = new Thickness(0, 12, 0, 0), HorizontalAlignment = HorizontalAlignment.Left };
         button.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         button.Click += (_, _) => ShakeElement.Shake(field);
 
@@ -113,18 +113,18 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Dữ liệu không hợp lệ",
+            Loc.T("Dữ liệu không hợp lệ", "Invalid data"),
             content,
             xaml: "<Border x:Name=\"LengthField\" attached:ShakeElement.Amplitude=\"8\">\n" +
-                  "    <!-- ô nhập -->\n" +
+                  Loc.T("    <!-- ô nhập -->\n", "    <!-- input box -->\n") +
                   "</Border>\n\n" +
-                  "<!-- Kích hoạt từ code -->",
+                  Loc.T("<!-- Kích hoạt từ code -->", "<!-- Trigger from code -->\n"),
             csharp: "if (!IsValid(value))\n" +
                     "{\n" +
                     "    ShakeElement.Shake(LengthField);\n" +
-                    "    Growl.Toast(\"Chiều dài dầm phải > 0\", GrowlType.Warning);\n" +
+                    Loc.T("    Growl.Toast(\"Chiều dài dầm phải > 0\", GrowlType.Warning);\n", "    Growl.Toast(\"Beam length must be > 0\", GrowlType.Warning);\n") +
                     "}\n\n" +
-                    "// Tự động bỏ qua nếu người dùng tắt animation hệ thống"));
+                    Loc.T("// Tự động bỏ qua nếu người dùng tắt animation hệ thống", "// Automatically skipped when the user disables system animation\n")));
 
         return root;
     }
@@ -137,7 +137,7 @@ public partial class ShowcaseViewModel
     {
         var note = new TextBlock
         {
-            Text = "Hai khung dưới là host window giả lập (một sáng, một tối). Nội dung bên trong tự chọn theme theo khung chứa nó — đúng cách plugin Revit/AutoCAD chạy: không có Application riêng, chỉ có window của host.",
+            Text = Loc.T("Hai khung dưới là host window giả lập (một sáng, một tối). Nội dung bên trong tự chọn theme theo khung chứa nó — đúng cách plugin Revit/AutoCAD chạy: không có Application riêng, chỉ có window của host.", "The two frames below are simulated host windows (one light, one dark). The content inside picks its theme from the frame that hosts it — exactly how a Revit/AutoCAD plug-in runs: no Application of its own, only the host window."),
             FontSize = 12,
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 14)
@@ -168,7 +168,7 @@ public partial class ShowcaseViewModel
 
             var body = new TextBlock
             {
-                Text = "Nội dung plugin — chữ, viền và nút lấy theo theme của host.",
+                Text = Loc.T("Nội dung plugin — chữ, viền và nút lấy theo theme của host.", "Plug-in content — text, borders and buttons follow the host theme."),
                 FontSize = 11.5,
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 5, 0, 0)
@@ -194,8 +194,8 @@ public partial class ShowcaseViewModel
         var lightHost = HostPanel(Color.FromRgb(0xFF, 0xFF, 0xFF), Color.FromRgb(0xE2, 0xE8, 0xF0));
         var darkHost = HostPanel(Color.FromRgb(0x11, 0x18, 0x27), Color.FromRgb(0x33, 0x41, 0x55));
 
-        var lightScope = PluginContent("Host sáng (light window)");
-        var darkScope = PluginContent("Host tối (dark window)");
+        var lightScope = PluginContent(Loc.T("Host sáng (light window)", "Light host window"));
+        var darkScope = PluginContent(Loc.T("Host tối (dark window)", "Dark host window"));
         lightHost.Child = lightScope;
         darkHost.Child = darkScope;
 
@@ -210,7 +210,7 @@ public partial class ShowcaseViewModel
 
         var swap = new Button
         {
-            Content = "Đảo màu 2 host",
+            Content = Loc.T("Đảo màu 2 host", "Swap the two hosts"),
             Margin = new Thickness(0, 14, 0, 0),
             HorizontalAlignment = HorizontalAlignment.Left,
             Padding = new Thickness(14, 6, 14, 6)
@@ -233,17 +233,17 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Auto — theme bám theo window chủ",
+            Loc.T("Auto — theme bám theo window chủ", "Auto — theme follows the host window"),
             content,
-            xaml: "<!-- Plugin root: một UserControl hoặc Grid của add-in -->\n" +
+            xaml: Loc.T("<!-- Plugin root: một UserControl hoặc Grid của add-in -->\n", "<!-- Plug-in root: a UserControl or Grid from the add-in -->\n") +
                   "<UserControl x:Name=\"PluginRoot\" Background=\"Transparent\">\n" +
-                  "    <!-- nội dung plugin -->\n" +
+                  Loc.T("    <!-- nội dung plugin -->\n", "    <!-- plug-in content -->\n") +
                   "</UserControl>",
-            csharp: "// Không cần Application.Current — chỉ cần root của plugin\n" +
+            csharp: Loc.T("// Không cần Application.Current — chỉ cần root của plugin\n", "// No Application.Current needed — just the plug-in root\n") +
                     "ThemeManager.Current.ApplyTheme(PluginRoot, AppTheme.Auto);\n\n" +
-                    "// Host vừa đổi theme (Revit/AutoCAD chuyển sáng-tối)\n" +
+                    Loc.T("// Host vừa đổi theme (Revit/AutoCAD chuyển sáng-tối)\n", "// The host just switched theme (Revit/AutoCAD light-dark)\n") +
                     "ThemeManager.Current.RefreshAutoTheme(PluginRoot);\n\n" +
-                    "// Hỏi trước khi cần biết host đang sáng hay tối\n" +
+                    Loc.T("// Hỏi trước khi cần biết host đang sáng hay tối\n", "// Ask before you need to know whether the host is light or dark\n") +
                     "var hostTheme = ThemeManager.DetectTheme(PluginRoot);"));
 
         return root;
@@ -253,7 +253,7 @@ public partial class ShowcaseViewModel
     {
         var note = new TextBlock
         {
-            Text = "Nhấn để áp preset Brutal (nền kem, viền mực, accent vàng điện)",
+            Text = Loc.T("Nhấn để áp preset Brutal (nền kem, viền mực, accent vàng điện)", "Click to apply the Brutal preset (cream ground, ink border, electric-yellow accent)"),
             FontSize = 12,
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 12)
@@ -282,7 +282,7 @@ public partial class ShowcaseViewModel
             content,
             xaml: "<!-- Trong App.xaml.cs -->",
             csharp: "ThemeManager.Current.Preset = ThemePreset.Brutal;\n\n" +
-                    "// Quay lại mặc định — brush được khôi phục từ snapshot\n" +
+                    Loc.T("// Quay lại mặc định — brush được khôi phục từ snapshot\n", "// Back to the default — brushes are restored from the snapshot\n") +
                     "ThemeManager.Current.Preset = ThemePreset.Default;"));
 
         return root;
@@ -293,22 +293,22 @@ public partial class ShowcaseViewModel
         var note = new TextBlock
         {
             Text = MotionSettings.AnimationsEnabled
-                ? "Animation đang BẬT (theo cài đặt Windows)."
-                : "Animation đang TẮT — các hiệu ứng vẽ khung tĩnh.",
+                ? Loc.T("Animation đang BẬT (theo cài đặt Windows).", "Animation is ON (per the Windows setting).")
+                : Loc.T("Animation đang TẮT — các hiệu ứng vẽ khung tĩnh.", "Animation is OFF — effects draw a static frame."),
             FontSize = 12,
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 10)
         };
         note.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
-        var toggle = new Button { Content = "Tắt / bật animation trong app", Padding = new Thickness(12, 6, 12, 6), HorizontalAlignment = HorizontalAlignment.Left };
+        var toggle = new Button { Content = Loc.T("Tắt / bật animation trong app", "Turn animation off / on in the app"), Padding = new Thickness(12, 6, 12, 6), HorizontalAlignment = HorizontalAlignment.Left };
         toggle.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         toggle.Click += (_, _) =>
         {
             MotionSettings.ForceDisabled = !MotionSettings.ForceDisabled;
             note.Text = MotionSettings.AnimationsEnabled
-                ? "Animation đang BẬT."
-                : "Animation đang TẮT — các hiệu ứng vẽ khung tĩnh.";
+                ? Loc.T("Animation đang BẬT.", "Animation is ON.")
+                : Loc.T("Animation đang TẮT — các hiệu ứng vẽ khung tĩnh.", "Animation is OFF — effects draw a static frame.");
         };
 
         var content = new StackPanel();
@@ -317,13 +317,13 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Tắt animation hệ thống",
+            Loc.T("Tắt animation hệ thống", "Disable system animation"),
             content,
-            xaml: "<!-- Không cần làm gì: mọi hiệu ứng tự đọc MotionSettings -->",
-            csharp: "// Tắt toàn bộ hiệu ứng trong app (ví dụ theo setting của người dùng)\n" +
+            xaml: Loc.T("<!-- Không cần làm gì: mọi hiệu ứng tự đọc MotionSettings -->", "<!-- Nothing to do: every effect reads MotionSettings on its own -->\n"),
+            csharp: Loc.T("// Tắt toàn bộ hiệu ứng trong app (ví dụ theo setting của người dùng)\n", "// Turn every effect off in the app (for example from a user setting)\n") +
                     "MotionSettings.ForceDisabled = true;\n\n" +
                     "// Windows \"Show animations\" = off  →  MotionSettings.AnimationsEnabled == false\n" +
-                    "// Các hiệu ứng tự vẽ khung tĩnh thay vì đứng hình."));
+                    Loc.T("// Các hiệu ứng tự vẽ khung tĩnh thay vì đứng hình.", "// Effects draw a static frame instead of freezing.\n")));
 
         return root;
     }

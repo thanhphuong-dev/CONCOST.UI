@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -201,7 +201,7 @@ public partial class ShowcaseViewModel
 
         var minimize = new Button
         {
-            Content = "Thu gọn / mở rộng",
+            Content = Loc.T("Thu gọn / mở rộng", "Collapse / expand"),
             Padding = new Thickness(12, 6, 12, 6),
             HorizontalAlignment = HorizontalAlignment.Left
         };
@@ -213,7 +213,7 @@ public partial class ShowcaseViewModel
         baseStack.Children.Add(minimize);
 
         var root = new StackPanel();
-        root.Children.Add(DemoSection("Mặc định", baseStack,
+        root.Children.Add(DemoSection(Loc.T("Mặc định", "Default"), baseStack,
             xaml: "<ribbon:Ribbon>\n" +
                   "    <ribbon:RibbonTabItem Header=\"Home\">\n" +
                   "        <ribbon:RibbonGroup Header=\"Clipboard\">\n" +
@@ -296,7 +296,7 @@ public partial class ShowcaseViewModel
         var advancedStack = new StackPanel();
         advancedStack.Children.Add(advanced);
 
-        root.Children.Add(DemoSection("Lệnh nâng cao", advancedStack,
+        root.Children.Add(DemoSection(Loc.T("Lệnh nâng cao", "Advanced commands"), advancedStack,
             xaml: "<ribbon:RibbonSplitButton Header=\"Export\" Size=\"Large\">\n" +
                   "    <ribbon:RibbonMenuItem Header=\"PDF\" />\n" +
                   "    <ribbon:RibbonMenuSeparator />\n" +
@@ -309,12 +309,12 @@ public partial class ShowcaseViewModel
                   "    </ui:RibbonMenuItem>\n" +
                   "</ui:RibbonDropDownButton>",
             csharp: "var split = new RibbonSplitButton { Header = \"Export\" };\n" +
-                    "split.Command = ExportCommand;                            // vùng trái\n" +
-                    "split.Items.Add(new RibbonMenuItem { Header = \"PDF\" });  // vùng mũi tên\n\n" +
+                    Loc.T("split.Command = ExportCommand;                            // vùng trái\n", "split.Command = ExportCommand;                            // left zone") +
+                    Loc.T("split.Items.Add(new RibbonMenuItem { Header = \"PDF\" });  // vùng mũi tên\n\n", "split.Items.Add(new RibbonMenuItem { Header = \"PDF\" });  // arrow zone\n\n") +
                     "var radio = new RibbonRadioButton\n" +
                     "{\n" +
                     "    Header = \"mm\",\n" +
-                    "    GroupName = \"unit\",   // cùng GroupName = loại trừ lẫn nhau\n" +
+                    Loc.T("    GroupName = \"unit\",   // cùng GroupName = loại trừ lẫn nhau\n", "    GroupName = \"unit\",   // same GroupName = mutually exclusive\n") +
                     "    IsChecked = true\n" +
                     "};"));
 
@@ -433,15 +433,15 @@ public partial class ShowcaseViewModel
         };
         ribbon.DisplayModeChanged += (_, _) => modes.SelectedItem = ribbon.DisplayMode;
 
-        var cycle = new Button { Content = "Cycle (4 trạng thái)", Padding = new Thickness(12, 6, 12, 6) };
+        var cycle = new Button { Content = Loc.T("Cycle (4 trạng thái)", "Cycle (4 states)"), Padding = new Thickness(12, 6, 12, 6) };
         cycle.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         cycle.Click += (_, _) => ribbon.CycleState();
 
-        var showTab = new Button { Content = "Hiện tab ngữ cảnh", Padding = new Thickness(12, 6, 12, 6), Margin = new Thickness(8, 0, 0, 0) };
+        var showTab = new Button { Content = Loc.T("Hiện tab ngữ cảnh", "Show the contextual tab"), Padding = new Thickness(12, 6, 12, 6), Margin = new Thickness(8, 0, 0, 0) };
         showTab.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         showTab.Click += (_, _) => ribbon.ShowContextualTab(contextual);
 
-        var hideTab = new Button { Content = "Ẩn tab ngữ cảnh", Padding = new Thickness(12, 6, 12, 6), Margin = new Thickness(8, 0, 0, 0) };
+        var hideTab = new Button { Content = Loc.T("Ẩn tab ngữ cảnh", "Hide the contextual tab"), Padding = new Thickness(12, 6, 12, 6), Margin = new Thickness(8, 0, 0, 0) };
         hideTab.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         hideTab.Click += (_, _) => ribbon.HideContextualTab("modify-walls");
 
@@ -456,7 +456,7 @@ public partial class ShowcaseViewModel
         stack.Children.Add(actions);
 
         var root = new StackPanel();
-        root.Children.Add(DemoSection("Thu gọn và overlay", stack,
+        root.Children.Add(DemoSection(Loc.T("Thu gọn và overlay", "Collapse and overlay"), stack,
             xaml: "<ribbon:Ribbon x:Name=\"rb\" DisplayMode=\"MinimizeToTabs\">\n" +
                   "    <ribbon:Ribbon.InfoCenter>\n" +
                   "        <TextBlock Text=\"3 objects selected\" />\n" +
@@ -467,7 +467,7 @@ public partial class ShowcaseViewModel
                   "        <TextBlock Text=\"Snap options\" />\n" +
                   "    </ribbon:RibbonGroup.SlideOut>\n" +
                   "</ribbon:RibbonGroup>",
-            csharp: "rb.DisplayMode = RibbonDisplayMode.MinimizeToTabs;   // hoặc rb.CycleState()\n\n" +
+            csharp: Loc.T("rb.DisplayMode = RibbonDisplayMode.MinimizeToTabs;   // hoặc rb.CycleState()\n\n", "rb.DisplayMode = RibbonDisplayMode.MinimizeToTabs;   // or rb.CycleState()\n\n") +
                     "rb.InfoCenter = new TextBlock { Text = \"3 objects selected\" };\n" +
                     "rb.DisplayModeChanged += (_, _) => Trace.WriteLine(rb.DisplayMode);\n\n" +
                     "rb.ShowContextualTab(new RibbonTabItem\n" +
@@ -476,7 +476,7 @@ public partial class ShowcaseViewModel
                     "    Id = \"modify-walls\",\n" +
                     "    ContextualGroup = \"Modify\"\n" +
                     "});\n" +
-                    "rb.HideContextualTab(\"modify-walls\");   // quay lại tab trước đó"));
+                    Loc.T("rb.HideContextualTab(\"modify-walls\");   // quay lại tab trước đó", "rb.HideContextualTab(\"modify-walls\");   // back to the previous tab")));
 
         // Second card: the item types and item-level tuning.
         var ticked = new RibbonGroup { Header = "Options" };
@@ -501,7 +501,7 @@ public partial class ShowcaseViewModel
 
         var label = new TextBlock
         {
-            Text = "Kéo cửa sổ hẹp lại: tab này đi theo thứ tự lớn → nhỏ → ẩn nhãn → thu thành nút.",
+            Text = Loc.T("Kéo cửa sổ hẹp lại: tab này đi theo thứ tự lớn → nhỏ → ẩn nhãn → thu thành nút.", "Narrow the window: this tab walks the ladder large → small → labels hidden → collapsed to a button."),
             FontSize = 11,
             Margin = new Thickness(0, 8, 0, 0)
         };
@@ -511,7 +511,7 @@ public partial class ShowcaseViewModel
         tuningStack.Children.Add(smallRibbon);
         tuningStack.Children.Add(label);
 
-        root.Children.Add(DemoSection("Loại item và bậc thu gọn", tuningStack,
+        root.Children.Add(DemoSection(Loc.T("Loại item và bậc thu gọn", "Item types and collapse steps"), tuningStack,
             xaml: "<ribbon:RibbonGroup Header=\"Options\" CollapsePriority=\"0\">\n" +
                   "    <ribbon:RibbonLabel Header=\"Snap mode\" />\n" +
                   "    <ribbon:RibbonRadioGroup SelectedIndex=\"0\">\n" +
@@ -522,8 +522,8 @@ public partial class ShowcaseViewModel
                   "</ribbon:RibbonGroup>",
             csharp: "var radio = new RibbonRadioGroup { SelectedIndex = 0 };\n" +
                     "radio.Items.Add(new RibbonRadioButton { Header = \"Off\" });\n" +
-                    "radio.Items.Add(new RibbonRadioButton { Header = \"Node\" });   // tự bỏ chọn cái kia\n\n" +
-                    "// CollapsePriority = 0: panel không bao giờ thu thành nút, item không bao giờ thu nhỏ\n" +
+                    Loc.T("radio.Items.Add(new RibbonRadioButton { Header = \"Node\" });   // tự bỏ chọn cái kia\n\n", "radio.Items.Add(new RibbonRadioButton { Header = \"Node\" });   // unchecks the other one\n\n") +
+                    Loc.T("// CollapsePriority = 0: panel không bao giờ thu thành nút, item không bao giờ thu nhỏ\n", "// CollapsePriority = 0: the panel never folds into a button and items never shrink") +
                     "group.CollapsePriority = 0;\n" +
                     "item.CollapsePriority = 0;"));
 
@@ -534,24 +534,24 @@ public partial class ShowcaseViewModel
     private UIElement BuildRibbonExtendedCard()
     {
         var fileGroup = new RibbonGroup { Header = "File" };
-        fileGroup.Items.Add(Cmd("New", RibbonItemSize.Large, IconKind.File, "Tạo bản vẽ mới", "Ctrl+N"));
-        fileGroup.Items.Add(Cmd("Open", RibbonItemSize.Large, IconKind.Folder, "Mở bản vẽ", "Ctrl+O"));
-        fileGroup.Items.Add(Cmd("Save", RibbonItemSize.Large, IconKind.Save, "Ghi bản vẽ", "Ctrl+S"));
+        fileGroup.Items.Add(Cmd("New", RibbonItemSize.Large, IconKind.File, Loc.T("Tạo bản vẽ mới", "New drawing"), "Ctrl+N"));
+        fileGroup.Items.Add(Cmd("Open", RibbonItemSize.Large, IconKind.Folder, Loc.T("Mở bản vẽ", "Open drawing"), "Ctrl+O"));
+        fileGroup.Items.Add(Cmd("Save", RibbonItemSize.Large, IconKind.Save, Loc.T("Ghi bản vẽ", "Save drawing"), "Ctrl+S"));
 
         var editGroup = new RibbonGroup { Header = "Edit" };
-        editGroup.Items.Add(Cmd("Undo", RibbonItemSize.Large, IconKind.Undo, "Hoàn tác", "Ctrl+Z"));
-        editGroup.Items.Add(Cmd("Redo", RibbonItemSize.Large, IconKind.Redo, "Làm lại", "Ctrl+Y"));
+        editGroup.Items.Add(Cmd("Undo", RibbonItemSize.Large, IconKind.Undo, Loc.T("Hoàn tác", "Undo"), "Ctrl+Z"));
+        editGroup.Items.Add(Cmd("Redo", RibbonItemSize.Large, IconKind.Redo, Loc.T("Làm lại", "Redo"), "Ctrl+Y"));
         editGroup.Items.Add(new RibbonSeparator());
-        editGroup.Items.Add(Cmd("Cut", RibbonItemSize.Small, IconKind.Close, "Cắt", "Ctrl+X"));
-        editGroup.Items.Add(Cmd("Copy", RibbonItemSize.Small, IconKind.Copy, "Sao chép", "Ctrl+C"));
+        editGroup.Items.Add(Cmd("Cut", RibbonItemSize.Small, IconKind.Close, Loc.T("Cắt", "Cut"), "Ctrl+X"));
+        editGroup.Items.Add(Cmd("Copy", RibbonItemSize.Small, IconKind.Copy, Loc.T("Sao chép", "Copy"), "Ctrl+C"));
 
         var viewGroup = new RibbonGroup { Header = "Show" };
-        viewGroup.Items.Add(Cmd("Grid", RibbonItemSize.Small, IconKind.GridSquare, "Hiện lưới", "F7"));
-        viewGroup.Items.Add(Cmd("Ruler", RibbonItemSize.Small, IconKind.Ruler, "Hiện thước", "F8"));
+        viewGroup.Items.Add(Cmd("Grid", RibbonItemSize.Small, IconKind.GridSquare, Loc.T("Hiện lưới", "Show grid"), "F7"));
+        viewGroup.Items.Add(Cmd("Ruler", RibbonItemSize.Small, IconKind.Ruler, Loc.T("Hiện thước", "Show ruler"), "F8"));
 
         var media = new RibbonGroup { Header = "Media" };
-        media.Items.Add(Cmd("Table", RibbonItemSize.Large, IconKind.TableData, "Chèn bảng"));
-        media.Items.Add(Cmd("Chart", RibbonItemSize.Large, IconKind.ChartBar, "Chèn biểu đồ"));
+        media.Items.Add(Cmd("Table", RibbonItemSize.Large, IconKind.TableData, Loc.T("Chèn bảng", "Insert table")));
+        media.Items.Add(Cmd("Chart", RibbonItemSize.Large, IconKind.ChartBar, Loc.T("Chèn biểu đồ", "Insert chart")));
 
         var home = new RibbonTabItem { Header = "Home", Id = "home", Icon = RibbonIcon(IconKind.Folder) };
         home.Content = new List<RibbonGroup> { fileGroup, editGroup };
@@ -578,24 +578,23 @@ public partial class ShowcaseViewModel
         var extended = new Ribbon
         {
             ApplicationMenu = fileMenu,
-            EmptyContent = "Chưa mở không gian làm việc nào.",
+            EmptyContent = Loc.T("Chưa mở không gian làm việc nào.", "No workspace is open yet."),
             ItemsSource = new object[] { home, insert, view }
         };
 
         var options = new WrapPanel();
 
-        options.Children.Add(Option("Viền khung", true, on => extended.ShowBorder = on));
-        options.Children.Add(Option("Khối File", true, on => extended.ShowApplicationMenu = on));
-        options.Children.Add(Option("Dải tab", true, on => extended.ShowTabStrip = on));
-        options.Children.Add(Option("Nhãn group", true, on => Ribbon.SetShowGroupLabels(extended, on)));
-        options.Children.Add(Option("Screen tip", true, on => extended.ShowScreenTips = on));
-        options.Children.Add(Option("Gộp group khi hẹp", true, on => extended.IsGroupCollapseEnabled = on));
-        options.Children.Add(Option("Cho tùy biến QAT", true, on => extended.IsQuickAccessCustomizable = on));
-        options.Children.Add(Option("Bật key tip (Alt)", true, on => extended.IsKeyTipEnabled = on));
+        options.Children.Add(Option(Loc.T("Viền khung", "Chrome border"), true, on => extended.ShowBorder = on));
+        options.Children.Add(Option(Loc.T("Khối File", "File block"), true, on => extended.ShowApplicationMenu = on));
+        options.Children.Add(Option(Loc.T("Dải tab", "Tab strip"), true, on => extended.ShowTabStrip = on));
+        options.Children.Add(Option(Loc.T("Nhãn group", "Group labels"), true, on => Ribbon.SetShowGroupLabels(extended, on)));
+        options.Children.Add(Option(Loc.T("Gộp group khi hẹp", "Merge groups when narrow"), true, on => extended.IsGroupCollapseEnabled = on));
+        options.Children.Add(Option(Loc.T("Cho tùy biến QAT", "QAT customisation"), true, on => extended.IsQuickAccessCustomizable = on));
+        options.Children.Add(Option(Loc.T("Bật key tip (Alt)", "Key tips (Alt)"), true, on => extended.IsKeyTipEnabled = on));
 
         var empty = new Button
         {
-            Content = "Bỏ hết tab",
+            Content = Loc.T("Bỏ hết tab", "Remove every tab"),
             Padding = new Thickness(12, 5, 12, 5),
             Margin = new Thickness(0, 0, 16, 8)
         };
@@ -604,7 +603,7 @@ public partial class ShowcaseViewModel
         {
             bool wasEmpty = extended.IsEmpty;
             extended.ItemsSource = wasEmpty ? new object[] { home, insert, view } : Array.Empty<RibbonTabItem>();
-            empty.Content = extended.IsEmpty ? "Khôi phục tab" : "Bỏ hết tab";
+            empty.Content = extended.IsEmpty ? Loc.T("Khôi phục tab", "Restore tabs") : Loc.T("Bỏ hết tab", "Remove every tab");
         };
         options.Children.Add(empty);
 
@@ -623,7 +622,7 @@ public partial class ShowcaseViewModel
         stack.Children.Add(extended);
         stack.Children.Add(options);
 
-        return DemoSection("Thuộc tính mở rộng", stack,
+        return DemoSection(Loc.T("Thuộc tính mở rộng", "Extended properties"), stack,
             xaml: "<ribbon:Ribbon ShowBorder=\"False\"\n" +
                   "               IsGroupCollapseEnabled=\"False\"\n" +
                   "               IsQuickAccessCustomizable=\"False\"\n" +
@@ -680,7 +679,7 @@ public partial class ShowcaseViewModel
         var fileMenu = new RibbonApplicationMenu
         {
             Header = "File",
-            RecentHeader = "Mở gần đây",
+            RecentHeader = Loc.T("Mở gần đây", "Recent"),
             Items =
             {
                 RibbonMenuEntry("New drawing", IconKind.File, "Ctrl+N"),
@@ -711,48 +710,48 @@ public partial class ShowcaseViewModel
         fileMenu.RecentItems = recent;
 
         // ---- Quick access: three commands pinned before the window is shown ----
-        var save = Cmd("Save", RibbonItemSize.Large, IconKind.Save, "Ghi bản vẽ hiện tại", "Ctrl+S");
+        var save = Cmd("Save", RibbonItemSize.Large, IconKind.Save, Loc.T("Ghi bản vẽ hiện tại", "Save the current drawing"), "Ctrl+S");
         save.Id = "save";
-        var undo = Cmd("Undo", RibbonItemSize.Large, IconKind.Undo, "Hoàn tác thao tác cuối", "Ctrl+Z");
+        var undo = Cmd("Undo", RibbonItemSize.Large, IconKind.Undo, Loc.T("Hoàn tác thao tác cuối", "Undo the last action"), "Ctrl+Z");
         undo.Id = "undo";
-        var redo = Cmd("Redo", RibbonItemSize.Large, IconKind.Redo, "Làm lại thao tác vừa hoàn tác", "Ctrl+Y");
+        var redo = Cmd("Redo", RibbonItemSize.Large, IconKind.Redo, Loc.T("Làm lại thao tác vừa hoàn tác", "Redo the action just undone"), "Ctrl+Y");
         redo.Id = "redo";
 
         // ---- Home tab: a full ribbon, not three lonely buttons ----
         var fileGroup = new RibbonGroup { Header = "File" };
-        fileGroup.Items.Add(Cmd("New", RibbonItemSize.Large, IconKind.File, "Tạo bản vẽ mới", "Ctrl+N"));
-        fileGroup.Items.Add(Cmd("Open", RibbonItemSize.Large, IconKind.Folder, "Mở bản vẽ có sẵn", "Ctrl+O"));
+        fileGroup.Items.Add(Cmd("New", RibbonItemSize.Large, IconKind.File, Loc.T("Tạo bản vẽ mới", "New drawing"), "Ctrl+N"));
+        fileGroup.Items.Add(Cmd("Open", RibbonItemSize.Large, IconKind.Folder, Loc.T("Mở bản vẽ có sẵn", "Open an existing drawing"), "Ctrl+O"));
         fileGroup.Items.Add(save);
 
         var editGroup = new RibbonGroup { Header = "Edit" };
         editGroup.Items.Add(undo);
         editGroup.Items.Add(redo);
         editGroup.Items.Add(new RibbonSeparator());
-        editGroup.Items.Add(Cmd("Cut", RibbonItemSize.Small, IconKind.Close, "Cắt", "Ctrl+X"));
-        editGroup.Items.Add(Cmd("Copy", RibbonItemSize.Small, IconKind.Copy, "Sao chép", "Ctrl+C"));
-        editGroup.Items.Add(Cmd("Paste", RibbonItemSize.Small, IconKind.Copy, "Dán", "Ctrl+V"));
+        editGroup.Items.Add(Cmd("Cut", RibbonItemSize.Small, IconKind.Close, Loc.T("Cắt", "Cut"), "Ctrl+X"));
+        editGroup.Items.Add(Cmd("Copy", RibbonItemSize.Small, IconKind.Copy, Loc.T("Sao chép", "Copy"), "Ctrl+C"));
+        editGroup.Items.Add(Cmd("Paste", RibbonItemSize.Small, IconKind.Copy, Loc.T("Dán", "Paste"), "Ctrl+V"));
 
         var insertGroup = new RibbonGroup { Header = "Insert" };
-        insertGroup.Items.Add(Cmd("Table", RibbonItemSize.Large, IconKind.TableData, "Chèn bảng", "TB"));
-        insertGroup.Items.Add(Cmd("Chart", RibbonItemSize.Large, IconKind.ChartBar, "Chèn biểu đồ"));
+        insertGroup.Items.Add(Cmd("Table", RibbonItemSize.Large, IconKind.TableData, Loc.T("Chèn bảng", "Insert table"), "TB"));
+        insertGroup.Items.Add(Cmd("Chart", RibbonItemSize.Large, IconKind.ChartBar, Loc.T("Chèn biểu đồ", "Insert chart")));
         insertGroup.Items.Add(new RibbonSeparator());
-        insertGroup.Items.Add(Cmd("Link", RibbonItemSize.Small, IconKind.Link, "Chèn liên kết", "Ctrl+K"));
-        insertGroup.Items.Add(Cmd("Layers", RibbonItemSize.Small, IconKind.Layers, "Quản lý lớp"));
-        insertGroup.Items.Add(Cmd("Settings", RibbonItemSize.Small, IconKind.Settings, "Cấu hình"));
+        insertGroup.Items.Add(Cmd("Link", RibbonItemSize.Small, IconKind.Link, Loc.T("Chèn liên kết", "Insert link"), "Ctrl+K"));
+        insertGroup.Items.Add(Cmd("Layers", RibbonItemSize.Small, IconKind.Layers, Loc.T("Quản lý lớp", "Manage layers")));
+        insertGroup.Items.Add(Cmd("Settings", RibbonItemSize.Small, IconKind.Settings, Loc.T("Cấu hình", "Configure")));
 
         var homeTab = new RibbonTabItem { Header = "Home", Icon = RibbonIcon(IconKind.Folder) };
         homeTab.Content = new List<RibbonGroup> { fileGroup, editGroup, insertGroup };
 
         var mediaGroup = new RibbonGroup { Header = "Media" };
-        mediaGroup.Items.Add(Cmd("Chart", RibbonItemSize.Large, IconKind.ChartLine, "Chèn biểu đồ"));
-        mediaGroup.Items.Add(Cmd("Layers", RibbonItemSize.Medium, IconKind.Layers, "Quản lý lớp"));
-        mediaGroup.Items.Add(Cmd("Link", RibbonItemSize.Small, IconKind.Link, "Chèn liên kết"));
+        mediaGroup.Items.Add(Cmd("Chart", RibbonItemSize.Large, IconKind.ChartLine, Loc.T("Chèn biểu đồ", "Insert chart")));
+        mediaGroup.Items.Add(Cmd("Layers", RibbonItemSize.Medium, IconKind.Layers, Loc.T("Quản lý lớp", "Manage layers")));
+        mediaGroup.Items.Add(Cmd("Link", RibbonItemSize.Small, IconKind.Link, Loc.T("Chèn liên kết", "Insert link")));
 
         var dataGroup = new RibbonGroup { Header = "Data" };
-        dataGroup.Items.Add(Cmd("Table", RibbonItemSize.Large, IconKind.TableData, "Chèn bảng"));
-        dataGroup.Items.Add(Cmd("File", RibbonItemSize.Small, IconKind.File, "Nhập dữ liệu"));
-        dataGroup.Items.Add(Cmd("Copy", RibbonItemSize.Small, IconKind.Copy, "Sao chép dữ liệu"));
-        dataGroup.Items.Add(Cmd("Search", RibbonItemSize.Small, IconKind.Search, "Tìm dữ liệu"));
+        dataGroup.Items.Add(Cmd("Table", RibbonItemSize.Large, IconKind.TableData, Loc.T("Chèn bảng", "Insert table")));
+        dataGroup.Items.Add(Cmd("File", RibbonItemSize.Small, IconKind.File, Loc.T("Nhập dữ liệu", "Import data")));
+        dataGroup.Items.Add(Cmd("Copy", RibbonItemSize.Small, IconKind.Copy, Loc.T("Sao chép dữ liệu", "Copy data")));
+        dataGroup.Items.Add(Cmd("Search", RibbonItemSize.Small, IconKind.Search, Loc.T("Tìm dữ liệu", "Find data")));
 
         var insertTab = new RibbonTabItem { Header = "Insert", Icon = RibbonIcon(IconKind.TableData) };
         insertTab.Content = new List<RibbonGroup> { mediaGroup, dataGroup };
@@ -764,7 +763,7 @@ public partial class ShowcaseViewModel
             Size = RibbonItemSize.Small,
             IsChecked = true,
             Icon = RibbonIcon(IconKind.GridSquare),
-            ScreenTip = "Hiện lưới",
+            ScreenTip = Loc.T("Hiện lưới", "Show grid"),
             GestureText = "F7"
         });
         showGroup.Items.Add(new RibbonToggleButton
@@ -772,21 +771,21 @@ public partial class ShowcaseViewModel
             Header = "Ruler",
             Size = RibbonItemSize.Small,
             Icon = RibbonIcon(IconKind.Ruler),
-            ScreenTip = "Hiện thước",
+            ScreenTip = Loc.T("Hiện thước", "Show ruler"),
             GestureText = "F8"
         });
-        showGroup.Items.Add(Cmd("Layers", RibbonItemSize.Small, IconKind.Layers, "Quản lý lớp"));
+        showGroup.Items.Add(Cmd("Layers", RibbonItemSize.Small, IconKind.Layers, Loc.T("Quản lý lớp", "Manage layers")));
 
         var viewTab = new RibbonTabItem { Header = "View", Icon = RibbonIcon(IconKind.GridSquare) };
         viewTab.Content = new List<RibbonGroup> { showGroup };
 
         // ---- Contextual tab: only visible while a sketch is being edited ----
         var drawGroup = new RibbonGroup { Header = "Draw" };
-        drawGroup.Items.Add(Cmd("Line", RibbonItemSize.Large, IconKind.Edit, "Vẽ đoạn thẳng", "L"));
-        drawGroup.Items.Add(Cmd("Circle", RibbonItemSize.Large, IconKind.GridSquare, "Vẽ đường tròn", "C"));
+        drawGroup.Items.Add(Cmd("Line", RibbonItemSize.Large, IconKind.Edit, Loc.T("Vẽ đoạn thẳng", "Draw line"), "L"));
+        drawGroup.Items.Add(Cmd("Circle", RibbonItemSize.Large, IconKind.GridSquare, Loc.T("Vẽ đường tròn", "Draw circle"), "C"));
         drawGroup.Items.Add(new RibbonSeparator());
-        drawGroup.Items.Add(Cmd("Trim", RibbonItemSize.Small, IconKind.Close, "Cắt phần thừa", "TR"));
-        drawGroup.Items.Add(Cmd("Offset", RibbonItemSize.Small, IconKind.Copy, "Tạo bản song song", "O"));
+        drawGroup.Items.Add(Cmd("Trim", RibbonItemSize.Small, IconKind.Close, Loc.T("Cắt phần thừa", "Trim"), "TR"));
+        drawGroup.Items.Add(Cmd("Offset", RibbonItemSize.Small, IconKind.Copy, Loc.T("Tạo bản song song", "Offset"), "O"));
 
         var sketchTab = new RibbonTabItem { Header = "Sketch", Icon = RibbonIcon(IconKind.Edit) };
         sketchTab.Content = new List<RibbonGroup> { drawGroup };
@@ -796,7 +795,7 @@ public partial class ShowcaseViewModel
 
         var sketch = new RibbonContextualTabGroup
         {
-            Header = "Công cụ vẽ",
+            Header = Loc.T("Công cụ vẽ", "Drawing tools"),
             Accent = accent,
             Visibility = Visibility.Collapsed
         };
@@ -815,7 +814,7 @@ public partial class ShowcaseViewModel
         // ---- QAT placement selector: demonstrates QuickAccessPlacement DP ----
         var placementLabel = new TextBlock
         {
-            Text = "Vị trí Quick Access:",
+            Text = Loc.T("Vị trí Quick Access:", "Quick Access position:"),
             FontSize = 11.5,
             Margin = new Thickness(0, 10, 0, 4)
         };
@@ -843,7 +842,7 @@ public partial class ShowcaseViewModel
         // ---- Contextual tab toggle: clearly labelled so the user knows what it does ----
         var ctxLabel = new TextBlock
         {
-            Text = "Tab ngữ cảnh (chỉ hiện khi đang vẽ sketch):",
+            Text = Loc.T("Tab ngữ cảnh (chỉ hiện khi đang vẽ sketch):", "Contextual tab (only while sketching):"),
             FontSize = 11.5,
             Margin = new Thickness(0, 14, 0, 4)
         };
@@ -851,7 +850,7 @@ public partial class ShowcaseViewModel
 
         var toggleSketch = new Button
         {
-            Content = "Hiện tab Sketch",
+            Content = Loc.T("Hiện tab Sketch", "Show the Sketch tab"),
             Padding = new Thickness(12, 6, 12, 6),
             Width = 180,
             HorizontalAlignment = HorizontalAlignment.Left
@@ -862,7 +861,7 @@ public partial class ShowcaseViewModel
         {
             sketchVisible = !sketchVisible;
             sketch.Visibility = sketchVisible ? Visibility.Visible : Visibility.Collapsed;
-            toggleSketch.Content = sketchVisible ? "Ẩn tab Sketch" : "Hiện tab Sketch";
+            toggleSketch.Content = sketchVisible ? Loc.T("Ẩn tab Sketch", "Hide the Sketch tab") : Loc.T("Hiện tab Sketch", "Show the Sketch tab");
         };
 
         // ---- MenuBar inside the ribbon chrome: placement can be Above or Below ----
@@ -890,7 +889,7 @@ public partial class ShowcaseViewModel
         // ---- MenuBar placement selector ----
         var mbPlacementLabel = new TextBlock
         {
-            Text = "Vị trí MenuBar:",
+            Text = Loc.T("Vị trí MenuBar:", "MenuBar position:"),
             FontSize = 11.5,
             Margin = new Thickness(0, 10, 0, 4)
         };
@@ -901,8 +900,8 @@ public partial class ShowcaseViewModel
             Width = 180,
             HorizontalAlignment = HorizontalAlignment.Left
         };
-        mbPlacementBox.Items.Add("Trên ribbon (AboveRibbon)");
-        mbPlacementBox.Items.Add("Dưới ribbon (BelowRibbon)");
+        mbPlacementBox.Items.Add(Loc.T("Trên ribbon (AboveRibbon)", "Above the ribbon (AboveRibbon)"));
+        mbPlacementBox.Items.Add(Loc.T("Dưới ribbon (BelowRibbon)", "Below the ribbon (BelowRibbon)"));
         mbPlacementBox.SelectedIndex = 0;
         mbPlacementBox.SelectionChanged += (_, _) =>
         {
@@ -914,7 +913,7 @@ public partial class ShowcaseViewModel
         // ---- Show/hide MenuBar ----
         var mbShowCheck = new System.Windows.Controls.CheckBox
         {
-            Content = "Hiện MenuBar",
+            Content = Loc.T("Hiện MenuBar", "Show the MenuBar"),
             IsChecked = true,
             Margin = new Thickness(0, 6, 0, 0)
         };
@@ -924,7 +923,7 @@ public partial class ShowcaseViewModel
         // ---- The hairline under the bar ----
         var mbDividerCheck = new System.Windows.Controls.CheckBox
         {
-            Content = "Đường kẻ dưới MenuBar",
+            Content = Loc.T("Đường kẻ dưới MenuBar", "Rule under the MenuBar"),
             IsChecked = true,
             Margin = new Thickness(0, 6, 0, 0)
         };
@@ -942,7 +941,7 @@ public partial class ShowcaseViewModel
         stack.Children.Add(ctxLabel);
         stack.Children.Add(toggleSketch);
 
-        return DemoSection("MenuBar, QAT, tab và tab ngữ cảnh", stack,
+        return DemoSection(Loc.T("MenuBar, QAT, tab và tab ngữ cảnh", "Menu bar, QAT, tabs and contextual tabs"), stack,
             xaml: "<ribbon:Ribbon ApplicationMenu=\"{StaticResource FileMenu}\">\n" +
                   "    <ribbon:Ribbon.MenuBar>\n" +
                   "        <ribbon:RibbonMenuBar>\n" +
@@ -960,34 +959,34 @@ public partial class ShowcaseViewModel
                   "    <ribbon:RibbonTabItem Header=\"Home\">\n" +
                   "        <ribbon:RibbonGroup Header=\"File\">\n" +
                   "            <ribbon:RibbonButton Header=\"Save\" Size=\"Large\"\n" +
-                  "                                 ScreenTip=\"Ghi bản vẽ hiện tại\" GestureText=\"Ctrl+S\" />\n" +
+                  Loc.T("                                 ScreenTip=\"Ghi bản vẽ hiện tại\" GestureText=\"Ctrl+S\" />\n", "                                 ScreenTip=\"Save the current drawing\" GestureText=\"Ctrl+S\" />\n") +
                   "        </ribbon:RibbonGroup>\n" +
                   "    </ribbon:RibbonTabItem>\n\n" +
-                  "    <ribbon:RibbonContextualTabGroup Header=\"Công cụ vẽ\" Accent=\"#D93B3B\"\n" +
+                  Loc.T("    <ribbon:RibbonContextualTabGroup Header=\"Công cụ vẽ\" Accent=\"#D93B3B\"\n", "    <ribbon:RibbonContextualTabGroup Header=\"Drawing tools\" Accent=\"#D93B3B\"\n") +
                   "                                     Visibility=\"Collapsed\">\n" +
                   "        <ribbon:RibbonTabItem Header=\"Sketch\" />\n" +
                   "    </ribbon:RibbonContextualTabGroup>\n" +
                   "</ribbon:Ribbon>",
-            csharp: "// MenuBar nằm trên cùng, trên cả QAT và tabs\n" +
+            csharp: Loc.T("// MenuBar nằm trên cùng, trên cả QAT và tabs\n", "// The MenuBar sits on top, above both the QAT and the tabs") +
                     "var bar = new RibbonMenuBar();\n" +
                     "bar.Items.Add(new RibbonMenuBarItem { Header = \"File\" });\n" +
                     "ribbon.MenuBar = bar;\n" +
                     "ribbon.MenuBarPlacement = RibbonMenuBarPlacement.AboveRibbon;\n" +
                     "ribbon.ShowMenuBar = true;\n\n" +
-                    "// QAT: ghim lệnh, chevron mở menu tùy biến\n" +
+                    Loc.T("// QAT: ghim lệnh, chevron mở menu tùy biến\n", "// QAT: pin commands, the chevron opens the customise menu") +
                     "ribbon.PinToQuickAccess(saveButton);\n" +
                     "ribbon.UnpinFromQuickAccess(saveButton);\n" +
                     "ribbon.QuickAccess.ShowLabels = true;\n\n" +
-                    "// Tab ngữ cảnh: ẩn/hiện theo chế độ đang làm việc\n" +
-                    "sketch.Visibility = Visibility.Visible;   // hiện cả nhóm\n" +
-                    "sketch.Accent = Brushes.Crimson;          // đổi màu dải\n\n" +
-                    "// Screen tip tự sinh từ Header + ScreenTip + GestureText\n" +
+                    Loc.T("// Tab ngữ cảnh: ẩn/hiện theo chế độ đang làm việc\n", "// Contextual tab: shown and hidden by the active mode") +
+                    Loc.T("sketch.Visibility = Visibility.Visible;   // hiện cả nhóm\n", "sketch.Visibility = Visibility.Visible;   // shows the whole group") +
+                    Loc.T("sketch.Accent = Brushes.Crimson;          // đổi màu dải\n\n", "sketch.Accent = Brushes.Crimson;          // recolours the strip\n\n") +
+                    Loc.T("// Screen tip tự sinh từ Header + ScreenTip + GestureText\n", "// The screen tip is built from Header + ScreenTip + GestureText") +
                     "var tip = new RibbonToolTip\n" +
                     "{\n" +
                     "    Title = \"Save\",\n" +
-                    "    Description = \"Ghi bản vẽ hiện tại\",\n" +
+                    Loc.T("    Description = \"Ghi bản vẽ hiện tại\",\n", "    Description = \"Save the current drawing\",\n") +
                     "    GestureText = \"Ctrl+S\",\n" +
-                    "    Footer = \"Nhấn F1 để xem trợ giúp\"\n" +
+                    Loc.T("    Footer = \"Nhấn F1 để xem trợ giúp\"\n", "    Footer = \"Press F1 for help\"\n") +
                     "};");
     }
 
@@ -1101,7 +1100,7 @@ public partial class ShowcaseViewModel
 
         var status = new TextBlock
         {
-            Text = "Đang chọn: Steel",
+            Text = Loc.T("Đang chọn: Steel", "Selected: Steel"),
             FontSize = 11.5,
             Margin = new Thickness(0, 10, 0, 0)
         };
@@ -1113,14 +1112,14 @@ public partial class ShowcaseViewModel
                 ? tile.Header
                 : gallery.SelectedItem?.ToString() ?? string.Empty;
 
-            status.Text = $"Đang chọn: {name}";
+            status.Text = Loc.F("Đang chọn: {0}", "Selected: {0}", name);
         };
 
         var stack = new StackPanel();
         stack.Children.Add(ribbon);
         stack.Children.Add(status);
 
-        return DemoSection("Ô nhập liệu và gallery", stack,
+        return DemoSection(Loc.T("Ô nhập liệu và gallery", "Inputs and gallery"), stack,
             xaml: "<ribbon:RibbonGroup Header=\"Text\">\n" +
                   "    <ribbon:RibbonComboBox Header=\"Font\" ColumnSpan=\"2\"\n" +
                   "                           ItemsSource=\"{Binding Fonts}\" SelectedItem=\"Calibri\" />\n" +
@@ -1137,7 +1136,7 @@ public partial class ShowcaseViewModel
                   "        <ribbon:RibbonGalleryItem Header=\"Sand\" Icon=\"{StaticResource SandSwatch}\" />\n" +
                   "    </ribbon:RibbonGallery>\n" +
                   "</ribbon:RibbonGroup>",
-            csharp: "// ColumnSpan: số cột group mà control chiếm (mặc định 1)\n" +
+            csharp: Loc.T("// ColumnSpan: số cột group mà control chiếm (mặc định 1)\n", "// ColumnSpan: how many group columns the control takes (1 by default)") +
                     "var font = new RibbonComboBox\n" +
                     "{\n" +
                     "    Header = \"Font\",\n" +
@@ -1146,7 +1145,7 @@ public partial class ShowcaseViewModel
                     "};\n" +
                     "font.SelectedItem = \"Calibri\";\n\n" +
                     "var step = new RibbonTextBox { Header = \"Step\", Text = \"10\", ColumnSpan = 2 };\n" +
-                    "var ortho = new RibbonCheckBox { Header = \"Ortho\" };   // IsChecked hai chiều\n\n" +
+                    Loc.T("var ortho = new RibbonCheckBox { Header = \"Ortho\" };   // IsChecked hai chiều\n\n", "var ortho = new RibbonCheckBox { Header = \"Ortho\" };   // IsChecked works both ways\n\n") +
                     "var gallery = new RibbonGallery { ColumnSpan = 3, ItemWidth = 42, ItemHeight = 42 };\n" +
                     "gallery.ItemsSource = new[] { new RibbonGalleryItem(\"Steel\", icon) };\n" +
                     "gallery.SelectionChanged += (_, _) => Apply(gallery.SelectedItem);");
@@ -1173,7 +1172,7 @@ public partial class ShowcaseViewModel
     /// <summary>Card 5 — Alt key tips, the colour button, the search field and state persistence.</summary>
     private UIElement BuildRibbonKeyboardCard()
     {
-        var status = new TextBlock { Text = "Màu: #FFDC2626", FontSize = 11.5, Margin = new Thickness(0, 4, 0, 0) };
+        var status = new TextBlock { Text = Loc.T("Màu: #FFDC2626", "Colour: #FFDC2626"), FontSize = 11.5, Margin = new Thickness(0, 4, 0, 0) };
         status.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
         var colour = new RibbonColorPicker
@@ -1184,7 +1183,7 @@ public partial class ShowcaseViewModel
         };
 
         colour.SelectedColorChanged += (_, _) =>
-            status.Text = $"Màu: {colour.SelectedColor.ToString()}";
+            status.Text = Loc.F("Màu: {0}", "Colour: {0}", colour.SelectedColor.ToString());
 
         var clipboard = new RibbonGroup { Header = "Clipboard" };
 
@@ -1195,7 +1194,7 @@ public partial class ShowcaseViewModel
             KeyTip = "V",
             ScreenTip = "Paste from the clipboard"
         };
-        paste.Click += (_, _) => status.Text = "Đã dán.";
+        paste.Click += (_, _) => status.Text = Loc.T("Đã dán.", "Pasted.");
 
         clipboard.Items.Add(paste);
         clipboard.Items.Add(new RibbonButton { Header = "Cut", Icon = RibbonIcon(IconKind.Cut), KeyTip = "X" });
@@ -1204,7 +1203,7 @@ public partial class ShowcaseViewModel
         // ---- Paint group: a colour swatch, then fill and outline. The icons read as a pair: one
         //      solid square, one hollow, which is exactly the difference between the two commands. ----
         var paint = new RibbonGroup { Header = "Paint", KeyTip = "P" };
-        paint.DialogLauncherCommand = new ActionCommand(() => status.Text = "Đã mở hộp thoại Paint.");
+        paint.DialogLauncherCommand = new ActionCommand(() => status.Text = Loc.T("Đã mở hộp thoại Paint.", "Opened the Paint dialog."));
         paint.Items.Add(colour);
         paint.Items.Add(new RibbonButton { Header = "Fill", Icon = RibbonIcon(IconKind.HatchSolid), KeyTip = "F" });
         paint.Items.Add(new RibbonButton { Header = "Border", Icon = RibbonIcon(IconKind.GridSquare), KeyTip = "B" });
@@ -1220,7 +1219,7 @@ public partial class ShowcaseViewModel
         {
             Header = "Find",
             Size = RibbonItemSize.Large,
-            Placeholder = "Tìm lệnh, màu…",
+            Placeholder = Loc.T("Tìm lệnh, màu…", "Search commands, colours…"),
             ColumnSpan = 3
         });
 
@@ -1238,7 +1237,7 @@ public partial class ShowcaseViewModel
 
         var hint = new TextBlock
         {
-            Text = "Nhấn Alt để hiện key tip, gõ chữ cái để chạy lệnh, Esc để thoát.",
+            Text = Loc.T("Nhấn Alt để hiện key tip, gõ chữ cái để chạy lệnh, Esc để thoát.", "Press Alt to show key tips, type a letter to run the command, Esc to leave."),
             FontSize = 11.5,
             Margin = new Thickness(0, 10, 0, 0)
         };
@@ -1246,7 +1245,7 @@ public partial class ShowcaseViewModel
 
         var show = new Button
         {
-            Content = "Hiện key tip",
+            Content = Loc.T("Hiện key tip", "Show key tips"),
             Margin = new Thickness(0, 10, 0, 0),
             Padding = new Thickness(14, 6, 14, 6),
             HorizontalAlignment = HorizontalAlignment.Left
@@ -1260,7 +1259,7 @@ public partial class ShowcaseViewModel
         stack.Children.Add(hint);
         stack.Children.Add(status);
 
-        return DemoSection("Bàn phím, màu và tìm kiếm", stack,
+        return DemoSection(Loc.T("Bàn phím, màu và tìm kiếm", "Keyboard, colour and search"), stack,
             xaml: "<ribbon:RibbonTabItem Header=\"Home\" KeyTip=\"H\">\n" +
                   "    <ribbon:RibbonGroup Header=\"Paint\" KeyTip=\"P\"\n" +
                   "                        DialogLauncherCommand=\"{Binding OpenPaintCommand}\">\n" +
@@ -1271,17 +1270,17 @@ public partial class ShowcaseViewModel
                   "    </ribbon:RibbonGroup>\n\n" +
                   "    <ribbon:RibbonGroup Header=\"Find\">\n" +
                   "        <ribbon:RibbonSearchBox Header=\"Find\" ColumnSpan=\"3\"\n" +
-                  "                                Placeholder=\"Tìm lệnh, màu…\" />\n" +
+                  Loc.T("                                Placeholder=\"Tìm lệnh, màu…\" />\n", "                                Placeholder=\"Search commands, colours…\" />\n") +
                   "    </ribbon:RibbonGroup>\n" +
                   "</ribbon:RibbonTabItem>",
-            csharp: "// Key tip: bỏ trống thì ribbon tự lấy chữ cái đầu của Header\n" +
+            csharp: Loc.T("// Key tip: bỏ trống thì ribbon tự lấy chữ cái đầu của Header\n", "// Key tip: leave it empty and the ribbon takes the first letter of Header") +
                     "var fill = new RibbonButton { Header = \"Fill\", KeyTip = \"F\" };\n" +
-                    "var border = new RibbonButton { Header = \"Border\" };   // tự thành \"B\"\n\n" +
+                    Loc.T("var border = new RibbonButton { Header = \"Border\" };   // tự thành \"B\"\n\n", "var border = new RibbonButton { Header = \"Border\" };   // becomes \"B\"\n\n") +
                     "var colour = new RibbonColorPicker { Header = \"Colour\", ShowAlpha = true };\n" +
                     "colour.SelectedColorChanged += (_, _) => Apply(colour.SelectedColor);\n\n" +
-                    "var search = new RibbonSearchBox { ColumnSpan = 3, Placeholder = \"Tìm lệnh\" };\n" +
+                    Loc.T("var search = new RibbonSearchBox { ColumnSpan = 3, Placeholder = \"Tìm lệnh\" };\n", "var search = new RibbonSearchBox { ColumnSpan = 3, Placeholder = \"Search commands\" };\n") +
                     "search.SearchCommand = SearchCommand;\n\n" +
-                    "// Lưu và khôi phục trạng thái người dùng\n" +
+                    Loc.T("// Lưu và khôi phục trạng thái người dùng\n", "// Save and restore the user's state") +
                     "RibbonStateStore.Save(ribbon.CaptureState(), \"ribbon.json\");\n" +
                     "ribbon.ApplyState(RibbonStateStore.Load(\"ribbon.json\"));");
     }

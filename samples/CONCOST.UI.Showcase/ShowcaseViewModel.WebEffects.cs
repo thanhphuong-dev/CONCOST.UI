@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -26,7 +26,7 @@ public partial class ShowcaseViewModel
         };
         var subtitle = new TextBlock
         {
-            Text = "AuroraBackground — nền động cho splash screen / hero",
+            Text = Loc.T("AuroraBackground — nền động cho splash screen / hero", "AuroraBackground — animated backdrop for splash screens and heroes"),
             FontSize = 12,
             Foreground = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255)),
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -43,7 +43,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             host,
             xaml: "<Grid Height=\"170\" ClipToBounds=\"True\" Background=\"#0B0F17\">\n" +
                   "    <ui:AuroraBackground BlobCount=\"5\" BlobOpacity=\"0.45\" />\n" +
@@ -54,10 +54,10 @@ public partial class ShowcaseViewModel
                     "{\n" +
                     "    BlobCount = 5,\n" +
                     "    BlobOpacity = 0.45,\n" +
-                    "    Speed = 1.0,              // hệ số tốc độ\n" +
+                    Loc.T("    Speed = 1.0,              // hệ số tốc độ\n", "    Speed = 1.0,              // speed multiplier\n") +
                     "    AccentBrush = Brushes.OrangeRed\n" +
                     "};\n\n" +
-                    "// Tắt animation khi cửa sổ không hiển thị\n" +
+                    Loc.T("// Tắt animation khi cửa sổ không hiển thị\n", "// Stop animating while the window is hidden") +
                     "aurora.IsAnimated = false;"));
 
         return root;
@@ -66,10 +66,10 @@ public partial class ShowcaseViewModel
     private object CreateBorderBeamDemo()
     {
         var inner = new StackPanel();
-        var heading = new TextBlock { Text = "Nghiệm thu đợt 3", FontSize = 14, FontWeight = FontWeights.SemiBold };
+        var heading = new TextBlock { Text = Loc.T("Nghiệm thu đợt 3", "Acceptance, phase 3"), FontSize = 14, FontWeight = FontWeights.SemiBold };
         heading.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
         inner.Children.Add(heading);
-        inner.Children.Add(DemoCaption("Viền sáng chạy quanh thẻ — dùng cho item mới, trạng thái đang xử lý.", 4));
+        inner.Children.Add(DemoCaption(Loc.T("Viền sáng chạy quanh thẻ — dùng cho item mới, trạng thái đang xử lý.", "A light running around the card — for new items and in-progress states."), 4));
 
         var beam = new BorderBeam
         {
@@ -85,13 +85,13 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             beam,
             xaml: "<ui:BorderBeam CornerRadius=\"12\" Padding=\"18\"\n" +
                   "               BeamThickness=\"1.8\" BeamLength=\"0.30\" RevolutionSeconds=\"3.5\">\n" +
                   "    <StackPanel>\n" +
-                  "        <TextBlock Text=\"Nghiệm thu đợt 3\" FontWeight=\"SemiBold\" />\n" +
-                  "        <TextBlock Text=\"Đang xử lý...\" Foreground=\"Gray\" />\n" +
+                  Loc.T("        <TextBlock Text=\"Nghiệm thu đợt 3\" FontWeight=\"SemiBold\" />\n", "        <TextBlock Text=\"Acceptance, phase 3\" FontWeight=\"SemiBold\" />\n") +
+                  Loc.T("        <TextBlock Text=\"Đang xử lý...\" Foreground=\"Gray\" />\n", "        <TextBlock Text=\"Processing...\" Foreground=\"Gray\" />\n") +
                   "    </StackPanel>\n" +
                   "</ui:BorderBeam>",
             csharp: "var beam = new BorderBeam\n" +
@@ -99,10 +99,10 @@ public partial class ShowcaseViewModel
                     "    CornerRadius = new CornerRadius(12),\n" +
                     "    BeamThickness = 1.8,\n" +
                     "    BeamLength = 0.30,          // 30% chu vi\n" +
-                    "    RevolutionSeconds = 3.5,    // một vòng / 3.5 giây\n" +
+                    Loc.T("    RevolutionSeconds = 3.5,    // một vòng / 3.5 giây\n", "    RevolutionSeconds = 3.5,    // one turn every 3.5 s\n") +
                     "    BeamBrush = Brushes.Orange\n" +
                     "};\n" +
-                    "beam.Child = new TextBlock { Text = \"Đang xử lý...\" };"));
+                    Loc.T("beam.Child = new TextBlock { Text = \"Đang xử lý...\" };", "beam.Child = new TextBlock { Text = \"Processing...\" };")));
 
         return root;
     }
@@ -112,7 +112,7 @@ public partial class ShowcaseViewModel
         var confetti = new ConfettiBurst { ParticleCount = 110 };
         var message = new TextBlock
         {
-            Text = "Bấm để ăn mừng",
+            Text = Loc.T("Bấm để ăn mừng", "Click to celebrate"),
             FontSize = 13,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center
@@ -121,7 +121,7 @@ public partial class ShowcaseViewModel
 
         var button = new Button
         {
-            Content = "Duyệt hồ sơ",
+            Content = Loc.T("Duyệt hồ sơ", "Approve dossier"),
             Padding = new Thickness(14, 6, 14, 6),
             HorizontalAlignment = HorizontalAlignment.Center,
             Margin = new Thickness(0, 12, 0, 0)
@@ -140,18 +140,18 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mặc định",
+            Loc.T("Mặc định", "Default"),
             host,
             xaml: "<Grid Height=\"170\" ClipToBounds=\"True\">\n" +
-                  "    <Button Content=\"Duyệt hồ sơ\" Click=\"OnApproveClick\" />\n" +
+                  Loc.T("    <Button Content=\"Duyệt hồ sơ\" Click=\"OnApproveClick\" />\n", "    <Button Content=\"Approve dossier\" Click=\"OnApproveClick\" />\n") +
                   "    <ui:ConfettiBurst x:Name=\"Celebration\" ParticleCount=\"110\" />\n" +
                   "</Grid>",
             csharp: "private void OnApproveClick(object sender, RoutedEventArgs e)\n" +
                     "{\n" +
                     "    Approve();\n" +
-                    "    Celebration.IsBursting = true;   // tự tắt khi hạt tan hết\n" +
+                    Loc.T("    Celebration.IsBursting = true;   // tự tắt khi hạt tan hết\n", "    Celebration.IsBursting = true;   // stops itself once the particles fade\n") +
                     "}\n\n" +
-                    "// Tuỳ chỉnh\n" +
+                    Loc.T("// Tuỳ chỉnh\n", "// Customise") +
                     "Celebration.Gravity = 1100;\n" +
                     "Celebration.Duration = new Duration(TimeSpan.FromSeconds(2));\n" +
                     "Celebration.Palette = new[] { Colors.Orange, Colors.SeaGreen };"));

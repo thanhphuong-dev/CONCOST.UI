@@ -411,6 +411,29 @@ pattern.OffsetY = scrollOffset * 0.08;`,
         ]
     },
 
+    themeauto: {
+        title: "Theme Auto — following the host",
+        desc: "A Revit/AutoCAD plug-in has no <code>Application</code> of its own, so the theme has to come from the host window. <code>AppTheme.Auto</code> reads the nearest painted background around the root and refreshes itself when the host switches light or dark.",
+        sections: [
+            { title: "Attach automatic theming to the plug-in root", desc: "Call it once, after the root is in the visual tree. No <code>Application.Current</code> needed — exactly how an add-in runs inside the host process." },
+            {
+                title: "The ThemeManager API",
+                desc: "Four application-level properties and four per-root calls. Every call must run on the root's dispatcher thread.",
+                table: [
+                    { token: "ThemeManager.Current", desc: "Singleton — one instance per process, even when the host loads several add-ins." },
+                    { token: "ThemeManager.Current.ApplyTheme(root, AppTheme.Auto)", desc: "Themes one root. <code>Auto</code> reads the background of the nearest ancestor that actually paints one." },
+                    { token: "ThemeManager.Current.RefreshAutoTheme(root)", desc: "Call again after the host switches theme. Roots given an explicit <code>Light</code>/<code>Dark</code> are skipped." },
+                    { token: "ThemeManager.DetectTheme(root)", desc: "Returns the <code>AppTheme</code> the host is showing without applying anything — for branching logic." },
+                    { token: "ThemeManager.Current.ApplyAccentColor(root, color)", desc: "Sets an accent for one root without touching the rest of the host." },
+                    { token: "ThemeManager.Current.ApplySurfaceStyle(root, SurfaceStyle)", desc: "Picks flat / raised / frosted glass for that root." },
+                    { token: "ThemeManager.Current.Theme / Preset / AccentColor", desc: "Global state, for when your app owns the <code>Application</code>." }
+                ]
+            },
+            { title: "Refresh when the host switches theme", desc: "<code>RefreshAutoTheme</code> only touches roots sitting at <code>AppTheme.Auto</code>, so it is safe to call unconditionally from the host's theme-changed event." },
+            { title: "An explicit theme still wins", desc: "Set <code>AppTheme.Light</code> or <code>AppTheme.Dark</code> and <code>RefreshAutoTheme</code> leaves that root alone — useful for a print preview or a colour chart." }
+        ]
+    },
+
     brutaltheme: {
         title: "ThemePreset.Brutal — neo-brutalism",
         desc: "The seventh <code>ThemeManager</code> preset: cream surfaces <code>#FFFDF5</code>, ink borders <code>#111111</code> and an electric accent <code>#FFE14D</code> — neo-brutalist spirit that still reads in a business app.",
@@ -1685,7 +1708,7 @@ summary.RefreshSummaries();`,
 
     quickaccesstoolbar: {
         title: "QuickAccessToolbar — the icon strip on top",
-        desc: "The standalone version of the ribbon's quick-access toolbar: icons only, 28px tall, usable in any window without a ribbon.",
+        desc: "The standalone version of the ribbon's quick-access toolbar: icons only, sized by its own metrics, usable in any window without a ribbon.",
         sections: [
             {
                 title: "Icon, tooltip, done",
@@ -1696,8 +1719,24 @@ summary.RefreshSummaries();`,
                 }
             },
             {
+                title: "Three plates — Plain, Outlined, Elevated",
+                desc: "<code>Variant</code> decides whether anything is painted behind the icons. <code>Plain</code> leaves them on the host's own surface — the ribbon uses this, because it already owns its chrome. <code>Outlined</code> adds a hairline for a busy surface, <code>Elevated</code> a surface and a shadow for a strip floating over a drawing.",
+                callout: {
+                    type: "note",
+                    body: "The control paints its own plate, so a host does not have to wrap it in a <code>Border</code> — that wrapper is usually a pixel or two off from the real hit area."
+                }
+            },
+            {
+                title: "The host owns the numbers",
+                desc: "All four measurements are dependency properties: <code>ButtonSize</code>, <code>IconSize</code>, <code>Spacing</code> and <code>ShowSeparators</code>. The strip is no longer a fixed 28 px tall — it is <code>ButtonSize</code> plus whatever plate the variant adds, so asking for 34 px targets raises the row with it.",
+                callout: {
+                    type: "tip",
+                    body: "The separator stretches with <code>ButtonSize</code> instead of carrying its own height, so changing the button size is the only edit needed."
+                }
+            },
+            {
                 title: "Overflowing into a menu",
-                desc: "Same mechanism as <code>CommandBar</code>: when the space runs out the extra items drop into a popup rather than being clipped.",
+                desc: "Same mechanism as <code>CommandBar</code>: when the space runs out the extra items drop into a popup rather than being clipped. <code>OverflowItems</code> reads back exactly what the layout pass could not fit.",
                 callout: {
                     type: "note",
                     body: "This is a standalone control, not a child of <code>Ribbon</code>. The ribbon keeps its own internal <code>RibbonQuickAccessToolBar</code> — same idea, different scope."

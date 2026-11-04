@@ -143,6 +143,10 @@ public abstract class RibbonItem : HeaderedContentControl
         // A greyed-out command still has to explain itself on hover.
         ToolTipService.SetShowOnDisabled(this, true);
 
+        // A ribbon command is usually a glyph with a caption under it, and the caption is not the
+        // control's Content: without this the item is an unnamed button to a screen reader.
+        AttachedProperties.AccessibleName.SetFromToolTip(this, true);
+
         // The tip appears the moment the pointer settles: 500 ms is short enough to feel instant and
         // long enough that sweeping across a row of buttons does not stack tips up.
         ToolTipService.SetInitialShowDelay(this, 500);

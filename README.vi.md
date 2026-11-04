@@ -25,7 +25,7 @@
 ## Vì sao nên dùng
 
 - **Ba target framework, một API.** `net48`, `net8.0-windows`, `net10.0-windows` từ cùng một source. Tham chiếu project là MSBuild tự chọn bản khớp, nên cùng một view vừa build được vào plugin AutoCAD .NET Framework 4.8 vừa chạy trong app desktop .NET 8.
-- **Theme tôn trọng ứng dụng chủ.** `ThemeManager.ApplyTheme(this, …)` giới hạn light/dark, accent và preset trong **một view** — không cần `Application`, không ghi đè resource toàn cục. Đây chính là điều kiện để dùng được trong add-in Revit.
+- **Theme sáng dịu và tương thích ứng dụng chủ.** Chọn `AppTheme.Light`, `SoftLight` (nền xám lạnh pha xanh nhẹ, giảm chói), `Dark`, `System` hoặc `Auto`; `ThemeManager.ApplyTheme(this, …)` giới hạn resource trong **một view**, phù hợp với add-in Revit và AutoCAD.
 - **Hiệu ứng nhẹ.** Mọi animation đều vẽ bằng `DrawingContext` hoặc transform — không shader, không `BlurEffect`, không tạo visual tree cho từng item — và tất cả đều tôn trọng thiết lập **"Show animations"** của Windows (WCAG 2.2.2).
 - **Tài liệu sinh từ source.** Bảng thuộc tính và snippet C# được sinh từ chính khai báo `DependencyProperty` rồi đối chiếu với API đã biên dịch, nên tài liệu không thể lệch khỏi code.
 

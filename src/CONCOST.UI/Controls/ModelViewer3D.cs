@@ -42,6 +42,9 @@ public readonly struct MeshEdge
 /// </remarks>
 public class ModelViewer3D : FrameworkElement
 {
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
+        new ModelViewer3DAutomationPeer(this);
+
     /// <summary>Identifies the <see cref="Vertices"/> property.</summary>
     public static readonly DependencyProperty VerticesProperty = DependencyProperty.Register(
         nameof(Vertices), typeof(ObservableCollection<Point3D>), typeof(ModelViewer3D),

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,7 +17,7 @@ public partial class ShowcaseViewModel
 
         var title = new TextBlock
         {
-            Text = "Bốn khối màu trôi quanh neo của nó",
+            Text = Loc.T("Bốn khối màu trôi quanh neo của nó", "Four colour blobs drifting around its anchor"),
             FontSize = 15,
             FontWeight = FontWeights.SemiBold,
             Foreground = Brushes.White
@@ -40,15 +40,15 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Mesh gradient động",
+            Loc.T("Mesh gradient động", "Animated mesh gradient"),
             stage,
             xaml: "<controls:AnimatedMeshGradient Height=\"240\"\n" +
                   "    ColorA=\"#7F77DD\" ColorB=\"#1D9E75\"\n" +
                   "    ColorC=\"#EF9F27\" ColorD=\"#D4537E\"\n" +
                   "    Speed=\"1\" BlobOpacity=\"0.55\" />",
-            csharp: "// Mỗi khối là một radial gradient trong suốt ở viền,\n" +
-                    "// neo quanh bốn góc và chỉ \"thở\" quanh đó —\n" +
-                    "// khác AuroraBackground (trôi ngang mặt phẳng).\n" +
+            csharp: Loc.T("// Mỗi khối là một radial gradient trong suốt ở viền,\n", "// Each blob is a transparent radial gradient at the edge,\n") +
+                    Loc.T("// neo quanh bốn góc và chỉ \"thở\" quanh đó —\n", "// anchored to the four corners, and only \"breathes\" there —\n") +
+                    Loc.T("// khác AuroraBackground (trôi ngang mặt phẳng).\n", "// unlike AuroraBackground (which drifts across the plane).\n") +
                     "mesh.Restart();"));
 
         return root;
@@ -66,7 +66,7 @@ public partial class ShowcaseViewModel
         var body = new StackPanel();
         body.Children.Add(new TextBlock
         {
-            Text = "Gói chuyên nghiệp",
+            Text = Loc.T("Gói chuyên nghiệp", "Professional plan"),
             FontSize = 13,
             FontWeight = FontWeights.SemiBold
         });
@@ -82,7 +82,7 @@ public partial class ShowcaseViewModel
 
         var note = new TextBlock
         {
-            Text = "Viền gradient xoay một vòng mỗi 8 giây.",
+            Text = Loc.T("Viền gradient xoay một vòng mỗi 8 giây.", "The gradient border rotates once every 8 seconds."),
             FontSize = 11.5,
             TextWrapping = TextWrapping.Wrap
         };
@@ -93,7 +93,7 @@ public partial class ShowcaseViewModel
 
         var toggle = new Button
         {
-            Content = "Dừng xoay",
+            Content = Loc.T("Dừng xoay", "Pause rotation"),
             Padding = new Thickness(12, 5, 12, 5),
             Margin = new Thickness(0, 12, 0, 0),
             HorizontalAlignment = HorizontalAlignment.Left
@@ -102,7 +102,7 @@ public partial class ShowcaseViewModel
         toggle.Click += (_, _) =>
         {
             card.IsAnimated = !card.IsAnimated;
-            toggle.Content = card.IsAnimated ? "Dừng xoay" : "Chạy tiếp";
+            toggle.Content = card.IsAnimated ? Loc.T("Dừng xoay", "Pause rotation") : Loc.T("Chạy tiếp", "Resume");
         };
 
         var stack = new StackPanel();
@@ -111,15 +111,15 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Viền gradient xoay",
+            Loc.T("Viền gradient xoay", "Rotating gradient border"),
             stack,
             xaml: "<controls:AnimatedGradientBorder SecondsPerTurn=\"8\"\n" +
                   "    RingThickness=\"2\" Corner=\"14\">\n" +
                   "    <StackPanel>...</StackPanel>\n" +
                   "</controls:AnimatedGradientBorder>",
-            csharp: "// Xoay bằng DoubleAnimation trên RotateTransform của brush —\n" +
-                    "// chạy ở render thread, không tốn UI thread mỗi frame.\n" +
-                    "card.IsAnimated = false;   // giữ nguyên frame đầu"));
+            csharp: Loc.T("// Xoay bằng DoubleAnimation trên RotateTransform của brush —\n", "// Rotation is a DoubleAnimation on the brush RotateTransform —\n") +
+                    Loc.T("// chạy ở render thread, không tốn UI thread mỗi frame.\n", "// it runs on the render thread, costing the UI thread nothing per frame.\n") +
+                    Loc.T("card.IsAnimated = false;   // giữ nguyên frame đầu", "card.IsAnimated = false;   // hold the first frame")));
 
         return root;
     }
@@ -143,7 +143,7 @@ public partial class ShowcaseViewModel
         var text = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
         var heading = new TextBlock
         {
-            Text = "Kính mờ",
+            Text = Loc.T("Kính mờ", "Frosted glass"),
             FontSize = 16,
             FontWeight = FontWeights.SemiBold
         };
@@ -151,7 +151,7 @@ public partial class ShowcaseViewModel
         text.Children.Add(heading);
         var hint = new TextBlock
         {
-            Text = "Blur lấy đúng vùng nằm sau tấm kính, không kéo giãn cả nền.",
+            Text = Loc.T("Blur lấy đúng vùng nằm sau tấm kính, không kéo giãn cả nền.", "The blur samples exactly the area behind the pane instead of stretching the whole backdrop."),
             FontSize = 11.5,
             Margin = new Thickness(0, 6, 0, 0),
             TextWrapping = TextWrapping.Wrap
@@ -167,16 +167,16 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Kính mờ trên nền động",
+            Loc.T("Kính mờ trên nền động", "Frosted glass over a moving background"),
             stage,
             xaml: "<Grid>\n" +
                   "    <controls:AnimatedMeshGradient x:Name=\"Backdrop\" />\n" +
                   "    <controls:FrostedGlass Source=\"{Binding ElementName=Backdrop}\"\n" +
                   "        BlurRadius=\"22\" Corner=\"16\" />\n" +
                   "</Grid>",
-            csharp: "// WPF không có backdrop filter: trỏ Source vào phần tử phía sau.\n" +
-                    "// Viewbox của VisualBrush được đặt theo toạ độ tấm kính trong Source,\n" +
-                    "// nên blur khớp đúng vùng nằm sau nó."));
+            csharp: Loc.T("// WPF không có backdrop filter: trỏ Source vào phần tử phía sau.\n", "// WPF has no backdrop filter: point Source at the element behind.\n") +
+                    Loc.T("// Viewbox của VisualBrush được đặt theo toạ độ tấm kính trong Source,\n", "// The VisualBrush Viewbox is set from the pane's coordinates inside Source,\n") +
+                    Loc.T("// nên blur khớp đúng vùng nằm sau nó.", "// so the blur lines up with the area behind it.")));
 
         return root;
     }
@@ -192,14 +192,14 @@ public partial class ShowcaseViewModel
         };
         content.Children.Add(new TextBlock
         {
-            Text = "Di chuột trong khung này",
+            Text = Loc.T("Di chuột trong khung này", "Move the pointer inside this frame"),
             FontSize = 14,
             FontWeight = FontWeights.SemiBold,
             HorizontalAlignment = HorizontalAlignment.Center
         });
         content.Children.Add(new TextBlock
         {
-            Text = "Overlay không nhận chuột nên không cướp click.",
+            Text = Loc.T("Overlay không nhận chuột nên không cướp click.", "The overlay is not hit-testable, so it never steals a click."),
             FontSize = 11.5,
             Margin = new Thickness(0, 6, 0, 0),
             HorizontalAlignment = HorizontalAlignment.Center
@@ -212,14 +212,14 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Đèn rọi theo con trỏ",
+            Loc.T("Đèn rọi theo con trỏ", "Cursor spotlight"),
             stage,
             xaml: "<Grid>\n" +
                   "    <StackPanel>...</StackPanel>\n" +
                   "    <controls:CursorSpotlight Radius=\"130\" SpotDim=\"0.62\" />\n" +
                   "</Grid>",
-            csharp: "// Không hit-test, nhưng vẫn theo được con trỏ vì\n" +
-                    "// Mouse.GetPosition đọc vị trí hiện tại, không cần nhận sự kiện.\n" +
+            csharp: Loc.T("// Không hit-test, nhưng vẫn theo được con trỏ vì\n", "// Not hit-testable, yet it still tracks the pointer because\n") +
+                    Loc.T("// Mouse.GetPosition đọc vị trí hiện tại, không cần nhận sự kiện.\n", "// Mouse.GetPosition reads the current position without needing events.\n") +
                     "spotlight.FollowCursor = false;\n" +
                     "spotlight.SpotlightCenter = new Point(120, 80);"));
 
@@ -232,7 +232,7 @@ public partial class ShowcaseViewModel
 
         for (int i = 1; i <= 8; i++)
         {
-            list.Items.Add($"Cấu kiện {i:00} — bê tông M{i % 3 + 2}50");
+            list.Items.Add(Loc.F("Cấu kiện {0:00} — bê tông M{1}50", "Member {0:00} — concrete M{1}50", i, i % 3 + 2));
         }
 
         StaggerAnimation.SetIsEnabled(list, true);
@@ -241,7 +241,7 @@ public partial class ShowcaseViewModel
 
         var replay = new Button
         {
-            Content = "Chạy lại",
+            Content = Loc.T("Chạy lại", "Replay"),
             Padding = new Thickness(12, 5, 12, 5),
             Margin = new Thickness(0, 10, 0, 0),
             HorizontalAlignment = HorizontalAlignment.Left
@@ -262,13 +262,13 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Danh sách hiện dần",
+            Loc.T("Danh sách hiện dần", "List revealing in sequence"),
             stack,
             xaml: "<ListBox controls:StaggerAnimation.IsEnabled=\"True\"\n" +
                   "         controls:StaggerAnimation.Delay=\"55\"\n" +
                   "         controls:StaggerAnimation.OffsetY=\"16\" />",
-            csharp: "// Trễ theo vị trí, chặn ở MaxItems để danh sách dài\n" +
-                    "// không mất mười giây mới hiện xong.\n" +
+            csharp: Loc.T("// Trễ theo vị trí, chặn ở MaxItems để danh sách dài\n", "// Delay by index, capped at MaxItems so a long list\n") +
+                    Loc.T("// không mất mười giây mới hiện xong.\n", "// does not take ten seconds to finish.\n") +
                     "StaggerAnimation.SetMaxItems(list, 24);"));
 
         return root;
@@ -288,7 +288,7 @@ public partial class ShowcaseViewModel
 
         var sourceText = new TextBlock
         {
-            Text = "Nguồn",
+            Text = Loc.T("Nguồn", "Source"),
             FontSize = 11.5,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center
@@ -309,7 +309,7 @@ public partial class ShowcaseViewModel
 
         var targetText = new TextBlock
         {
-            Text = "Đích — lớn ra từ ô bên trái",
+            Text = Loc.T("Đích — lớn ra từ ô bên trái", "Target — grows out of the box on the left"),
             FontSize = 12,
             Foreground = Brushes.White,
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -323,7 +323,7 @@ public partial class ShowcaseViewModel
 
         var run = new Button
         {
-            Content = "Chạy transition",
+            Content = Loc.T("Chạy transition", "Run transition"),
             Padding = new Thickness(12, 5, 12, 5),
             Margin = new Thickness(0, 12, 0, 0),
             HorizontalAlignment = HorizontalAlignment.Left
@@ -345,11 +345,11 @@ public partial class ShowcaseViewModel
         root.Children.Add(DemoSection(
             "Shared element",
             stack,
-            xaml: "<!-- Không cần XAML: gọi khi đổi view -->",
+            xaml: Loc.T("<!-- Không cần XAML: gọi khi đổi view -->", "<!-- No XAML needed: call it when the view changes -->"),
             csharp: "var parent = (UIElement)VisualTreeHelper.GetParent(target);\n" +
                     "var origin = source.TranslatePoint(new Point(0, 0), parent);\n\n" +
                     "SharedElementTransition.Run(target, new Rect(origin, source.RenderSize));\n" +
-                    "// hoặc gọn hơn:\n" +
+                    Loc.T("// hoặc gọn hơn:\n", "// or, more concisely:\n") +
                     "SharedElementTransition.RunFrom(target, source);"));
 
         return root;

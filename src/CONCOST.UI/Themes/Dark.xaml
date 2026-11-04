@@ -47,6 +47,12 @@
     <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeBorder" Color="#67758A" />
     <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeText" Color="#DCE3EC" />
     <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeHighlight" Color="#4C9AFF" />
+    <SolidColorBrush x:Key="CONCOST.Code.Keyword" Color="#569CD6" />
+    <SolidColorBrush x:Key="CONCOST.Code.String" Color="#CE9178" />
+    <SolidColorBrush x:Key="CONCOST.Code.Comment" Color="#6A9955" />
+    <SolidColorBrush x:Key="CONCOST.Code.Number" Color="#B5CEA8" />
+    <SolidColorBrush x:Key="CONCOST.Code.Tag" Color="#569CD6" />
+    <SolidColorBrush x:Key="CONCOST.Code.Attribute" Color="#9CDCFE" />
 
     <!-- Ribbon. On a dark shell the strip sits below the paper and hover lifts toward blue, so a
          hovered command reads as lit rather than as merely brighter. Pressed is the same hue one
@@ -67,6 +73,17 @@
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualAccent" Color="#4C9AFF" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipBackground" Color="#1B2434" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipText" Color="#F8FAFC" />
+
+    <!-- Classic project tree. The selection is a band across the row, the way Explorer and
+         Revit draw it, so it is its own pair rather than the accent used by a pill selection. -->
+
+    <!-- One tint per node kind. All-grey glyphs at 13 px are indistinguishable, which is why
+         a schedule and a level read as the same little square. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.View" Color="#60A5FA" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Sheet" Color="#34D399" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Schedule" Color="#A78BFA" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Family" Color="#FBBF24" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Level" Color="#2DD4BF" />
 
     <!-- Shadow: pure black pool under a floating panel. The elevation behaviour scales this alpha
          with the level, so a level 1 card stays subtle and a level 4 dialog reads as detached. -->

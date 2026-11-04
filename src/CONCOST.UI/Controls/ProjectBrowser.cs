@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -51,6 +52,21 @@ public enum ProjectBrowserVariant
 
     /// <summary>A card with a shadow, for a browser floating over a drawing.</summary>
     Floating
+}
+
+/// <summary>
+/// How the tree itself is drawn. <see cref="Modern"/> is this library's rounded pill selection and
+/// chevron expander; <see cref="Classic"/> is the Explorer/Revit treatment — one dense row, a boxed
+/// +/−, and the selection painted as a band across the full width.
+/// </summary>
+public enum ProjectBrowserTreeStyle
+{
+    /// <summary>Rounded selection, chevron expander, 12.5 px rows.</summary>
+    Modern,
+
+    /// <summary>Full-width selection band, boxed expander, 12 px rows, and none of the browser's
+    /// tool strip, kind picker, sort picker or item count — the palette Revit ships.</summary>
+    Classic
 }
 
 /// <summary>One node of the project tree.</summary>
@@ -252,6 +268,7 @@ public class ProjectBrowser : Grid
         // Status without a caption: the glyph carries the switch and the checked state is the soft
         // accent, so a grouped tree does not put a block of orange in a 300 px palette.
         _group = new ToggleButton { MinWidth = 0, MinHeight = 0, ToolTip = "Group by kind" };
+        AutomationProperties.SetName(_group, "Group by kind");
         _group.SetResourceReference(StyleProperty, "CONCOST.ToggleButton.Status");
         IconElement.SetKind(_group, IconKind.GridSquare);
         _group.Click += (_, _) => GroupMode = _group.IsChecked == true ? ProjectGroupMode.ByKind : ProjectGroupMode.None;
@@ -286,6 +303,24 @@ public class ProjectBrowser : Grid
         var treeHost = new Grid();
 
         _tree = new TreeView { BorderThickness = new Thickness(0), Margin = new Thickness(2, 2, 2, 2) };
+
+        // A palette does not scroll sideways. With horizontal scrolling on, the panel measures every
+        // row at infinite width, so a long view name is clipped mid-word by the edge instead of
+        // ellipsizing — and the reader loses the only cue that there is more text.
+        ScrollViewer.SetHorizontalScrollBarVisibility(_tree, ScrollBarVisibility.Disabled);
+
+        // The library fades its scrollbars out until the pointer arrives, which is right for a page
+        // and wrong for a palette: with the bar invisible a list that continues past the bottom edge
+        // reads as a list that was cut off. It has to be set on the ScrollViewer itself — the
+        // ScrollViewer style pins the property to True, and a style setter beats inheritance.
+        bool autoHideCleared = false;
+        _tree.LayoutUpdated += (_, _) =>
+        {
+            if (autoHideCleared || FindScroller(_tree) is not { } scroller) return;
+
+            ScrollViewerHelper.SetIsAutoHideEnabled(scroller, false);
+            autoHideCleared = true;
+        };
         _tree.SelectedItemChanged += OnTreeSelectionChanged;
         _tree.AddHandler(Control.MouseDoubleClickEvent, new System.Windows.Input.MouseButtonEventHandler(OnTreeDoubleClick), true);
         treeHost.Children.Add(_tree);
@@ -300,7 +335,8 @@ public class ProjectBrowser : Grid
             Margin = new Thickness(18),
             Visibility = Visibility.Collapsed
         };
-        _empty.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextTertiary");
+        // Content, not chrome: tertiary grey lands at ~2.6:1 on white, under the 4.5:1 floor.
+        _empty.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
         treeHost.Children.Add(_empty);
 
         SetRow(treeHost, 2);
@@ -329,6 +365,19 @@ public class ProjectBrowser : Grid
     public static readonly DependencyProperty VariantProperty = DependencyProperty.Register(
         nameof(Variant), typeof(ProjectBrowserVariant), typeof(ProjectBrowser),
         new FrameworkPropertyMetadata(ProjectBrowserVariant.Seamless, OnChromeChanged));
+
+    /// <summary>Row depth, so the classic template knows which rows get a connector line.</summary>
+    public static readonly DependencyProperty DepthProperty = DependencyProperty.RegisterAttached(
+        "Depth", typeof(int), typeof(ProjectBrowser), new FrameworkPropertyMetadata(0));
+
+    public static int GetDepth(DependencyObject element) => (int)element.GetValue(DepthProperty);
+
+    public static void SetDepth(DependencyObject element, int value) => element.SetValue(DepthProperty, value);
+
+    /// <summary>How the tree rows are drawn; <c>Classic</c> is the Explorer/Revit treatment.</summary>
+    public static readonly DependencyProperty TreeStyleProperty = DependencyProperty.Register(
+        nameof(TreeStyle), typeof(ProjectBrowserTreeStyle), typeof(ProjectBrowser),
+        new FrameworkPropertyMetadata(ProjectBrowserTreeStyle.Modern, OnTreeStyleChanged));
 
     /// <summary>Corner of the plate.</summary>
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
@@ -411,6 +460,13 @@ public class ProjectBrowser : Grid
     {
         get => (ProjectBrowserVariant)GetValue(VariantProperty);
         set => SetValue(VariantProperty, value);
+    }
+
+    /// <summary>How the tree rows are drawn; <c>Classic</c> is the Explorer/Revit treatment.</summary>
+    public ProjectBrowserTreeStyle TreeStyle
+    {
+        get => (ProjectBrowserTreeStyle)GetValue(TreeStyleProperty);
+        set => SetValue(TreeStyleProperty, value);
     }
 
     /// <summary>Corner of the plate.</summary>
@@ -672,6 +728,56 @@ public class ProjectBrowser : Grid
         if (d is ProjectBrowser browser) browser.ApplyChrome();
     }
 
+    private static void OnTreeStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ProjectBrowser browser) browser.ApplyTreeStyle();
+    }
+
+    /// <summary>
+    /// Swaps the tree's row treatment and hides the chrome that only makes sense for this library's
+    /// own palette: a Revit project browser is a search box over a list, nothing else.
+    /// </summary>
+    private void ApplyTreeStyle()
+    {
+        bool classic = TreeStyle == ProjectBrowserTreeStyle.Classic;
+
+        if (classic)
+            _tree.SetResourceReference(StyleProperty, "CONCOST.ProjectBrowser.TreeClassic");
+        else
+            _tree.ClearValue(StyleProperty);
+
+        // The search box sits directly under the host's title bar in the classic palette, so it
+        // loses the gap the tool strip used to need below it.
+        _header.Margin = classic ? new Thickness(5, 5, 5, 4) : new Thickness(6, 6, 6, 4);
+
+        ApplyGroupVisibility();
+
+        // The containers are created by hand, not by the item generator, so an ItemContainerStyle on
+        // the tree never reaches them: every item is stamped as it is built.
+        Rebuild();
+    }
+
+    private static ScrollViewer? FindScroller(DependencyObject root)
+    {
+        int count = VisualTreeHelper.GetChildrenCount(root);
+        for (int i = 0; i < count; i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is ScrollViewer scroller) return scroller;
+
+            if (FindScroller(child) is { } deeper) return deeper;
+        }
+
+        return null;
+    }
+
+    /// <summary>Applies the row style to a container that was created by hand.</summary>
+    private void StyleItem(TreeViewItem item)
+    {
+        if (TreeStyle == ProjectBrowserTreeStyle.Classic)
+            item.SetResourceReference(StyleProperty, "CONCOST.ProjectBrowser.ItemClassic");
+    }
+
     private static void OnControlHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is ProjectBrowser browser) browser.ApplyControlHeight();
@@ -753,26 +859,31 @@ public class ProjectBrowser : Grid
 
     private void ApplyGroupVisibility()
     {
+        // The classic palette is a search box over a list: the tool strip, the two pickers, the
+        // group switch and the count row are this library's own chrome and are not drawn at all.
+        // The switches keep their values, so leaving classic puts them back where they were.
+        bool chrome = TreeStyle != ProjectBrowserTreeStyle.Classic;
+
         _search.Visibility = ShowSearch ? Visibility.Visible : Visibility.Collapsed;
-        _kindFilter.Visibility = ShowKindFilter ? Visibility.Visible : Visibility.Collapsed;
-        _sort.Visibility = ShowSort ? Visibility.Visible : Visibility.Collapsed;
-        _group.Visibility = ShowGroup ? Visibility.Visible : Visibility.Collapsed;
+        _kindFilter.Visibility = ShowKindFilter && chrome ? Visibility.Visible : Visibility.Collapsed;
+        _sort.Visibility = ShowSort && chrome ? Visibility.Visible : Visibility.Collapsed;
+        _group.Visibility = ShowGroup && chrome ? Visibility.Visible : Visibility.Collapsed;
 
         foreach (var button in _toolButtons)
         {
-            button.Visibility = ShowToolbar ? Visibility.Visible : Visibility.Collapsed;
+            button.Visibility = ShowToolbar && chrome ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        _toolRule.Visibility = ShowToolbar && ShowGroup ? Visibility.Visible : Visibility.Collapsed;
-        _tools.Visibility = ShowToolbar || ShowGroup ? Visibility.Visible : Visibility.Collapsed;
+        _toolRule.Visibility = ShowToolbar && ShowGroup && chrome ? Visibility.Visible : Visibility.Collapsed;
+        _tools.Visibility = (ShowToolbar || ShowGroup) && chrome ? Visibility.Visible : Visibility.Collapsed;
 
         // The header is two rows and a rule; with nothing left in it they all leave together, so the
         // tree starts at the top edge instead of under a band of empty space.
-        bool header = ShowSearch || ShowKindFilter || ShowToolbar || ShowSort || ShowGroup;
+        bool header = ShowSearch || ((ShowKindFilter || ShowToolbar || ShowSort || ShowGroup) && chrome);
 
         _header.Visibility = header ? Visibility.Visible : Visibility.Collapsed;
         _headerRule.Visibility = header ? Visibility.Visible : Visibility.Collapsed;
-        _footer.Visibility = ShowCount ? Visibility.Visible : Visibility.Collapsed;
+        _footer.Visibility = ShowCount && chrome ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void ApplyCaptions()
@@ -847,6 +958,8 @@ public class ProjectBrowser : Grid
                         Tag = null
                     };
 
+                    StyleItem(groupItem);
+
                     foreach (var node in Sorted(group))
                     {
                         var item = BuildNode(node, expanded, searching);
@@ -877,13 +990,13 @@ public class ProjectBrowser : Grid
     /// Builds the item for one node, or <c>null</c> when the node is filtered out. A node survives when
     /// it matches or when any descendant does, so the path to a match is never dropped.
     /// </summary>
-    private TreeViewItem? BuildNode(ProjectTreeNode node, HashSet<ProjectTreeNode> expanded, bool searching)
+    private TreeViewItem? BuildNode(ProjectTreeNode node, HashSet<ProjectTreeNode> expanded, bool searching, int depth = 0)
     {
         var children = new List<TreeViewItem>();
 
         foreach (var child in Sorted(node.Children))
         {
-            var childItem = BuildNode(child, expanded, searching);
+            var childItem = BuildNode(child, expanded, searching, depth + 1);
             if (childItem is not null) children.Add(childItem);
         }
 
@@ -896,6 +1009,9 @@ public class ProjectBrowser : Grid
             ContextMenu = CreateMenu(node),
             IsExpanded = expanded.Contains(node) || (searching && children.Count > 0)
         };
+
+        SetDepth(item, depth);
+        StyleItem(item);
 
         foreach (var child in children) item.Items.Add(child);
 
@@ -920,7 +1036,12 @@ public class ProjectBrowser : Grid
 
     private FrameworkElement CreateHeader(string caption, ProjectNodeKind kind, bool isModified)
     {
-        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        // A Grid, not a horizontal StackPanel: a StackPanel measures its children at infinite width,
+        // so the caption never has a width to trim against and the tree simply clipped it mid-word.
+        var panel = new Grid();
+        panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
         var icon = new Icon
         {
@@ -931,22 +1052,45 @@ public class ProjectBrowser : Grid
             Margin = new Thickness(0, 0, 5, 0)
         };
 
-        icon.SetResourceReference(Control.ForegroundProperty, kind == ProjectNodeKind.Project ? "CONCOST.Brush.Primary" : "CONCOST.Brush.TextSecondary");
+        // A tint per kind: at 13 px two grey outline glyphs are the same glyph, and the tree stopped
+        // telling a schedule from a level.
+        icon.SetResourceReference(Control.ForegroundProperty, BrushFor(kind));
+        SetColumn(icon, 0);
         panel.Children.Add(icon);
 
-        var text = new TextBlock { Text = caption, VerticalAlignment = VerticalAlignment.Center };
+        var text = new TextBlock
+        {
+            Text = caption,
+            VerticalAlignment = VerticalAlignment.Center,
+            // A palette is narrow and view names are long: clip with an ellipsis, and let the full
+            // name stay reachable on hover instead of losing it at the edge.
+            TextTrimming = TextTrimming.CharacterEllipsis,
+            ToolTip = caption
+        };
         text.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
+        SetColumn(text, 1);
         panel.Children.Add(text);
 
         if (isModified)
         {
             var dot = new System.Windows.Shapes.Ellipse { Width = 5, Height = 5, Margin = new Thickness(5, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
             dot.SetResourceReference(System.Windows.Shapes.Shape.FillProperty, "CONCOST.Brush.Primary");
+            SetColumn(dot, 2);
             panel.Children.Add(dot);
         }
 
         return panel;
     }
+
+    private static string BrushFor(ProjectNodeKind kind) => kind switch
+    {
+        ProjectNodeKind.View => "CONCOST.Brush.Node.View",
+        ProjectNodeKind.Sheet => "CONCOST.Brush.Node.Sheet",
+        ProjectNodeKind.Schedule => "CONCOST.Brush.Node.Schedule",
+        ProjectNodeKind.Family or ProjectNodeKind.FamilySymbol => "CONCOST.Brush.Node.Family",
+        ProjectNodeKind.Level => "CONCOST.Brush.Node.Level",
+        _ => "CONCOST.Brush.Primary"
+    };
 
     private static IconKind IconFor(ProjectNodeKind kind) => kind switch
     {
@@ -1001,6 +1145,10 @@ public class ProjectBrowser : Grid
 
         button.SetResourceReference(StyleProperty, "CONCOST.Button.Icon.Ghost");
         IconElement.SetKind(button, kind);
+
+        // The glyph is the whole control: a tooltip is not an accessible name, and a screen reader
+        // announcing three unnamed buttons is the classic icon-only failure.
+        AutomationProperties.SetName(button, tooltip);
 
         button.Click += (_, _) => action();
 

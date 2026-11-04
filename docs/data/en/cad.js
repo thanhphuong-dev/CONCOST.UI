@@ -451,6 +451,14 @@ bar.ShowDividers  = false;   // both rules at once`
                 }
             },
             {
+                title: "The Revit tree — a variant of the row, not the plate",
+                desc: "<code>TreeStyle=\"Classic\"</code> changes how each row is drawn, not what it stands on: a boxed +/− instead of a chevron, a shorter row, and the selection painted as a band across the full width rather than a rounded pill hugging the caption. The tree also turns horizontal scrolling off — with it on, the panel is measured at infinite width, every row sizes to its own caption, and the band stops mid-tree. Long names clip at the edge, the way Revit clips them. The tool strip, kind filter, sort picker and count row all leave, because a Revit project browser is a search box over a list.",
+                callout: {
+                    type: "tip",
+                    body: "Two independent axes: <code>TreeStyle</code> decides the rows, <code>Variant</code> decides the plate. A classic tree can still sit on a <code>Floating</code> plate."
+                }
+            },
+            {
                 title: "Search, group and sort",
                 desc: "The search box, kind filter, sort picker and group switch are all inside the control. Search is case-insensitive and keeps the ancestors of each match, so the result still reads like a branch. <code>VisibleNodes</code> returns exactly what is on screen — handy for tests and for the item count."
             },

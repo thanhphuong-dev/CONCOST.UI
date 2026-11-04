@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -40,12 +40,12 @@ public partial class ShowcaseViewModel
     {
         new BreakdownNode
         {
-            Name = "Tầng 1", Count = 48, Quantity = 412.6,
+            Name = Loc.T("Tầng 1", "Level 1"), Count = 48, Quantity = 412.6,
             Children =
             {
                 new BreakdownNode
                 {
-                    Name = "Cột", Count = 16, Quantity = 96.4,
+                    Name = Loc.T("Cột", "Column"), Count = 16, Quantity = 96.4,
                     Children =
                     {
                         new BreakdownNode { Name = "C1 (400×400)", Count = 8, Quantity = 48.2 },
@@ -54,24 +54,24 @@ public partial class ShowcaseViewModel
                 },
                 new BreakdownNode
                 {
-                    Name = "Dầm", Count = 24, Quantity = 214.8,
+                    Name = Loc.T("Dầm", "Beam"), Count = 24, Quantity = 214.8,
                     Children =
                     {
                         new BreakdownNode { Name = "D1 (300×600)", Count = 14, Quantity = 142.6 },
                         new BreakdownNode { Name = "D2 (250×500)", Count = 10, Quantity = 72.2 }
                     }
                 },
-                new BreakdownNode { Name = "Sàn", Count = 8, Quantity = 101.4 }
+                new BreakdownNode { Name = Loc.T("Sàn", "Slab"), Count = 8, Quantity = 101.4 }
             }
         },
         new BreakdownNode
         {
-            Name = "Tầng 2", Count = 36, Quantity = 298.2,
+            Name = Loc.T("Tầng 2", "Level 2"), Count = 36, Quantity = 298.2,
             Children =
             {
-                new BreakdownNode { Name = "Cột", Count = 12, Quantity = 62.1 },
-                new BreakdownNode { Name = "Dầm", Count = 18, Quantity = 168.5 },
-                new BreakdownNode { Name = "Sàn", Count = 6, Quantity = 67.6 }
+                new BreakdownNode { Name = Loc.T("Cột", "Column"), Count = 12, Quantity = 62.1 },
+                new BreakdownNode { Name = Loc.T("Dầm", "Beam"), Count = 18, Quantity = 168.5 },
+                new BreakdownNode { Name = Loc.T("Sàn", "Slab"), Count = 6, Quantity = 67.6 }
             }
         }
     };
@@ -83,7 +83,7 @@ public partial class ShowcaseViewModel
             RootItems = SampleBreakdown(),
             ChildrenPath = "Children",
             ShowHierarchyColumn = true,
-            HierarchyHeader = "Cấu kiện",
+            HierarchyHeader = Loc.T("Cấu kiện", "Member"),
             HierarchyPath = nameof(BreakdownNode.Name),
             HierarchyColumnWidth = 280,
             IndentSize = 18,
@@ -93,13 +93,13 @@ public partial class ShowcaseViewModel
 
         grid.Columns.Add(new DataGridTextColumn
         {
-            Header = "Số lượng",
+            Header = Loc.T("Số lượng", "Count"),
             Binding = new Binding(nameof(BreakdownNode.Count)),
             Width = 100
         });
         grid.Columns.Add(new DataGridTextColumn
         {
-            Header = "Khối lượng (m³)",
+            Header = Loc.T("Khối lượng (m³)", "Volume (m³)"),
             Binding = new Binding(nameof(BreakdownNode.Quantity)) { StringFormat = "N1" },
             Width = 140
         });
@@ -112,16 +112,16 @@ public partial class ShowcaseViewModel
         };
         counter.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
-        void Sync() => counter.Text = $"Đang hiện {grid.VisibleItemCount} / 12 dòng";
+        void Sync() => counter.Text = Loc.F("Đang hiện {0} / 12 dòng", "Showing {0} / 12 rows", grid.VisibleItemCount);
 
         // Open every branch so the indent levels and chevrons are visible straight away.
         grid.ExpandAll();
 
-        var expand = new Button { Content = "Mở hết", Padding = new Thickness(12, 5, 12, 5) };
+        var expand = new Button { Content = Loc.T("Mở hết", "Expand all"), Padding = new Thickness(12, 5, 12, 5) };
         expand.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         expand.Click += (_, _) => { grid.ExpandAll(); Sync(); };
 
-        var collapse = new Button { Content = "Gấp hết", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 0, 0, 0) };
+        var collapse = new Button { Content = Loc.T("Gấp hết", "Collapse all"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 0, 0, 0) };
         collapse.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         collapse.Click += (_, _) => { grid.CollapseAll(); Sync(); };
 
@@ -138,20 +138,20 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Cây phân tách khối lượng — dòng chính là item, không phải bản sao",
+            Loc.T("Cây phân tách khối lượng — dòng chính là item, không phải bản sao", "Quantity breakdown tree — rows are items, not copies"),
             stack,
             xaml: "<controls:TreeDataGrid RootItems=\"{Binding Nodes}\"\n" +
                   "    ChildrenPath=\"Children\"\n" +
-                  "    HierarchyHeader=\"Cấu kiện\"\n" +
+                  Loc.T("    HierarchyHeader=\"Cấu kiện\"\n", "    HierarchyHeader=\"Member\"\n") +
                   "    HierarchyPath=\"Name\"\n" +
                   "    IndentSize=\"18\" />",
-            csharp: "// Mở/gấp theo code\n" +
+            csharp: Loc.T("// Mở/gấp theo code\n", "// Expand/collapse from code") +
                     "grid.ExpandAll();\n" +
                     "grid.CollapseAll();\n" +
-                    "grid.ExpandTo(node);      // mở đường tới node\n" +
+                    Loc.T("grid.ExpandTo(node);      // mở đường tới node\n", "grid.ExpandTo(node);      // expands the path to the node") +
                     "grid.ToggleNode(node);\n\n" +
-                    "// Trạng thái mở khoá theo tham chiếu,\n" +
-                    "// nên dựng lại ItemsSource vẫn giữ nguyên."));
+                    Loc.T("// Trạng thái mở khoá theo tham chiếu,\n", "// Expansion state is keyed by reference,") +
+                    Loc.T("// nên dựng lại ItemsSource vẫn giữ nguyên.", "// so rebuilding ItemsSource keeps it.")));
 
         return root;
     }
@@ -179,17 +179,17 @@ public partial class ShowcaseViewModel
             SelectionMode = DataGridSelectionMode.Extended
         };
 
-        grid.Columns.Add(new DataGridTextColumn { Header = "Mã", Binding = new Binding(nameof(BeamRow.Code)), Width = 110 });
-        grid.Columns.Add(new DataGridTextColumn { Header = "Tiết diện", Binding = new Binding(nameof(BeamRow.Section)), Width = 110 });
+        grid.Columns.Add(new DataGridTextColumn { Header = Loc.T("Mã", "Mark"), Binding = new Binding(nameof(BeamRow.Code)), Width = 110 });
+        grid.Columns.Add(new DataGridTextColumn { Header = Loc.T("Tiết diện", "Section"), Binding = new Binding(nameof(BeamRow.Section)), Width = 110 });
         grid.Columns.Add(new DataGridTextColumn
         {
-            Header = "Dài (m)",
+            Header = Loc.T("Dài (m)", "Length (m)"),
             Binding = new Binding(nameof(BeamRow.Length)) { StringFormat = "N2" },
             Width = 100
         });
         grid.Columns.Add(new DataGridTextColumn
         {
-            Header = "Nặng (kg)",
+            Header = Loc.T("Nặng (kg)", "Weight (kg)"),
             Binding = new Binding(nameof(BeamRow.Weight)) { StringFormat = "N1" },
             Width = 110
         });
@@ -199,20 +199,20 @@ public partial class ShowcaseViewModel
 
         void Sync() =>
             status.Text = grid.SelectedCount == 0
-                ? "Chưa chọn dòng nào"
-                : $"{grid.SelectedCount} dòng · {grid.SelectedItemsList.OfType<BeamRow>().Sum(r => r.Weight):N1} kg";
+                ? Loc.T("Chưa chọn dòng nào", "No row selected")
+                : Loc.F("{0} dòng · {1:N1} kg", "{0} rows · {1:N1} kg", grid.SelectedCount, grid.SelectedItemsList.OfType<BeamRow>().Sum(r => r.Weight));
 
         grid.SelectionChanged += (_, _) => Sync();
 
-        var all = new Button { Content = "Chọn hết", Padding = new Thickness(12, 5, 12, 5) };
+        var all = new Button { Content = Loc.T("Chọn hết", "Select all"), Padding = new Thickness(12, 5, 12, 5) };
         all.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         all.Click += (_, _) => { grid.SelectEverything(); Sync(); };
 
-        var none = new Button { Content = "Bỏ chọn", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 0, 0, 0) };
+        var none = new Button { Content = Loc.T("Bỏ chọn", "Clear selection"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 0, 0, 0) };
         none.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         none.Click += (_, _) => { grid.ClearEverything(); Sync(); };
 
-        var invert = new Button { Content = "Đảo chọn", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 0, 0, 0) };
+        var invert = new Button { Content = Loc.T("Đảo chọn", "Invert selection"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 0, 0, 0) };
         invert.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         invert.Click += (_, _) => { grid.InvertSelection(); Sync(); };
 
@@ -231,18 +231,18 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Chọn nhiều dòng có ô tick ba trạng thái",
+            Loc.T("Chọn nhiều dòng có ô tick ba trạng thái", "Multi-row selection with tri-state check boxes"),
             stack,
             xaml: "<controls:MultiSelectDataGrid ItemsSource=\"{Binding Beams}\"\n" +
                   "    ShowCheckBoxColumn=\"True\"\n" +
                   "    CheckBoxColumnWidth=\"44\" />",
-            csharp: "// Ô tick ở header là ba trạng thái:\n" +
-                    "// IsAllSelected đọc/ghi được\n" +
+            csharp: Loc.T("// Ô tick ở header là ba trạng thái:\n", "// The header checkbox is tri-state:") +
+                    Loc.T("// IsAllSelected đọc/ghi được\n", "// IsAllSelected reads and writes") +
                     "grid.IsAllSelected = true;\n\n" +
                     "grid.SelectEverything();\n" +
                     "grid.ClearEverything();\n" +
                     "grid.InvertSelection();\n\n" +
-                    "// Đếm và danh sách chọn\n" +
+                    Loc.T("// Đếm và danh sách chọn\n", "// Count and the selected list") +
                     "int n = grid.SelectedCount;\n" +
                     "var items = grid.SelectedItemsList;   // observable"));
 
@@ -262,13 +262,13 @@ public partial class ShowcaseViewModel
         {
             ItemsSource = new List<FolderSize>
             {
-                new() { Label = "Kết cấu", Value = 1840 },
-                new() { Label = "Kiến trúc", Value = 1120 },
+                new() { Label = Loc.T("Kết cấu", "Structure"), Value = 1840 },
+                new() { Label = Loc.T("Kiến trúc", "Architecture"), Value = 1120 },
                 new() { Label = "MEP", Value = 860 },
-                new() { Label = "Hạ tầng", Value = 420 },
-                new() { Label = "Cảnh quan", Value = 260 },
-                new() { Label = "Nội thất", Value = 180 },
-                new() { Label = "Khác", Value = 90 }
+                new() { Label = Loc.T("Hạ tầng", "Infrastructure"), Value = 420 },
+                new() { Label = Loc.T("Cảnh quan", "Landscape"), Value = 260 },
+                new() { Label = Loc.T("Nội thất", "Interior"), Value = 180 },
+                new() { Label = Loc.T("Khác", "Other"), Value = 90 }
             },
             ValuePath = nameof(FolderSize.Value),
             LabelPath = nameof(FolderSize.Label),
@@ -290,10 +290,10 @@ public partial class ShowcaseViewModel
 
         var readout = new TextBlock { FontSize = 11.5, Margin = new Thickness(0, 10, 0, 0) };
         readout.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        readout.Text = "Bấm vào một ô để xem tỉ trọng.";
+        readout.Text = Loc.T("Bấm vào một ô để xem tỉ trọng.", "Click a cell to see its share.");
 
         map.ItemInvoked += (_, e) =>
-            readout.Text = $"{e.Entry.Label} — {e.Entry.Value:N0} MB · {e.Entry.Share:P1} tổng dung lượng";
+            readout.Text = Loc.F("{0} — {1:N0} MB · {2:P1} tổng dung lượng", "{0} — {1:N0} MB · {2:P1} of total", e.Entry.Label, e.Entry.Value, e.Entry.Share);
 
         var stack = new StackPanel();
         stack.Children.Add(map);
@@ -301,16 +301,16 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Bản đồ tỉ trọng — thuật toán squarified",
+            Loc.T("Bản đồ tỉ trọng — thuật toán squarified", "Treemap — squarified layout"),
             stack,
             xaml: "<controls:TreeMap ItemsSource=\"{Binding Sizes}\"\n" +
                   "    ValuePath=\"Value\" LabelPath=\"Label\"\n" +
                   "    Gap=\"3\" CornerRadius=\"6\" />",
             csharp: "map.ItemInvoked += (_, e) =>\n" +
                     "    Show(e.Entry.Label, e.Entry.Share);\n\n" +
-                    "// Truy vấn ngược từ toạ độ chuột\n" +
+                    Loc.T("// Truy vấn ngược từ toạ độ chuột\n", "// Hit-test back from the pointer coordinates") +
                     "var hit = map.HitTest(point);\n\n" +
-                    "// Dữ liệu đổi thì gọi Invalidate()"));
+                    Loc.T("// Dữ liệu đổi thì gọi Invalidate()", "// Call Invalidate() when the data changes")));
 
         return root;
     }
@@ -326,12 +326,12 @@ public partial class ShowcaseViewModel
             Height = 420,
             Width = 330,
             HorizontalAlignment = HorizontalAlignment.Left,
-            Placeholder = "Tìm cấu kiện (không cần dấu)..."
+            Placeholder = Loc.T("Tìm cấu kiện (không cần dấu)...", "Find a member (no accents needed)...")
         };
 
         var readout = new TextBlock
         {
-            Text = "Chưa chọn cấu kiện nào.",
+            Text = Loc.T("Chưa chọn cấu kiện nào.", "No member selected yet."),
             FontSize = 12,
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 8)
@@ -350,8 +350,8 @@ public partial class ShowcaseViewModel
         picker.SelectionChanged += (_, _) =>
         {
             readout.Text = picker.SelectedCount == 0
-                ? "Chưa chọn cấu kiện nào."
-                : $"Đã chọn {picker.SelectedCount} mục:";
+                ? Loc.T("Chưa chọn cấu kiện nào.", "No member selected yet.")
+                : Loc.F("Đã chọn {0} mục:", "Selected {0} items:", picker.SelectedCount);
 
             selected.Text = string.Join("\n", picker.SelectedItems
                 .OfType<BreakdownNode>()
@@ -372,7 +372,7 @@ public partial class ShowcaseViewModel
 
         var note = new TextBlock
         {
-            Text = "Gõ “dam d1” hay “tang 1” đều tìm được — bộ lọc bỏ dấu và giữ lại nhánh cha để thấy đường dẫn.",
+            Text = Loc.T("Gõ “dam d1” hay “tang 1” đều tìm được — bộ lọc bỏ dấu và giữ lại nhánh cha để thấy đường dẫn.", "Type “dam d1” or “tang 1” and it still matches — the filter strips accents and keeps the parent branches so the path stays visible."),
             FontSize = 11.5,
             Margin = new Thickness(0, 10, 0, 0),
             TextWrapping = TextWrapping.Wrap
@@ -385,19 +385,19 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Cây có tìm kiếm, chọn nhiều",
+            Loc.T("Cây có tìm kiếm, chọn nhiều", "Searchable tree with multi-select"),
             stack,
             xaml: "<controls:SearchableTreePicker\n" +
                   "    ItemsSource=\"{Binding Nodes}\"\n" +
                   "    ChildrenPath=\"Children\"\n" +
                   "    DisplayPath=\"Name\"\n" +
                   "    SelectionMode=\"Multiple\"\n" +
-                  "    Placeholder=\"Tìm cấu kiện...\" />",
+                  Loc.T("    Placeholder=\"Tìm cấu kiện...\" />", "    Placeholder=\"Find a member...\" />"),
             csharp: "picker.SelectionChanged += (_, _) =>\n" +
                     "    Show(picker.SelectedItems);\n\n" +
-                    "// Bộ lọc giữ nhánh cha, nên kết quả vẫn thấy đường dẫn\n" +
+                    Loc.T("// Bộ lọc giữ nhánh cha, nên kết quả vẫn thấy đường dẫn\n", "// The filter keeps parent branches, so results still show their path") +
                     "picker.SearchText = \"dam d1\";\n\n" +
-                    "// Chọn tất cả những gì đang hiện (sau khi lọc)\n" +
+                    Loc.T("// Chọn tất cả những gì đang hiện (sau khi lọc)\n", "// Select everything currently visible (after filtering)") +
                     "picker.SelectAllVisible();"));
 
         return root;
@@ -413,13 +413,13 @@ public partial class ShowcaseViewModel
 
         var tree = new ToolWindow
         {
-            Header = "Cấu kiện",
+            Header = Loc.T("Cấu kiện", "Member"),
             Icon = IconKind.Layers,
             Dock = DockSide.Left,
             DockSize = 210
         };
         var treeView = new TreeView { BorderThickness = new Thickness(0) };
-        foreach (var name in new[] { "Tầng 1", "Tầng 2", "Mái", "Móng" })
+        foreach (var name in new[] { Loc.T("Tầng 1", "Level 1"), Loc.T("Tầng 2", "Level 2"), Loc.T("Mái", "Roof"), Loc.T("Móng", "Foundation") })
         {
             treeView.Items.Add(new TreeViewItem { Header = name, IsExpanded = true });
         }
@@ -429,13 +429,13 @@ public partial class ShowcaseViewModel
         // behaves, instead of each taking its own slice of the edge.
         var layers = new ToolWindow
         {
-            Header = "Lớp",
+            Header = Loc.T("Lớp", "Layer"),
             Icon = IconKind.LayerColor,
             Dock = DockSide.Left,
             DockSize = 210
         };
         var layerList = new ListBox { BorderThickness = new Thickness(0) };
-        foreach (var name in new[] { "Kết cấu", "Kiến trúc", "MEP", "Cảnh quan" })
+        foreach (var name in new[] { Loc.T("Kết cấu", "Structure"), Loc.T("Kiến trúc", "Architecture"), "MEP", Loc.T("Cảnh quan", "Landscape") })
         {
             layerList.Items.Add(name);
         }
@@ -443,7 +443,7 @@ public partial class ShowcaseViewModel
 
         var props = new ToolWindow
         {
-            Header = "Thuộc tính",
+            Header = Loc.T("Thuộc tính", "Properties"),
             Icon = IconKind.Settings,
             Dock = DockSide.Right,
             DockSize = 230
@@ -451,11 +451,11 @@ public partial class ShowcaseViewModel
         var propList = new StackPanel { Margin = new Thickness(12) };
         foreach (var (key, value) in new[]
                  {
-                     ("Tiết diện", "300×600"),
-                     ("Chiều dài", "6.20 m"),
-                     ("Bê tông", "B25"),
-                     ("Thép", "CB400V"),
-                     ("Lớp bảo vệ", "25 mm")
+                     (Loc.T("Tiết diện", "Section"), "300×600"),
+                     (Loc.T("Chiều dài", "Length"), "6.20 m"),
+                     (Loc.T("Bê tông", "Concrete"), "B25"),
+                     (Loc.T("Thép", "Steel"), "CB400V"),
+                     (Loc.T("Lớp bảo vệ", "Cover"), "25 mm")
                  })
         {
             var row = new Grid { Margin = new Thickness(0, 0, 0, 8) };
@@ -477,7 +477,7 @@ public partial class ShowcaseViewModel
 
         var log = new ToolWindow
         {
-            Header = "Nhật ký",
+            Header = Loc.T("Nhật ký", "Log"),
             Icon = IconKind.FileText,
             Dock = DockSide.Bottom,
             DockSize = 120
@@ -488,13 +488,13 @@ public partial class ShowcaseViewModel
             BorderThickness = new Thickness(0),
             FontFamily = new FontFamily("Consolas"),
             FontSize = 11.5,
-            Text = "[09:12] Nạp mô hình: 1 284 cấu kiện\n[09:12] Bóc tách khối lượng xong\n[09:13] Đã lưu bảng khối lượng"
+            Text = Loc.T("[09:12] Nạp mô hình: 1 284 cấu kiện\n[09:12] Bóc tách khối lượng xong\n[09:13] Đã lưu bảng khối lượng", "[09:12] Model loaded: 1,284 members\n[09:12] Quantity take-off finished\n[09:13] Quantity schedule saved")
         };
         log.Content = logBox;
 
         var canvas = new ToolWindow
         {
-            Header = "Bản vẽ",
+            Header = Loc.T("Bản vẽ", "Drawing"),
             Icon = IconKind.Drawing,
             Dock = DockSide.Center,
             ShowHeader = true
@@ -503,7 +503,7 @@ public partial class ShowcaseViewModel
         drawing.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
         var drawingText = new TextBlock
         {
-            Text = "Vùng giữa — kéo header của panel bên cạnh để dock sang đây",
+            Text = Loc.T("Vùng giữa — kéo header của panel bên cạnh để dock sang đây", "Centre area — drag the header of a neighbouring panel here to dock it"),
             FontSize = 12,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
@@ -524,17 +524,17 @@ public partial class ShowcaseViewModel
 
         var search = new ToolWindow
         {
-            Header = "Tìm kiếm",
+            Header = Loc.T("Tìm kiếm", "Search"),
             Icon = IconKind.Search,
             Dock = DockSide.Left
         };
         var searchBox = new StackPanel { Margin = new Thickness(10) };
-        var find = new TextBox { Text = "dầm D1" };
+        var find = new TextBox { Text = Loc.T("dầm D1", "beam D1") };
         find.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.TextBox.Base");
         searchBox.Children.Add(find);
         var findHint = new TextBlock
         {
-            Text = "3 kết quả trong 1 284 cấu kiện",
+            Text = Loc.T("3 kết quả trong 1 284 cấu kiện", "3 results in 1,284 members"),
             FontSize = 11,
             Margin = new Thickness(0, 8, 0, 0)
         };
@@ -560,26 +560,26 @@ public partial class ShowcaseViewModel
 
         var readout = new TextBlock { FontSize = 11.5, Margin = new Thickness(0, 10, 0, 0) };
         readout.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        readout.Text = "Trái: nhóm chia hai hàng, hàng trên có hai tab. Phải, dưới và vùng giữa là panel đơn.";
+        readout.Text = Loc.T("Trái: nhóm chia hai hàng, hàng trên có hai tab. Phải, dưới và vùng giữa là panel đơn.", "Left: a group split into two rows, the top row with two tabs. Right, bottom and centre are single panels.");
 
-        manager.PaneDocked += (_, pane) => readout.Text = $"Đã dock “{pane.Header}” sang {pane.Dock}.";
-        manager.PaneClosed += (_, pane) => readout.Text = $"Đã đóng “{pane.Header}”.";
+        manager.PaneDocked += (_, pane) => readout.Text = Loc.F("Đã dock “{0}” sang {1}.", "Docked “{0}” to {1}.", pane.Header, pane.Dock);
+        manager.PaneClosed += (_, pane) => readout.Text = Loc.F("Đã đóng “{0}”.", "Closed “{0}”.", pane.Header);
 
-        var autoHide = new Button { Content = "Ghim / tự ẩn panel phải", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 10, 0, 0) };
+        var autoHide = new Button { Content = Loc.T("Ghim / tự ẩn panel phải", "Pin / auto-hide the right panel"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 10, 0, 0) };
         autoHide.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         autoHide.HorizontalAlignment = HorizontalAlignment.Left;
         autoHide.Click += (_, _) =>
         {
             props.ToggleAutoHide();
             readout.Text = props.IsAutoHidden
-                ? "Panel phải đã thu về dải tab ở mép — bấm tab để mở flyout."
-                : "Panel phải đã ghim lại vào layout.";
+                ? Loc.T("Panel phải đã thu về dải tab ở mép — bấm tab để mở flyout.", "The right panel folded into an edge tab strip — click a tab to open the flyout.")
+                : Loc.T("Panel phải đã ghim lại vào layout.", "The right panel is pinned back into the layout.");
         };
 
-        var saveLayout = new Button { Content = "Lưu layout", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 10, 0, 0) };
+        var saveLayout = new Button { Content = Loc.T("Lưu layout", "Save layout"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 10, 0, 0) };
         saveLayout.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
 
-        var restoreLayout = new Button { Content = "Khôi phục", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 10, 0, 0) };
+        var restoreLayout = new Button { Content = Loc.T("Khôi phục", "Restore"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 10, 0, 0) };
         restoreLayout.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
 
         string? saved = null;
@@ -587,30 +587,30 @@ public partial class ShowcaseViewModel
         saveLayout.Click += (_, _) =>
         {
             saved = manager.CaptureLayout();
-            readout.Text = $"Đã lưu layout ({saved.Split('\n').Length - 1} panel) — thử kéo cạnh rồi khôi phục.";
-            ToastService.Success("Đã lưu layout");
+            readout.Text = Loc.F("Đã lưu layout ({0} panel) — thử kéo cạnh rồi khôi phục.", "Layout saved ({0} panels) — try dragging an edge, then restore.", saved.Split('\n').Length - 1);
+            ToastService.Success(Loc.T("Đã lưu layout", "Layout saved"));
         };
 
         restoreLayout.Click += (_, _) =>
         {
             if (saved is null)
             {
-                readout.Text = "Chưa có layout nào được lưu.";
+                readout.Text = Loc.T("Chưa có layout nào được lưu.", "No layout has been saved yet.");
                 return;
             }
 
             manager.ApplyLayout(saved);
-            readout.Text = "Đã khôi phục layout đã lưu.";
+            readout.Text = Loc.T("Đã khôi phục layout đã lưu.", "Restored the saved layout.");
         };
 
-        var floatButton = new Button { Content = "Tách cửa sổ nổi", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 10, 0, 0) };
+        var floatButton = new Button { Content = Loc.T("Tách cửa sổ nổi", "Float into a window"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(8, 10, 0, 0) };
         floatButton.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         floatButton.Click += (_, _) =>
         {
             // Float is idempotent: a second click brings the existing window forward instead of
             // opening another one, so there is no handler to accumulate either.
             manager.Float(props);
-            readout.Text = "Đã tách “Thuộc tính” ra cửa sổ nổi — đóng cửa sổ đó để dock lại.";
+            readout.Text = Loc.T("Đã tách “Thuộc tính” ra cửa sổ nổi — đóng cửa sổ đó để dock lại.", "Floated “Properties” into its own window — close it to dock it back.");
         };
 
         var buttons = new StackPanel { Orientation = Orientation.Horizontal };
@@ -626,21 +626,21 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Dock bốn cạnh, kéo để đổi chỗ, ghim để tự ẩn",
+            Loc.T("Dock bốn cạnh, kéo để đổi chỗ, ghim để tự ẩn", "Dock on four sides, drag to rearrange, pin to auto-hide"),
             stack,
             xaml: "<controls:DockingManager>\n" +
-                  "    <controls:ToolWindow Header=\"Cấu kiện\" Dock=\"Left\" DockSize=\"210\" />\n" +
-                  "    <controls:ToolWindow Header=\"Thuộc tính\" Dock=\"Right\" DockSize=\"230\" />\n" +
-                  "    <controls:ToolWindow Header=\"Nhật ký\" Dock=\"Bottom\" DockSize=\"120\" />\n" +
-                  "    <controls:ToolWindow Header=\"Bản vẽ\" Dock=\"Center\" />\n" +
+                  Loc.T("    <controls:ToolWindow Header=\"Cấu kiện\" Dock=\"Left\" DockSize=\"210\" />\n", "    <controls:ToolWindow Header=\"Members\" Dock=\"Left\" DockSize=\"210\" />\n") +
+                  Loc.T("    <controls:ToolWindow Header=\"Thuộc tính\" Dock=\"Right\" DockSize=\"230\" />\n", "    <controls:ToolWindow Header=\"Properties\" Dock=\"Right\" DockSize=\"230\" />\n") +
+                  Loc.T("    <controls:ToolWindow Header=\"Nhật ký\" Dock=\"Bottom\" DockSize=\"120\" />\n", "    <controls:ToolWindow Header=\"Log\" Dock=\"Bottom\" DockSize=\"120\" />\n") +
+                  Loc.T("    <controls:ToolWindow Header=\"Bản vẽ\" Dock=\"Center\" />\n", "    <controls:ToolWindow Header=\"Drawing\" Dock=\"Center\" />\n") +
                   "</controls:DockingManager>",
             csharp: "// Dock theo code (menu View)\n" +
                     "manager.Dock(pane, DockSide.Right);\n\n" +
-                    "// Tự ẩn / flyout\n" +
+                    Loc.T("// Tự ẩn / flyout\n", "// Auto-hide / flyout") +
                     "pane.ToggleAutoHide();\n" +
                     "manager.ToggleFlyout(pane);\n" +
                     "manager.CloseFlyouts();\n\n" +
-                    "// Đóng: Closing cho phép huỷ\n" +
+                    Loc.T("// Đóng: Closing cho phép huỷ\n", "// Closing can be cancelled") +
                     "pane.Closing += (_, e) => e.Cancel = HasUnsaved();\n" +
                     "manager.ClosePane(pane);"));
 
@@ -657,10 +657,10 @@ public partial class ShowcaseViewModel
 
         var docs = new (string Title, IconKind Icon, bool Dirty)[]
         {
-            ("Bản vẽ kết cấu.dwg", IconKind.Drawing, false),
-            ("Bảng khối lượng.xlsx", IconKind.FileExcel, true),
-            ("Mặt bằng tầng 1.dwg", IconKind.Drawing, false),
-            ("Ghi chú.txt", IconKind.FileText, false)
+            (Loc.T("Bản vẽ kết cấu.dwg", "Structural drawing.dwg"), IconKind.Drawing, false),
+            (Loc.T("Bảng khối lượng.xlsx", "Quantity schedule.xlsx"), IconKind.FileExcel, true),
+            (Loc.T("Mặt bằng tầng 1.dwg", "Level 1 plan.dwg"), IconKind.Drawing, false),
+            (Loc.T("Ghi chú.txt", "Notes.txt"), IconKind.FileText, false)
         };
 
         foreach (var (title, icon, dirty) in docs)
@@ -673,7 +673,7 @@ public partial class ShowcaseViewModel
 
             var hint = new TextBlock
             {
-                Text = "Nội dung tài liệu hiển thị ở đây.",
+                Text = Loc.T("Nội dung tài liệu hiển thị ở đây.", "The document content shows here."),
                 FontSize = 11.5,
                 Margin = new Thickness(0, 6, 0, 0)
             };
@@ -691,21 +691,21 @@ public partial class ShowcaseViewModel
 
         var readout = new TextBlock { FontSize = 11.5, Margin = new Thickness(0, 10, 0, 0) };
         readout.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        readout.Text = $"{tabs.Documents.Count()} tài liệu đang mở.";
+        readout.Text = Loc.F("{0} tài liệu đang mở.", "{0} documents open.", tabs.Documents.Count());
 
         tabs.SelectionChanged += (_, _) =>
         {
             var current = tabs.SelectedItem as DocumentTabItem;
-            readout.Text = current is null ? "Đang xem: —" : $"Đang xem: {current.Header}";
+            readout.Text = current is null ? Loc.T("Đang xem: —", "Viewing: —") : Loc.F("Đang xem: {0}", "Viewing: {0}", current.Header);
         };
 
-        var closeCurrent = new Button { Content = "Đóng tab đang xem", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 10, 0, 0) };
+        var closeCurrent = new Button { Content = Loc.T("Đóng tab đang xem", "Close the current tab"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 10, 0, 0) };
         closeCurrent.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         closeCurrent.HorizontalAlignment = HorizontalAlignment.Left;
         closeCurrent.Click += (_, _) =>
         {
             tabs.CloseTab(tabs.SelectedItem);
-            readout.Text = $"{tabs.Documents.Count()} tài liệu đang mở.";
+            readout.Text = Loc.F("{0} tài liệu đang mở.", "{0} documents open.", tabs.Documents.Count());
         };
 
         var stack = new StackPanel();
@@ -715,20 +715,20 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Tab tài liệu: icon, chấm chưa lưu, nút đóng",
+            Loc.T("Tab tài liệu: icon, chấm chưa lưu, nút đóng", "Document tabs: icon, dirty dot, close button"),
             stack,
             xaml: "<controls:DocumentTabControl ShowCloseButtons=\"True\">\n" +
-                  "    <controls:DocumentTabItem Header=\"Bản vẽ.dwg\"\n" +
+                  Loc.T("    <controls:DocumentTabItem Header=\"Bản vẽ.dwg\"\n", "    <controls:DocumentTabItem Header=\"Drawing.dwg\"\n") +
                   "        Icon=\"Drawing\" IsDirty=\"False\" />\n" +
-                  "    <controls:DocumentTabItem Header=\"Khối lượng.xlsx\"\n" +
+                  Loc.T("    <controls:DocumentTabItem Header=\"Khối lượng.xlsx\"\n", "    <controls:DocumentTabItem Header=\"Quantities.xlsx\"\n") +
                   "        Icon=\"FileExcel\" IsDirty=\"True\" />\n" +
                   "</controls:DocumentTabControl>",
-            csharp: "// Đóng là một YÊU CẦU, không phải lệnh:\n" +
-                    "// CloseCommand do host quyết định (hỏi lưu trước).\n" +
+            csharp: Loc.T("// Đóng là một YÊU CẦU, không phải lệnh:\n", "// Closing is a REQUEST, not a command:") +
+                    Loc.T("// CloseCommand do host quyết định (hỏi lưu trước).\n", "// CloseCommand is the host's call (ask to save first).") +
                     "tabs.CloseTab(document);\n" +
                     "tabs.CloseOtherTabs(document);\n" +
                     "tabs.CloseAllTabs();\n\n" +
-                    "// Chấm chưa lưu do host đặt\n" +
+                    Loc.T("// Chấm chưa lưu do host đặt\n", "// The unsaved dot is set by the host") +
                     "tab.IsDirty = true;"));
 
         return root;
@@ -752,20 +752,20 @@ public partial class ShowcaseViewModel
 
         var bar = new StatusBar();
         DockPanel.SetDock(bar, Dock.Bottom);
-        bar.Items.Add(new StatusBarItem { Text = "Sẵn sàng", Icon = IconKind.CheckCircle });
-        bar.Items.Add(new StatusBarItem { Text = "1 284 cấu kiện", Icon = IconKind.Layers });
+        bar.Items.Add(new StatusBarItem { Text = Loc.T("Sẵn sàng", "Ready"), Icon = IconKind.CheckCircle });
+        bar.Items.Add(new StatusBarItem { Text = Loc.T("1 284 cấu kiện", "1,284 members"), Icon = IconKind.Layers });
         bar.Items.Add(new StatusBarItem
         {
-            Text = "3 cảnh báo",
+            Text = Loc.T("3 cảnh báo", "3 warnings"),
             Icon = IconKind.Warning,
-            Command = new RelayCommand(() => ToastService.Warning("Mở danh sách cảnh báo"))
+            Command = new RelayCommand(() => ToastService.Warning(Loc.T("Mở danh sách cảnh báo", "Open the warning list")))
         });
         bar.Items.Add(new StatusBarItem { Text = "mm", Alignment = StatusBarAlignment.Right, IsSeparator = true });
         bar.Items.Add(new StatusBarItem { Text = "100%", Alignment = StatusBarAlignment.Right });
 
         var body = new TextBlock
         {
-            Text = "Vùng nội dung cửa sổ",
+            Text = Loc.T("Vùng nội dung cửa sổ", "Window content area"),
             FontSize = 12,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center
@@ -778,7 +778,7 @@ public partial class ShowcaseViewModel
 
         var note = new TextBlock
         {
-            Text = "Ô “3 cảnh báo” có Command nên bấm được; ô chữ không có command thì con trỏ để mặc định.",
+            Text = Loc.T("Ô “3 cảnh báo” có Command nên bấm được; ô chữ không có command thì con trỏ để mặc định.", "The “3 warnings” cell has a Command so it is clickable; a text cell without one keeps the default cursor."),
             FontSize = 11.5,
             Margin = new Thickness(0, 10, 0, 0),
             TextWrapping = TextWrapping.Wrap
@@ -791,20 +791,20 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Hai phía, một khoảng trống ở giữa",
+            Loc.T("Hai phía, một khoảng trống ở giữa", "Two sides with a gap in the middle"),
             stack,
             xaml: "<controls:StatusBar>\n" +
-                  "    <controls:StatusBarItem Text=\"Sẵn sàng\" Icon=\"CheckCircle\" />\n" +
+                  Loc.T("    <controls:StatusBarItem Text=\"Sẵn sàng\" Icon=\"CheckCircle\" />\n", "    <controls:StatusBarItem Text=\"Ready\" Icon=\"CheckCircle\" />\n") +
                   "    <controls:StatusBarItem Text=\"100%\" Alignment=\"Right\" />\n" +
                   "</controls:StatusBar>",
             csharp: "bar.Items.Add(new StatusBarItem\n" +
                     "{\n" +
-                    "    Text = \"3 cảnh báo\",\n" +
+                    Loc.T("    Text = \"3 cảnh báo\",\n", "    Text = \"3 warnings\",\n") +
                     "    Icon = IconKind.Warning,\n" +
                     "    Command = ShowWarningsCommand\n" +
                     "});\n\n" +
-                    "// Không cần Grid cột * để đẩy hai nhóm ra hai đầu:\n" +
-                    "// StatusBarPanel xếp trái từ mép trái, phải từ mép phải."));
+                    Loc.T("// Không cần Grid cột * để đẩy hai nhóm ra hai đầu:\n", "// No * column is needed to push the two groups to the ends:") +
+                    Loc.T("// StatusBarPanel xếp trái từ mép trái, phải từ mép phải.", "// StatusBarPanel lays the left group from the left edge and the right group from the right.")));
 
         return root;
     }
@@ -813,12 +813,12 @@ public partial class ShowcaseViewModel
     {
         var commands = new[]
         {
-            new CommandBarItem("Xuất PDF", new RelayCommand(() => ToastService.Success("Đang xuất PDF…")), IconKind.FilePdf),
-            new CommandBarItem("Xuất Excel", new RelayCommand(() => ToastService.Success("Đang xuất Excel…")), IconKind.FileExcel),
-            new CommandBarItem("In", new RelayCommand(() => ToastService.Info("Đang gửi lệnh in")), IconKind.Print),
+            new CommandBarItem(Loc.T("Xuất PDF", "Export PDF"), new RelayCommand(() => ToastService.Success(Loc.T("Đang xuất PDF…", "Exporting PDF…"))), IconKind.FilePdf),
+            new CommandBarItem(Loc.T("Xuất Excel", "Export Excel"), new RelayCommand(() => ToastService.Success(Loc.T("Đang xuất Excel…", "Exporting Excel…"))), IconKind.FileExcel),
+            new CommandBarItem("In", new RelayCommand(() => ToastService.Info(Loc.T("Đang gửi lệnh in", "Sending the print job"))), IconKind.Print),
             new CommandBarItem { IsSeparator = true },
-            new CommandBarItem("Cấu hình", new RelayCommand(() => ToastService.Info("Mở cấu hình")), IconKind.Settings),
-            new CommandBarItem("Trợ giúp", new RelayCommand(() => ToastService.Info("Mở tài liệu")), IconKind.Help)
+            new CommandBarItem(Loc.T("Cấu hình", "Configure"), new RelayCommand(() => ToastService.Info(Loc.T("Mở cấu hình", "Open settings"))), IconKind.Settings),
+            new CommandBarItem(Loc.T("Trợ giúp", "Help"), new RelayCommand(() => ToastService.Info(Loc.T("Mở tài liệu", "Open the documentation"))), IconKind.Help)
         };
 
         var wide = new CommandBar { ItemsSource = commands };
@@ -832,35 +832,35 @@ public partial class ShowcaseViewModel
 
         wide.LayoutUpdated += (_, _) =>
             wideNote.Text = wide.HasOverflow
-                ? $"Tràn {wide.OverflowItems.Cast<object>().Count()} lệnh"
-                : "Đủ chỗ — không có lệnh nào bị ẩn";
+                ? Loc.F("Tràn {0} lệnh", "{0} commands overflowing", wide.OverflowItems.Cast<object>().Count())
+                : Loc.T("Đủ chỗ — không có lệnh nào bị ẩn", "Enough room — no command is hidden");
 
         narrow.LayoutUpdated += (_, _) =>
             narrowNote.Text = narrow.HasOverflow
-                ? $"Tràn {narrow.OverflowItems.Cast<object>().Count()} lệnh — bấm mũi tên để mở"
-                : "Đủ chỗ";
+                ? Loc.F("Tràn {0} lệnh — bấm mũi tên để mở", "{0} commands overflowing — click the arrow to open", narrow.OverflowItems.Cast<object>().Count())
+                : Loc.T("Đủ chỗ", "Enough room");
 
         var stack = new StackPanel();
-        stack.Children.Add(new TextBlock { Text = "Toàn chiều rộng", FontSize = 11.5, Margin = new Thickness(0, 0, 0, 4) });
+        stack.Children.Add(new TextBlock { Text = Loc.T("Toàn chiều rộng", "Full width"), FontSize = 11.5, Margin = new Thickness(0, 0, 0, 4) });
         stack.Children.Add(wide);
         stack.Children.Add(wideNote);
-        stack.Children.Add(new TextBlock { Text = "Bị bó còn 260px", FontSize = 11.5, Margin = new Thickness(0, 16, 0, 4) });
+        stack.Children.Add(new TextBlock { Text = Loc.T("Bị bó còn 260px", "Squeezed to 260px"), FontSize = 11.5, Margin = new Thickness(0, 16, 0, 4) });
         stack.Children.Add(narrow);
         stack.Children.Add(narrowNote);
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Hết chỗ thì rơi vào menu, không bị cắt cụt",
+            Loc.T("Hết chỗ thì rơi vào menu, không bị cắt cụt", "Overflow goes to a menu instead of clipping"),
             stack,
             xaml: "<controls:CommandBar ItemsSource=\"{Binding Commands}\"\n" +
-                  "    OverflowToolTip=\"Thêm lệnh\" />",
+                  Loc.T("    OverflowToolTip=\"Thêm lệnh\" />", "    OverflowToolTip=\"More commands\" />"),
             csharp: "bar.ItemsSource = new[]\n" +
                     "{\n" +
-                    "    new CommandBarItem(\"Xuất PDF\", ExportPdf, IconKind.FilePdf),\n" +
+                    Loc.T("    new CommandBarItem(\"Xuất PDF\", ExportPdf, IconKind.FilePdf),\n", "    new CommandBarItem(\"Export PDF\", ExportPdf, IconKind.FilePdf),\n") +
                     "    new CommandBarItem { IsSeparator = true },\n" +
                     "    new CommandBarItem(\"In\", Print, IconKind.Print)\n" +
                     "};\n\n" +
-                    "// Ai bị ẩn — do OverflowPanel đo, control chỉ đọc lại\n" +
+                    Loc.T("// Ai bị ẩn — do OverflowPanel đo, control chỉ đọc lại\n", "// Which items are hidden — OverflowPanel measures it and the control just reads it back") +
                     "if (bar.HasOverflow) ...bar.OverflowItems..."));
 
         return root;
@@ -868,57 +868,176 @@ public partial class ShowcaseViewModel
 
     private object CreateQuickAccessToolbarDemo()
     {
+        // One strip, with every switch that changes it beside it. Three copies of the same strip
+        // differing only by a property the picker can already set is a gallery, not a workbench.
         var items = new[]
         {
-            new QuickAccessItem(IconKind.Save, "Lưu (Ctrl+S)", new RelayCommand(() => ToastService.Success("Đã lưu"))),
-            new QuickAccessItem(IconKind.Undo, "Hoàn tác (Ctrl+Z)", new RelayCommand(() => ToastService.Info("Hoàn tác"))),
-            new QuickAccessItem(IconKind.Redo, "Làm lại (Ctrl+Y)", new RelayCommand(() => ToastService.Info("Làm lại"))),
+            new QuickAccessItem(IconKind.Save, Loc.T("Lưu (Ctrl+S)", "Save (Ctrl+S)"), new RelayCommand(() => ToastService.Success(Loc.T("Đã lưu", "Saved")))),
+            new QuickAccessItem(IconKind.Undo, Loc.T("Hoàn tác (Ctrl+Z)", "Undo (Ctrl+Z)"), new RelayCommand(() => ToastService.Info(Loc.T("Hoàn tác", "Undo")))),
+            new QuickAccessItem(IconKind.Redo, Loc.T("Làm lại (Ctrl+Y)", "Redo (Ctrl+Y)"), new RelayCommand(() => ToastService.Info(Loc.T("Làm lại", "Redo")))),
             new QuickAccessItem { IsSeparator = true },
-            new QuickAccessItem(IconKind.Print, "In (Ctrl+P)", new RelayCommand(() => ToastService.Info("In"))),
-            new QuickAccessItem(IconKind.ZoomIn, "Phóng to", new RelayCommand(() => ToastService.Info("Phóng to"))),
-            new QuickAccessItem(IconKind.ZoomOut, "Thu nhỏ", new RelayCommand(() => ToastService.Info("Thu nhỏ"))),
-            new QuickAccessItem(IconKind.Settings, "Cài đặt", new RelayCommand(() => ToastService.Info("Cài đặt")))
+            new QuickAccessItem(IconKind.Print, Loc.T("In (Ctrl+P)", "Print (Ctrl+P)"), new RelayCommand(() => ToastService.Info(Loc.T("In", "Print")))),
+            new QuickAccessItem(IconKind.ZoomIn, Loc.T("Phóng to", "Zoom in"), new RelayCommand(() => ToastService.Info(Loc.T("Phóng to", "Zoom in")))),
+            new QuickAccessItem(IconKind.ZoomOut, Loc.T("Thu nhỏ", "Zoom out"), new RelayCommand(() => ToastService.Info(Loc.T("Thu nhỏ", "Zoom out")))),
+            new QuickAccessItem { IsSeparator = true },
+            new QuickAccessItem(IconKind.Settings, Loc.T("Cài đặt", "Settings"), new RelayCommand(() => ToastService.Info(Loc.T("Cài đặt", "Settings"))))
         };
 
-        var strip = new Border { CornerRadius = new CornerRadius(6), BorderThickness = new Thickness(1), Padding = new Thickness(4) };
-        strip.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
-        strip.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
+        static TextBlock Head(string text)
+        {
+            var head = new TextBlock
+            {
+                Text = text,
+                FontSize = 11.5,
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            head.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
+            return head;
+        }
 
-        var full = new QuickAccessToolbar { ItemsSource = items };
-        strip.Child = full;
-
-        var compact = new QuickAccessToolbar
+        var strip = new QuickAccessToolbar
         {
             ItemsSource = items,
-            Width = 130,
-            IsCustomizable = false,
-            HorizontalAlignment = HorizontalAlignment.Left
+            Variant = QuickAccessToolbarVariant.Outlined,
+            Width = 360,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            OverflowToolTip = Loc.T("Lệnh không vừa", "Commands that did not fit")
         };
 
-        var readout = new TextBlock { FontSize = 11, Margin = new Thickness(0, 8, 0, 0) };
+        var readout = new TextBlock
+        {
+            FontSize = 11,
+            Margin = new Thickness(0, 10, 0, 0),
+            TextWrapping = TextWrapping.Wrap,
+            LineHeight = 16
+        };
         readout.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        full.LayoutUpdated += (_, _) => readout.Text = full.HasOverflow
-            ? $"Bản đầy đủ tràn {full.OverflowItems.Cast<object>().Count()} lệnh"
-            : "Bản đầy đủ: đủ chỗ cho cả 7 lệnh";
 
-        var stack = new StackPanel();
-        stack.Children.Add(strip);
-        stack.Children.Add(readout);
-        stack.Children.Add(new TextBlock { Text = "Bị bó còn 130px", FontSize = 11.5, Margin = new Thickness(0, 16, 0, 6) });
-        stack.Children.Add(compact);
+        var openButton = SecondaryButton(Loc.T("Mở menu tràn", "Open the overflow menu"));
+        openButton.Margin = new Thickness(0, 10, 0, 0);
+        openButton.HorizontalAlignment = HorizontalAlignment.Left;
+        openButton.Click += (_, _) => strip.IsOverflowOpen = !strip.IsOverflowOpen;
+
+        strip.LayoutUpdated += (_, _) =>
+        {
+            var hidden = strip.OverflowItems.Cast<object>()
+                .OfType<QuickAccessItem>()
+                .Where(item => !item.IsSeparator && !string.IsNullOrEmpty(item.ToolTip))
+                .Select(item => item.ToolTip)
+                .ToList();
+
+            readout.Text = hidden.Count > 0
+                ? Loc.F("Bị đẩy vào menu ({0} lệnh): {1}", "Pushed into the menu ({0} commands): {1}",
+                    hidden.Count, string.Join(" · ", hidden))
+                : Loc.T("Đủ chỗ cho cả 8 lệnh — kéo thanh Rộng xuống để xem menu tràn.",
+                        "Room for all 8 commands — pull the width slider down to see the overflow menu.");
+        };
+
+        var stage = new Border
+        {
+            Height = 72,
+            CornerRadius = new CornerRadius(10),
+            BorderThickness = new Thickness(1),
+            Padding = new Thickness(16),
+            Child = strip
+        };
+        stage.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+        stage.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+
+        // ---- the panel ----------------------------------------------------
+        var col1 = new StackPanel();
+        col1.Children.Add(Head(Loc.T("KÍCH THƯỚC VÀ NHỊP", "SIZE & RHYTHM")));
+        col1.Children.Add(AppearanceSlider(Loc.T("Cạnh nút", "Button size"), 20, 36, strip.ButtonSize, 1, "{0:0} px", v => strip.ButtonSize = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ icon", "Icon size"), 10, 22, strip.IconSize, 1, "{0:0} px", v => strip.IconSize = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Khoảng cách", "Spacing"), 0, 12, strip.Spacing, 1, "{0:0} px", v => strip.Spacing = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Bề rộng", "Width"), 140, 460, strip.Width, 10, "{0:0} px", v => strip.Width = v));
+
+        var col2 = new StackPanel();
+        col2.Children.Add(Head(Loc.T("HIỂN THỊ", "PRESENTATION")));
+
+        var variantRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 12) };
+        var variantLabel = new TextBlock
+        {
+            Text = Loc.T("Kiểu nền:", "Variant:"),
+            FontSize = 12,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(0, 0, 10, 0),
+            Width = 92
+        };
+        variantLabel.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+
+        var variantBox = new ComboBox { Width = 158, HorizontalAlignment = HorizontalAlignment.Left };
+        variantBox.Items.Add("Plain");
+        variantBox.Items.Add("Outlined");
+        variantBox.Items.Add("Elevated");
+        variantBox.SelectedIndex = 1;
+        variantBox.SelectionChanged += (_, _) =>
+            strip.Variant = (QuickAccessToolbarVariant)Math.Max(0, variantBox.SelectedIndex);
+
+        variantRow.Children.Add(variantLabel);
+        variantRow.Children.Add(variantBox);
+        col2.Children.Add(variantRow);
+
+        var toggles = new WrapPanel { Width = 401, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 6) };
+        toggles.Children.Add(AppearanceToggle(Loc.T("Vẽ dấu phân cách", "Draw separators"), strip.ShowSeparators, v => strip.ShowSeparators = v));
+        toggles.Children.Add(AppearanceToggle(Loc.T("Luôn hiện chevron", "Always show the chevron"), strip.IsCustomizable, v => strip.IsCustomizable = v));
+        col2.Children.Add(toggles);
+
+        var note = new TextBlock
+        {
+            Text = Loc.T(
+                "Dấu phân cách chỉ vẽ khi ShowSeparators bật. Chevron hiện khi IsCustomizable bật hoặc khi có lệnh bị tràn — tắt cả hai thì dải chỉ còn đúng số icon vừa chỗ.",
+                "A separator is only drawn while ShowSeparators is on. The chevron shows while IsCustomizable is on, or as soon as a command overflows — turn both off and the strip is nothing but the icons that fit."),
+            FontSize = 11,
+            TextWrapping = TextWrapping.Wrap,
+            MaxWidth = 400,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            LineHeight = 16
+        };
+        note.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        col2.Children.Add(note);
+
+        var workbench = new Grid { Margin = new Thickness(0, 18, 0, 0) };
+        workbench.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(410) });
+        workbench.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
+        workbench.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        Grid.SetColumn(col1, 0);
+        Grid.SetColumn(col2, 2);
+        workbench.Children.Add(col1);
+        workbench.Children.Add(col2);
+
+        var deck = new StackPanel();
+        deck.Children.Add(stage);
+        deck.Children.Add(workbench);
+        deck.Children.Add(readout);
+        deck.Children.Add(openButton);
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Dải icon gọn — dùng được ngoài ribbon",
-            stack,
+            Loc.T("Dải lệnh nhanh", "The quick-access strip"),
+            deck,
             xaml: "<controls:QuickAccessToolbar ItemsSource=\"{Binding QuickCommands}\"\n" +
-                  "    IsCustomizable=\"False\" />",
-            csharp: "qat.ItemsSource = new[]\n" +
-                    "{\n" +
-                    "    new QuickAccessItem(IconKind.Save, \"Lưu\", SaveCommand),\n" +
-                    "    new QuickAccessItem { IsSeparator = true },\n" +
-                    "    new QuickAccessItem(IconKind.Print, \"In\", PrintCommand)\n" +
-                    "};"));
+                  "    Variant=\"Outlined\"\n" +
+                  "    ButtonSize=\"24\"\n" +
+                  "    IconSize=\"14\"\n" +
+                  "    Spacing=\"2\"\n" +
+                  "    ShowSeparators=\"True\"\n" +
+                  "    IsCustomizable=\"True\" />",
+            csharp: Loc.T("// Mỗi thuộc tính đều là DependencyProperty nên bind được\n",
+                          "// Every one of these is a DependencyProperty, so all of them bind\n") +
+                    "qat.Variant = QuickAccessToolbarVariant.Outlined;\n" +
+                    "qat.ButtonSize = 30;\n" +
+                    "qat.IconSize = 16;\n" +
+                    "qat.Spacing = 4;\n" +
+                    "qat.Width = 150;            " + Loc.T("// hẹp lại để thấy menu tràn\n", "// narrow it to see the overflow menu\n") +
+                    "qat.ShowSeparators = true;\n" +
+                    "qat.IsCustomizable = true;\n\n" +
+                    Loc.T("// Chevron tự hiện khi panel báo có lệnh không vừa\n",
+                          "// The chevron appears by itself once the panel reports an overflow\n") +
+                    "foreach (QuickAccessItem hidden in qat.OverflowItems)\n" +
+                    "    Debug.WriteLine(hidden.ToolTip);"));
 
         return root;
     }

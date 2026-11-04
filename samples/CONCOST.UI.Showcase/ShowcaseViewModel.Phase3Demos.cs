@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,24 +28,24 @@ public partial class ShowcaseViewModel
 
         var palette = new CommandPalette
         {
-            Placeholder = "Tìm lệnh, màn hình, thiết lập…",
-            EmptyText = "Không có lệnh nào khớp.",
+            Placeholder = Loc.T("Tìm lệnh, màn hình, thiết lập…", "Search commands, screens, settings…"),
+            EmptyText = Loc.T("Không có lệnh nào khớp.", "No commands match."),
             MaxListHeight = 276
         };
 
         palette.ItemsSource = new List<CommandPaletteItem>
         {
-            new("Tổng quan dự án", "Bảng điều khiển KPI và tiến độ", new RelayCommand(() => ToastService.Success("Mở tổng quan dự án")), IconKind.ChartLine, "Ctrl+1", "Điều hướng"),
-            new("Bảng khối lượng", "Bóc tách khối lượng theo cấu kiện", new RelayCommand(() => ToastService.Success("Mở bảng khối lượng")), IconKind.File, "Ctrl+2", "Điều hướng"),
-            new("Cấu hình thép", "Đường kính, mác thép, lớp bảo vệ", new RelayCommand(() => ToastService.Success("Mở cấu hình thép")), IconKind.Settings, "Ctrl+3", "Điều hướng"),
-            new("Xuất PDF", "Xuất bản vẽ hiện tại ra PDF", new RelayCommand(() => ToastService.Success("Đang xuất PDF…")), IconKind.File, "Ctrl+P", "Xuất bản"),
-            new("Xuất Excel", "Xuất bảng khối lượng ra Excel", new RelayCommand(() => ToastService.Success("Đang xuất Excel…")), IconKind.File, "Ctrl+E", "Xuất bản"),
-            new("Đổi theme", "Chuyển giữa sáng và tối", new RelayCommand(() => ToastService.Info("Đổi theme")), IconKind.LightMode, "Ctrl+D", "Hiển thị"),
-            new("Bật/tắt hiệu ứng", "Tắt chuyển cảnh khi máy yếu", new RelayCommand(() => ToastService.Info("Đã tắt hiệu ứng")), IconKind.LightMode, null, "Hiển thị"),
-            new("Cài đặt", "Ngôn ngữ, đơn vị, đường dẫn", new RelayCommand(() => ToastService.Info("Mở cài đặt")), IconKind.Settings, "Ctrl+,", "Hệ thống")
+            new(Loc.T("Tổng quan dự án", "Project overview"), Loc.T("Bảng điều khiển KPI và tiến độ", "KPI and progress dashboard"), new RelayCommand(() => ToastService.Success(Loc.T("Mở tổng quan dự án", "Open project overview"))), IconKind.ChartLine, "Ctrl+1", Loc.T("Điều hướng", "Navigation")),
+            new(Loc.T("Bảng khối lượng", "Quantity schedule"), Loc.T("Bóc tách khối lượng theo cấu kiện", "Quantity take-off by member"), new RelayCommand(() => ToastService.Success(Loc.T("Mở bảng khối lượng", "Open the quantity schedule"))), IconKind.File, "Ctrl+2", Loc.T("Điều hướng", "Navigation")),
+            new(Loc.T("Cấu hình thép", "Rebar settings"), Loc.T("Đường kính, mác thép, lớp bảo vệ", "Diameter, steel grade, cover"), new RelayCommand(() => ToastService.Success(Loc.T("Mở cấu hình thép", "Open rebar settings"))), IconKind.Settings, "Ctrl+3", Loc.T("Điều hướng", "Navigation")),
+            new(Loc.T("Xuất PDF", "Export PDF"), Loc.T("Xuất bản vẽ hiện tại ra PDF", "Export the current drawing to PDF"), new RelayCommand(() => ToastService.Success(Loc.T("Đang xuất PDF…", "Exporting PDF…"))), IconKind.File, "Ctrl+P", Loc.T("Xuất bản", "Export")),
+            new(Loc.T("Xuất Excel", "Export Excel"), Loc.T("Xuất bảng khối lượng ra Excel", "Export the quantity schedule to Excel"), new RelayCommand(() => ToastService.Success(Loc.T("Đang xuất Excel…", "Exporting Excel…"))), IconKind.File, "Ctrl+E", Loc.T("Xuất bản", "Export")),
+            new(Loc.T("Đổi theme", "Switch theme"), Loc.T("Chuyển giữa sáng và tối", "Toggle between light and dark"), new RelayCommand(() => ToastService.Info(Loc.T("Đổi theme", "Switch theme"))), IconKind.LightMode, "Ctrl+D", Loc.T("Hiển thị", "Display")),
+            new(Loc.T("Bật/tắt hiệu ứng", "Turn effects on/off"), Loc.T("Tắt chuyển cảnh khi máy yếu", "Skip transitions on slow machines"), new RelayCommand(() => ToastService.Info(Loc.T("Đã tắt hiệu ứng", "Effects disabled"))), IconKind.LightMode, null, Loc.T("Hiển thị", "Display")),
+            new(Loc.T("Cài đặt", "Settings"), Loc.T("Ngôn ngữ, đơn vị, đường dẫn", "Language, units, paths"), new RelayCommand(() => ToastService.Info(Loc.T("Mở cài đặt", "Open settings"))), IconKind.Settings, "Ctrl+,", Loc.T("Hệ thống", "System"))
         };
 
-        palette.ItemInvoked += (_, e) => ToastService.Success($"Đã chạy: {e.Item.Title}");
+        palette.ItemInvoked += (_, e) => ToastService.Success(Loc.F("Đã chạy: {0}", "Ran: {0}", e.Item.Title));
 
         var content = new StackPanel
         {
@@ -56,7 +56,7 @@ public partial class ShowcaseViewModel
 
         var title = new TextBlock
         {
-            Text = "Bảng lệnh",
+            Text = Loc.T("Bảng lệnh", "Command palette"),
             FontSize = 18,
             FontWeight = FontWeights.SemiBold,
             HorizontalAlignment = HorizontalAlignment.Center
@@ -66,7 +66,7 @@ public partial class ShowcaseViewModel
 
         var hint = new TextBlock
         {
-            Text = "Gõ không dấu vẫn tìm được: “tong quan” khớp “Tổng quan”.",
+            Text = Loc.T("Gõ không dấu vẫn tìm được: “tong quan” khớp “Tổng quan”.", "Accent-insensitive search: “tong quan” still matches “Tổng quan”."),
             FontSize = 11.5,
             Margin = new Thickness(0, 6, 0, 18),
             HorizontalAlignment = HorizontalAlignment.Center
@@ -76,7 +76,7 @@ public partial class ShowcaseViewModel
 
         var openButton = new Button
         {
-            Content = "Mở bảng lệnh",
+            Content = Loc.T("Mở bảng lệnh", "Open the command palette"),
             Padding = new Thickness(18, 8, 18, 8),
             HorizontalAlignment = HorizontalAlignment.Center
         };
@@ -86,12 +86,12 @@ public partial class ShowcaseViewModel
 
         var keys = new TextBlock
         {
-            Text = "↑ ↓ chọn   ·   ↵ chạy   ·   esc đóng",
+            Text = Loc.T("↑ ↓ chọn   ·   ↵ chạy   ·   esc đóng", "↑ ↓ select   ·   ↵ run   ·   esc close"),
             FontSize = 10.5,
             Margin = new Thickness(0, 14, 0, 0),
             HorizontalAlignment = HorizontalAlignment.Center
         };
-        keys.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextTertiary");
+        keys.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
         content.Children.Add(keys);
 
         host.Children.Add(content);
@@ -99,22 +99,22 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Ctrl+K — gõ để lọc, ↑↓ để chọn",
+            Loc.T("Ctrl+K — gõ để lọc, ↑↓ để chọn", "Ctrl+K — type to filter, ↑↓ to select"),
             host,
             xaml: "<controls:CommandPalette x:Name=\"Palette\"\n" +
                   "    IsOpen=\"{Binding IsPaletteOpen}\"\n" +
                   "    ItemsSource=\"{Binding Commands}\"\n" +
-                  "    Placeholder=\"Tìm lệnh…\"\n" +
+                  Loc.T("    Placeholder=\"Tìm lệnh…\"\n", "    Placeholder=\"Search commands…\"\n") +
                   "    ItemInvoked=\"OnCommandInvoked\" />",
-            csharp: "// Mỗi dòng là một CommandPaletteItem: tiêu đề, mô tả, lệnh, icon, phím tắt, nhóm\n" +
+            csharp: Loc.T("// Mỗi dòng là một CommandPaletteItem: tiêu đề, mô tả, lệnh, icon, phím tắt, nhóm\n", "// Each row is a CommandPaletteItem: title, description, command, icon, shortcut, group\n") +
                     "palette.ItemsSource = new[]\n" +
                     "{\n" +
-                    "    new CommandPaletteItem(\"Xuất PDF\", \"Xuất bản vẽ ra PDF\",\n" +
-                    "        ExportPdfCommand, IconKind.File, \"Ctrl+P\", \"Xuất bản\")\n" +
+                    Loc.T("    new CommandPaletteItem(\"Xuất PDF\", \"Xuất bản vẽ ra PDF\",\n", "    new CommandPaletteItem(\"Export PDF\", \"Export the drawing to PDF\",\n") +
+                    Loc.T("        ExportPdfCommand, IconKind.File, \"Ctrl+P\", \"Xuất bản\")\n", "        ExportPdfCommand, IconKind.File, \"Ctrl+P\", \"Export\")\n") +
                     "};\n\n" +
-                    "palette.Open();   // hoặc gán IsOpen = true\n\n" +
-                    "// Tìm kiếm bỏ dấu, nhiều từ khoá độc lập:\n" +
-                    "// \"xuat pdf\" khớp \"Xuất PDF\", \"tong quan\" khớp \"Tổng quan\""));
+                    Loc.T("palette.Open();   // hoặc gán IsOpen = true\n\n", "palette.Open();   // or set IsOpen = true\n\n") +
+                    Loc.T("// Tìm kiếm bỏ dấu, nhiều từ khoá độc lập:\n", "// Accent-insensitive search, several independent keywords:\n") +
+                    Loc.T("// \"xuat pdf\" khớp \"Xuất PDF\", \"tong quan\" khớp \"Tổng quan\"", "// \"xuat pdf\" matches \"Xuất PDF\", \"tong quan\" matches \"Tổng quan\"\n")));
 
         return root;
     }
@@ -126,31 +126,31 @@ public partial class ShowcaseViewModel
         row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(14) });
         row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-        var left = BuildParticleCard("Hạt trôi", 70, 0);
+        var left = BuildParticleCard(Loc.T("Hạt trôi", "Drifting particles"), 70, 0);
         Grid.SetColumn(left, 0);
         row.Children.Add(left);
 
-        var right = BuildParticleCard("Chòm sao", 40, 96);
+        var right = BuildParticleCard(Loc.T("Chòm sao", "Constellation"), 40, 96);
         Grid.SetColumn(right, 2);
         row.Children.Add(right);
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Hạt nền cho hero panel và empty state",
+            Loc.T("Hạt nền cho hero panel và empty state", "Particle background for hero panels and empty states"),
             row,
             xaml: "<controls:ParticleField ParticleCount=\"70\"\n" +
                   "    Speed=\"18\" Direction=\"270\" Spread=\"0.28\"\n" +
                   "    ParticleOpacity=\"0.75\"\n" +
                   "    ConnectDistance=\"0\" />",
-            csharp: "// ConnectDistance > 0 nối các hạt gần nhau thành chòm sao\n" +
+            csharp: Loc.T("// ConnectDistance > 0 nối các hạt gần nhau thành chòm sao\n", "// ConnectDistance > 0 links nearby particles into a constellation\n") +
                     "var field = new ParticleField\n" +
                     "{\n" +
                     "    ParticleCount = 40,\n" +
                     "    ConnectDistance = 96,\n" +
                     "    Speed = 18\n" +
                     "};\n\n" +
-                    "// Tôn trọng thiết lập giảm chuyển động của Windows;\n" +
-                    "// Seed cố định để ảnh chụp luôn giống nhau"));
+                    Loc.T("// Tôn trọng thiết lập giảm chuyển động của Windows;\n", "// Honours the Windows reduced-motion setting;\n") +
+                    Loc.T("// Seed cố định để ảnh chụp luôn giống nhau", "// A fixed seed keeps screenshots identical\n")));
 
         return root;
     }
@@ -205,7 +205,7 @@ public partial class ShowcaseViewModel
         var primary = new RadialGauge
         {
             Value = 76,
-            Label = "Tiến độ",
+            Label = Loc.T("Tiến độ", "Progress"),
             Suffix = "%",
             TrackThickness = 12
         };
@@ -214,7 +214,7 @@ public partial class ShowcaseViewModel
         {
             Value = 42,
             Maximum = 100,
-            Label = "Khối lượng",
+            Label = Loc.T("Khối lượng", "Quantity"),
             Suffix = "%",
             ShowTicks = true,
             TickCount = 20,
@@ -229,7 +229,7 @@ public partial class ShowcaseViewModel
             Value = 186.4,
             Minimum = 0,
             Maximum = 250,
-            Label = "Tải trọng",
+            Label = Loc.T("Tải trọng", "Load"),
             Suffix = " kN",
             ValueFormat = "0.0",
             TrackThickness = 9,
@@ -262,19 +262,19 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Vòng cung, tick mark và số ở giữa",
+            Loc.T("Vòng cung, tick mark và số ở giữa", "Arc, tick marks and the value in the middle"),
             stack,
-            xaml: "<controls:RadialGauge Value=\"76\" Label=\"Tiến độ\" Suffix=\"%\"\n" +
+            xaml: Loc.T("<controls:RadialGauge Value=\"76\" Label=\"Tiến độ\" Suffix=\"%\"\n", "<controls:RadialGauge Value=\"76\" Label=\"Progress\" Suffix=\"%\"\n") +
                   "    StartAngle=\"135\" SweepAngle=\"270\" TrackThickness=\"12\" />\n\n" +
                   "<controls:RadialGauge Value=\"186.4\" Maximum=\"250\"\n" +
                   "    ValueFormat=\"0.0\" Suffix=\" kN\"\n" +
                   "    ShowTicks=\"True\" TickCount=\"10\" />",
-            csharp: "// Value tự kẹp vào [Minimum, Maximum] và chạy easing khi đổi\n" +
+            csharp: Loc.T("// Value tự kẹp vào [Minimum, Maximum] và chạy easing khi đổi\n", "// Value clamps itself to [Minimum, Maximum] and eases when it changes\n") +
                     "gauge.Value = 76;\n\n" +
-                    "// Bật tick mark ngoài vòng cung\n" +
+                    Loc.T("// Bật tick mark ngoài vòng cung\n", "// Turn on the tick marks outside the arc\n") +
                     "gauge.ShowTicks = true;\n" +
                     "gauge.TickCount = 10;\n\n" +
-                    "// Tắt animation: gauge.IsAnimated = false"));
+                    Loc.T("// Tắt animation: gauge.IsAnimated = false", "// Animation off: gauge.IsAnimated = false")));
 
         return root;
     }
@@ -283,9 +283,9 @@ public partial class ShowcaseViewModel
     {
         var pages = new List<(string Title, string Body, string Hex)>
         {
-            ("Trang 1 — Tổng quan", "KPI, tiến độ và cảnh báo của dự án.", "#FF7900"),
-            ("Trang 2 — Khối lượng", "Bảng bóc tách theo cấu kiện và tầng.", "#2563EB"),
-            ("Trang 3 — Cài đặt", "Ngôn ngữ, đơn vị đo và đường dẫn mẫu.", "#0E9F6E")
+            (Loc.T("Trang 1 — Tổng quan", "Page 1 — Overview"), Loc.T("KPI, tiến độ và cảnh báo của dự án.", "KPIs, progress and warnings for the project."), "#FF7900"),
+            (Loc.T("Trang 2 — Khối lượng", "Page 2 — Quantities"), Loc.T("Bảng bóc tách theo cấu kiện và tầng.", "Take-off table by member and level."), "#2563EB"),
+            (Loc.T("Trang 3 — Cài đặt", "Page 3 — Settings"), Loc.T("Ngôn ngữ, đơn vị đo và đường dẫn mẫu.", "Language, units and template paths."), "#0E9F6E")
         };
 
         int index = 0;
@@ -326,7 +326,7 @@ public partial class ShowcaseViewModel
             host.Content = card;
         }
 
-        var previous = new Button { Content = "‹ Trước", Padding = new Thickness(14, 6, 14, 6) };
+        var previous = new Button { Content = Loc.T("‹ Trước", "‹ Back"), Padding = new Thickness(14, 6, 14, 6) };
         previous.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         previous.Click += (_, _) =>
         {
@@ -347,8 +347,8 @@ public partial class ShowcaseViewModel
         var modes = new ComboBox { Width = 170, Margin = new Thickness(16, 0, 0, 0) };
         modes.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.ComboBox.Base");
         modes.Items.Add("Fade");
-        modes.Items.Add("Slide ngang");
-        modes.Items.Add("Slide dọc");
+        modes.Items.Add(Loc.T("Slide ngang", "Horizontal slide"));
+        modes.Items.Add(Loc.T("Slide dọc", "Vertical slide"));
         modes.Items.Add("Scale");
         modes.SelectedIndex = 0;
         modes.SelectionChanged += (_, _) =>
@@ -376,18 +376,18 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Đổi nội dung là tự chạy hiệu ứng",
+            Loc.T("Đổi nội dung là tự chạy hiệu ứng", "Changing the content runs the effect"),
             stack,
             xaml: "<controls:PageTransitionHost Transition=\"SlideLeft\"\n" +
                   "    Duration=\"0:0:0.26\">\n" +
                   "    <ContentControl Content=\"{Binding CurrentPage}\" />\n" +
                   "</controls:PageTransitionHost>",
-            csharp: "// Gán Content — hiệu ứng tự chạy\n" +
+            csharp: Loc.T("// Gán Content — hiệu ứng tự chạy\n", "// Assign Content — the effect runs on its own\n") +
                     "host.Transition = PageTransition.SlideLeft;\n" +
                     "host.Content = nextPage;\n\n" +
-                    "// Hoặc phát lại cho nội dung hiện tại\n" +
+                    Loc.T("// Hoặc phát lại cho nội dung hiện tại\n", "// Or replay it for the current content\n") +
                     "host.Play();\n\n" +
-                    "// Tắt: IsTransitionEnabled = false"));
+                    Loc.T("// Tắt: IsTransitionEnabled = false", "// Off: IsTransitionEnabled = false")));
 
         return root;
     }

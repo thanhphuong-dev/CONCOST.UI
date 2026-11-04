@@ -60,6 +60,14 @@ public class ConfettiBurst : FrameworkElement
         DependencyProperty.Register(nameof(Palette), typeof(IEnumerable<Color>), typeof(ConfettiBurst),
             new PropertyMetadata(null));
 
+    public static readonly DependencyProperty MinParticleSizeProperty =
+        DependencyProperty.Register(nameof(MinParticleSize), typeof(double), typeof(ConfettiBurst),
+            new PropertyMetadata(4.0));
+
+    public static readonly DependencyProperty MaxParticleSizeProperty =
+        DependencyProperty.Register(nameof(MaxParticleSize), typeof(double), typeof(ConfettiBurst),
+            new PropertyMetadata(9.0));
+
     public bool IsBursting
     {
         get => (bool)GetValue(IsBurstingProperty);
@@ -100,6 +108,20 @@ public class ConfettiBurst : FrameworkElement
     {
         get => (IEnumerable<Color>?)GetValue(PaletteProperty);
         set => SetValue(PaletteProperty, value);
+    }
+
+    /// <summary>Smallest confetti piece, in pixels. 4 by default.</summary>
+    public double MinParticleSize
+    {
+        get => (double)GetValue(MinParticleSizeProperty);
+        set => SetValue(MinParticleSizeProperty, value);
+    }
+
+    /// <summary>Largest confetti piece, in pixels. 9 by default.</summary>
+    public double MaxParticleSize
+    {
+        get => (double)GetValue(MaxParticleSizeProperty);
+        set => SetValue(MaxParticleSizeProperty, value);
     }
 
     private static void OnIsBurstingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -150,7 +172,7 @@ public class ConfettiBurst : FrameworkElement
                 Spin = (_random.NextDouble() - 0.5) * 12,
                 Life = 0,
                 MaxLife = life * (0.7 + _random.NextDouble() * 0.5),
-                Size = 4 + _random.NextDouble() * 5,
+                Size = MinParticleSize + _random.NextDouble() * Math.Max(0, MaxParticleSize - MinParticleSize),
                 Color = palette[_random.Next(palette.Count)]
             });
         }

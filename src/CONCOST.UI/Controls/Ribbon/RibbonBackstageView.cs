@@ -109,9 +109,10 @@ public class RibbonBackstageView : Grid
     private readonly Border _back;
     private readonly TextBlock _backText;
 
+
     public RibbonBackstageView()
     {
-        ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(216) });
+        ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(RailWidth) });
         ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
         Visibility = Visibility.Collapsed;
@@ -121,7 +122,7 @@ public class RibbonBackstageView : Grid
 
         _applicationName = new TextBlock
         {
-            Text = "CONCOST",
+            Text = ApplicationName,
             FontSize = 16,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(18, 16, 12, 14)
@@ -139,11 +140,11 @@ public class RibbonBackstageView : Grid
         var backIcon = new Icon { Kind = IconKind.ArrowLeft, Width = 12, Height = 12, VerticalAlignment = VerticalAlignment.Center };
         backIcon.SetResourceReference(Control.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
-        var backText = _backText = new TextBlock { Text = "Back", FontSize = 12, Margin = new Thickness(6, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+        var backText = _backText = new TextBlock { Text = BackText, FontSize = 12, Margin = new Thickness(6, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
         backText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
         backContent.Children.Add(backIcon);
-        backContent.Children.Add(backText);
+        backContent.Children.Add(_backText);
 
         _back.Child = backContent;
         _back.MouseLeftButtonUp += (_, _) => Close();

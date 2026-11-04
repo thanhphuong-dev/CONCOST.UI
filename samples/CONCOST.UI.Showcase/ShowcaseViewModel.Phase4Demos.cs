@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,13 +27,13 @@ public partial class ShowcaseViewModel
     {
         var notes = new[]
         {
-            new MasonryNote { Title = "Cột C1", Body = "Tiết diện 400×600, thép dọc 8Ø20, đai Ø8a150.", Height = 132 },
-            new MasonryNote { Title = "Dầm D2", Body = "Nhịp 6.2 m, gối tựa tường gạch, kiểm tra võng L/250.", Height = 168 },
-            new MasonryNote { Title = "Sàn tầng 3", Body = "Bê tông B25, dày 120 mm.", Height = 96 },
-            new MasonryNote { Title = "Vách W4", Body = "Vách cứng 200 mm chịu tải ngang, bố trí thép hai lớp.", Height = 200 },
-            new MasonryNote { Title = "Móng M1", Body = "Bệ cọc 2.4×2.4, 9 cọc Ø300 dài 18 m.", Height = 148 },
-            new MasonryNote { Title = "Cầu thang", Body = "Bản thang dày 110, cốn BTCT.", Height = 108 },
-            new MasonryNote { Title = "Mái", Body = "Sàn mái dày 130, chống thấm 2 lớp.", Height = 176 }
+            new MasonryNote { Title = Loc.T("Cột C1", "Column C1"), Body = Loc.T("Tiết diện 400×600, thép dọc 8Ø20, đai Ø8a150.", "Section 400×600, 8Ø20 longitudinal rebar, Ø8a150 stirrups."), Height = 132 },
+            new MasonryNote { Title = Loc.T("Dầm D2", "Beam D2"), Body = Loc.T("Nhịp 6.2 m, gối tựa tường gạch, kiểm tra võng L/250.", "6.2 m span, bearing on a masonry wall, L/250 deflection check."), Height = 168 },
+            new MasonryNote { Title = Loc.T("Sàn tầng 3", "Level 3 slab"), Body = Loc.T("Bê tông B25, dày 120 mm.", "Concrete B25, 120 mm thick."), Height = 96 },
+            new MasonryNote { Title = Loc.T("Vách W4", "Wall W4"), Body = Loc.T("Vách cứng 200 mm chịu tải ngang, bố trí thép hai lớp.", "200 mm shear wall carrying lateral load, two layers of reinforcement."), Height = 200 },
+            new MasonryNote { Title = Loc.T("Móng M1", "Footing M1"), Body = Loc.T("Bệ cọc 2.4×2.4, 9 cọc Ø300 dài 18 m.", "Pile cap 2.4×2.4, 9 piles Ø300, 18 m long."), Height = 148 },
+            new MasonryNote { Title = Loc.T("Cầu thang", "Stair"), Body = Loc.T("Bản thang dày 110, cốn BTCT.", "110 mm waist slab with an RC stringer."), Height = 108 },
+            new MasonryNote { Title = Loc.T("Mái", "Roof"), Body = Loc.T("Sàn mái dày 130, chống thấm 2 lớp.", "130 mm roof slab, two waterproofing layers."), Height = 176 }
         };
 
         var masonry = new MasonryPanel
@@ -46,13 +46,13 @@ public partial class ShowcaseViewModel
 
         foreach (MasonryNote note in notes) masonry.Children.Add(CreateMasonryCard(note));
 
-        var auto = new Button { Content = "Tự động", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 0, 8, 10) };
+        var auto = new Button { Content = Loc.T("Tự động", "Automatic"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 0, 8, 10) };
         auto.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
 
-        var fixedThree = new Button { Content = "3 cột", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 0, 8, 10) };
+        var fixedThree = new Button { Content = Loc.T("3 cột", "3 columns"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 0, 8, 10) };
         fixedThree.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
 
-        var toggleBalance = new Button { Content = "Cân bằng chiều cao: bật", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 0, 8, 10) };
+        var toggleBalance = new Button { Content = Loc.T("Cân bằng chiều cao: bật", "Balance heights: on"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 0, 8, 10) };
         toggleBalance.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
 
         auto.Click += (_, _) => masonry.Columns = 0;
@@ -60,7 +60,7 @@ public partial class ShowcaseViewModel
         toggleBalance.Click += (_, _) =>
         {
             masonry.IsBalanced = !masonry.IsBalanced;
-            toggleBalance.Content = masonry.IsBalanced ? "Cân bằng chiều cao: bật" : "Cân bằng chiều cao: tắt";
+            toggleBalance.Content = masonry.IsBalanced ? Loc.T("Cân bằng chiều cao: bật", "Balance heights: on") : Loc.T("Cân bằng chiều cao: tắt", "Balance heights: off");
         };
 
         var actions = new WrapPanel();
@@ -71,20 +71,20 @@ public partial class ShowcaseViewModel
         var root = new StackPanel();
         root.Children.Add(actions);
         root.Children.Add(DemoSection(
-            "Bố cục thác nước — đo theo cột, xếp vào cột ngắn nhất",
+            Loc.T("Bố cục thác nước — đo theo cột, xếp vào cột ngắn nhất", "Masonry layout — measured by column, placed in the shortest one"),
             masonry,
             xaml: "<controls:MasonryPanel MinColumnWidth=\"190\"\n" +
                   "                    ColumnSpacing=\"14\" RowSpacing=\"14\"\n" +
                   "                    IsBalanced=\"True\">\n" +
-                  "    <!-- con nào cũng được, chiều cao tuỳ ý -->\n" +
+                  Loc.T("    <!-- con nào cũng được, chiều cao tuỳ ý -->\n", "    <!-- any child works, any height -->\n") +
                   "</controls:MasonryPanel>",
-            csharp: "// Columns = 0 để số cột tính từ MinColumnWidth\n" +
+            csharp: Loc.T("// Columns = 0 để số cột tính từ MinColumnWidth\n", "// Columns = 0 derives the column count from MinColumnWidth") +
                     "panel.Columns = 0;\n\n" +
-                    "// Số cột và bề rộng thực tế của một cột\n" +
+                    Loc.T("// Số cột và bề rộng thực tế của một cột\n", "// Actual column count and column width") +
                     "int columns = panel.GetColumnCount(availableWidth);\n" +
                     "double width = panel.GetColumnWidth(availableWidth);\n\n" +
-                    "// IsBalanced=false thì bám theo chiều cao trung bình,\n" +
-                    "// để nhóm nội dung theo thứ tự đọc"));
+                    Loc.T("// IsBalanced=false thì bám theo chiều cao trung bình,\n", "// IsBalanced=false follows the average height,") +
+                    Loc.T("// để nhóm nội dung theo thứ tự đọc", "// so content groups read in order")));
 
         return root;
     }
@@ -123,17 +123,17 @@ public partial class ShowcaseViewModel
 
     private object CreateTagInputDemo()
     {
-        var materials = new ObservableCollection<string> { "Bê tông B25", "Thép CB400" };
+        var materials = new ObservableCollection<string> { Loc.T("Bê tông B25", "Concrete B25"), Loc.T("Thép CB400", "Rebar CB400") };
 
         var tagInput = new TagInput
         {
             ItemsSource = materials,
-            Placeholder = "Gõ tên vật tư rồi Enter, hoặc dán “bê tông, thép, cốp pha”…",
+            Placeholder = Loc.T("Gõ tên vật tư rồi Enter, hoặc dán “bê tông, thép, cốp pha”…", "Type a material and press Enter, or paste “concrete, steel, formwork”…"),
             SuggestionSource = new[]
             {
-                "Bê tông B20", "Bê tông B25", "Bê tông B30",
-                "Thép CB300", "Thép CB400", "Thép CB500",
-                "Cốp pha nhôm", "Cốp pha gỗ", "Gạch không nung", "Vữa xi măng"
+                Loc.T("Bê tông B20", "Concrete B20"), Loc.T("Bê tông B25", "Concrete B25"), Loc.T("Bê tông B30", "Concrete B30"),
+                Loc.T("Thép CB300", "Rebar CB300"), Loc.T("Thép CB400", "Rebar CB400"), Loc.T("Thép CB500", "Rebar CB500"),
+                Loc.T("Cốp pha nhôm", "Aluminium formwork"), Loc.T("Cốp pha gỗ", "Timber formwork"), Loc.T("Gạch không nung", "Non-fired brick"), Loc.T("Vữa xi măng", "Cement mortar")
             },
             MaxTags = 6
         };
@@ -143,14 +143,14 @@ public partial class ShowcaseViewModel
         void ReadTags()
         {
             readout.Text = materials.Count == 0
-                ? "Chưa có thẻ nào."
-                : $"{materials.Count} thẻ: {string.Join(" · ", materials)}";
+                ? Loc.T("Chưa có thẻ nào.", "No tags yet.")
+                : Loc.F("{0} thẻ: {1}", "{0} cards: {1}", materials.Count, string.Join(" · ", materials));
         }
 
         tagInput.TagsChanged += (_, e) =>
         {
             ReadTags();
-            ToastService.Info(e.IsAdded ? $"Thêm “{e.Text}”" : $"Bỏ “{e.Text}”");
+            ToastService.Info(e.IsAdded ? Loc.F("Thêm “{0}”", "Added “{0}”", e.Text) : Loc.F("Bỏ “{0}”", "Removed “{0}”", e.Text));
         };
 
         ReadTags();
@@ -158,10 +158,10 @@ public partial class ShowcaseViewModel
 
         var pickOnly = new TagInput
         {
-            Placeholder = "Chỉ chọn được trong danh sách — tối đa 3",
+            Placeholder = Loc.T("Chỉ chọn được trong danh sách — tối đa 3", "Pick from the list only — up to 3"),
             AllowFreeText = false,
             MaxTags = 3,
-            SuggestionSource = new[] { "Tầng 1", "Tầng 2", "Tầng 3", "Tầng 4", "Tầng mái", "Hầm" },
+            SuggestionSource = new[] { Loc.T("Tầng 1", "Level 1"), Loc.T("Tầng 2", "Level 2"), Loc.T("Tầng 3", "Level 3"), Loc.T("Tầng 4", "Level 4"), Loc.T("Tầng mái", "Roof level"), Loc.T("Hầm", "Basement") },
             Margin = new Thickness(0, 4, 0, 0)
         };
 
@@ -171,7 +171,7 @@ public partial class ShowcaseViewModel
 
         var caption = new TextBlock
         {
-            Text = "Bộ lọc không dấu: gõ “be tong” vẫn thấy “Bê tông B25”.",
+            Text = Loc.T("Bộ lọc không dấu: gõ “be tong” vẫn thấy “Bê tông B25”.", "Accent-insensitive filter: typing “be tong” still finds “Bê tông B25”."),
             FontSize = 11.5,
             Margin = new Thickness(0, 12, 0, 6),
             TextWrapping = TextWrapping.Wrap
@@ -182,18 +182,18 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Thẻ vật tư — dán nhiều giá trị một lần",
+            Loc.T("Thẻ vật tư — dán nhiều giá trị một lần", "Material tags — paste many values at once"),
             stack,
             xaml: "<controls:TagInput ItemsSource=\"{Binding Materials}\"\n" +
                   "                   SuggestionSource=\"{Binding AllMaterials}\"\n" +
-                  "                   Placeholder=\"Gõ tên vật tư rồi Enter…\"\n" +
+                  Loc.T("                   Placeholder=\"Gõ tên vật tư rồi Enter…\"\n", "                   Placeholder=\"Type a material name, then Enter…\"\n") +
                   "                   MaxTags=\"6\"\n" +
                   "                   TagsChanged=\"OnTagsChanged\" />\n\n" +
                   "<controls:TagInput AllowFreeText=\"False\" MaxTags=\"3\"\n" +
                   "                   SuggestionSource=\"{Binding Floors}\" />",
-            csharp: "// Danh sách ghi được thì control tự ghi ngược vào\n" +
+            csharp: Loc.T("// Danh sách ghi được thì control tự ghi ngược vào\n", "// When the list is writable the control writes back into it") +
                     "tags.ItemsSource = materials;   // ObservableCollection<string>\n\n" +
-                    "// Tách chuỗi dán vào theo dấu phẩy\n" +
+                    Loc.T("// Tách chuỗi dán vào theo dấu phẩy\n", "// Splits a pasted string on the comma") +
                     "tags.Delimiter = \",\";\n" +
                     "int added = tags.CommitText();\n\n" +
                     "tags.TagsChanged += (_, e) =>\n" +
@@ -209,48 +209,48 @@ public partial class ShowcaseViewModel
             Height = 220,
             MaxWidth = 640,
             HorizontalAlignment = HorizontalAlignment.Left,
-            Placeholder = "Ký vào đây",
+            Placeholder = Loc.T("Ký vào đây", "Sign here"),
             ShowGuideline = true
         };
 
         var status = new TextBlock { FontSize = 11.5, Margin = new Thickness(0, 10, 0, 0) };
         status.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        status.Text = "Chưa ký. Giữ chuột và kéo để vẽ nét.";
+        status.Text = Loc.T("Chưa ký. Giữ chuột và kéo để vẽ nét.", "Not signed yet. Hold and drag to draw a stroke.");
 
-        var undo = new Button { Content = "Huỷ nét cuối", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 12, 8, 0) };
+        var undo = new Button { Content = Loc.T("Huỷ nét cuối", "Undo last stroke"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 12, 8, 0) };
         undo.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
 
-        var clear = new Button { Content = "Xoá hết", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 12, 8, 0) };
+        var clear = new Button { Content = Loc.T("Xoá hết", "Clear all"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 12, 8, 0) };
         clear.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
 
-        var export = new Button { Content = "Xuất PNG", Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 12, 8, 0) };
+        var export = new Button { Content = Loc.T("Xuất PNG", "Export PNG"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 12, 8, 0) };
         export.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Primary");
 
-        var guideline = new CheckBox { Content = "Hiện dòng kẻ", IsChecked = true, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 12, 0, 0) };
+        var guideline = new CheckBox { Content = Loc.T("Hiện dòng kẻ", "Show guide line"), IsChecked = true, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 12, 0, 0) };
 
         undo.Click += (_, _) =>
         {
-            if (!pad.Undo()) ToastService.Info("Không còn nét nào để huỷ.");
+            if (!pad.Undo()) ToastService.Info(Loc.T("Không còn nét nào để huỷ.", "No stroke left to undo."));
         };
         clear.Click += (_, _) => pad.Clear();
         export.Click += (_, _) =>
         {
             if (!pad.HasSignature)
             {
-                ToastService.Info("Chưa có chữ ký để xuất.");
+                ToastService.Info(Loc.T("Chưa có chữ ký để xuất.", "Nothing to export yet."));
                 return;
             }
 
             var image = pad.Export(1200, 0, Brushes.White);
-            ToastService.Success($"Đã xuất {image.PixelWidth}×{image.PixelHeight} px");
+            ToastService.Success(Loc.F("Đã xuất {0}×{1} px", "Exported {0}×{1} px", image.PixelWidth, image.PixelHeight));
         };
         guideline.Checked += (_, _) => pad.ShowGuideline = true;
         guideline.Unchecked += (_, _) => pad.ShowGuideline = false;
 
         pad.SignatureChanged += (_, _) =>
             status.Text = pad.HasSignature
-                ? $"{pad.Strokes.Count} nét — SignatureImage đã sẵn sàng để lưu."
-                : "Chưa ký. Giữ chuột và kéo để vẽ nét.";
+                ? Loc.F("{0} nét — SignatureImage đã sẵn sàng để lưu.", "{0} strokes — SignatureImage is ready to save.", pad.Strokes.Count)
+                : Loc.T("Chưa ký. Giữ chuột và kéo để vẽ nét.", "Not signed yet. Hold and drag to draw a stroke.");
 
         var actions = new WrapPanel();
         actions.Children.Add(undo);
@@ -265,15 +265,15 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Chữ ký tay — xuất thẳng sang bitmap",
+            Loc.T("Chữ ký tay — xuất thẳng sang bitmap", "Handwritten signature — export straight to bitmap"),
             stack,
             xaml: "<controls:SignaturePad Height=\"220\"\n" +
-                  "                     Placeholder=\"Ký vào đây\"\n" +
+                  Loc.T("                     Placeholder=\"Ký vào đây\"\n", "                     Placeholder=\"Sign here\"\n") +
                   "                     ShowGuideline=\"True\"\n" +
                   "                     SignatureChanged=\"OnSignatureChanged\" />",
-            csharp: "// Ảnh cập nhật sau mỗi nét (không phải mỗi lần di chuột)\n" +
+            csharp: Loc.T("// Ảnh cập nhật sau mỗi nét (không phải mỗi lần di chuột)\n", "// The image updates after each stroke (not on every mouse move)") +
                     "BitmapSource? image = pad.SignatureImage;\n\n" +
-                    "// Xuất nền trắng 1200 px, hoặc nền trong suốt\n" +
+                    Loc.T("// Xuất nền trắng 1200 px, hoặc nền trong suốt\n", "// Export on a 1200 px white ground, or transparent") +
                     "BitmapSource png = pad.Export(1200, 0, Brushes.White);\n\n" +
                     "pad.Undo();    // Ctrl+Z\n" +
                     "pad.Clear();   // Delete"));
@@ -287,9 +287,9 @@ public partial class ShowcaseViewModel
         {
             MaxWidth = 640,
             HorizontalAlignment = HorizontalAlignment.Left,
-            BackText = "Quay lại",
-            NextText = "Tiếp",
-            FinishText = "Hoàn tất"
+            BackText = Loc.T("Quay lại", "Back"),
+            NextText = Loc.T("Tiếp", "Next"),
+            FinishText = Loc.T("Hoàn tất", "Finish")
         };
 
         var projectName = new TextBox { Margin = new Thickness(0, 0, 0, 10), MinWidth = 260 };
@@ -297,16 +297,16 @@ public partial class ShowcaseViewModel
 
         var projectStep = new WizardStep
         {
-            Header = "Thông tin dự án",
-            Description = "Tên công trình và địa điểm",
+            Header = Loc.T("Thông tin dự án", "Project information"),
+            Description = Loc.T("Tên công trình và địa điểm", "Project name and location"),
             IsValid = false
         };
 
         var projectBody = new StackPanel();
-        projectBody.Children.Add(DemoCaption("Tên công trình (bắt buộc)"));
+        projectBody.Children.Add(DemoCaption(Loc.T("Tên công trình (bắt buộc)", "Project name (required)")));
         projectBody.Children.Add(projectName);
-        projectBody.Children.Add(DemoCaption("Địa điểm"));
-        projectBody.Children.Add(new TextBox { Text = "Quận 7, TP.HCM", MinWidth = 260 });
+        projectBody.Children.Add(DemoCaption(Loc.T("Địa điểm", "Location")));
+        projectBody.Children.Add(new TextBox { Text = Loc.T("Quận 7, TP.HCM", "District 7, HCMC"), MinWidth = 260 });
         projectStep.Content = projectBody;
 
         projectName.TextChanged += (_, _) =>
@@ -314,8 +314,8 @@ public partial class ShowcaseViewModel
 
         var materialStep = new WizardStep
         {
-            Header = "Vật liệu",
-            Description = "Cấp bê tông và mác thép",
+            Header = Loc.T("Vật liệu", "Materials"),
+            Description = Loc.T("Cấp bê tông và mác thép", "Concrete and steel grade"),
             IsValid = true
         };
 
@@ -325,14 +325,14 @@ public partial class ShowcaseViewModel
         grade.Items.Add("B30");
 
         var materialBody = new StackPanel();
-        materialBody.Children.Add(DemoCaption("Cấp bê tông"));
+        materialBody.Children.Add(DemoCaption(Loc.T("Cấp bê tông", "Concrete grade")));
         materialBody.Children.Add(grade);
         materialStep.Content = materialBody;
 
         var summaryStep = new WizardStep
         {
-            Header = "Xác nhận",
-            Description = "Kiểm tra lại trước khi tạo hồ sơ",
+            Header = Loc.T("Xác nhận", "Confirm"),
+            Description = Loc.T("Kiểm tra lại trước khi tạo hồ sơ", "Review before creating the record"),
             IsValid = true
         };
 
@@ -347,9 +347,9 @@ public partial class ShowcaseViewModel
         {
             WizardStep? step = wizard.CurrentStep;
             readout.Text = step == null
-                ? "Wizard chưa có bước nào."
-                : $"Bước {step.Number}/{wizard.Steps.Count} — {step.Header}. " +
-                  (wizard.CanGoNext ? "Có thể tiếp." : "Cần điền đủ thông tin bắt buộc.");
+                ? Loc.T("Wizard chưa có bước nào.", "The wizard has no steps.")
+                : Loc.F("Bước {0}/{1} — {2}. ", "Step {0}/{1} — {2}. ", step.Number, wizard.Steps.Count, step.Header) +
+                  (wizard.CanGoNext ? Loc.T("Có thể tiếp.", "Ready to continue.") : Loc.T("Cần điền đủ thông tin bắt buộc.", "Fill in the required fields."));
         }
 
         wizard.StepChanged += (_, _) =>
@@ -358,13 +358,13 @@ public partial class ShowcaseViewModel
 
             if (wizard.CurrentStep == summaryStep)
             {
-                summary.Text = $"Công trình: {(projectName.Text.Trim().Length == 0 ? "(chưa đặt tên)" : projectName.Text.Trim())}\n" +
-                               $"Địa điểm: Quận 7, TP.HCM\n" +
-                               $"Bê tông: {grade.SelectedItem}";
+                summary.Text = Loc.F("Công trình: {0}\n", "Project: {0}\n", projectName.Text.Trim().Length == 0 ? Loc.T("(chưa đặt tên)", "(unnamed)") : projectName.Text.Trim()) +
+                               Loc.T("Địa điểm: Quận 7, TP.HCM\n", "Location: District 7, Ho Chi Minh City\n") +
+                               Loc.F("Bê tông: {0}", "Concrete: {0}", grade.SelectedItem);
             }
         };
 
-        wizard.Finished += (_, _) => ToastService.Success("Đã tạo hồ sơ — wizard phát Finished.");
+        wizard.Finished += (_, _) => ToastService.Success(Loc.T("Đã tạo hồ sơ — wizard phát Finished.", "Dossier created — the wizard raised Finished."));
 
         wizard.Steps.Add(projectStep);
         wizard.Steps.Add(materialStep);
@@ -378,30 +378,30 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Wizard nhiều bước — tiến chỉ khi bước hiện tại hợp lệ",
+            Loc.T("Wizard nhiều bước — tiến chỉ khi bước hiện tại hợp lệ", "Multi-step wizard — advance only when the current step is valid"),
             stack,
             xaml: "<controls:Wizard Finished=\"OnFinished\"\n" +
-                  "                BackText=\"Quay lại\" NextText=\"Tiếp\"\n" +
-                  "                FinishText=\"Hoàn tất\">\n" +
-                  "    <controls:WizardStep Header=\"Thông tin dự án\"\n" +
-                  "                         Description=\"Tên công trình\"\n" +
+                  Loc.T("                BackText=\"Quay lại\" NextText=\"Tiếp\"\n", "                BackText=\"Back\" NextText=\"Next\"\n") +
+                  Loc.T("                FinishText=\"Hoàn tất\">\n", "                FinishText=\"Finish\">\n") +
+                  Loc.T("    <controls:WizardStep Header=\"Thông tin dự án\"\n", "    <controls:WizardStep Header=\"Project information\"\n") +
+                  Loc.T("                         Description=\"Tên công trình\"\n", "                         Description=\"Project name\"\n") +
                   "                         IsValid=\"{Binding HasProjectName}\">\n" +
                   "        <TextBox Text=\"{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}\" />\n" +
                   "    </controls:WizardStep>\n" +
-                  "    <controls:WizardStep Header=\"Xác nhận\" IsValid=\"True\">\n" +
+                  Loc.T("    <controls:WizardStep Header=\"Xác nhận\" IsValid=\"True\">\n", "    <controls:WizardStep Header=\"Confirm\" IsValid=\"True\">\n") +
                   "        <TextBlock Text=\"{Binding Summary}\" />\n" +
                   "    </controls:WizardStep>\n" +
                   "</controls:Wizard>",
-            csharp: "// IsValid là của từng bước, wizard chỉ đọc\n" +
+            csharp: Loc.T("// IsValid là của từng bước, wizard chỉ đọc\n", "// IsValid belongs to each step; the wizard only reads it") +
                     "step1.IsValid = viewModel.HasProjectName;\n\n" +
                     "wizard.Navigating += (_, e) =>\n" +
                     "{\n" +
                     "    if (e.ToIndex > 0 && !viewModel.Saved)\n" +
-                    "        e.Cancel = true;      // giữ người dùng lại\n" +
+                    Loc.T("        e.Cancel = true;      // giữ người dùng lại\n", "        e.Cancel = true;      // keep the user here") +
                     "};\n\n" +
                     "wizard.Finished += (_, _) => CreateRecord();\n" +
-                    "wizard.GoTo(0);                // quay về đầu\n" +
-                    "wizard.CurrentIndex = 1;       // hoặc đặt trực tiếp"));
+                    Loc.T("wizard.GoTo(0);                // quay về đầu\n", "wizard.GoTo(0);                // back to the start") +
+                    Loc.T("wizard.CurrentIndex = 1;       // hoặc đặt trực tiếp", "wizard.CurrentIndex = 1;       // or assign it directly")));
 
         return root;
     }

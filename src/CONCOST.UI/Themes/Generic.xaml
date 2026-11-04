@@ -760,6 +760,9 @@
     </Style.Triggers>
   </Style>
   <Style x:Key="CONCOST.Button.Icon" TargetType="{x:Type Button}">
+    <!-- An icon button has no text: the tooltip is its only name, and UI Automation does not read
+         a tooltip on its own. -->
+    <Setter Property="attached:AccessibleName.FromToolTip" Value="True" />
     <Setter Property="Width" Value="34" />
     <Setter Property="Height" Value="34" />
     <Setter Property="MinWidth" Value="34" />
@@ -942,31 +945,31 @@
               <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.BorderHover}" Property="Border.BorderBrush" />
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="True">
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.White}" Property="TextElement.Foreground" />
-              <Setter Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
-              <Setter TargetName="btnIcon" Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="TextElement.Foreground" />
+              <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
+              <Setter TargetName="btnIcon" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </Trigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="ToggleButton.IsChecked" Value="True" />
                 <Condition Property="UIElement.IsMouseOver" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryHover}" Property="Border.Background" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryHover}" Property="Border.BorderBrush" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.White}" Property="TextElement.Foreground" />
-              <Setter TargetName="btnIcon" Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="TextElement.Foreground" />
+              <Setter TargetName="btnIcon" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </MultiTrigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="ToggleButton.IsChecked" Value="True" />
                 <Condition Property="IsPressed" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryPressed}" Property="Border.Background" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryPressed}" Property="Border.BorderBrush" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.White}" Property="TextElement.Foreground" />
-              <Setter TargetName="btnIcon" Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="TextElement.Foreground" />
+              <Setter TargetName="btnIcon" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </MultiTrigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="border" Property="UIElement.Opacity" Value="0.4" />
@@ -978,7 +981,7 @@
     </Setter>
     <Style.Triggers>
       <Trigger Property="ToggleButton.IsChecked" Value="True">
-        <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.White}" />
+        <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
       </Trigger>
     </Style.Triggers>
   </Style>
@@ -1060,17 +1063,17 @@
               <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.BorderHover}" Property="Border.BorderBrush" />
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="True">
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />
-              <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </Trigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="ToggleButton.IsChecked" Value="True" />
                 <Condition Property="UIElement.IsMouseOver" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryHover}" Property="Border.Background" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryHover}" Property="Border.BorderBrush" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
             </MultiTrigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="border" Property="UIElement.Opacity" Value="0.4" />
@@ -1121,6 +1124,7 @@
     </Setter>
   </Style>
   <Style x:Key="CONCOST.ToggleButton.Icon.Ghost" TargetType="{x:Type ToggleButton}">
+    <Setter Property="attached:AccessibleName.FromToolTip" Value="True" />
     <Setter Property="Width" Value="34" />
     <Setter Property="Height" Value="34" />
     <Setter Property="MinWidth" Value="34" />
@@ -1147,27 +1151,27 @@
               <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="True">
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />
-              <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </Trigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="ToggleButton.IsChecked" Value="True" />
                 <Condition Property="UIElement.IsMouseOver" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryHover}" Property="Border.Background" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryHover}" Property="Border.BorderBrush" />
-              <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </MultiTrigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="ToggleButton.IsChecked" Value="True" />
                 <Condition Property="IsPressed" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryPressed}" Property="Border.Background" />
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryPressed}" Property="Border.BorderBrush" />
-              <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />
+              <Setter TargetName="iconElement" Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </MultiTrigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="border" Property="UIElement.Opacity" Value="0.4" />
@@ -1273,6 +1277,8 @@
   </Style>
   <Style x:Key="{x:Type ToggleButton}" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource CONCOST.ToggleButton.Base}" />
   <Style x:Key="CONCOST.RadioButton.Base" TargetType="{x:Type RadioButton}">
+    <!-- A radio drawn as a preview swatch has no caption; its tooltip is the only label. -->
+    <Setter Property="attached:AccessibleName.FromToolTip" Value="True" />
     <Setter Property="FontSize" Value="{DynamicResource CONCOST.FontSize.Default}" />
     <Setter Property="FontFamily" Value="{DynamicResource CONCOST.FontFamily.Default}" />
     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
@@ -1309,6 +1315,8 @@
   </Style>
   <Style x:Key="{x:Type RadioButton}" TargetType="{x:Type RadioButton}" BasedOn="{StaticResource CONCOST.RadioButton.Base}" />
   <Style x:Key="CONCOST.RadioButton.Segment" TargetType="{x:Type RadioButton}">
+    <!-- A segment is a glyph, not a caption: the tooltip is the only label it has. -->
+    <Setter Property="attached:AccessibleName.FromToolTip" Value="True" />
     <Setter Property="Background" Value="#00FFFFFF" />
     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
     <Setter Property="BorderThickness" Value="0" />
@@ -1327,8 +1335,9 @@
               <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="True">
-              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Property="Foreground" Value="#FFFFFF" />
+              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -1910,8 +1919,10 @@
               <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="ListBoxItem.IsSelected" Value="True">
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Value="{DynamicResource CONCOST.Brush.White}" Property="Foreground" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="border" Value="1" Property="Border.BorderThickness" />
+              <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
               <Setter Property="FontWeight" Value="Normal" />
             </Trigger>
           </ControlTemplate.Triggers>
@@ -2986,9 +2997,10 @@
               <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="ListBoxItem.IsSelected" Value="True">
-              <Setter TargetName="Bd" Property="Border.Background" Value="#15FF7900" />
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />
-              <Setter Value="{DynamicResource CONCOST.Brush.Primary}" Property="Foreground" />
+              <Setter TargetName="Bd" Property="Border.Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="Bd" Value="1" Property="Border.BorderThickness" />
+              <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
               <Setter Property="FontWeight" Value="Normal" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
@@ -3048,8 +3060,8 @@
               <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.Surface}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="ListBoxItem.IsSelected" Value="True">
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.BorderBrush" />
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.Surface}" Property="Border.Background" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="UIElement.Opacity" Value="0.45" />
@@ -3152,33 +3164,33 @@
                 <Condition Property="MenuItem.Role" Value="TopLevelHeader" />
                 <Condition Property="UIElement.IsMouseOver" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="TopLevelHeaderBorder" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Property="Foreground" Value="#FFFFFF" />
+              <Setter TargetName="TopLevelHeaderBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
             </MultiTrigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="MenuItem.Role" Value="TopLevelHeader" />
                 <Condition Property="MenuItem.IsSubmenuOpen" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="TopLevelHeaderBorder" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Property="Foreground" Value="#FFFFFF" />
+              <Setter TargetName="TopLevelHeaderBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
             </MultiTrigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="MenuItem.Role" Value="TopLevelItem" />
                 <Condition Property="UIElement.IsMouseOver" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="TopLevelItemBorder" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Property="Foreground" Value="#FFFFFF" />
+              <Setter TargetName="TopLevelItemBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
             </MultiTrigger>
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="MenuItem.Role" Value="SubmenuItem" />
                 <Condition Property="MenuItem.IsHighlighted" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="SubmenuBorder" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Property="Foreground" Value="#FFFFFF" />
-              <Setter TargetName="ShortcutText" Property="TextBlock.Foreground" Value="#FFFFFF" />
+              <Setter TargetName="SubmenuBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+              <Setter TargetName="ShortcutText" Property="TextBlock.Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
               <Setter TargetName="ShortcutText" Property="UIElement.Opacity" Value="0.95" />
             </MultiTrigger>
             <MultiTrigger>
@@ -3186,11 +3198,11 @@
                 <Condition Property="MenuItem.Role" Value="SubmenuHeader" />
                 <Condition Property="MenuItem.IsHighlighted" Value="True" />
               </MultiTrigger.Conditions>
-              <Setter TargetName="SubmenuBorder" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Property="Foreground" Value="#FFFFFF" />
-              <Setter TargetName="ShortcutText" Property="TextBlock.Foreground" Value="#FFFFFF" />
+              <Setter TargetName="SubmenuBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+              <Setter TargetName="ShortcutText" Property="TextBlock.Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
               <Setter TargetName="ShortcutText" Property="UIElement.Opacity" Value="0.95" />
-              <Setter TargetName="SubmenuArrow" Property="Shape.Stroke" Value="#FFFFFF" />
+              <Setter TargetName="SubmenuArrow" Property="Shape.Stroke" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
             </MultiTrigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="UIElement.Opacity" Value="0.4" />
@@ -3576,7 +3588,7 @@
         <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
       </Trigger>
       <Trigger Property="DataGridRow.IsSelected" Value="True">
-        <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" />
+        <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
         <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
       </Trigger>
     </Style.Triggers>
@@ -3684,7 +3696,7 @@
         <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
       </Trigger>
       <Trigger Property="DataGridRow.IsSelected" Value="True">
-        <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" />
+        <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
         <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
       </Trigger>
     </Style.Triggers>
@@ -4234,8 +4246,8 @@
               <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </MultiTrigger>
             <Trigger Property="TabItem.IsSelected" Value="True">
-              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Property="Foreground" Value="#FFFFFF" />
+              <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
               <Setter Property="FontWeight" Value="Normal" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
@@ -6105,31 +6117,37 @@
     <Setter Property="Height" Value="42" />
     <Setter Property="controls:CompassIndicator.CardinalBrush" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
     <Setter Property="controls:CompassIndicator.NorthBrush" Value="{DynamicResource CONCOST.Brush.Danger}" />
+    <Setter Property="controls:CompassIndicator.DialBrush" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="controls:CompassIndicator.DialBorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="controls:CompassIndicator.CenterMarkerBrush" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:CompassIndicator}">
           <Grid>
-            <Border BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1.5" CornerRadius="21" Background="{DynamicResource CONCOST.Brush.Surface}" />
+            <Ellipse Stroke="{TemplateBinding controls:CompassIndicator.DialBorderBrush}" StrokeThickness="{TemplateBinding controls:CompassIndicator.DialBorderThickness}" Fill="{TemplateBinding controls:CompassIndicator.DialBrush}" />
             <!-- The dial: needle and cardinal letters turn with the drawing. -->
-            <Grid Margin="6" RenderTransformOrigin="0.5,0.5">
+            <Grid Margin="{TemplateBinding controls:CompassIndicator.DialInset}" RenderTransformOrigin="0.5,0.5">
               <Grid.RenderTransform>
                 <RotateTransform Angle="{Binding Angle, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
               </Grid.RenderTransform>
-              <Line X1="0.5" Y1="0" X2="0.5" Y2="1" Stretch="Fill" StrokeThickness="1.5" Stroke="{TemplateBinding controls:CompassIndicator.NorthBrush}" StrokeStartLineCap="Round" StrokeEndLineCap="Triangle" HorizontalAlignment="Center" Margin="0,7,0,0" Opacity="0.85" />
+              <Line X1="0.5" Y1="0" X2="0.5" Y2="1" Stretch="Fill" StrokeThickness="{TemplateBinding controls:CompassIndicator.NeedleThickness}" Stroke="{TemplateBinding controls:CompassIndicator.NorthBrush}" StrokeStartLineCap="Round" StrokeEndLineCap="Triangle" HorizontalAlignment="Center" Margin="0,7,0,0" Opacity="0.85" />
               <Grid x:Name="Cardinals">
-                <TextBlock Text="N" FontSize="10" FontWeight="SemiBold" Foreground="{TemplateBinding controls:CompassIndicator.NorthBrush}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-3,0,0" />
-                <TextBlock Text="E" FontSize="10" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-1,0" />
-                <TextBlock Text="S" FontSize="10" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-3" />
-                <TextBlock Text="W" FontSize="10" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-1,0,0,0" />
+                <TextBlock Text="N" FontSize="{TemplateBinding controls:CompassIndicator.CardinalFontSize}" FontWeight="SemiBold" Foreground="{TemplateBinding controls:CompassIndicator.NorthBrush}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-3,0,0" />
+                <TextBlock Text="E" FontSize="{TemplateBinding controls:CompassIndicator.CardinalFontSize}" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-1,0" />
+                <TextBlock Text="S" FontSize="{TemplateBinding controls:CompassIndicator.CardinalFontSize}" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-3" />
+                <TextBlock Text="W" FontSize="{TemplateBinding controls:CompassIndicator.CardinalFontSize}" FontWeight="Normal" Foreground="{TemplateBinding controls:CompassIndicator.CardinalBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-1,0,0,0" />
               </Grid>
             </Grid>
             <!-- Fixed viewport marker: points at screen-up whatever the dial reads. -->
             <Path Data="M 0,4 L 3.5,-2 L 7,4 Z" Fill="{TemplateBinding controls:CompassIndicator.NorthBrush}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,1.5,0,0" />
-            <Ellipse Width="3" Height="3" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Ellipse x:Name="CenterMarker" Width="{TemplateBinding controls:CompassIndicator.CenterMarkerSize}" Height="{TemplateBinding controls:CompassIndicator.CenterMarkerSize}" Fill="{TemplateBinding controls:CompassIndicator.CenterMarkerBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
           </Grid>
           <ControlTemplate.Triggers>
             <Trigger Property="controls:CompassIndicator.ShowCardinals" Value="False">
               <Setter Property="Visibility" Value="Collapsed" TargetName="Cardinals" />
+            </Trigger>
+            <Trigger Property="controls:CompassIndicator.ShowCenterMarker" Value="False">
+              <Setter Property="Visibility" Value="Collapsed" TargetName="CenterMarker" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -6193,7 +6211,7 @@
               <Setter TargetName="navBorder" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="nav:NavigationItem.IsSelected" Value="True">
-              <Setter TargetName="navBorder" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
+              <Setter TargetName="navBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -7004,9 +7022,10 @@
               <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="TreeViewItem.IsSelected" Value="True">
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-              <Setter Property="Foreground" Value="#FFFFFF" />
-              <Setter TargetName="Expander" Property="Foreground" Value="#FFFFFF" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="Bd" Value="1" Property="Border.BorderThickness" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
               <Setter Property="FontWeight" Value="Normal" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
@@ -7077,8 +7096,10 @@
                     <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" Property="Border.Background" />
                   </Trigger>
                   <Trigger Property="TreeViewItem.IsSelected" Value="True">
-                    <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
-                    <Setter Value="{DynamicResource CONCOST.Brush.Primary}" Property="Foreground" />
+                    <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+                    <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+                    <Setter TargetName="Bd" Value="1" Property="Border.BorderThickness" />
+                    <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
                     <Setter Property="FontWeight" Value="Normal" />
                   </Trigger>
                   <Trigger Property="IsEnabled" Value="False">
@@ -7106,6 +7127,143 @@
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="Background" Value="#00FFFFFF" />
   </Style>
+
+  <!-- ===================== Classic tree (project browser) ===================== -->
+  <!-- The Windows-Explorer/Revit tree: a boxed +/− instead of a chevron, one dense row, and the
+       selection painted as a full-width band rather than a rounded pill around the caption. It
+       exists because a project browser is read like a file list, not browsed like a menu. -->
+  <Style x:Key="CONCOST.ProjectBrowser.ExpanderClassic" TargetType="{x:Type ToggleButton}">
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Width" Value="9" />
+    <Setter Property="Height" Value="9" />
+    <Setter Property="FrameworkElement.Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ToggleButton}">
+          <Border x:Name="Box"
+                  Width="9" Height="9"
+                  Background="{DynamicResource CONCOST.Brush.Surface}"
+                  BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}"
+                  BorderThickness="1"
+                  SnapsToDevicePixels="True">
+            <Grid>
+              <Rectangle x:Name="H" Width="5" Height="1" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <Rectangle x:Name="V" Width="1" Height="5" Fill="{DynamicResource CONCOST.Brush.TextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+          </Border>
+          <ControlTemplate.Triggers>
+            <!-- Expanded drops the upright and leaves the minus: the same sign the box had before. -->
+            <Trigger Property="ToggleButton.IsChecked" Value="True">
+              <Setter TargetName="V" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="UIElement.IsMouseOver" Value="True">
+              <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.ProjectBrowser.ItemClassic" TargetType="{x:Type TreeViewItem}">
+    <Setter Property="Background" Value="#00FFFFFF" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <!-- 26 px rows. At 12/2,1 they measured 19 px and read as a list that had been shrunk; 12.5/3,2
+         gave 21 and still looked thin in a wide palette. -->
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Padding" Value="5,3" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="FrameworkElement.FocusVisualStyle" Value="{x:Null}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type TreeViewItem}">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition />
+            </Grid.RowDefinitions>
+            <!-- The row stretches the full width of the tree, so IsSelected paints a band across it
+                 instead of a rounded box hugging the caption. -->
+            <!-- The guide that joins this row's children: it sits on the expander's centre line, and
+                 every child's connector meets it because a child is indented by exactly this column. -->
+            <Rectangle Grid.Row="1" Width="1" Margin="7,0,0,0" HorizontalAlignment="Left" Stroke="{DynamicResource CONCOST.Brush.BorderSecondary}" StrokeThickness="1" StrokeDashArray="2,2" SnapsToDevicePixels="True" />
+
+            <Border Name="Bd" Grid.Row="0" Background="{TemplateBinding Control.Background}" Padding="{TemplateBinding Control.Padding}" SnapsToDevicePixels="True" Cursor="Hand">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="14" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ToggleButton Name="Expander" ClickMode="Press" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource CONCOST.ProjectBrowser.ExpanderClassic}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" />
+                <ContentPresenter Name="PART_Header" Grid.Column="1" ContentSource="Header" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,4,0" />
+              </Grid>
+            </Border>
+
+            <!-- The connector from this row back to its parent's guide. Drawn after the row so it sits
+                 on top of the selection band, and pulled 7 px left so it reaches the guide. -->
+            <Rectangle Name="Elbow" Grid.Row="0" Width="14" Height="1" Margin="-7,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Stroke="{DynamicResource CONCOST.Brush.BorderSecondary}" StrokeThickness="1" StrokeDashArray="2,2" SnapsToDevicePixels="True" />
+
+            <ItemsPresenter Name="ItemsHost" Grid.Row="1" Margin="14,0,0,0" />
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="TreeViewItem.IsExpanded" Value="False">
+              <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <!-- No children, no box: an empty square promises a branch that is not there. -->
+            <Trigger Property="ItemsControl.HasItems" Value="False">
+              <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+            </Trigger>
+            <!-- A root row has nothing to its left to connect to. -->
+            <Trigger Property="controls:ProjectBrowser.Depth" Value="0">
+              <Setter TargetName="Elbow" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <!-- Hover is neutral, selection is the pale blue band. Two neighbouring blues made a
+                 hovered row look selected. -->
+            <Trigger SourceName="Bd" Property="UIElement.IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" Property="Border.Background" />
+            </Trigger>
+            <!-- The accent, from the tokens ThemeManager regenerates when the accent changes:
+                 PrimarySoft and PrimaryLight. PrimarySoftLight/PrimarySoftBorder are static orange and
+                 would have left an orange band under a blue accent. -->
+            <Trigger Property="TreeViewItem.IsSelected" Value="True">
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="Bd" Value="1" Property="Border.BorderThickness" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="UIElement.Opacity" Value="0.4" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CONCOST.ProjectBrowser.TreeClassic" TargetType="{x:Type TreeView}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <!-- No horizontal scroll: with one, the panel is measured at infinite width and every row sizes
+         to its own caption, so a short row's selection band stops mid-tree. Revit clips instead. -->
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+    <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+    <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type TreeView}">
+          <Border Background="{TemplateBinding Control.Background}" SnapsToDevicePixels="True">
+            <ScrollViewer Padding="0" attached:ScrollViewerHelper.IsAutoHideEnabled="False">
+              <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+            </ScrollViewer>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <Style x:Key="CONCOST.ListView.Base" TargetType="{x:Type ListView}">
     <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
     <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
@@ -7136,8 +7294,10 @@
                     <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" Property="Border.Background" />
                   </Trigger>
                   <Trigger Property="ListBoxItem.IsSelected" Value="True">
-                    <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
-                    <Setter Value="{DynamicResource CONCOST.Brush.Primary}" Property="Foreground" />
+                    <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+                    <Setter TargetName="border" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+                    <Setter TargetName="border" Value="1" Property="Border.BorderThickness" />
+                    <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
                     <Setter Property="FontWeight" Value="Normal" />
                   </Trigger>
                 </ControlTemplate.Triggers>
@@ -7465,7 +7625,7 @@
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="6" Padding="2" Margin="0,0,8,0">
                   <StackPanel Orientation="Horizontal">
-                    <RadioButton Name="PART_SortCategoryBtn" IsChecked="True" GroupName="PGSort" Cursor="Hand" Padding="8,5" Margin="1" ToolTip="Categorized View" Style="{DynamicResource CONCOST.RadioButton.Segment}">
+                    <RadioButton Name="PART_SortCategoryBtn" IsChecked="True" GroupName="PGSort" Cursor="Hand" Padding="8,5" Margin="1" ToolTip="Categorized View" AutomationProperties.Name="Categorized View" Style="{DynamicResource CONCOST.RadioButton.Segment}">
                       <icons:Icon Kind="Menu" Width="14" Height="14" />
                     </RadioButton>
                     <RadioButton Name="PART_SortNameBtn" GroupName="PGSort" Cursor="Hand" Padding="8,5" Margin="1" ToolTip="Alphabetical View (A-Z)" Style="{DynamicResource CONCOST.RadioButton.Segment}">
@@ -8112,9 +8272,9 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:ColorPicker}">
-          <Border Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="10" Padding="16" SnapsToDevicePixels="True">
+          <Border Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding controls:ColorPicker.CornerRadius}" Padding="16" SnapsToDevicePixels="True">
             <StackPanel>
-              <Border CornerRadius="8" Height="140" Margin="0,0,0,12" ClipToBounds="True" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1">
+              <Border CornerRadius="8" Height="{TemplateBinding controls:ColorPicker.FieldHeight}" Margin="0,0,0,12" ClipToBounds="True" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1">
                 <Grid>
                   <Rectangle Name="PART_HueBackgroundRect" Fill="#FFFF0000" />
                   <Rectangle>
@@ -8174,7 +8334,7 @@
                   </ControlTemplate>
                 </Control.Template>
               </Slider>
-              <Slider Name="PART_AlphaSlider" Minimum="0" Maximum="255" Value="255" Height="14" Margin="0,0,0,12">
+              <Slider Name="PART_AlphaSlider" Minimum="0" Maximum="255" Value="255" Height="14" Margin="0,0,0,12" Visibility="{Binding ShowAlpha, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Control.Template>
                   <ControlTemplate TargetType="{x:Type Slider}">
                     <Grid>
@@ -8194,7 +8354,7 @@
                   </ControlTemplate>
                 </Control.Template>
               </Slider>
-              <Grid Margin="0,0,0,12">
+              <Grid Margin="0,0,0,12" Visibility="{Binding ShowHexInput, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="36" />
                   <ColumnDefinition Width="*" />
@@ -8206,16 +8366,16 @@
                 </Border>
                 <TextBox Grid.Column="1" Margin="8,0,0,0" Height="34" Style="{DynamicResource CONCOST.TextBox.Base}" FontWeight="Normal" FontFamily="Consolas, monospace" Text="{Binding HexCode, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=controls:ColorPicker}}" />
               </Grid>
-              <TextBlock Text="Preset Palette" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="0,0,0,6" />
-              <ItemsControl ItemsSource="{Binding PresetColors, RelativeSource={RelativeSource AncestorType=controls:ColorPicker}}">
+              <TextBlock Text="Preset Palette" Visibility="{Binding ShowPresets, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="0,0,0,6" />
+              <ItemsControl Visibility="{Binding ShowPresets, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding PresetColors, RelativeSource={RelativeSource AncestorType=controls:ColorPicker}}">
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <UniformGrid Columns="5" />
+                    <UniformGrid Columns="{Binding PresetColumns, RelativeSource={RelativeSource AncestorType=controls:ColorPicker}}" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <Button Width="22" Height="22" Margin="2" Cursor="Hand" BorderThickness="1" BorderBrush="{DynamicResource CONCOST.Brush.Border}">
+                    <Button Width="{Binding SwatchSize, RelativeSource={RelativeSource AncestorType=controls:ColorPicker}}" Height="{Binding SwatchSize, RelativeSource={RelativeSource AncestorType=controls:ColorPicker}}" Margin="2" Cursor="Hand" BorderThickness="1" BorderBrush="{DynamicResource CONCOST.Brush.Border}">
                       <Control.Background>
                         <SolidColorBrush Color="{Binding}" />
                       </Control.Background>
@@ -8462,12 +8622,14 @@
                                 <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" Property="Border.Background" />
                               </Trigger>
                               <Trigger Property="ToggleButton.IsChecked" Value="True">
-                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-                                <Setter TargetName="ItemIcon" Property="Foreground" Value="#FFFFFF" />
-                                <Setter TargetName="ItemTitle" Property="TextBlock.Foreground" Value="#FFFFFF" />
-                                <Setter TargetName="ItemBadge" Property="Border.Background" Value="#FFFFFF" />
-                                <Setter TargetName="ItemBadge" Property="Border.BorderThickness" Value="0" />
-                                <Setter TargetName="ItemBadgeText" Value="{DynamicResource CONCOST.Brush.Primary}" Property="TextBlock.Foreground" />
+                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+                                <Setter TargetName="ItemBorder" Value="1" Property="Border.BorderThickness" />
+                                <Setter TargetName="ItemIcon" Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                                <Setter TargetName="ItemTitle" Property="TextBlock.Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                                <Setter TargetName="ItemBadge" Property="Border.Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+                                <Setter TargetName="ItemBadge" Property="Border.BorderThickness" Value="1" />
+                                <Setter TargetName="ItemBadgeText" Value="{DynamicResource CONCOST.Brush.PrimaryDark}" Property="TextBlock.Foreground" />
                               </Trigger>
                             </ControlTemplate.Triggers>
                           </ControlTemplate>
@@ -8515,8 +8677,8 @@
                                 <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" Property="Border.Background" />
                               </Trigger>
                               <Trigger Property="ToggleButton.IsChecked" Value="True">
-                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-                                <Setter TargetName="ItemIcon" Property="Foreground" Value="#FFFFFF" />
+                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+                                <Setter TargetName="ItemIcon" Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
                               </Trigger>
                             </ControlTemplate.Triggers>
                           </ControlTemplate>
@@ -8818,12 +8980,14 @@
                                 <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" Property="Border.Background" />
                               </Trigger>
                               <Trigger Property="ToggleButton.IsChecked" Value="True">
-                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.Primary}" Property="Border.Background" />
-                                <Setter TargetName="ItemIcon" Property="Foreground" Value="#FFFFFF" />
-                                <Setter TargetName="ItemText" Property="TextBlock.Foreground" Value="#FFFFFF" />
-                                <Setter TargetName="ItemBadge" Property="Border.Background" Value="#FFFFFF" />
-                                <Setter TargetName="ItemBadge" Property="Border.BorderThickness" Value="0" />
-                                <Setter TargetName="ItemBadgeText" Value="{DynamicResource CONCOST.Brush.Primary}" Property="TextBlock.Foreground" />
+                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+                                <Setter TargetName="ItemBorder" Value="1" Property="Border.BorderThickness" />
+                                <Setter TargetName="ItemIcon" Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                                <Setter TargetName="ItemText" Property="TextBlock.Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                                <Setter TargetName="ItemBadge" Property="Border.Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+                                <Setter TargetName="ItemBadge" Property="Border.BorderThickness" Value="1" />
+                                <Setter TargetName="ItemBadgeText" Value="{DynamicResource CONCOST.Brush.PrimaryDark}" Property="TextBlock.Foreground" />
                               </Trigger>
                             </ControlTemplate.Triggers>
                           </ControlTemplate>
@@ -9056,8 +9220,8 @@
                                 <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" Property="Border.Background" />
                               </Trigger>
                               <Trigger Property="ListBoxItem.IsSelected" Value="True">
-                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.Background" />
-                                <Setter Value="{DynamicResource CONCOST.Brush.Primary}" Property="Foreground" />
+                                <Setter TargetName="ItemBorder" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+                                <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
                               </Trigger>
                             </ControlTemplate.Triggers>
                           </ControlTemplate>
@@ -9742,6 +9906,7 @@
   <Style TargetType="{x:Type ribbon:RibbonContextualTabGroup}" BasedOn="{StaticResource CONCOST.RibbonContextualTabGroup.Base}" />
 
   <Style x:Key="CONCOST.RibbonButton.Base" TargetType="{x:Type ribbon:RibbonButton}">
+    <Setter Property="attached:AccessibleName.FromToolTip" Value="True" />
     <Setter Property="FocusVisualStyle" Value="{StaticResource CONCOST.RibbonItem.FocusVisual}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemForeground}" />
@@ -10104,15 +10269,26 @@
               </Grid.RowDefinitions>
 
               <!-- Quick access, "above the ribbon" slot. Empty — and therefore zero-height — unless
-                   QuickAccessPlacement puts the strip here. -->
-              <ContentControl x:Name="PART_QatAbove" Grid.Row="0" Margin="8,4,8,0" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+                   QuickAccessPlacement puts the strip here. The band is the same chrome as the tab
+                   strip, so an above-the-ribbon QAT and a menu bar stack into one continuous strip
+                   instead of leaving two white rows above a grey one. -->
+              <Border x:Name="QatAboveBand" Grid.Row="0" Background="{DynamicResource CONCOST.Brush.Ribbon.TabStrip}">
+                <ContentControl x:Name="PART_QatAbove" Margin="8,4,8,0" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+              </Border>
 
               <!-- MenuBar slot above the tab strip. Sits between the QAT (when above) and the tabs. -->
-              <ContentControl x:Name="PART_MenuBarAbove" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Visibility="Collapsed" Focusable="False" />
+              <Border x:Name="MenuBarAboveBand" Grid.Row="1" Background="{DynamicResource CONCOST.Brush.Ribbon.TabStrip}">
+                <ContentControl x:Name="PART_MenuBarAbove" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Visibility="Collapsed" Focusable="False" />
+              </Border>
 
               <!-- One compact top row: File block, tab strip, quick-access commands. Everything sits
                    on the same baseline as the tabs, so there is no empty band above them. -->
               <Grid x:Name="HeaderStrip" Grid.Row="2">
+                <!-- The chrome band spans the whole row — under the File block, the tabs and the
+                     quick-access strip alike. Painting it on the tab ListBox instead left the band
+                     only as wide as the tabs, so on a light theme it read as a grey pill floating
+                     between two white rows rather than as the ribbon's header. -->
+                <Border x:Name="HeaderBackground" Background="{DynamicResource CONCOST.Brush.Ribbon.TabStrip}" />
                 <Border x:Name="HeaderDivider" BorderBrush="{DynamicResource CONCOST.Brush.Ribbon.Divider}" BorderThickness="0,0,0,1" />
 
                 <Grid Margin="4,4,4,0">
@@ -10131,7 +10307,7 @@
                        the quick-access strip as soon as the tabs no longer fit. -->
                   <ScrollViewer Grid.Column="1" x:Name="PART_TabScroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" CanContentScroll="False" ClipToBounds="True" Focusable="False">
 
-                  <ListBox x:Name="PART_Tabs" ItemsSource="{TemplateBinding VisibleTabs}" SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="{DynamicResource CONCOST.Brush.Ribbon.TabStrip}" BorderThickness="0" Padding="4,3,4,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+                  <ListBox x:Name="PART_Tabs" ItemsSource="{TemplateBinding VisibleTabs}" SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="Transparent" BorderThickness="0" Padding="4,3,4,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
                 <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
                     <ribbon:RibbonTabStripPanel HorizontalAlignment="Left" BandHeight="{DynamicResource CONCOST.Ribbon.ContextualBandHeight}" FontFamily="{DynamicResource CONCOST.FontFamily.Default}" FontSize="{DynamicResource CONCOST.Ribbon.ContextualBandFontSize}" />
@@ -10180,7 +10356,7 @@
                   </ScrollViewer>
 
                   <!-- "»" appears only when the tabs no longer fit; it lists every tab. -->
-                  <Button x:Name="TabOverflowButton" Grid.Column="2" Width="24" Height="24" Margin="2,0,0,4" Padding="0" VerticalAlignment="Bottom" Background="Transparent" BorderThickness="0" Cursor="Hand" Visibility="Collapsed" Focusable="False" ToolTip="All tabs" Command="{x:Static ribbon:Ribbon.ShowTabListCommand}">
+                  <Button x:Name="TabOverflowButton" Grid.Column="2" Width="24" Height="24" Margin="2,0,0,4" Padding="0" VerticalAlignment="Bottom" Background="Transparent" BorderThickness="0" Cursor="Hand" Visibility="Collapsed" Focusable="False" ToolTip="All tabs" AutomationProperties.Name="All tabs" Command="{x:Static ribbon:Ribbon.ShowTabListCommand}">
                     <Button.Template>
                       <ControlTemplate TargetType="{x:Type Button}">
                         <Border x:Name="Ob" Background="Transparent" CornerRadius="3">
@@ -10198,7 +10374,7 @@
                   <!-- The ribbon's own size control, at the end of the tab row the way Revit and
                        Office put it: one click folds the ribbon one step further, and the caret turns
                        to point back up once it is folded. -->
-                  <Button x:Name="MinimizeButton" Grid.Column="3" Width="22" Height="22" Margin="0,0,2,4" Padding="0" VerticalAlignment="Bottom" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False" ToolTip="Minimize the ribbon" Command="{x:Static ribbon:Ribbon.CycleDisplayModeCommand}">
+                  <Button x:Name="MinimizeButton" Grid.Column="3" Width="22" Height="22" Margin="0,0,2,4" Padding="0" VerticalAlignment="Bottom" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False" ToolTip="Minimize the ribbon" AutomationProperties.Name="Minimize the ribbon" Command="{x:Static ribbon:Ribbon.CycleDisplayModeCommand}">
                     <Button.Template>
                       <ControlTemplate TargetType="{x:Type Button}">
                         <Border x:Name="Mb" Background="Transparent" CornerRadius="3">
@@ -10850,8 +11026,8 @@
               <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
-              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
-              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Primary}" />
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
+              <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="Opacity" Value="0.45" />
@@ -11767,90 +11943,159 @@
   <Style x:Key="{x:Type controls:CommandBar}" TargetType="{x:Type controls:CommandBar}" BasedOn="{StaticResource CONCOST.CommandBar.Base}" />
 
   <!-- ===================== QuickAccessToolbar ===================== -->
+  <!-- The overflow chevron is a disclosure, not a toggle: an open menu must not paint the strip's
+       one accent-filled control. Neutral surfaces, and the glyph stays a glyph. -->
+  <Style x:Key="CONCOST.QuickAccessToolbar.Chevron" TargetType="{x:Type ToggleButton}">
+    <Setter Property="attached:AccessibleName.FromToolTip" Value="True" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ToggleButton}">
+          <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="4" SnapsToDevicePixels="True">
+            <Path x:Name="Glyph"
+                  Data="M0,0 L9,0 L4.5,4 Z"
+                  Fill="{TemplateBinding Foreground}"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextDisabled}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
   <Style x:Key="CONCOST.QuickAccessToolbar.Base" TargetType="{x:Type controls:QuickAccessToolbar}">
-    <Setter Property="Height" Value="28" />
+    <!-- No fixed Height: the strip sizes to ButtonSize plus whatever plate the variant adds, so a
+         host that wants 34 px targets does not also have to remember to raise the row. -->
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:QuickAccessToolbar}">
-          <DockPanel LastChildFill="True">
-            <ToggleButton x:Name="MoreButton"
-                          DockPanel.Dock="Right"
-                          Width="20" Height="20"
-                          MinWidth="20" MinHeight="20"
-                          Margin="2,0,0,0"
-                          Style="{StaticResource CONCOST.ToggleButton.Icon.Ghost}"
-                          attached:IconElement.Kind="ChevronDown"
-                          attached:IconElement.IconSize="10"
-                          ToolTip="Tuỳ chỉnh"
-                          IsChecked="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+          <Border x:Name="Plate"
+                  Background="Transparent"
+                  BorderBrush="Transparent"
+                  BorderThickness="0"
+                  CornerRadius="0"
+                  Padding="0"
+                  SnapsToDevicePixels="True">
+            <DockPanel LastChildFill="True">
+              <ToggleButton x:Name="MoreButton"
+                            DockPanel.Dock="Right"
+                            Width="{TemplateBinding controls:QuickAccessToolbar.ButtonSize}"
+                            Height="{TemplateBinding controls:QuickAccessToolbar.ButtonSize}"
+                            MinWidth="{TemplateBinding controls:QuickAccessToolbar.ButtonSize}"
+                            MinHeight="{TemplateBinding controls:QuickAccessToolbar.ButtonSize}"
+                            Margin="2,0,0,0"
+                            Style="{StaticResource CONCOST.QuickAccessToolbar.Chevron}"
+                            ToolTip="{TemplateBinding controls:QuickAccessToolbar.OverflowToolTip}"
+                            IsChecked="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
 
-            <ItemsControl x:Name="PART_Items"
-                          ItemsSource="{TemplateBinding controls:OverflowToolbar.ItemsSource}"
-                          VerticalAlignment="Center">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <controls:OverflowPanel Spacing="1" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <Grid>
-                    <Button x:Name="QuickButton"
-                            Width="24" Height="24"
-                            Style="{StaticResource CONCOST.Button.Icon.Ghost}"
-                            attached:IconElement.Kind="{Binding Icon}"
-                            attached:IconElement.IconSize="14"
-                            ToolTip="{Binding ToolTip}"
-                            Command="{Binding Command}"
-                            CommandParameter="{Binding CommandParameter}"
-                            IsEnabled="{Binding IsEnabled}" />
-                    <Rectangle x:Name="QuickSeparator"
-                               Width="1" Height="14"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Fill="{DynamicResource CONCOST.Brush.Border}"
-                               Visibility="Collapsed" />
-                  </Grid>
-                  <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding IsSeparator}" Value="True">
-                      <Setter TargetName="QuickButton" Property="Visibility" Value="Collapsed" />
-                      <Setter TargetName="QuickSeparator" Property="Visibility" Value="Visible" />
-                    </DataTrigger>
-                  </DataTemplate.Triggers>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <Popup IsOpen="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                   PlacementTarget="{Binding ElementName=MoreButton}"
-                   Placement="Bottom"
-                   StaysOpen="False"
-                   AllowsTransparency="True"
-                   PopupAnimation="Fade">
-              <Border Background="{DynamicResource CONCOST.Brush.Surface}"
-                      BorderBrush="{DynamicResource CONCOST.Brush.Border}"
-                      BorderThickness="1"
-                      CornerRadius="8"
-                      Padding="4"
-                      Margin="0,4,0,0">
-                <ItemsControl ItemsSource="{TemplateBinding controls:OverflowToolbar.OverflowItems}">
-                  <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                      <Button Style="{StaticResource CONCOST.Button.Icon.Ghost}"
-                              Width="24" Height="24"
-                              Margin="1"
+              <ItemsControl x:Name="PART_Items"
+                            ItemsSource="{TemplateBinding controls:OverflowToolbar.ItemsSource}"
+                            VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <!-- Not a TemplateBinding: an ItemsPanelTemplate's templated parent is the
+                         ItemsControl, so the spacing has to be read off the toolbar itself. -->
+                    <controls:OverflowPanel Spacing="{Binding Spacing, RelativeSource={RelativeSource AncestorType={x:Type controls:QuickAccessToolbar}}}" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <Button x:Name="QuickButton"
+                              Width="{Binding ButtonSize, RelativeSource={RelativeSource AncestorType={x:Type controls:QuickAccessToolbar}}}"
+                              Height="{Binding ButtonSize, RelativeSource={RelativeSource AncestorType={x:Type controls:QuickAccessToolbar}}}"
+                              MinWidth="{Binding ButtonSize, RelativeSource={RelativeSource AncestorType={x:Type controls:QuickAccessToolbar}}}"
+                              MinHeight="{Binding ButtonSize, RelativeSource={RelativeSource AncestorType={x:Type controls:QuickAccessToolbar}}}"
+                              Style="{StaticResource CONCOST.Button.Icon.Ghost}"
                               attached:IconElement.Kind="{Binding Icon}"
-                              attached:IconElement.IconSize="14"
+                              attached:IconElement.IconSize="{Binding IconSize, RelativeSource={RelativeSource AncestorType={x:Type controls:QuickAccessToolbar}}}"
                               ToolTip="{Binding ToolTip}"
                               Command="{Binding Command}"
                               CommandParameter="{Binding CommandParameter}"
                               IsEnabled="{Binding IsEnabled}" />
-                    </DataTemplate>
-                  </ItemsControl.ItemTemplate>
-                </ItemsControl>
-              </Border>
-            </Popup>
-          </DockPanel>
+                      <!-- Stretched, not a fixed height: the rule keeps its 5 px air top and bottom
+                           and grows with ButtonSize instead of staying 14 px in a 34 px row. -->
+                      <Rectangle x:Name="QuickSeparator"
+                                 Width="1"
+                                 Margin="0,5"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Stretch"
+                                 Fill="{DynamicResource CONCOST.Brush.Border}"
+                                 Visibility="Collapsed" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                      <DataTrigger Binding="{Binding IsSeparator}" Value="True">
+                        <Setter TargetName="QuickButton" Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                          <Condition Binding="{Binding IsSeparator}" Value="True" />
+                          <Condition Binding="{Binding ShowSeparators, RelativeSource={RelativeSource AncestorType={x:Type controls:QuickAccessToolbar}}}" Value="True" />
+                        </MultiDataTrigger.Conditions>
+                        <Setter TargetName="QuickSeparator" Property="Visibility" Value="Visible" />
+                      </MultiDataTrigger>
+                    </DataTemplate.Triggers>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <Popup IsOpen="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                     PlacementTarget="{Binding ElementName=MoreButton}"
+                     Placement="Bottom"
+                     StaysOpen="False"
+                     AllowsTransparency="True">
+                <!-- A popup's child lives in its own visual tree, so AncestorType lookups cannot
+                     reach the toolbar from in here — every binding below would resolve to nothing
+                     and the menu would open as an empty box. The toolbar is handed to the plate as
+                     its DataContext instead, and the items read it back off the ItemsControl. -->
+                <Border Background="{DynamicResource CONCOST.Brush.Surface}"
+                        BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="4"
+                        Margin="0,4,0,0"
+                        DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                  <Border.Effect>
+                    <DropShadowEffect BlurRadius="18" ShadowDepth="4" Direction="270" Opacity="0.20" Color="#101828" />
+                  </Border.Effect>
+                  <ItemsControl ItemsSource="{TemplateBinding controls:OverflowToolbar.OverflowItems}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <Button Style="{StaticResource CONCOST.Button.Icon.Ghost}"
+                                Width="{Binding DataContext.ButtonSize, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                Height="{Binding DataContext.ButtonSize, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                MinWidth="{Binding DataContext.ButtonSize, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                MinHeight="{Binding DataContext.ButtonSize, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                Margin="1"
+                                attached:IconElement.Kind="{Binding Icon}"
+                                attached:IconElement.IconSize="{Binding DataContext.IconSize, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                ToolTip="{Binding ToolTip}"
+                                Command="{Binding Command}"
+                                CommandParameter="{Binding CommandParameter}"
+                                IsEnabled="{Binding IsEnabled}" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </Border>
+              </Popup>
+            </DockPanel>
+          </Border>
 
           <ControlTemplate.Triggers>
             <MultiTrigger>
@@ -11860,6 +12105,26 @@
               </MultiTrigger.Conditions>
               <Setter TargetName="MoreButton" Property="Visibility" Value="Collapsed" />
             </MultiTrigger>
+            <!-- The plate is opt-in: Plain leaves the icons on the host's own surface, which is what
+                 the ribbon's copy of this strip needs. -->
+            <Trigger Property="controls:QuickAccessToolbar.Variant" Value="Outlined">
+              <Setter TargetName="Plate" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+              <Setter TargetName="Plate" Property="BorderThickness" Value="1" />
+              <Setter TargetName="Plate" Property="CornerRadius" Value="6" />
+              <Setter TargetName="Plate" Property="Padding" Value="3" />
+            </Trigger>
+            <Trigger Property="controls:QuickAccessToolbar.Variant" Value="Elevated">
+              <Setter TargetName="Plate" Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+              <Setter TargetName="Plate" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+              <Setter TargetName="Plate" Property="BorderThickness" Value="1" />
+              <Setter TargetName="Plate" Property="CornerRadius" Value="8" />
+              <Setter TargetName="Plate" Property="Padding" Value="4" />
+              <Setter TargetName="Plate" Property="Effect">
+                <Setter.Value>
+                  <DropShadowEffect BlurRadius="14" ShadowDepth="3" Direction="270" Opacity="0.16" Color="#101828" />
+                </Setter.Value>
+              </Setter>
+            </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>

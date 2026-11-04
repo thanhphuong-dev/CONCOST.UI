@@ -13,6 +13,8 @@ namespace CONCOST.UI.Themes;
 public enum AppTheme
 {
     Light,
+    /// <summary>A warm, low-glare light palette for long work sessions.</summary>
+    SoftLight,
     Dark,
 
     /// <summary>Follow the operating system's light/dark setting.</summary>
@@ -217,14 +219,12 @@ public class ThemeManager : ObservableObject
 
         var effectiveTheme = ResolveTheme(theme, Application.Current?.MainWindow);
 
-        string themeUri = effectiveTheme == AppTheme.Dark
-            ? "pack://application:,,,/CONCOST.UI;component/Themes/Dark.xaml"
-            : "pack://application:,,,/CONCOST.UI;component/Themes/Light.xaml";
+        string themeUri = $"pack://application:,,,/CONCOST.UI;component/Themes/{GetThemeFileName(effectiveTheme)}";
 
         var newDict = new ResourceDictionary { Source = new Uri(themeUri, UriKind.Absolute) };
 
         var merged = app.Resources.MergedDictionaries;
-        var existing = merged.FirstOrDefault(d => d.Source != null && (d.Source.OriginalString.Contains("/Themes/Dark.xaml") || d.Source.OriginalString.Contains("/Themes/Light.xaml")));
+        var existing = merged.FirstOrDefault(IsThemeDictionary);
 
         if (existing != null)
         {
@@ -323,12 +323,10 @@ public class ThemeManager : ObservableObject
 
     private static void ReplaceThemeDictionary(ResourceDictionary themeResources, AppTheme theme)
     {
-        string themeName = theme == AppTheme.Dark ? "Dark.xaml" : "Light.xaml";
+        string themeName = GetThemeFileName(theme);
         string themeUri = $"pack://application:,,,/CONCOST.UI;component/Themes/{themeName}";
         var dictionaries = themeResources.MergedDictionaries;
-        var current = dictionaries.FirstOrDefault(dictionary =>
-            dictionary.Source?.OriginalString.Contains("/Themes/Dark.xaml", StringComparison.OrdinalIgnoreCase) == true ||
-            dictionary.Source?.OriginalString.Contains("/Themes/Light.xaml", StringComparison.OrdinalIgnoreCase) == true);
+        var current = dictionaries.FirstOrDefault(IsThemeDictionary);
         var replacement = new ResourceDictionary { Source = new Uri(themeUri, UriKind.Absolute) };
 
         if (current == null)
@@ -336,6 +334,18 @@ public class ThemeManager : ObservableObject
         else
             dictionaries[dictionaries.IndexOf(current)] = replacement;
     }
+
+    private static string GetThemeFileName(AppTheme theme) => theme switch
+    {
+        AppTheme.Dark => "Dark.xaml",
+        AppTheme.SoftLight => "SoftLight.xaml",
+        _ => "Light.xaml"
+    };
+
+    private static bool IsThemeDictionary(ResourceDictionary dictionary) =>
+        dictionary.Source?.OriginalString.Contains("/Themes/Dark.xaml", StringComparison.OrdinalIgnoreCase) == true ||
+        dictionary.Source?.OriginalString.Contains("/Themes/Light.xaml", StringComparison.OrdinalIgnoreCase) == true ||
+        dictionary.Source?.OriginalString.Contains("/Themes/SoftLight.xaml", StringComparison.OrdinalIgnoreCase) == true;
 
     private static (Color Color, bool Dark) GetPreset(ThemePreset preset) => preset switch
     {
@@ -421,6 +431,7 @@ public class ThemeManager : ObservableObject
     {
         AppTheme.Dark => AppTheme.Dark,
         AppTheme.Light => AppTheme.Light,
+        AppTheme.SoftLight => AppTheme.SoftLight,
         AppTheme.Auto => DetectTheme(probe),
         _ => GetSystemTheme()
     };

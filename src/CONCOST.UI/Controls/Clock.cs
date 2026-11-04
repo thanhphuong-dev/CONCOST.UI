@@ -38,6 +38,11 @@ public class Clock : Control
         DependencyProperty.Register(nameof(ShowSeconds), typeof(bool), typeof(Clock),
             new PropertyMetadata(false, OnShowSecondsChanged));
 
+    /// <summary>Identifies the <see cref="AccentBrush"/> property.</summary>
+    public static readonly DependencyProperty AccentBrushProperty =
+        DependencyProperty.Register(nameof(AccentBrush), typeof(Brush), typeof(Clock),
+            new PropertyMetadata(null, OnAccentBrushChanged));
+
     public static readonly RoutedEvent SelectedTimeChangedEvent = EventManager.RegisterRoutedEvent(
         nameof(SelectedTimeChanged), RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<DateTime>), typeof(Clock));
 
@@ -59,12 +64,24 @@ public class Clock : Control
         set => SetValue(ShowSecondsProperty, value);
     }
 
+    /// <summary>Overrides the dial accent used by the selected number, the hand, the tip and the pin. Null follows the theme.</summary>
+    public Brush? AccentBrush
+    {
+        get => (Brush?)GetValue(AccentBrushProperty);
+        set => SetValue(AccentBrushProperty, value);
+    }
+
     public string FormattedTime => SelectedTime.ToString(ShowSeconds ? "HH:mm:ss" : "HH:mm");
 
     public event RoutedPropertyChangedEventHandler<DateTime> SelectedTimeChanged
     {
         add => AddHandler(SelectedTimeChangedEvent, value);
         remove => RemoveHandler(SelectedTimeChangedEvent, value);
+    }
+
+    private static void OnAccentBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Clock clock) clock.UpdateClockVisuals();
     }
 
     private static void OnSelectedTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -196,6 +213,10 @@ public class Clock : Control
         double cy = h / 2.0;
         double radius = size * 0.40;
 
+        Brush accent = AccentBrush
+            ?? (TryFindResource("CONCOST.Brush.Primary") as Brush)
+            ?? Brushes.Orange;
+
         // Draw numbers (12 positions: 1..12 for Hour, 5,10,15..00 for Min/Sec)
         for (int i = 1; i <= 12; i++)
         {
@@ -251,7 +272,7 @@ public class Clock : Control
 
             if (isSelected)
             {
-                numBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
+                numBorder.Background = accent;
             }
             else
             {
@@ -294,7 +315,7 @@ public class Clock : Control
             StrokeThickness = 2,
             StrokeEndLineCap = PenLineCap.Round
         };
-        line.SetResourceReference(System.Windows.Shapes.Line.StrokeProperty, "CONCOST.Brush.Primary");
+        line.Stroke = accent;
         handCanvas.Children.Add(line);
 
         // Selected tip dot
@@ -304,7 +325,7 @@ public class Clock : Control
             Height = 8,
             CornerRadius = new CornerRadius(4)
         };
-        tipDot.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
+        tipDot.Background = accent;
         System.Windows.Controls.Canvas.SetLeft(tipDot, endX - 4);
         System.Windows.Controls.Canvas.SetTop(tipDot, endY - 4);
         handCanvas.Children.Add(tipDot);
@@ -316,7 +337,7 @@ public class Clock : Control
             Height = 8,
             CornerRadius = new CornerRadius(4)
         };
-        centerPin.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
+        centerPin.Background = accent;
         System.Windows.Controls.Canvas.SetLeft(centerPin, cx - 4);
         System.Windows.Controls.Canvas.SetTop(centerPin, cy - 4);
         handCanvas.Children.Add(centerPin);

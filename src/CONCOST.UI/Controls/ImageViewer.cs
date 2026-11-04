@@ -21,6 +21,9 @@ namespace CONCOST.UI.Controls;
 /// </remarks>
 public class ImageViewer : FrameworkElement
 {
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
+        new ImageViewerAutomationPeer(this);
+
     /// <summary>Identifies the <see cref="Source"/> property.</summary>
     public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
         nameof(Source), typeof(ImageSource), typeof(ImageViewer),
@@ -53,6 +56,21 @@ public class ImageViewer : FrameworkElement
     public static readonly DependencyProperty ShowCheckerboardProperty = DependencyProperty.Register(
         nameof(ShowCheckerboard), typeof(bool), typeof(ImageViewer),
         new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>Identifies the <see cref="CheckerboardBrush"/> property.</summary>
+    public static readonly DependencyProperty CheckerboardBrushProperty = DependencyProperty.Register(
+        nameof(CheckerboardBrush), typeof(Brush), typeof(ImageViewer),
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>Identifies the <see cref="CheckerCellSize"/> property.</summary>
+    public static readonly DependencyProperty CheckerCellSizeProperty = DependencyProperty.Register(
+        nameof(CheckerCellSize), typeof(double), typeof(ImageViewer),
+        new FrameworkPropertyMetadata(12.0, FrameworkPropertyMetadataOptions.AffectsRender, null, CoerceCheckerCellSize));
+
+    /// <summary>Identifies the <see cref="ZoomStep"/> property.</summary>
+    public static readonly DependencyProperty ZoomStepProperty = DependencyProperty.Register(
+        nameof(ZoomStep), typeof(double), typeof(ImageViewer),
+        new FrameworkPropertyMetadata(1.15, null, CoerceZoomStep));
 
     private Point _panOrigin;
     private Point _panStart;
@@ -122,6 +140,41 @@ public class ImageViewer : FrameworkElement
     {
         get => (bool)GetValue(ShowCheckerboardProperty);
         set => SetValue(ShowCheckerboardProperty, value);
+    }
+
+    /// <summary>Overrides the odd checker square. Null keeps the built-in grey.</summary>
+    public Brush? CheckerboardBrush
+    {
+        get => (Brush?)GetValue(CheckerboardBrushProperty);
+        set => SetValue(CheckerboardBrushProperty, value);
+    }
+
+    /// <summary>Edge of one checker square, in pixels. 12 by default, clamped to 4-64.</summary>
+    public double CheckerCellSize
+    {
+        get => (double)GetValue(CheckerCellSizeProperty);
+        set => SetValue(CheckerCellSizeProperty, value);
+    }
+
+    /// <summary>Multiplier applied per wheel notch. 1.15 by default, clamped to 1.01-2.</summary>
+    public double ZoomStep
+    {
+        get => (double)GetValue(ZoomStepProperty);
+        set => SetValue(ZoomStepProperty, value);
+    }
+
+    private static object CoerceCheckerCellSize(DependencyObject d, object baseValue)
+    {
+        double value = (double)baseValue;
+        if (double.IsNaN(value)) return 12.0;
+        return value < 4 ? 4 : value > 64 ? 64 : value;
+    }
+
+    private static object CoerceZoomStep(DependencyObject d, object baseValue)
+    {
+        double value = (double)baseValue;
+        if (double.IsNaN(value)) return 1.15;
+        return value < 1.01 ? 1.01 : value > 2 ? 2 : value;
     }
 
     /// <summary>True when a picture is loaded and it has a usable size.</summary>
@@ -249,7 +302,7 @@ public class ImageViewer : FrameworkElement
 
     private void DrawCheckerboard(DrawingContext dc)
     {
-        const double cell = 12;
+        double cell = CheckerCellSize;
 
         dc.PushClip(new RectangleGeometry(new Rect(RenderSize)));
 
@@ -258,7 +311,7 @@ public class ImageViewer : FrameworkElement
             for (double x = 0; x < ActualWidth; x += cell)
             {
                 bool odd = ((int)(x / cell) + (int)(y / cell)) % 2 == 1;
-                dc.DrawRectangle(odd ? CheckerBrush : Brushes.White, null, new Rect(x, y, cell, cell));
+                dc.DrawRectangle(odd ? (CheckerboardBrush ?? CheckerBrush) : Brushes.White, null, new Rect(x, y, cell, cell));
             }
         }
 
@@ -269,7 +322,7 @@ public class ImageViewer : FrameworkElement
     {
         base.OnMouseWheel(e);
 
-        double factor = e.Delta > 0 ? 1.15 : 1 / 1.15;
+        double factor = e.Delta > 0 ? ZoomStep : 1 / ZoomStep;
 
         if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
         {

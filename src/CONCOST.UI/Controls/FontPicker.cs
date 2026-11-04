@@ -54,6 +54,16 @@ public class FontPicker : Grid
         nameof(PreviewText), typeof(string), typeof(FontPicker),
         new FrameworkPropertyMetadata("The quick brown fox jumps over the lazy dog", OnPreviewTextChanged));
 
+    /// <summary>Identifies the <see cref="RowHeight"/> property.</summary>
+    public static readonly DependencyProperty RowHeightProperty = DependencyProperty.Register(
+        nameof(RowHeight), typeof(double), typeof(FontPicker),
+        new PropertyMetadata(26.0, OnRowHeightChanged));
+
+    /// <summary>Identifies the <see cref="PreviewMaxHeight"/> property.</summary>
+    public static readonly DependencyProperty PreviewMaxHeightProperty = DependencyProperty.Register(
+        nameof(PreviewMaxHeight), typeof(double), typeof(FontPicker),
+        new PropertyMetadata(48.0, OnPreviewMaxHeightChanged));
+
     private static readonly double[] Sizes = { 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72 };
 
     private readonly ComboBox _family;
@@ -76,7 +86,7 @@ public class FontPicker : Grid
 
         _family = new ComboBox
         {
-            Height = 26,
+            Height = RowHeight,
             FontSize = 12,
             IsEditable = true,
             IsTextSearchEnabled = true,
@@ -99,7 +109,7 @@ public class FontPicker : Grid
 
         _size = new ComboBox
         {
-            Height = 26,
+            Height = RowHeight,
             Margin = new Thickness(6, 0, 0, 0),
             FontSize = 12,
             IsEditable = true,
@@ -134,7 +144,7 @@ public class FontPicker : Grid
             Margin = new Thickness(0, 8, 0, 0),
             TextWrapping = TextWrapping.Wrap,
             TextTrimming = TextTrimming.CharacterEllipsis,
-            MaxHeight = 48
+            MaxHeight = PreviewMaxHeight
         };
 
         _preview.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
@@ -189,6 +199,20 @@ public class FontPicker : Grid
         set => SetValue(PreviewTextProperty, value);
     }
 
+    /// <summary>Height of the family, size and style controls. 26 by default.</summary>
+    public double RowHeight
+    {
+        get => (double)GetValue(RowHeightProperty);
+        set => SetValue(RowHeightProperty, value);
+    }
+
+    /// <summary>Maximum height of the preview line. 48 by default.</summary>
+    public double PreviewMaxHeight
+    {
+        get => (double)GetValue(PreviewMaxHeightProperty);
+        set => SetValue(PreviewMaxHeightProperty, value);
+    }
+
     /// <summary>The weight the chosen values amount to.</summary>
     public FontWeight EffectiveWeight => IsBold ? FontWeights.Bold : FontWeights.Normal;
 
@@ -210,8 +234,8 @@ public class FontPicker : Grid
 
         var button = new ToggleButton
         {
-            Width = 26,
-            Height = 26,
+            Width = RowHeight,
+            Height = RowHeight,
             Margin = new Thickness(4, 0, 0, 0),
             ToolTip = tooltip,
             Content = label
@@ -286,6 +310,28 @@ public class FontPicker : Grid
     private static void OnPreviewVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FontPicker picker) picker.ApplyAppearance();
+    }
+
+    private static void OnRowHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not FontPicker picker || e.NewValue is not double height || height <= 0) return;
+
+        picker._family.Height = height;
+        picker._size.Height = height;
+
+        foreach (UIElement child in picker.Children)
+        {
+            if (child is not ToggleButton toggle) continue;
+
+            toggle.Width = height;
+            toggle.Height = height;
+        }
+    }
+
+    private static void OnPreviewMaxHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FontPicker picker && e.NewValue is double height)
+            picker._preview.MaxHeight = height;
     }
 
     private static void OnPreviewTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

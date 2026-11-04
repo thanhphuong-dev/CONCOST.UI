@@ -374,7 +374,7 @@ public class CheckComboBox : Control
         else if (selected.Count == InternalItems.Count && InternalItems.Count > 1)
         {
             text = $"All Selected ({selected.Count})";
-            foregroundBrush = TryFindResource("CONCOST.Brush.Primary") as Brush ?? Brushes.DodgerBlue;
+            foregroundBrush = TryFindResource("CONCOST.Brush.PrimaryDark") as Brush ?? Brushes.DodgerBlue;
         }
         else if (selected.Count == 2)
         {

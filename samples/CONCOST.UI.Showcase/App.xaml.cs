@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -31,8 +31,9 @@ public partial class App : Application
             // A demo should not vanish because one handler threw: report it and keep the window up so
             // the rest of the catalogue stays usable.
             MessageBox.Show(
-                $"{args.Exception.GetType().Name}: {args.Exception.Message}\n\nĐã ghi log vào:\n{CrashLogPath}",
-                "CONCOST.UI Showcase — lỗi không xử lý",
+                Loc.F("{0}: {1}\n\nLog written to:\n{2}", "{0}: {1}\n\nLog written to:\n{2}",
+                    args.Exception.GetType().Name, args.Exception.Message, CrashLogPath),
+                Loc.T("CONCOST.UI Showcase — lỗi không xử lý", "CONCOST.UI Showcase — unhandled error"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
 

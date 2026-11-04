@@ -1,0 +1,100 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Soft Light uses cool-neutral paper and restrained blue-grey chrome to lower glare. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Background" Color="#F1F3F6" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Surface" Color="#F8F9FB" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSecondary" Color="#E9EDF2" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceHover" Color="#E0E6EE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfacePressed" Color="#D4DCE7" />
+
+    <!-- Elevated surfaces stay near-white; sunken areas use a quiet cool grey. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceElevated" Color="#FCFCFD" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSunken" Color="#E7EBF1" />
+
+    <!-- Scrim behind a modal. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Overlay" Color="#CCF1F3F6" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Border" Color="#D7DDE6" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderSubtle" Color="#E4E8EE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasBackground" Color="#F1F3F6" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderSecondary" Color="#C4CCD7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderHover" Color="#98A5B6" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderFocused" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.TextPrimary" Color="#242A33" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextSecondary" Color="#586273" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextTertiary" Color="#636E7D" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextDisabled" Color="#AAB2BE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextInverse" Color="#FFFFFF" />
+
+    <!-- Control Specific Overrides for Soft Light -->
+    <SolidColorBrush x:Key="CONCOST.Brush.InputBackground" Color="#FCFCFD" />
+    <SolidColorBrush x:Key="CONCOST.Brush.InputBorder" Color="#C4CCD7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.InputHoverBorder" Color="#98A5B6" />
+
+    <!-- Drawing surfaces. A plan grid is ink on paper, not a control border: the border greys are
+         dark enough that a thousand of them turn the viewport into graphite paper. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasGrid" Color="#E7EBF1" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasGridMajor" Color="#D5DCE6" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasAxis" Color="#B9C3D1" />
+
+    <!-- ViewCube. Light grey faces with darker bevel lines, dark grey captions and the blue highlight
+         Autodesk uses, not the accent orange: a highlight on the cube means "this is what you will
+         click", and the accent is reserved for commands that are already chosen. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeFace" Color="#E3E8EF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeEdge" Color="#B4BECC" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeBorder" Color="#7D8999" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeText" Color="#3D4653" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeHighlight" Color="#2E86DE" />
+    <SolidColorBrush x:Key="CONCOST.Code.Keyword" Color="#0B69C7" />
+    <SolidColorBrush x:Key="CONCOST.Code.String" Color="#B45309" />
+    <SolidColorBrush x:Key="CONCOST.Code.Comment" Color="#3F7A3F" />
+    <SolidColorBrush x:Key="CONCOST.Code.Number" Color="#7C3AED" />
+    <SolidColorBrush x:Key="CONCOST.Code.Tag" Color="#0B69C7" />
+    <SolidColorBrush x:Key="CONCOST.Code.Attribute" Color="#475569" />
+
+    <!-- Ribbon. The strip is a shade darker than the paper so the tabs read as chrome and the
+         selected tab merges into the panel below it. Hover and pressed are a light blue rather
+         than the neutral grey the cards use: on a ribbon the highlight has to say “this command”
+         at a glance, and the accent stays reserved for the selected tab. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.TabStrip" Color="#E9EDF2" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.TabSelected" Color="#F8F9FB" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelBackground" Color="#F8F9FB" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.Divider" Color="#D7DDE6" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelTitle" Color="#586273" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemForeground" Color="#242A33" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHover" Color="#E7EEF8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHoverBorder" Color="#C9D7EA" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressed" Color="#D9E4F2" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressedBorder" Color="#B6C9E1" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemChecked" Color="#DFE9F5" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemCheckedBorder" Color="#C2D2E7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemDisabledForeground" Color="#929CAB" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualAccent" Color="#2E86DE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipBackground" Color="#FCFCFD" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipText" Color="#242A33" />
+
+    <!-- Classic project tree. The selection is a band across the row, the way Explorer and
+         Revit draw it, so it is its own pair rather than the accent used by a pill selection. -->
+
+    <!-- One tint per node kind. All-grey glyphs at 13 px are indistinguishable, which is why
+         a schedule and a level read as the same little square. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.View" Color="#2563A6" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Sheet" Color="#287A5A" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Schedule" Color="#7351A6" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Family" Color="#A86518" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Level" Color="#18796F" />
+
+    <!-- Shadow: a whisper of ink under a card. The elevation behaviour feeds this colour to a
+         drop shadow and deepens it per level, so the token itself stays almost invisible. -->
+    <Color x:Key="CONCOST.Color.Shadow">#1A0F172A</Color>
+    <Color x:Key="CONCOST.Color.ShadowStrong">#330F172A</Color>
+
+    <!-- Dedicated Soft Light Primary Tint -->
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftLight" Color="#F5F1E8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftBorder" Color="#E3D7BE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftForeground" Color="#795B27" />
+
+</ResourceDictionary>

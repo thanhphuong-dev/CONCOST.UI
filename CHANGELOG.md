@@ -140,6 +140,83 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   and `UnitBoxTests` covers the header row, the range/step passthrough and the re-raised value
   event. The four Showcase pages (`OtpInput`, `UnitBox`, `CompassIndicator`, `LoadingIndicator`)
   ride the `ShowcasePagesTests` guard like every other page.
+- **The whole showcase was audited, page by page, and every page is now built and measured by a
+  test.** `ShowcasePageAuditTests` walks all 145 pages offscreen at a fixed width and asserts two
+  hard guarantees — every page constructs, and nothing is wider than the page it lives in — while
+  reporting the softer ones (low-contrast text, unnamed icon-only controls) for a human to read.
+  That is the check that was missing when two pages shipped broken this week: it is the reason the
+  variants gallery and the slider badges were caught at all, and now it runs on every build.
+  What it found: three pages appeared to fail but were the harness missing the app's resource
+  dictionaries; one page overflows by exactly 8 px, which is a grid pulled out by a negative margin
+  so its children's gutters land flush — deliberate, so the check allows 16 px of slack. The real
+  finding was accessibility: 52 pages had icon-only controls with a tooltip and no accessible name.
+  `AccessibleName.FromToolTip` fills the gap — it is switched on by the icon button styles, by
+  `IconElement.Kind` on any button, and by `RibbonItem`'s constructor, so a command is named wherever
+  it is declared rather than at each call site. It reads `ToolTipService.ToolTip` (not the
+  `FrameworkElement.ToolTip` wrapper, whose descriptor never fires) and re-reads on `Header`, because
+  a control is usually built first and captioned second. PropertyGrid went from 250 unnamed segments
+  to 28; 41 pages still report some, mostly controls that draw their glyph with a bare `Path`.
+- **`ProjectBrowser` can be read like a file list, not browsed like a menu.** The tree only had
+  this library's own treatment — a rounded pill around the caption and a chevron expander — which
+  is right for a settings tree and wrong for a project palette, where the reader is scanning a
+  long list of drawings. `TreeStyle = Classic` is the Explorer/Revit row: a boxed +/−, a shorter
+  row, and the selection painted as a band across the full width. The band is the part that took
+  work — with horizontal scrolling on, the panel is measured at infinite width, so every row sized
+  to its own caption and a short row's band stopped mid-tree; the classic tree disables horizontal
+  scroll and clips long names at the edge, the way Revit clips them. The tool strip, kind filter,
+  sort picker and count row fold away with it, because that palette is a search box over a list;
+  their switches keep their values, so going back to `Modern` restores them. `TreeStyle` is a
+  separate axis from `Variant` — a classic tree can still sit on a floating plate — and the
+  Showcase gallery now shows the four dresses side by side.
+- **`QuickAccessToolbar` carries its own metrics now.** It had one property of its own
+  (`IsCustomizable`) and a fixed 28 px row, which is the wrong shape for a control that gets
+  dropped into a 20 px title bar on one screen and floated over a drawing on the next. Five
+  properties fix that: `ButtonSize` and `IconSize` (24 / 14 by default, the title-bar size),
+  `ShowSeparators` to keep the grouping in the data while the strip stays a run of plain icons,
+  `OverflowToolTip`, and `Variant` — `Plain` paints nothing (the ribbon's case), `Outlined` a
+  hairline plate, `Elevated` a surface with a shadow. The fixed height is gone: the strip is
+  `ButtonSize` plus the plate, so a host asking for 34 px targets gets a 34 px row instead of a
+  clipped one. Two long-standing gaps closed with it: `OverflowToolbar.Spacing` was a dependency
+  property the template never read (the panel hard-coded 1 px), and the chevron's tooltip was a
+  literal `"Tuỳ chỉnh"` in the theme file, so an English host shipped a Vietnamese tooltip.
+  The separator rule stretches with the button instead of carrying its own 14 px height. The
+  overflow chevron got a style of its own: the ghost toggle it borrowed carries a 34 px minimum
+  that overrode `ButtonSize`, and fills itself with the accent while checked, so a disclosure read
+  as the strip's one selected command. Its menu is a plain popup with a shadow rather than a fade,
+  and its items read the strip's metrics through the plate's `DataContext` — a popup's child lives
+  in its own visual tree, where an `AncestorType` lookup resolves to nothing and the menu opens
+  as an empty box.
+- **The Showcase speaks both languages, and nothing is left hardcoded.** The sample was written
+  in Vietnamese with a `Loc.T(vi, en)` switch on the few strings that mattered, so roughly a
+  thousand literals — catalog titles, card descriptions, demo captions, button text — reached the
+  screen in Vietnamese whatever the language selector said, and a hundred more interpolated their
+  own wording into the sentence. Every literal now goes through the localizer: `Loc.T` for plain
+  text, `Loc.F` for a format string (the argument order survives the swap, the sentence around it
+  does not) and `Loc.Code` for the 66 verbatim C#/XAML samples, which are swapped line by line from
+  a generated `LocCode` table so a sample keeps its comments in the reader's language. The shell's
+  own labels moved to `{local:Loc Showcase.X}`, a markup extension that returns a `Binding` on the
+  localizer's indexer, so the header, the filter chips and the command palette retitle themselves
+  when the selector moves rather than on the next reload; cards whose demo is built imperatively
+  rebuild from `OnLocalizationChanged`, because a cached `ShowcaseItem.Content` cannot follow a
+  binding.
+  A second pass caught the strings no accented-text scan can see, because they were typed without
+  diacritics at all: 51 of them across the two CAD demo cards — the `Ti le / Chi tiet / Kieu` HUD
+  line, the `San sang:` callouts, every slider and toggle caption on the ViewControlBar and
+  CadStatusBar panels, the background-task and notification text — and one real bug behind them.
+  The Backstage demo still called `Select("Thông tin dự án")` by its Vietnamese header after that
+  header had itself become localized, so the opening page resolved in Vietnamese only.
+  The header's version stamp now comes from the assembly instead of a literal `v1.0.1`,
+  and the 21 new keys exist in both `vi-VN` and `en-US`.
+- **Three controls that had no documentation page now have one.** `Calendar` and `DatePicker` both
+  ship implicit styles in `Generic.xaml` and are demoed in the Showcase, yet the site had no page
+  for either, and `AppTheme.Auto` — the mode a Revit/AutoCAD plug-in has to use, because it owns no
+  `Application` of its own — was exercised by the Showcase and documented nowhere. The `calendar`,
+  `datepicker` and `themeauto` pages close those gaps: four variants each for the two date controls,
+  the blackout-range and selection-mode samples, a seven-row table of the `ThemeManager` API
+  (`ApplyTheme`, `RefreshAutoTheme`, `DetectTheme`, `ApplyAccentColor`, `ApplySurfaceStyle`), and an
+  English overlay for each. The site is 156 pages and 1399 properties, every page reachable from
+  the sidebar, and `check-xaml.py` still reports 0 issues.
+
 - **The ribbon can give back the chrome a host already owns.** Two switches now cover the parts
   of the top row a shell may want to draw itself: `Ribbon.ShowApplicationMenu` hides the File
   block without dropping `ApplicationMenu` (so the menu can still open from a host button), and
@@ -172,6 +249,60 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   so the net48 build emitted six CS8602/CS8601/CS8604 warnings and broke the "0 warnings" gate the
   project builds under. The two spots now carry the null-forgiving operator the annotation was
   standing in for.
+- **The selection band follows the accent.** It used `PrimarySoftLight`/`PrimarySoftBorder`, which are
+  static orange in the token files — `ThemeManager.ApplyAccentColor` regenerates `Primary`,
+  `PrimarySoft`, `PrimaryLight`, `PrimaryHover` and three more, but not those two, so a blue accent
+  still drew an orange band. It uses `PrimarySoft`/`PrimaryLight` now: measured under a blue accent the
+  band is `#1F2563EB` with a `#FF5B8AF0` edge, and under the default accent it is the same soft tint
+  as before. The two unused `CONCOST.Brush.Tree.Selected`/`Tree.Hover` tokens were removed with it.
+- **Classic rows are 26 px and the selection is the app's accent.** The rows had been at 19, then 21,
+  and still read as a list that had been shrunk next to a 1400 px wide palette; 13/5,3 gives 26.
+  The selection was `Tree.Selected` (#CCE8FF) — the only blue in a shell where every other selected
+  thing is orange, and at that width it read as a stripe across the panel. It is `PrimarySoftLight`
+  with a `PrimarySoftBorder` hairline now, the same soft accent the rest of the library uses.
+  `Tree.Hover` and `Tree.Selected` are no longer used by the control.
+- **The classic tree is legible and its hover is no longer a second selection.** Rows measured 19 px
+  against the 32 px of the modern tree — faithful to Explorer, but it read as a list that had been
+  shrunk beside a 400 px palette; 12.5/3,2 gives 21.6 px. And hover used `Tree.Hover` (#EDF4FB),
+  one step away from the selection band (#CCE8FF), so a hovered row looked selected; hover is now the
+  neutral `SurfaceHover`, which is also what the modern tree uses.
+- **The project tree reads at a glance again.** Three fixes on the ProjectBrowser. Every node kind
+  shared one grey glyph colour, so at 13 px a schedule, a level and a sheet were the same little
+  square — each kind now has its own tint (`CONCOST.Brush.Node.View/Sheet/Schedule/Family/Level`).
+  The classic tree draws the guide lines it was missing: a dotted vertical per level plus a
+  connector into each row, positioned so a child's connector meets its parent's line exactly (an
+  attached `Depth` keeps the connector off the root). And the two pickers finally have captions —
+  unlabelled, they read as one list of three styles, which is why the page looked like it had no
+  Revit tree at all.
+- **A project palette keeps its scrollbar.** The library fades scrollbars out until the pointer
+  arrives — right for a page, wrong for a palette: with the bar invisible, a tree that continues
+  past the bottom edge reads as a tree that was cut off, which is exactly how the classic dress
+  looked. `ScrollViewerHelper.IsAutoHideEnabled` already existed for this, but it is pinned to
+  `True` by the ScrollViewer style and a style setter beats inheritance, so setting it on the tree
+  did nothing; the control now clears it on the scroller itself once the tree loads. The classic
+  tree also sets it in its own template.
+- **The project browser now says what it means when a name does not fit, and names its own tools.**
+  A UX pass over the control (against the accessibility, truncation and contrast rules in the
+  `ui-ux-pro-max` skill) found three gaps. A view name longer than the palette was clipped mid-word
+  by the edge with no cue that anything was missing; the caption is a `TextBlock` with
+  `CharacterEllipsis` and the full name on hover, the row header is a `Grid` so the caption has a
+  width to trim against, and the tree no longer scrolls horizontally — with that on, the panel
+  measures every row at infinite width and nothing can ellipsize. The four tool buttons and the
+  group switch are icon-only and carried a `ToolTip` but no `AutomationProperties.Name`, so a screen
+  reader announced four unnamed buttons; they carry their caption now. And the empty-state line was
+  `TextTertiary`, about 2.6:1 on white, under the 4.5:1 floor for body text — it is
+  `TextSecondary`, as are the two tertiary captions on the QuickAccessToolbar page.
+- **The ribbon header is one band again, and the light theme is where that showed.** The chrome
+  colour was painted on the tab `ListBox`, so it was only as wide as the tabs: the menu bar above
+  it sat on the shell and the body below it on the panel, which left three separate rows — white,
+  grey, white. On the dark theme the three shades read as depth and nobody noticed; on light the
+  grey strip looked like a pill floating between two white rows, and the ribbon had no header at
+  all once the tabs were hidden. The band is now painted on the whole header row and on the
+  quick-access and menu-bar slots above it, so a menu bar, an above-the-ribbon QAT and the tabs
+  stack into one continuous strip that ends where the body begins. The rule under that strip is
+  drawn by the header rather than by the tab strip, which lets the selected tab punch through it
+  and merge into the panel below — the seam the tab colour was always meant to make. Both themes
+  are unchanged in colour; only the surfaces they are painted on moved.
 - **A snap marker no longer outlives the pointer that placed it.** `ViewportControl` kept
   `Snap`/`SnapKind` after the pointer left the surface, after a wheel zoom and during a pan. The
   glyph is stored in surface pixels, so re-checking *Hiện dấu bám* (`ShowSnapMarker`) after moving
@@ -188,6 +319,84 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   not performing. Hover now takes `CONCOST.Brush.InputHoverBorder` and keyboard focus takes
   `CONCOST.Brush.BorderFocused`, the same pair every other input in the library uses, so the
   unit plate keeps the accent and the frame stops competing with it.
+- **The ProjectBrowser page goes back to full width, which is the only shape that survives a
+  maximised window.** Two fixed columns (340 + 420) fill a 880 px card and leave 700 px of white in a
+  1500 px one, because the content does not grow with the window. The palette takes the card's width,
+  the actions sit under it, and the switches follow in two star columns — the same shape at both
+  widths. The density and hover fixes from the previous pass stay: they were what the "too small"
+  complaint was actually about, not the layout.
+- **The palette is a palette again, not a stretched tree.** Filling the card with it put the
+  scrollbar 600 px from the text and left a third of the control's width unused. It is back to a
+  dock's 340×420 on the left, with the control column at 420 beside it — 340 + 24 + 420 fits the
+  card's inner width. Two fits had to be corrected on the way: the left column was an Auto column
+  and grew to 430 because the hint line under the buttons would not wrap, which pushed the switches
+  off the card edge; and the actions moved from under the palette to the end of the control column,
+  because 420 px of palette against 310 px of switches left an empty quadrant beneath them.
+- **The grey plate behind the ProjectBrowser is gone.** It was a "stage" — a rounded grey panel the
+  palette was set on to suggest the dock it lives in. Two things were wrong with it: it put a second
+  frame around a control that already draws its own border, and at 340 px the palette covered less
+  than half of it, so the remainder read as dead space rather than as a canvas. The palette now fills
+  the card's width the way a widened dock would, which also gives long view names room to finish
+  instead of ending in an ellipsis; the filter actions sit under it, and the switches below in two
+  columns.
+- **The ProjectBrowser page is stacked, not split.** Side by side, the canvas had to be as tall as
+  the palette, so a 340 px palette sat in the middle of a 620 px grey field — the page read as a
+  large empty rectangle with a control lost inside it. The specimen plate now hugs the palette and
+  sits centred above the controls, which spread into two columns across the full card: the pickers
+  and the six switches on the left, the four sliders on the right. Same content, half the dead space.
+- **The ProjectBrowser page now puts its subject first.** Reviewed against the `visual-hierarchy`,
+  `whitespace-balance` and `compact-label-overflow` rules: the palette — the thing the page is about —
+  was the smallest object on it, a 300 px box beside a 648 px control panel, while the panel's slider
+  track had grown to 447 px to choose a value between 20 and 36. The stage now takes the room the
+  panel leaves and the palette sits centred on it at 340×380, the panel is a fixed 420, and the track
+  is back to 219. The extra width also fixed the palette's own header, where two pickers at 96 px had
+  been clipping their labels, and the taller palette shows nine rows of its twenty-four instead of
+  five.
+- **The panel fills the card instead of floating in it.** Removing the rules band left the
+  ProjectBrowser's content as a 764 px block centred in a 1046 px card, which read as a page that had
+  lost its scale. The palette keeps the width a dock gives it and the panel takes the rest, so the
+  card is used edge to edge. Two things had to change for that to work: `AppearanceSlider` pinned its
+  track to 190 px and left a dead band beside it on every page whose panel was wider than the row
+  (the track now takes the star column, with a 140 px floor), and the two pickers were fixed at
+  401 px while the sliders beside them stretched. The six switches are a 3×2 grid now, because a
+  wrap panel broke them 5 + 1 and left one box alone on its own row.
+- **The ProjectBrowser page lost its rules band.** Four paragraphs of design commentary under the
+  palette — text that repeated what the panel already shows, laid out in four columns that did not
+  fit and were clipped at the card edge. A page is the control and the switches that change it;
+  commentary that needs a paragraph to explain a border is not a feature of the page.
+- **A control page is a workbench, not a gallery.** The ProjectBrowser page carried five copies of
+  the same palette — one working example and a four-up card showing Card, Seamless, Floating and the
+  classic tree — and the QuickAccessToolbar page carried five strips. Every one of those copies
+  differed only by a property the picker beside it can already set, so the extra copies taught
+  nothing and cost a page of height. Both pages are now a single instance with the full panel next
+  to it; the QuickAccessToolbar panel gained a width slider, because narrowing the strip is how you
+  reach the overflow menu that used to need its own copy.
+- **The ProjectBrowser page reads as a palette again, not as a settings form.** A design pass over
+  the card found the hierarchy inverted: five accent-filled checkboxes stacked down the right column
+  were the loudest thing on the page, louder than the palette they describe. They are two rows of
+  three now. The two pickers were the widest elements on the page at full width; they are 401 px,
+  the width of a slider row, so the column has one right edge from the pickers through the toggles
+  to the sliders and the buttons. The palette and its controls are centred as one vignette —
+  left-aligned they left 240 px of white on the right and the card looked like it had lost a column —
+  and the dark Floating stage in the gallery is a step lighter, because at near-black it was the
+  first thing the eye found on a light page.
+- **The ProjectBrowser page stopped overflowing its own card.** Three separate fits were wrong.
+  The variants gallery was a single row of four 292 px cards, which is more than the card is wide, so
+  the last dress ran off the page edge; it is a 2×2 grid now, every cell the same, captions over the
+  palette they name. The control column was pinned to 330 px while the slider rows inside it are
+  401 px (label + track + value badge), so every badge was clipped off the right — the column is a
+  star column now and the note that used to squeeze it moved under both columns as a four-across
+  band. And the staged palette was as tall as its content, which with every branch collapsed was
+  180 px of white beside a column three times its height; it is staged at its real 300 px dock
+  height and opened up, so the card reads as a palette rather than as an empty panel.
+- **The QuickAccessToolbar page is a gallery page, not a footnote.** It was one card with two
+  strips and a readout, so the only thing a reader could learn from it was that the control
+  exists — none of its properties were reachable, and the page was mostly empty. It now has three
+  cards: the three plates side by side, a live playground for `ButtonSize` / `IconSize` / `Spacing`
+  / `ShowSeparators` / `Variant` with a preview strip that follows every slider, and an overflow
+  card that lists exactly which commands the layout could not fit. Each card carries its own
+  XAML and C# inspector. The docs page grew from two sections to four and from one auto-generated
+  property row to an eleven-row table; `check-xaml.py` reports 0 issues.
 - **The collapse ladder has a rung between "small" and "give up a panel".** Demoting `Large` → `Medium` → `Small` was the whole ladder, so the step after three rows of small buttons was to fold a panel — surrendering a set of commands to buy back forty pixels. The captions of the small buttons now go first (`Ribbon.ShowGroupLabels` / `ShowItemLabels`, both inherited, so one value on the ribbon reaches every item; `RibbonItem.IsLabelVisible` reports the result), which is the cheapest width a group can hand back without losing a command — only the words go. `RibbonItem.CollapsePriority = 0` pins a command at its own size the way `RibbonGroup.CollapsePriority = 0` pins a panel. Restoring the captions also moved out of `RestoreAutoCollapsed` and into the branch that has actually measured the full layout as fitting: with both sides restoring, the rung and the width restore undid each other every other pass and the ladder could never settle on a fold — which is why `RibbonExtendedPropertiesTests` now hosts its three groups at 240 px, narrow enough that folding one is still the only way to fit.
 - **The ribbon family reads its own theme tokens instead of borrowed ones.** A `RibbonToggleButton` was drawn from the generic `CONCOST.Brush.Accent` / `Border` pair, so a ticked command in a checked tab read as two different accents on the same row, and `RibbonButton`/`RibbonGroup`/the tab strip each picked a different grey for hover. Item hover, pressed, checked and disabled now come from `Ribbon.ItemHover`, `ItemPressed`, `ItemChecked`, `ItemDisabledForeground` and their border pairs, the strip from `Ribbon.TabStrip` / `TabSelected` / `ContextualAccent` / `Divider`, and the panel title has its own height token (`CONCOST.Ribbon.PanelTitleHeight`, 18 px — the row that has to hold both the slide-out toggle and the dialog launcher). A fold state that hides a caption now also zeroes the icon's margin, so an icon-only tile sits centred instead of hanging to the left.
 - **`ViewCube` is the Revit-style widget of the specification, and the maths left the control.** The old cube offered three faces, twelve edges named after their corners and a dotted compass, read a `ViewDirection` vector, and handed the host a `Hit` carrying a direction and a count of quarter turns — an absolute orientation the host still had to translate into whatever its camera spoke. The cube is now a bevelled solid with **26 hit regions** — six captioned faces, twelve edge strips, eight corner triangles — and the whole geometry lives in `ViewCubeMath`: the region table with its face/edge/corner normals and uprights, `RotationFor`, basis conversion, `Roll`, short-arc `Slerp` and the `Upright` projection behind `KeepSceneUpright`. The control reaches a camera through `ICameraHost` (`Rotation`, `PivotPoint`, `Projection`, `FitToView`), so `CameraController` speaks quaternions and a host that works in directions converts at its own boundary; `ICameraHostEvents` is the optional half that tells the cube the user orbited, and `Invalidate()` is there for a camera that cannot. Around the cube: a compass ring on the ground plane whose letters drag the yaw (hidden below ten degrees of elevation, where it collapses to a line), a home button, four 90° chevrons and two roll buttons that appear only when square on a face, and a context menu with the three projections, Set Current View as Home and as Front, Reset Front, Show Compass and Options. The specification's options table is dependency properties — `Position`, `DockMargin`, `Size` (Automatic is a fifth of the short side clamped to 64-160 px), `InactiveOpacity`, `SnapToClosestView`, `SnapAngle`, `FitToViewOnChange`, `AnimatedTransitions`, `AnimationDuration`, `KeepSceneUpright`, `ClickThreshold`. A press under the threshold turns the view, a longer one orbits and snaps within `SnapAngle`, a transition is a 200-600 ms `slerp` that continues from the pose on screen when interrupted, and the transparent parts of the widget pass the click through to the viewport. The 33 new tests in `CadViewTests` cover the 26 regions, the `u = (ẑ − (ẑ·f)f)` upright of the edges and corners, the short arc, the roll sense, and a hit test at the centre of every one of the 26 zones.
