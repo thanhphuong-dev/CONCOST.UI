@@ -254,12 +254,12 @@ public class ViewportControl : Grid
         new FrameworkPropertyMetadata(1.1));
 
     private static object CoerceCrosshairThickness(DependencyObject _, object value) =>
-        value is double thickness && double.IsFinite(thickness)
+        value is double thickness && NumericCompatibility.IsFinite(thickness)
             ? Math.Max(0.25, Math.Min(8, thickness))
             : 0.7;
 
     private static object CoerceCrosshairExtent(DependencyObject _, object value) =>
-        value is double extent && double.IsFinite(extent)
+        value is double extent && NumericCompatibility.IsFinite(extent)
             ? Math.Max(0, Math.Min(1, extent))
             : 1.0;
 

@@ -526,18 +526,38 @@
         <ControlTemplate TargetType="{x:Type Button}">
           <Border Name="border" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" Padding="{TemplateBinding Control.Padding}" SnapsToDevicePixels="True">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}">
-              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}" Margin="0,0,6,0">
+              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}">
                 <FrameworkElement.Style>
                   <Style TargetType="{x:Type icons:Icon}">
+                    <Setter Property="Margin" Value="0,0,6,0" />
                     <Style.Triggers>
                       <DataTrigger Value="None" Binding="{Binding Path=(attached:IconElement.Kind), RelativeSource={RelativeSource AncestorType=Button}}">
                         <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=Button}}" Value="{x:Null}">
+                        <Setter Property="Margin" Value="0" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=Button}}" Value="">
+                        <Setter Property="Margin" Value="0" />
                       </DataTrigger>
                     </Style.Triggers>
                   </Style>
                 </FrameworkElement.Style>
               </icons:Icon>
-              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Control.Foreground}" TextElement.FontWeight="{TemplateBinding Control.FontWeight}" RecognizesAccessKey="True" />
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Control.Foreground}" TextElement.FontWeight="{TemplateBinding Control.FontWeight}" RecognizesAccessKey="True">
+                <ContentPresenter.Style>
+                  <Style TargetType="{x:Type ContentPresenter}">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=Button}}" Value="{x:Null}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=Button}}" Value="">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ContentPresenter.Style>
+              </ContentPresenter>
             </StackPanel>
           </Border>
           <ControlTemplate.Triggers>
@@ -925,18 +945,38 @@
         <ControlTemplate TargetType="{x:Type ToggleButton}">
           <Border Name="border" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" Padding="{TemplateBinding Control.Padding}" TextElement.Foreground="{TemplateBinding Control.Foreground}" SnapsToDevicePixels="True">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}">
-              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}" Margin="0,0,6,0">
+              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}">
                 <FrameworkElement.Style>
                   <Style TargetType="{x:Type icons:Icon}">
+                    <Setter Property="Margin" Value="0,0,6,0" />
                     <Style.Triggers>
                       <DataTrigger Value="None" Binding="{Binding Path=(attached:IconElement.Kind), RelativeSource={RelativeSource AncestorType=ToggleButton}}">
                         <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="{x:Null}">
+                        <Setter Property="Margin" Value="0" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="">
+                        <Setter Property="Margin" Value="0" />
                       </DataTrigger>
                     </Style.Triggers>
                   </Style>
                 </FrameworkElement.Style>
               </icons:Icon>
-              <ContentPresenter Name="contentPresenter" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+              <ContentPresenter Name="contentPresenter" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True">
+                <ContentPresenter.Style>
+                  <Style TargetType="{x:Type ContentPresenter}">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="{x:Null}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ContentPresenter.Style>
+              </ContentPresenter>
             </StackPanel>
           </Border>
           <ControlTemplate.Triggers>
@@ -996,18 +1036,38 @@
         <ControlTemplate TargetType="{x:Type ToggleButton}">
           <Border Name="border" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" Padding="{TemplateBinding Control.Padding}" TextElement.Foreground="{TemplateBinding Control.Foreground}" SnapsToDevicePixels="True">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}">
-              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}" Margin="0,0,6,0">
+              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}">
                 <FrameworkElement.Style>
                   <Style TargetType="{x:Type icons:Icon}">
+                    <Setter Property="Margin" Value="0,0,6,0" />
                     <Style.Triggers>
                       <DataTrigger Value="None" Binding="{Binding Path=(attached:IconElement.Kind), RelativeSource={RelativeSource AncestorType=ToggleButton}}">
                         <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="{x:Null}">
+                        <Setter Property="Margin" Value="0" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="">
+                        <Setter Property="Margin" Value="0" />
                       </DataTrigger>
                     </Style.Triggers>
                   </Style>
                 </FrameworkElement.Style>
               </icons:Icon>
-              <ContentPresenter Name="contentPresenter" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+              <ContentPresenter Name="contentPresenter" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True">
+                <ContentPresenter.Style>
+                  <Style TargetType="{x:Type ContentPresenter}">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="{x:Null}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ContentPresenter.Style>
+              </ContentPresenter>
             </StackPanel>
           </Border>
           <ControlTemplate.Triggers>

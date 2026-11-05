@@ -169,7 +169,7 @@ public partial class ShowcaseViewModel
         AddStat(stats, $"{AllItems.Count - guideCount}", L("Showcase.Overview.Interactive", "INTERACTIVE COMPONENTS"), IconKind.Layers, "CONCOST.Brush.Info");
         AddStat(stats, $"{basicCount}", L("Showcase.Overview.Foundation", "FOUNDATION CONTROLS"), IconKind.Check, "CONCOST.Brush.Success");
         AddStat(stats, $"{customCount}", L("Showcase.Overview.Custom", "CUSTOM CONTROLS"), IconKind.TuneAdjust, "CONCOST.Brush.Warning");
-        AddStat(stats, "Light + Dark", L("Showcase.Overview.RuntimeThemes", "RUNTIME THEMES"), IconKind.DarkMode, "CONCOST.Brush.Danger");
+        AddStat(stats, Loc.T("Sáng + Tối", "Light + Dark"), L("Showcase.Overview.RuntimeThemes", "RUNTIME THEMES"), IconKind.DarkMode, "CONCOST.Brush.Danger");
         root.Children.Add(stats);
 
         // A short curated path lets a client see representative controls immediately.
@@ -290,7 +290,7 @@ public partial class ShowcaseViewModel
                 Padding = new Thickness(15),
                 Margin = new Thickness(4),
                 Cursor = System.Windows.Input.Cursors.Hand,
-                ToolTip = $"Open the {name} demonstration"
+                ToolTip = Loc.F("Mở bản trình diễn {0}", "Open the {0} demonstration", name)
             };
             button.SetResourceReference(Button.StyleProperty, "Showcase.OverviewCardButton");
             button.Click += (_, _) => OpenControl(name);

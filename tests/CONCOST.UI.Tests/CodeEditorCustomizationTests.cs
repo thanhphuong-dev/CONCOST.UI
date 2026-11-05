@@ -21,6 +21,7 @@ public class CodeEditorCustomizationTests
         "CONCOST.Code.Number",
         "CONCOST.Code.Tag",
         "CONCOST.Code.Attribute",
+        "CONCOST.Code.Type",
     ];
 
     private static ResourceDictionary Load(string fileName) => new()

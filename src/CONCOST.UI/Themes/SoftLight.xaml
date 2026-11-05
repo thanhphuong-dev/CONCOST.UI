@@ -54,6 +54,7 @@
     <SolidColorBrush x:Key="CONCOST.Code.Number" Color="#7C3AED" />
     <SolidColorBrush x:Key="CONCOST.Code.Tag" Color="#0B69C7" />
     <SolidColorBrush x:Key="CONCOST.Code.Attribute" Color="#475569" />
+    <SolidColorBrush x:Key="CONCOST.Code.Type" Color="#267F99" />
 
     <!-- Ribbon. The strip is a shade darker than the paper so the tabs read as chrome and the
          selected tab merges into the panel below it. Hover and pressed are a light blue rather

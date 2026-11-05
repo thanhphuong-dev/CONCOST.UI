@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+using System.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -111,7 +111,7 @@ public partial class ShowcaseViewModel
         };
 
         // Hai góc đã lưu mẫu: menu chuột phải và menu định hướng liệt kê chúng.
-        cube.SaveCurrentView(Loc.T("Isometric mặc định", "Default isometric"));
+        cube.SaveCurrentView(Loc.T("Trục đo mặc định", "Default isometric"));
         cube.SaveCurrentView(Loc.T("Nhìn từ trên", "Top view"));
 
         // ---------------------------------------------------------------------
@@ -128,7 +128,7 @@ public partial class ShowcaseViewModel
 
         var viewNameBadge = new TextBlock
         {
-            Text = Loc.T("Phối cảnh ISO (Top-Front-Right)", "ISO view (Top-Front-Right)"),
+            Text = Loc.T("Phối cảnh trục đo", "ISO view (Top-Front-Right)"),
             FontSize = 12,
             FontWeight = FontWeights.SemiBold
         };
@@ -173,28 +173,28 @@ public partial class ShowcaseViewModel
 
         cube.SaveViewRequested += (_, _) =>
         {
-            string name = $"Góc đã lưu {cube.SavedViews.Count + 1}";
+            string name = Loc.F("Góc đã lưu {0}", "Saved view {0}", cube.SavedViews.Count + 1);
             cube.SaveCurrentView(name);
-            ToastService.Success($"Đã lưu \"{name}\" — mở menu định hướng để quay lại.", "ViewCube 3D");
+            ToastService.Success(Loc.F("Đã lưu \"{0}\" — mở menu định hướng để quay lại.", "Saved \"{0}\" — open the orientation menu to return.", name), "ViewCube 3D");
         };
 
         cube.SavedViewActivated += (_, view) =>
         {
-            interactionHint.Text = $"Đang xem góc đã lưu: {view.Name}";
+            interactionHint.Text = Loc.F("Đang xem góc đã lưu: {0}", "Viewing saved view: {0}", view.Name);
         };
 
         cube.RegionHovered += (_, e) =>
         {
             if (e.Hit.IsEmpty)
-                interactionHint.Text = Loc.T("Rê chuột lên ViewCube để chọn 26 vùng, mũi tên 90° hoặc la bàn", "Hover the ViewCube to pick one of 26 zones, the 90° arrows or the compass");
+                interactionHint.Text = Loc.T("Rê chuột lên khối điều hướng để chọn 26 vùng, mũi tên 90° hoặc la bàn", "Hover the ViewCube to pick one of 26 zones, the 90° arrows or the compass");
             else
-                interactionHint.Text = Loc.T($"Đang trỏ: {e.Hit.Label} [{e.Hit.Part}]", $"Hovering: {e.Hit.Label} [{e.Hit.Part}]");
+                interactionHint.Text = Loc.T($"Đang trỏ: {e.Hit.Label}", $"Hovering: {e.Hit.Label} [{e.Hit.Part}]");
         };
 
         cube.ViewTransitionCompleted += (_, _) =>
         {
             viewTelemetry.Text = $"Yaw: {camera.Yaw:0.#}° | Pitch: {camera.Pitch:0.#}° | Roll: {camera.Roll:0.#}°";
-            viewNameBadge.Text = $"Định hướng: {cube.OrientationName}";
+            viewNameBadge.Text = Loc.F("Định hướng: {0}", "Orientation: {0}", cube.OrientationName);
             interactionHint.Text = Loc.T("Chuyển hướng hoàn tất", "View change complete");
         };
 
@@ -234,7 +234,7 @@ public partial class ShowcaseViewModel
         var hudTitleRow = new StackPanel { Orientation = Orientation.Horizontal };
         var hudTitle = new TextBlock
         {
-            Text = "🏢 CAD/BIM VIEWPORT 3D",
+            Text = Loc.T("🏢 KHUNG NHÌN 3D CAD/BIM", "🏢 CAD/BIM VIEWPORT 3D"),
             FontSize = 10,
             FontWeight = FontWeights.Bold,
             Margin = new Thickness(0, 0, 8, 0)
@@ -246,7 +246,7 @@ public partial class ShowcaseViewModel
         {
             CornerRadius = new CornerRadius(4),
             Padding = new Thickness(5, 1, 5, 1),
-            Child = new TextBlock { Text = "LIVE 3D", FontSize = 9, FontWeight = FontWeights.Bold, Foreground = Brushes.White }
+            Child = new TextBlock { Text = Loc.T("TRỰC TIẾP 3D", "LIVE 3D"), FontSize = 9, FontWeight = FontWeights.Bold, Foreground = Brushes.White }
         };
         liveBadge.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
         hudTitleRow.Children.Add(liveBadge);
@@ -303,23 +303,23 @@ public partial class ShowcaseViewModel
             return btn;
         }
 
-        quickViewsRow.Children.Add(MakeViewBtn("🏠 Home (ISO)", () => cube.ResetToHome()));
-        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt Trên (Top)", "Top"), () => cube.GoToFace("TOP")));
-        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt Trước (Front)", "Front"), () => cube.GoToFace("FRONT")));
-        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt Phải (Right)", "Right"), () => cube.GoToFace("RIGHT")));
-        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt Sau (Back)", "Back"), () => cube.GoToFace("BACK")));
-        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt Trái (Left)", "Left"), () => cube.GoToFace("LEFT")));
-        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("🎯 Khung hình (Fit)", "🎯 Fit"), () => { viewer.ResetView(); camera.FitToView(); }));
+        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("🏠 Góc gốc", "🏠 Home (ISO)"), () => cube.ResetToHome()));
+        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt trên", "Top"), () => cube.GoToFace("TOP")));
+        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt trước", "Front"), () => cube.GoToFace("FRONT")));
+        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt phải", "Right"), () => cube.GoToFace("RIGHT")));
+        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt sau", "Back"), () => cube.GoToFace("BACK")));
+        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("Mặt trái", "Left"), () => cube.GoToFace("LEFT")));
+        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("🎯 Vừa khung hình", "🎯 Fit"), () => { viewer.ResetView(); camera.FitToView(); }));
 
         // Góc đã lưu: menu định hướng của cube cũng liệt kê các góc này.
-        quickViewsRow.Children.Add(MakeViewBtn("💾 Lưu góc hiện tại", () =>
+        quickViewsRow.Children.Add(MakeViewBtn(Loc.T("💾 Lưu góc hiện tại", "💾 Save current view"), () =>
         {
-            string name = $"Góc đã lưu {cube.SavedViews.Count + 1}";
+            string name = Loc.F("Góc đã lưu {0}", "Saved view {0}", cube.SavedViews.Count + 1);
             cube.SaveCurrentView(name);
-            ToastService.Success($"Đã lưu \"{name}\".", "ViewCube 3D");
+            ToastService.Success(Loc.F("Đã lưu \"{0}\".", "Saved \"{0}\".", name), "ViewCube 3D");
         }));
 
-        var savedViewsLabel = CadHint("Góc đã lưu:");
+        var savedViewsLabel = CadHint(Loc.T("Góc đã lưu:", "Saved views:"));
         savedViewsLabel.VerticalAlignment = VerticalAlignment.Center;
         savedViewsLabel.Margin = new Thickness(6, 0, 10, 0);
         quickViewsRow.Children.Add(savedViewsLabel);
@@ -342,7 +342,7 @@ public partial class ShowcaseViewModel
 
             if (savedViewsHost.Children.Count == 0)
             {
-                var empty = CadHint("(chưa có)");
+                var empty = CadHint(Loc.T("(chưa có)", "(none)"));
                 empty.VerticalAlignment = VerticalAlignment.Center;
                 savedViewsHost.Children.Add(empty);
             }
@@ -405,7 +405,7 @@ public partial class ShowcaseViewModel
         var themeCombo = new ComboBox
         {
             Width = 135,
-            ItemsSource = new[] { Loc.T("Revit Chuẩn", "Revit classic"), "Dark Slate", "Blueprint Cyan", "Amber Gold" },
+            ItemsSource = new[] { Loc.T("Revit chuẩn", "Revit classic"), Loc.T("Xám đá đậm", "Dark Slate"), Loc.T("Xanh bản vẽ", "Blueprint Cyan"), Loc.T("Vàng hổ phách", "Amber Gold") },
             SelectedIndex = 0,
             Margin = new Thickness(0, 0, 16, 0)
         };
@@ -459,9 +459,18 @@ public partial class ShowcaseViewModel
         var langCombo = new ComboBox
         {
             Width = 110,
-            ItemsSource = new[] { Loc.T("Tiếng Anh (TOP)", "English (TOP)"), Loc.T("Tiếng Việt (TRÊN)", "Vietnamese (TRÊN)") },
-            SelectedIndex = 0
+            ItemsSource = new[] { Loc.T("Tiếng Anh", "English (TOP)"), Loc.T("Tiếng Việt", "Vietnamese (TRÊN)") },
+            SelectedIndex = Loc.IsVietnamese ? 1 : 0
         };
+        if (Loc.IsVietnamese)
+        {
+            cube.TopLabel = "TRÊN";
+            cube.BottomLabel = "DƯỚI";
+            cube.FrontLabel = "TRƯỚC";
+            cube.BackLabel = "SAU";
+            cube.LeftLabel = "TRÁI";
+            cube.RightLabel = "PHẢI";
+        }
         langCombo.SelectionChanged += (_, _) =>
         {
             if (langCombo.SelectedIndex == 1)
@@ -496,7 +505,7 @@ public partial class ShowcaseViewModel
         var col1 = new StackPanel();
         var head1 = new TextBlock
         {
-            Text = Loc.T("HÌNH HỌC VÀ GIAO DIỆN (GEOMETRY & APPEARANCE)", "GEOMETRY & APPEARANCE"),
+            Text = Loc.T("HÌNH HỌC VÀ GIAO DIỆN", "GEOMETRY & APPEARANCE"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 12)
@@ -529,7 +538,7 @@ public partial class ShowcaseViewModel
         var col2 = new StackPanel();
         var head2 = new TextBlock
         {
-            Text = Loc.T("TÍNH NĂNG VÀ HƯỚNG DẪN TƯƠNG TÁC (FEATURES & HINTS)", "FEATURES & HINTS"),
+            Text = Loc.T("TÍNH NĂNG VÀ HƯỚNG DẪN TƯƠNG TÁC", "FEATURES & HINTS"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 12)
@@ -538,7 +547,7 @@ public partial class ShowcaseViewModel
         col2.Children.Add(head2);
 
         var switches = new WrapPanel { Margin = new Thickness(0, 0, 0, 12) };
-        switches.Children.Add(AppearanceToggle(Loc.T("Luôn hiện icon", "Always show tools"), cube.AlwaysShowTools, v => cube.AlwaysShowTools = v));
+        switches.Children.Add(AppearanceToggle(Loc.T("Luôn hiện biểu tượng", "Always show tools"), cube.AlwaysShowTools, v => cube.AlwaysShowTools = v));
         switches.Children.Add(AppearanceToggle(Loc.T("Hiện la bàn", "Show compass"), cube.ShowCompass, v => cube.ShowCompass = v));
         switches.Children.Add(AppearanceToggle(Loc.T("Hút góc gần nhất", "Snap to closest view"), cube.SnapToClosestView, v => cube.SnapToClosestView = v));
         switches.Children.Add(AppearanceToggle(Loc.T("Giữ đúng trục", "Keep scene upright"), cube.KeepSceneUpright, v => cube.KeepSceneUpright = v));
@@ -546,12 +555,12 @@ public partial class ShowcaseViewModel
         col2.Children.Add(switches);
 
         var iconGuideCallout = CreateCalloutCard(
-            Loc.T("HƯỚNG DẪN ĐIỀU KHIỂN VIEWCUBE 3D:\n", "VIEWCUBE 3D CONTROL GUIDE:\n") +
-            Loc.T("• [Home] Góc trên-trái: Quay về góc nhìn Isometric chuẩn.\n", "• [Home] Top-left: return to the standard isometric view.\n") +
-            Loc.T("• [Roll] Góc trên-phải: Quay 90° quanh trục nhìn.\n", "• [Roll] Top-right: roll 90° around the view axis.\n") +
+            Loc.T("HƯỚNG DẪN ĐIỀU KHIỂN KHỐI 3D:\n", "VIEWCUBE 3D CONTROL GUIDE:\n") +
+            Loc.T("• [Góc gốc] Góc trên-trái: Quay về góc nhìn trục đo chuẩn.\n", "• [Home] Top-left: return to the standard isometric view.\n") +
+            Loc.T("• [Xoay nghiêng] Góc trên-phải: Quay 90° quanh trục nhìn.\n", "• [Roll] Top-right: roll 90° around the view axis.\n") +
             Loc.T("• [Mũi tên] 4 hướng: Bước nhảy 90° sang mặt kế tiếp.\n", "• [Arrows] four directions: step 90° to the next face.\n") +
-            Loc.T("• [La bàn] N, E, S, W: Kéo xoay phương vị mặt đất.\n", "• [Compass] N, E, S, W: drag to turn the ground heading.\n") +
-            Loc.T("• [Menu] Góc dưới-phải: Chuyển chế độ Ortho / Perspective.\n", "• [Menu] Bottom-right: switch Ortho / Perspective.\n") +
+            Loc.T("• [La bàn] B, Đ, N, T: Kéo xoay phương vị mặt đất.\n", "• [Compass] N, E, S, W: drag to turn the ground heading.\n") +
+            Loc.T("• [Trình đơn] Góc dưới-phải: Chuyển chế độ Trực giao / Phối cảnh.\n", "• [Menu] Bottom-right: switch Ortho / Perspective.\n") +
             Loc.T("• Kéo chuột trực tiếp lên khối: Xoay 3D tự do mượt mà.", "• Drag directly on the cube: smooth free 3D orbit."));
         col2.Children.Add(iconGuideCallout);
 
@@ -652,7 +661,7 @@ cube.GoToFace(""TOP"");")));
         // HUD Text & Pill trong Viewport
         var hudText = new TextBlock
         {
-            Text = Loc.T("Lệnh: Sẵn sàng | Công cụ: None | UCS: Top", "Command: ready | Tool: None | UCS: Top"),
+            Text = Loc.T("Lệnh: Sẵn sàng | Công cụ: Không | Hệ tọa độ: Mặt trên", "Command: ready | Tool: None | UCS: Top"),
             FontSize = 11.5,
             FontWeight = FontWeights.Medium,
             Foreground = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8)),
@@ -674,7 +683,7 @@ cube.GoToFace(""TOP"");")));
         hudText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
 
         // Callout thong bao trang thai
-        var statusCallout = CreateCalloutCard(Loc.T("Sẵn sàng: Bấm các nút trên thanh NavigationBar để điều khiển góc nhìn và công cụ 3D.", "Ready: use the NavigationBar buttons to control the view and 3D tools."));
+        var statusCallout = CreateCalloutCard(Loc.T("Sẵn sàng: Bấm các nút trên thanh điều hướng để điều khiển góc nhìn và công cụ 3D.", "Ready: use the NavigationBar buttons to control the view and 3D tools."));
 
         void UpdateCallout(string msg)
         {
@@ -763,7 +772,7 @@ cube.GoToFace(""TOP"");")));
         var col1 = new StackPanel();
         var head1 = new TextBlock
         {
-            Text = Loc.T("KIỂU DÁNG & HÌNH HỌC (GEOMETRY & STYLE)", "GEOMETRY & STYLE"),
+            Text = Loc.T("KIỂU DÁNG & HÌNH HỌC", "GEOMETRY & STYLE"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 10)
@@ -777,14 +786,14 @@ cube.GoToFace(""TOP"");")));
         var variantCombo = new ComboBox
         {
             Width = 160,
-            ItemsSource = new[] { Loc.T("Floating (Nổi)", "Floating"), Loc.T("Seamless (Phẳng)", "Seamless"), Loc.T("Glass (Kính mờ)", "Glass") },
+            ItemsSource = new[] { Loc.T("Nổi", "Floating"), Loc.T("Phẳng", "Seamless"), Loc.T("Kính mờ", "Glass") },
             SelectedIndex = 0,
             Margin = new Thickness(0, 0, 14, 0)
         };
         variantCombo.SelectionChanged += (_, _) =>
         {
             bar.Variant = (NavigationBarVariant)Math.Max(0, variantCombo.SelectedIndex);
-            UpdateCallout(Loc.T($"Đã đổi kiểu hiển thị NavigationBar sang: {bar.Variant}", $"NavigationBar variant changed to: {bar.Variant}"));
+            UpdateCallout(Loc.T($"Đã đổi kiểu hiển thị thanh điều hướng sang: {bar.Variant}", $"NavigationBar variant changed to: {bar.Variant}"));
         };
 
         var oriLbl = new TextBlock { Text = Loc.T("Hướng:", "Direction:"), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 0), Width = 45 };
@@ -806,10 +815,10 @@ cube.GoToFace(""TOP"");")));
         variantRow.Children.Add(oriCombo);
         col1.Children.Add(variantRow);
 
-        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ nút (ButtonSize)", "Button size (ButtonSize)"), 20, 40, bar.ButtonSize, 2, "0", v => bar.ButtonSize = v));
-        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ icon (IconSize)", "Icon size (IconSize)"), 10, 22, bar.IconSize, 1, "0", v => bar.IconSize = v));
-        col1.Children.Add(AppearanceSlider(Loc.T("Bo góc (CornerRadius)", "Corner radius"), 0, 20, bar.CornerRadius.TopLeft, 1, "0", v => bar.CornerRadius = new CornerRadius(v)));
-        col1.Children.Add(AppearanceSlider(Loc.T("Độ nổi (Elevation)", "Elevation"), 0, 4, bar.Elevation, 1, "0", v => bar.Elevation = (int)v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ nút", "Button size (ButtonSize)"), 20, 40, bar.ButtonSize, 2, "0", v => bar.ButtonSize = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ biểu tượng", "Icon size (IconSize)"), 10, 22, bar.IconSize, 1, "0", v => bar.IconSize = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Bo góc", "Corner radius"), 0, 20, bar.CornerRadius.TopLeft, 1, "0", v => bar.CornerRadius = new CornerRadius(v)));
+        col1.Children.Add(AppearanceSlider(Loc.T("Độ nổi", "Elevation"), 0, 4, bar.Elevation, 1, "0", v => bar.Elevation = (int)v));
 
         Grid.SetColumn(col1, 0);
         workbench.Children.Add(col1);
@@ -818,7 +827,7 @@ cube.GoToFace(""TOP"");")));
         var col2 = new StackPanel();
         var head2 = new TextBlock
         {
-            Text = Loc.T("NHÓM TÍNH NĂNG & THAO TÁC (FEATURES & ACTIONS)", "FEATURES & ACTIONS"),
+            Text = Loc.T("NHÓM TÍNH NĂNG & THAO TÁC", "FEATURES & ACTIONS"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 10)
@@ -827,25 +836,25 @@ cube.GoToFace(""TOP"");")));
         col2.Children.Add(head2);
 
         var switchesWrap = new WrapPanel { Margin = new Thickness(0, 0, 0, 10) };
-        switchesWrap.Children.Add(AppearanceToggle(Loc.T("Nhãn UCS", "UCS label"), bar.ShowUcsLabel, v => bar.ShowUcsLabel = v));
-        switchesWrap.Children.Add(AppearanceToggle(Loc.T("Cụm zoom", "Zoom cluster"), bar.ShowZoom, v => bar.ShowZoom = v));
+        switchesWrap.Children.Add(AppearanceToggle(Loc.T("Nhãn hệ tọa độ", "UCS label"), bar.ShowUcsLabel, v => bar.ShowUcsLabel = v));
+        switchesWrap.Children.Add(AppearanceToggle(Loc.T("Cụm thu phóng", "Zoom cluster"), bar.ShowZoom, v => bar.ShowZoom = v));
         switchesWrap.Children.Add(AppearanceToggle(Loc.T("Phối cảnh", "Perspective"), bar.ShowPerspective, v => bar.ShowPerspective = v));
-        switchesWrap.Children.Add(AppearanceToggle("Walk", bar.ShowWalk, v => bar.ShowWalk = v));
+        switchesWrap.Children.Add(AppearanceToggle(Loc.T("Đi bộ", "Walk"), bar.ShowWalk, v => bar.ShowWalk = v));
         switchesWrap.Children.Add(AppearanceToggle(Loc.T("Đường phân cách", "Divider"), bar.ShowDividers, v => bar.ShowDividers = v));
         col2.Children.Add(switchesWrap);
 
         // Quick action buttons
         var quickActions = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
-        var resetBtn = SecondaryButton("🏠 Reset View");
+        var resetBtn = SecondaryButton(Loc.T("🏠 Đặt lại góc nhìn", "🏠 Reset View"));
         resetBtn.Margin = new Thickness(0, 0, 6, 0);
         resetBtn.Click += (_, _) => { viewer.ResetView(); camera.FitToView(); UpdateCallout(Loc.T("Đã đặt lại góc nhìn mặc định.", "Default view restored.")); };
 
-        var extentsBtn = SecondaryButton("🔍 Zoom Extents");
+        var extentsBtn = SecondaryButton(Loc.T("🔍 Thu phóng toàn khung", "🔍 Zoom Extents"));
         extentsBtn.Margin = new Thickness(0, 0, 6, 0);
-        extentsBtn.Click += (_, _) => { viewer.Zoom = 0.95; UpdateCallout(Loc.T("Đã thu phóng toàn bộ mô hình (Zoom Extents).", "Zoomed to the whole model (Zoom Extents).")); };
+        extentsBtn.Click += (_, _) => { viewer.Zoom = 0.95; UpdateCallout(Loc.T("Đã thu phóng toàn bộ mô hình.", "Zoomed to the whole model (Zoom Extents).")); };
 
-        var isoBtn = SecondaryButton(Loc.T("📐 Góc nhìn ISO", "📐 ISO view"));
-        isoBtn.Click += (_, _) => { camera.SetOrientation(new Vector3D(0.85, -1.0, 0.65), isFinal: true); UpdateCallout(Loc.T("Đã chuyển sang góc phối cảnh Isometric.", "Switched to the isometric perspective view.")); };
+        var isoBtn = SecondaryButton(Loc.T("📐 Góc nhìn trục đo", "📐 ISO view"));
+        isoBtn.Click += (_, _) => { camera.SetOrientation(new Vector3D(0.85, -1.0, 0.65), isFinal: true); UpdateCallout(Loc.T("Đã chuyển sang góc phối cảnh trục đo.", "Switched to the isometric perspective view.")); };
 
         quickActions.Children.Add(resetBtn);
         quickActions.Children.Add(extentsBtn);
@@ -920,7 +929,7 @@ bar.ActiveToolChanged += (sender, e) =>
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Thanh điều hướng Viewport 3D (NavigationBar)", "3D viewport navigation bar (NavigationBar)"),
+            Loc.T("Thanh điều hướng khung nhìn 3D", "3D viewport navigation bar (NavigationBar)"),
             stageHost,
             xaml: xamlCode,
             csharp: csCode));
@@ -1022,7 +1031,7 @@ bar.ActiveToolChanged += (sender, e) =>
         hudPill.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
 
         var statusCallout = CreateCalloutCard(Loc.T(
-            "Sẵn sàng: Thay đổi các thông số trên ViewControlBar để cập nhật khung nhìn CAD trong thời gian thực.",
+            "Sẵn sàng: Thay đổi các thông số trên thanh thuộc tính để cập nhật khung nhìn CAD trong thời gian thực.",
             "Ready: change the settings on the ViewControlBar to update the CAD view live."));
 
         void UpdateCallout(string msg)
@@ -1069,7 +1078,7 @@ bar.ActiveToolChanged += (sender, e) =>
 
         bar.HideIsolateRequested += (_, _) =>
         {
-            UpdateCallout(Loc.T("Đã kích hoạt chế độ Ẩn/Cô lập đối tượng tạm thời (Temporary Hide/Isolate).",
+            UpdateCallout(Loc.T("Đã kích hoạt chế độ Ẩn/Cô lập đối tượng tạm thời.",
                 "Temporary Hide/Isolate mode is on."));
             ToastService.Info(Loc.T("Ẩn / Cô lập tạm thời", "Temporary hide / isolate"), "ViewControlBar");
         };
@@ -1101,7 +1110,7 @@ bar.ActiveToolChanged += (sender, e) =>
         var col1 = new StackPanel();
         var head1 = new TextBlock
         {
-            Text = Loc.T("KIỂU DÁNG & HÌNH HỌC (GEOMETRY & STYLE)", "GEOMETRY & STYLE"),
+            Text = Loc.T("KIỂU DÁNG & HÌNH HỌC", "GEOMETRY & STYLE"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 12)
@@ -1117,9 +1126,9 @@ bar.ActiveToolChanged += (sender, e) =>
             Width = 145,
             ItemsSource = new[]
             {
-                Loc.T("Floating (Nổi)", "Floating"),
-                Loc.T("Seamless (Phẳng)", "Seamless"),
-                Loc.T("Glass (Kính mờ)", "Glass")
+                Loc.T("Nổi", "Floating"),
+                Loc.T("Phẳng", "Seamless"),
+                Loc.T("Kính mờ", "Glass")
             },
             SelectedIndex = 2,
             Margin = new Thickness(0, 0, 16, 0)
@@ -1134,7 +1143,7 @@ bar.ActiveToolChanged += (sender, e) =>
         col1.Children.Add(variantRow);
 
         col1.Children.Add(AppearanceSlider(Loc.T("Cao điều khiển", "Control height"), 20, 40, bar.ControlHeight, 2, "0", v => bar.ControlHeight = v));
-        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ icon", "Icon size"), 10, 22, bar.IconSize, 1, "0", v => bar.IconSize = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ biểu tượng", "Icon size"), 10, 22, bar.IconSize, 1, "0", v => bar.IconSize = v));
         col1.Children.Add(AppearanceSlider(Loc.T("Bo góc", "Corner radius"), 0, 20, bar.CornerRadius.TopLeft, 1, "0", v => bar.CornerRadius = new CornerRadius(v)));
         col1.Children.Add(AppearanceSlider(Loc.T("Độ nổi", "Elevation"), 0, 4, bar.Elevation, 1, "0", v => bar.Elevation = (int)v));
 
@@ -1143,7 +1152,7 @@ bar.ActiveToolChanged += (sender, e) =>
         var scaleLbl = new TextBlock { Text = Loc.T("Thêm tỉ lệ:", "Add scale:"), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 0), Width = 65 };
         scaleLbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
         var scaleBox = new TextBox { Text = "1:75", Width = 75, Height = 28, Margin = new Thickness(0, 0, 8, 0), VerticalContentAlignment = VerticalAlignment.Center };
-        var addScaleBtn = SecondaryButton(Loc.T("Thêm vào list", "Add to list"));
+        var addScaleBtn = SecondaryButton(Loc.T("Thêm vào danh sách", "Add to list"));
         addScaleBtn.Height = 28;
         addScaleBtn.Padding = new Thickness(10, 2, 10, 2);
         addScaleBtn.Click += (_, _) =>
@@ -1169,7 +1178,7 @@ bar.ActiveToolChanged += (sender, e) =>
         var col2 = new StackPanel();
         var head2 = new TextBlock
         {
-            Text = Loc.T("NHÓM TÍNH NĂNG & TRẠNG THÁI (FEATURES & STATUS)", "FEATURES & STATUS"),
+            Text = Loc.T("NHÓM TÍNH NĂNG & TRẠNG THÁI", "FEATURES & STATUS"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 12)
@@ -1178,14 +1187,14 @@ bar.ActiveToolChanged += (sender, e) =>
         col2.Children.Add(head2);
 
         var switchesWrap = new WrapPanel { Margin = new Thickness(0, 0, 0, 12) };
-        switchesWrap.Children.Add(AppearanceToggle(Loc.T("Tỉ lệ (Scale)", "Scale"), bar.ShowScale, v => bar.ShowScale = v));
+        switchesWrap.Children.Add(AppearanceToggle(Loc.T("Tỉ lệ", "Scale"), bar.ShowScale, v => bar.ShowScale = v));
         switchesWrap.Children.Add(AppearanceToggle(Loc.T("Mức chi tiết", "Detail level"), bar.ShowDetailLevel, v => bar.ShowDetailLevel = v));
         switchesWrap.Children.Add(AppearanceToggle(Loc.T("Kiểu hiển thị", "Visual style"), bar.ShowVisualStyle, v => bar.ShowVisualStyle = v));
         switchesWrap.Children.Add(AppearanceToggle(Loc.T("Cụm công tắc", "Toggle cluster"), bar.ShowToggles, v => bar.ShowToggles = v));
         switchesWrap.Children.Add(AppearanceToggle(Loc.T("Ẩn / Cô lập", "Hide / isolate"), bar.ShowHideIsolate, v => bar.ShowHideIsolate = v));
         switchesWrap.Children.Add(AppearanceToggle(Loc.T("Đường phân cách", "Dividers"), bar.ShowDividers, v => bar.ShowDividers = v));
         switchesWrap.Children.Add(AppearanceToggle(Loc.T("Nhãn 'Ẩn'", "Hide caption"), false,
-                v => bar.HideIsolateCaption = v ? Loc.T("Ẩn", "Hide") : "Hide"));
+                v => bar.HideIsolateCaption = v ? Loc.T("Ẩn", "Hide") : Loc.T("Ẩn/Cô lập", "Hide")));
         col2.Children.Add(switchesWrap);
 
         col2.Children.Add(statusCallout);
@@ -1262,7 +1271,7 @@ bar.HideIsolateRequested += (sender, e) =>
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Thanh thuộc tính khung nhìn CAD (ViewControlBar)", "CAD view property bar (ViewControlBar)"),
+            Loc.T("Thanh thuộc tính khung nhìn CAD", "CAD view property bar (ViewControlBar)"),
             stageHost,
             xaml: xamlCode,
             csharp: csCode));
@@ -1429,7 +1438,7 @@ bar.HideIsolateRequested += (sender, e) =>
 
         var hudText = new TextBlock
         {
-            Text = Loc.T("[Tỷ lệ: 1:100] [Lưới: 500 mm] [Snap: Grid / Endpoint] [WCS]", "[Scale: 1:100] [Grid: 500 mm] [Snap: Grid / Endpoint] [WCS]"),
+            Text = Loc.T("[Tỷ lệ: 1:100] [Lưới: 500 mm] [Bắt điểm: Lưới / Điểm cuối] [Hệ tọa độ thế giới]", "[Scale: 1:100] [Grid: 500 mm] [Snap: Grid / Endpoint] [WCS]"),
             FontSize = 10.5,
             FontWeight = FontWeights.Medium
         };
@@ -1465,13 +1474,13 @@ bar.HideIsolateRequested += (sender, e) =>
 
         viewport.CursorMoved += (_, e) =>
         {
-            string snapStatus = e.IsSnapped ? Loc.T("BÁM ĐIỂM (SNAPPED)", "SNAPPED") : Loc.T("Tự do", "Free");
+            string snapStatus = e.IsSnapped ? Loc.T("ĐÃ BẮT ĐIỂM", "SNAPPED") : Loc.T("Tự do", "Free");
             UpdateCallout(Loc.T($"Tọa độ: X = {e.World.X:0.#} mm, Y = {e.World.Y:0.#} mm | Trạng thái: {snapStatus}", $"Coordinate: X = {e.World.X:0.#} mm, Y = {e.World.Y:0.#} mm | State: {snapStatus}"));
         };
 
         viewport.WorldClicked += (_, e) =>
         {
-            ToastService.Info(Loc.T($"Click tại: X = {e.World.X:0.#}, Y = {e.World.Y:0.#} mm", $"Clicked at: X = {e.World.X:0.#}, Y = {e.World.Y:0.#} mm"), "Viewport");
+            ToastService.Info(Loc.T($"Nhấp tại: X = {e.World.X:0.#}, Y = {e.World.Y:0.#} mm", $"Clicked at: X = {e.World.X:0.#}, Y = {e.World.Y:0.#} mm"), "Viewport");
         };
 
         // ---------------------------------------------------------------------
@@ -1486,7 +1495,7 @@ bar.HideIsolateRequested += (sender, e) =>
         var col1 = new StackPanel();
         var head1 = new TextBlock
         {
-            Text = Loc.T("LƯỚI & TRỤC TỌA ĐỘ (GRID & DATUM)", "GRID & DATUM"),
+            Text = Loc.T("LƯỚI & TRỤC TỌA ĐỘ", "GRID & DATUM"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 10)
@@ -1502,23 +1511,23 @@ bar.HideIsolateRequested += (sender, e) =>
         StackPanel? crosshairStylePanel = null;
 
         var gridToggles = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
-        gridToggles.Children.Add(AppearanceToggle(Loc.T("Hiện lưới (ShowGrid)", "Show grid (ShowGrid)"), viewport.ShowGrid, v =>
+        gridToggles.Children.Add(AppearanceToggle(Loc.T("Hiện lưới", "Show grid (ShowGrid)"), viewport.ShowGrid, v =>
         {
             viewport.ShowGrid = v;
             if (gridStylePanel is not null) gridStylePanel.IsEnabled = v;
         }));
-        gridToggles.Children.Add(AppearanceToggle(Loc.T("Trục tọa độ (ShowAxes)", "Axes (ShowAxes)"), viewport.ShowAxes, v =>
+        gridToggles.Children.Add(AppearanceToggle(Loc.T("Trục tọa độ", "Axes (ShowAxes)"), viewport.ShowAxes, v =>
         {
             viewport.ShowAxes = v;
             if (axisStylePanel is not null) axisStylePanel.IsEnabled = v;
         }));
-        gridToggles.Children.Add(AppearanceToggle(Loc.T("Gốc tọa độ (Origin)", "Origin marker (Origin)"), viewport.ShowOriginMarker, v => viewport.ShowOriginMarker = v));
-        gridToggles.Children.Add(AppearanceToggle(Loc.T("Tâm ngắm (ShowCrosshair)", "Crosshair (ShowCrosshair)"), viewport.ShowCrosshair, v =>
+        gridToggles.Children.Add(AppearanceToggle(Loc.T("Gốc tọa độ", "Origin marker (Origin)"), viewport.ShowOriginMarker, v => viewport.ShowOriginMarker = v));
+        gridToggles.Children.Add(AppearanceToggle(Loc.T("Tâm ngắm", "Crosshair (ShowCrosshair)"), viewport.ShowCrosshair, v =>
         {
             viewport.ShowCrosshair = v;
             if (crosshairStylePanel is not null) crosshairStylePanel.IsEnabled = v;
         }));
-        gridToggles.Children.Add(AppearanceToggle(Loc.T("Ô ngắm (Aperture)", "Aperture box (Aperture)"), viewport.ShowAperture, v => viewport.ShowAperture = v));
+        gridToggles.Children.Add(AppearanceToggle(Loc.T("Ô ngắm", "Aperture box (Aperture)"), viewport.ShowAperture, v => viewport.ShowAperture = v));
         col1.Children.Add(gridToggles);
 
         axisStylePanel = new StackPanel();
@@ -1528,7 +1537,7 @@ bar.HideIsolateRequested += (sender, e) =>
         // AxisBrush (màu), AxisDashStyle (nét đứt / nét liền) và AxisThickness (độ dày).
         var axisHead = new TextBlock
         {
-            Text = Loc.T("MÀU & NÉT TRỤC (AXIS STYLE)", "AXIS STYLE"),
+            Text = Loc.T("MÀU & NÉT TRỤC", "AXIS STYLE"),
             FontSize = 10.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 4, 0, 6)
@@ -1558,7 +1567,7 @@ bar.HideIsolateRequested += (sender, e) =>
             host.Children.Add(swatch);
         }
 
-        AddSwatch(axisSwatches, Color.FromRgb(0x8A, 0x8A, 0x8A), Loc.T("Xám — theo theme", "Grey — follow theme"), () =>
+        AddSwatch(axisSwatches, Color.FromRgb(0x8A, 0x8A, 0x8A), Loc.T("Xám — theo giao diện", "Grey — follow theme"), () =>
             viewport.SetResourceReference(ViewportControl.AxisBrushProperty, "CONCOST.Brush.TextSecondary"));
         AddSwatch(axisSwatches, Color.FromRgb(0xEF, 0x44, 0x44), Loc.T("Đỏ", "Red"), () =>
             viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)));
@@ -1568,7 +1577,7 @@ bar.HideIsolateRequested += (sender, e) =>
             viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0x16, 0xA3, 0x4A)));
         AddSwatch(axisSwatches, Color.FromRgb(0x93, 0x33, 0xEA), Loc.T("Tím", "Purple"), () =>
             viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0x93, 0x33, 0xEA)));
-        AddSwatch(axisSwatches, Color.FromRgb(0xFB, 0x92, 0x3C), "Cam", () =>
+        AddSwatch(axisSwatches, Color.FromRgb(0xFB, 0x92, 0x3C), Loc.T("Cam", "Amber"), () =>
             viewport.AxisBrush = new SolidColorBrush(Color.FromRgb(0xFB, 0x92, 0x3C)));
 
         axisStylePanel.Children.Add(axisSwatches);
@@ -1584,7 +1593,7 @@ bar.HideIsolateRequested += (sender, e) =>
         dashLabel.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
 
         var dashCombo = new ComboBox { Width = 150, Height = 28, MinHeight = 28, FontSize = 11.5 };
-        foreach (var caption in new[] { Loc.T("Nét đứt (Dash)", "Dash"), Loc.T("Nét liền (Solid)", "Solid"), Loc.T("Chấm (Dot)", "Dot"), Loc.T("Gạch-chấm (DashDot)", "Dash-dot") })
+        foreach (var caption in new[] { Loc.T("Nét đứt", "Dash"), Loc.T("Nét liền", "Solid"), Loc.T("Chấm", "Dot"), Loc.T("Gạch-chấm", "Dash-dot") })
             dashCombo.Items.Add(new ComboBoxItem { Content = caption });
 
         dashCombo.SelectedIndex = 0;
@@ -1603,16 +1612,16 @@ bar.HideIsolateRequested += (sender, e) =>
         dashRow.Children.Add(dashCombo);
         axisStylePanel.Children.Add(dashRow);
 
-        axisStylePanel.Children.Add(AppearanceSlider(Loc.T("Độ dày trục (AxisThickness)", "Axis thickness (AxisThickness)"), 0.5, 4, viewport.AxisThickness, 0.1, "{0:0.0}", v => viewport.AxisThickness = v));
+        axisStylePanel.Children.Add(AppearanceSlider(Loc.T("Độ dày trục", "Axis thickness (AxisThickness)"), 0.5, 4, viewport.AxisThickness, 0.1, "{0:0.0}", v => viewport.AxisThickness = v));
 
         axisStylePanel.IsEnabled = viewport.ShowAxes;
-        axisStylePanel.ToolTip = Loc.T("Bật “Trục tọa độ (ShowAxes)” để thấy thay đổi trên khung nhìn.", "Turn on “Axes (ShowAxes)” to see the change in the viewport.");
+        axisStylePanel.ToolTip = Loc.T("Bật “Trục tọa độ” để thấy thay đổi trên khung nhìn.", "Turn on “Axes (ShowAxes)” to see the change in the viewport.");
         col1.Children.Add(axisStylePanel);
 
         crosshairStylePanel = new StackPanel { Margin = new Thickness(0, 8, 0, 0) };
         var crosshairHead = new TextBlock
         {
-            Text = Loc.T("MÀU & NÉT TÂM NGẮM (CROSSHAIR STYLE)", "CROSSHAIR STYLE"),
+            Text = Loc.T("MÀU & NÉT TÂM NGẮM", "CROSSHAIR STYLE"),
             FontSize = 10.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 6)
@@ -1621,15 +1630,15 @@ bar.HideIsolateRequested += (sender, e) =>
         crosshairStylePanel.Children.Add(crosshairHead);
 
         var crosshairSwatches = new WrapPanel { Margin = new Thickness(0, 0, 0, 6) };
-        AddSwatch(crosshairSwatches, Color.FromRgb(0x8A, 0x8A, 0x8A), Loc.T("Xám — theo theme", "Grey — follow theme"), () =>
+        AddSwatch(crosshairSwatches, Color.FromRgb(0x8A, 0x8A, 0x8A), Loc.T("Xám — theo giao diện", "Grey — follow theme"), () =>
             viewport.ClearValue(ViewportControl.CrosshairBrushProperty));
         AddSwatch(crosshairSwatches, Color.FromRgb(0x25, 0x63, 0xEB), Loc.T("Xanh dương", "Blue"), () =>
             viewport.CrosshairBrush = new SolidColorBrush(Color.FromRgb(0x25, 0x63, 0xEB)));
         AddSwatch(crosshairSwatches, Color.FromRgb(0x16, 0xA3, 0x4A), Loc.T("Xanh lá", "Green"), () =>
             viewport.CrosshairBrush = new SolidColorBrush(Color.FromRgb(0x16, 0xA3, 0x4A)));
         crosshairStylePanel.Children.Add(crosshairSwatches);
-        crosshairStylePanel.Children.Add(AppearanceSlider(Loc.T("Độ dày (CrosshairThickness)", "Thickness (CrosshairThickness)"), 0.25, 3, viewport.CrosshairThickness, 0.25, "{0:0.00} px", v => viewport.CrosshairThickness = v));
-        crosshairStylePanel.Children.Add(AppearanceSlider(Loc.T("Chiều dài (CrosshairExtent)", "Extent (CrosshairExtent)"), 0.2, 1, viewport.CrosshairExtent, 0.1, "{0:0%}", v => viewport.CrosshairExtent = v));
+        crosshairStylePanel.Children.Add(AppearanceSlider(Loc.T("Độ dày", "Thickness (CrosshairThickness)"), 0.25, 3, viewport.CrosshairThickness, 0.25, "{0:0.00} px", v => viewport.CrosshairThickness = v));
+        crosshairStylePanel.Children.Add(AppearanceSlider(Loc.T("Chiều dài", "Extent (CrosshairExtent)"), 0.2, 1, viewport.CrosshairExtent, 0.1, "{0:0%}", v => viewport.CrosshairExtent = v));
 
         var crosshairDashRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 6) };
         var crosshairDashLabel = new TextBlock
@@ -1660,7 +1669,7 @@ bar.HideIsolateRequested += (sender, e) =>
         // Màu lưới: đặt cả nét mảnh lẫn nét đậm, nét đậm lấy cùng màu ở độ đậm cao hơn.
         var gridHead = new TextBlock
         {
-            Text = Loc.T("MÀU LƯỚI (GRID)", "GRID COLOUR"),
+            Text = Loc.T("MÀU LƯỚI", "GRID COLOUR"),
             FontSize = 10.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 6, 0, 6)
@@ -1678,7 +1687,7 @@ bar.HideIsolateRequested += (sender, e) =>
             viewport.GridMajorBrush = new SolidColorBrush(Color.FromArgb(majorAlpha, color.R, color.G, color.B));
         }
 
-        AddSwatch(gridSwatches, Color.FromRgb(0x8A, 0x8A, 0x8A), Loc.T("Xám — theo theme", "Grey — follow theme"), () =>
+        AddSwatch(gridSwatches, Color.FromRgb(0x8A, 0x8A, 0x8A), Loc.T("Xám — theo giao diện", "Grey — follow theme"), () =>
         {
             viewport.ClearValue(ViewportControl.GridBrushProperty);
             viewport.ClearValue(ViewportControl.GridMajorBrushProperty);
@@ -1689,13 +1698,13 @@ bar.HideIsolateRequested += (sender, e) =>
         AddSwatch(gridSwatches, Color.FromRgb(0xEF, 0x44, 0x44), Loc.T("Đỏ", "Red"), () => SetGrid(Color.FromRgb(0xEF, 0x44, 0x44), 0x28, 0x60));
 
         gridStylePanel.Children.Add(gridSwatches);
-        gridStylePanel.Children.Add(AppearanceSlider(Loc.T("Bước lưới (GridStep)", "Grid step (GridStep)"), 100, 2000, viewport.GridStep, 100, "{0:0} mm", v => { viewport.GridStep = v; hudText.Text = Loc.F("[Tỷ lệ: 1:100] [Lưới: {0:0} mm] [Snap: Grid / Endpoint] [WCS]", "[Scale: 1:100] [Grid: {0:0} mm] [Snap: Grid / Endpoint] [WCS]", v); }));
+        gridStylePanel.Children.Add(AppearanceSlider(Loc.T("Bước lưới", "Grid step (GridStep)"), 100, 2000, viewport.GridStep, 100, "{0:0} mm", v => { viewport.GridStep = v; hudText.Text = Loc.F("[Tỷ lệ: 1:100] [Lưới: {0:0} mm] [Bắt điểm: Lưới / Điểm cuối] [Hệ tọa độ thế giới]", "[Scale: 1:100] [Grid: {0:0} mm] [Snap: Grid / Endpoint] [WCS]", v); }));
         gridStylePanel.IsEnabled = viewport.ShowGrid;
-        gridStylePanel.ToolTip = Loc.T("Bật “Hiện lưới (ShowGrid)” để thấy thay đổi trên khung nhìn.", "Turn on “Show grid (ShowGrid)” to see the change in the viewport.");
+        gridStylePanel.ToolTip = Loc.T("Bật “Hiện lưới” để thấy thay đổi trên khung nhìn.", "Turn on “Show grid (ShowGrid)” to see the change in the viewport.");
         col1.Children.Add(gridStylePanel);
 
-        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ marker bắt điểm (SnapMarkerSize)", "Snap marker size (SnapMarkerSize)"), 4, 16, viewport.SnapMarkerSize, 1, "{0:0} px", v => viewport.SnapMarkerSize = v));
-        col1.Children.Add(AppearanceSlider(Loc.T("Độ mờ vùng chọn (SelectionOpacity)", "Selection opacity (SelectionOpacity)"), 0, 0.4, viewport.SelectionFillOpacity, 0.05, "{0:0.00}", v => viewport.SelectionFillOpacity = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ dấu bắt điểm", "Snap marker size (SnapMarkerSize)"), 4, 16, viewport.SnapMarkerSize, 1, "{0:0} px", v => viewport.SnapMarkerSize = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Độ mờ vùng chọn", "Selection opacity (SelectionOpacity)"), 0, 0.4, viewport.SelectionFillOpacity, 0.05, "{0:0.00}", v => viewport.SelectionFillOpacity = v));
 
         Grid.SetColumn(col1, 0);
         workbench.Children.Add(col1);
@@ -1704,7 +1713,7 @@ bar.HideIsolateRequested += (sender, e) =>
         var col2 = new StackPanel();
         var head2 = new TextBlock
         {
-            Text = Loc.T("BẮT ĐIỂM & THAO TÁC VIEWPORT (SNAPPING & ACTIONS)", "SNAPPING & ACTIONS"),
+            Text = Loc.T("BẮT ĐIỂM & THAO TÁC KHUNG NHÌN", "SNAPPING & ACTIONS"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 10)
@@ -1713,16 +1722,16 @@ bar.HideIsolateRequested += (sender, e) =>
         col2.Children.Add(head2);
 
         var snapToggles = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
-        snapToggles.Children.Add(AppearanceToggle(Loc.T("Bám lưới (SnapToGrid)", "Snap to grid (SnapToGrid)"), viewport.SnapToGrid, v => viewport.SnapToGrid = v));
-        snapToggles.Children.Add(AppearanceToggle(Loc.T("Hiện dấu bám (ShowSnapMarker)", "Show snap marker (ShowSnapMarker)"), viewport.ShowSnapMarker, v => viewport.ShowSnapMarker = v));
-        snapToggles.Children.Add(AppearanceToggle(Loc.T("Hiện nhãn bám (ShowSnapLabel)", "Show snap label (ShowSnapLabel)"), viewport.ShowSnapLabel, v => viewport.ShowSnapLabel = v));
+        snapToggles.Children.Add(AppearanceToggle(Loc.T("Bám lưới", "Snap to grid (SnapToGrid)"), viewport.SnapToGrid, v => viewport.SnapToGrid = v));
+        snapToggles.Children.Add(AppearanceToggle(Loc.T("Hiện dấu bám", "Show snap marker (ShowSnapMarker)"), viewport.ShowSnapMarker, v => viewport.ShowSnapMarker = v));
+        snapToggles.Children.Add(AppearanceToggle(Loc.T("Hiện nhãn bám", "Show snap label (ShowSnapLabel)"), viewport.ShowSnapLabel, v => viewport.ShowSnapLabel = v));
         col2.Children.Add(snapToggles);
 
         // Ô vuông cam trong khung nhìn chính là dấu bắt điểm (snap marker) — tô bằng
         // SnapMarkerBrush, mặc định lấy màu accent của theme. Đổi màu tại đây.
         var snapHead = new TextBlock
         {
-            Text = Loc.T("MÀU DẤU BẮT ĐIỂM (SNAP MARKER)", "SNAP MARKER COLOUR"),
+            Text = Loc.T("MÀU DẤU BẮT ĐIỂM", "SNAP MARKER COLOUR"),
             FontSize = 10.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 2, 0, 6)
@@ -1750,7 +1759,7 @@ bar.HideIsolateRequested += (sender, e) =>
             snapSwatches.Children.Add(swatch);
         }
 
-        AddSnapSwatch(Color.FromRgb(0xFB, 0x92, 0x3C), Loc.T("Cam — màu accent (mặc định)", "Amber — accent (default)"), () =>
+        AddSnapSwatch(Color.FromRgb(0xFB, 0x92, 0x3C), Loc.T("Cam — màu chủ đạo (mặc định)", "Amber — accent (default)"), () =>
             viewport.ClearValue(ViewportControl.SnapMarkerBrushProperty));
         AddSnapSwatch(Color.FromRgb(0x22, 0xC5, 0x5E), Loc.T("Xanh lá", "Green"), () =>
             viewport.SnapMarkerBrush = new SolidColorBrush(Color.FromRgb(0x22, 0xC5, 0x5E)));
@@ -1765,11 +1774,11 @@ bar.HideIsolateRequested += (sender, e) =>
 
         // Nút thao tác nhanh
         var actRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
-        var btnZoomExtents = SecondaryButton("Zoom Extents");
+        var btnZoomExtents = SecondaryButton(Loc.T("Thu phóng toàn khung", "Zoom Extents"));
         btnZoomExtents.Click += (_, _) =>
         {
             viewport.ZoomToFit(new Rect3D(0, 0, 0, 12000, 8000, 0));
-            UpdateCallout(Loc.T("Đã thu phóng toàn bộ bản vẽ (Zoom Extents: 12,000 × 8,000 mm).", "Zoomed to the whole drawing (Zoom Extents: 12,000 × 8,000 mm)."));
+            UpdateCallout(Loc.T("Đã thu phóng toàn bộ bản vẽ (12,000 × 8,000 mm).", "Zoomed to the whole drawing (Zoom Extents: 12,000 × 8,000 mm)."));
         };
 
         var btnToggleGrid = SecondaryButton(Loc.T("Bật/Tắt Lưới", "Toggle grid"));
@@ -1877,7 +1886,7 @@ viewport.CursorMoved += (s, e) =>
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Khung nhìn kỹ thuật CAD (ViewportControl)", "Technical CAD viewport (ViewportControl)"),
+            Loc.T("Khung nhìn kỹ thuật CAD", "Technical CAD viewport (ViewportControl)"),
             stageHost,
             xaml: xamlCode,
             csharp: csCode));
@@ -1896,7 +1905,7 @@ viewport.CursorMoved += (s, e) =>
 
         commandLine.AddCommands(new[]
         {
-            new CommandDefinition("LINE", Loc.T("Vẽ thanh liên tục (Polyline)", "Draw a continuous polyline")) { Prompt = "Specify first point" },
+            new CommandDefinition("LINE", Loc.T("Vẽ thanh liên tục", "Draw a continuous polyline")) { Prompt = "Specify first point" },
             new CommandDefinition("CIRCLE", Loc.T("Vẽ đường tròn kết cấu", "Draw a structural circle")).WithAliases("C"),
             new CommandDefinition("ZOOM", Loc.T("Phóng to / thu nhỏ khung nhìn", "Zoom the viewport in / out")).WithAliases("Z"),
             new CommandDefinition("SAVE", Loc.T("Lưu bản vẽ kết cấu CAD", "Save the CAD structural drawing")).WithAliases("QSAVE"),
@@ -1905,7 +1914,7 @@ viewport.CursorMoved += (s, e) =>
 
         // A command line that opens empty reads as a broken text field. Seed the banner a real
         // CAD shell prints before the first prompt.
-        commandLine.WriteLine(Loc.T("CONCOST CAD — Dòng lệnh kỹ thuật (AutoCAD-style)", "CONCOST CAD — technical command line (AutoCAD-style)"), CommandMessageKind.Hint);
+        commandLine.WriteLine(Loc.T("CONCOST CAD — Dòng lệnh kỹ thuật", "CONCOST CAD — technical command line (AutoCAD-style)"), CommandMessageKind.Hint);
         commandLine.WriteLine(Loc.T("Bản vẽ: Mat-bang-ket-cau-tang-1.dwg · Tỷ lệ 1:100 · Đơn vị: mm", "Drawing: Mat-bang-ket-cau-tang-1.dwg · scale 1:100 · units: mm"));
         commandLine.WriteLine(Loc.T("Nhập lệnh hoặc bấm LỆNH MẪU bên dưới · Tab: gợi ý · F2: mở rộng lịch sử", "Type a command or press a QUICK COMMAND below · Tab: suggestions · F2: expand history"));
 
@@ -2120,7 +2129,7 @@ viewport.CursorMoved += (s, e) =>
         var col1 = new StackPanel();
         var head1 = new TextBlock
         {
-            Text = Loc.T("KIỂU DÁNG VÀ LỊCH SỬ (GEOMETRY & HISTORY)", "GEOMETRY & HISTORY"),
+            Text = Loc.T("KIỂU DÁNG VÀ LỊCH SỬ", "GEOMETRY & HISTORY"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 10)
@@ -2134,7 +2143,7 @@ viewport.CursorMoved += (s, e) =>
         var variantCombo = new ComboBox
         {
             Width = 200,
-            ItemsSource = new[] { Loc.T("Docked (Đáy màn hình)", "Docked (bottom of screen)"), Loc.T("Inline (Phẳng)", "Inline (flat)"), Loc.T("Floating (Nổi)", "Floating") },
+            ItemsSource = new[] { Loc.T("Gắn đáy màn hình", "Docked (bottom of screen)"), Loc.T("Phẳng nội dòng", "Inline (flat)"), Loc.T("Nổi", "Floating") },
             SelectedIndex = 0,
             Margin = new Thickness(0, 0, 16, 0)
         };
@@ -2154,7 +2163,7 @@ viewport.CursorMoved += (s, e) =>
         var col2 = new StackPanel();
         var head2 = new TextBlock
         {
-            Text = Loc.T("LỆNH MẪU & TƯƠNG TÁC NHANH (QUICK COMMANDS)", "QUICK COMMANDS"),
+            Text = Loc.T("LỆNH MẪU & TƯƠNG TÁC NHANH", "QUICK COMMANDS"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 10)
@@ -2192,9 +2201,9 @@ viewport.CursorMoved += (s, e) =>
         col2.Children.Add(actRow);
 
         var cmdCallout = CreateCalloutCard(
-            Loc.T("HƯỚNG DẪN DÒNG LỆNH CAD (COMMAND LINE):\n", "CAD COMMAND LINE GUIDE:\n") +
+            Loc.T("HƯỚNG DẪN DÒNG LỆNH CAD:\n", "CAD COMMAND LINE GUIDE:\n") +
             Loc.T("• Gõ lệnh hoặc bấm nút nhanh ở trên: LINE, CIRCLE, ZOOM, SAVE, ERASE.\n", "• Type a command or press a quick button above: LINE, CIRCLE, ZOOM, SAVE, ERASE.\n") +
-            Loc.T("• Phím Tab: Tự động hoàn thành tên lệnh (Auto-completion).\n", "• Tab: command auto-completion.\n") +
+            Loc.T("• Phím Tab: Tự động hoàn thành tên lệnh.\n", "• Tab: command auto-completion.\n") +
             Loc.T("• Phím Mũi tên Lên / Xuống: Xem lại lịch sử các lệnh đã gõ.\n", "• Up / Down arrows: recall the commands you typed.\n") +
             Loc.T("• Phím F2: Phóng to / Thu gọn hộp thoại lịch sử dòng lệnh.", "• F2: expand / collapse the command history."));
         col2.Children.Add(cmdCallout);
@@ -2235,7 +2244,7 @@ commandLine.CommandInvoked += (s, e) =>
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Dòng lệnh CAD kỹ thuật (CommandLine)", "CAD command line (CommandLine)"),
+            Loc.T("Dòng lệnh CAD kỹ thuật", "CAD command line (CommandLine)"),
             stageHost,
             xaml: xamlCode,
             csharp: csCode));
@@ -2367,7 +2376,7 @@ commandLine.CommandInvoked += (s, e) =>
 
         // 1.5 HUD Overlay góc trên trái & UCS góc dưới trái
         var hudBadge = new Border { Background = new SolidColorBrush(Color.FromArgb(0x50, 0x00, 0x00, 0x00)), CornerRadius = new CornerRadius(4), Padding = new Thickness(8, 4, 8, 4), IsHitTestVisible = false };
-        hudBadge.Child = new TextBlock { Text = Loc.T("[Lệnh: PLINE (Vẽ đa tuyến)] [Chế độ: Dynamic Input (F12)] [Tỉ lệ: 1:100]", "[Command: PLINE (polyline)] [Mode: Dynamic Input (F12)] [Scale: 1:100]"), FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8)) };
+        hudBadge.Child = new TextBlock { Text = Loc.T("[Lệnh: Vẽ đa tuyến] [Chế độ: Nhập liệu động (F12)] [Tỉ lệ: 1:100]", "[Command: PLINE (polyline)] [Mode: Dynamic Input (F12)] [Scale: 1:100]"), FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8)) };
         Canvas.SetLeft(hudBadge, 12);
         Canvas.SetTop(hudBadge, 10);
         sheet.Children.Add(hudBadge);
@@ -2452,7 +2461,7 @@ commandLine.CommandInvoked += (s, e) =>
 
         // Cột 0: Kiểu dáng & Hình học
         var colStyle = new StackPanel { Margin = new Thickness(0, 0, 14, 0) };
-        colStyle.Children.Add(CadGroupHeader(Loc.T("KIỂU DÁNG & HÌNH HỌC (HUD APPEARANCE)", "APPEARANCE & GEOMETRY (HUD)")));
+        colStyle.Children.Add(CadGroupHeader(Loc.T("KIỂU DÁNG & HÌNH HỌC", "APPEARANCE & GEOMETRY (HUD)")));
 
         var comboRow = new Grid { Margin = new Thickness(0, 4, 0, 8) };
         comboRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -2463,7 +2472,7 @@ commandLine.CommandInvoked += (s, e) =>
         var variantCombo = new ComboBox
         {
             Height = 28,
-            ItemsSource = new[] { Loc.T("Floating (Nổi chuẩn CAD)", "Floating (CAD standard)"), Loc.T("Compact (Gọn 1 dòng)", "Compact (single line)"), Loc.T("Glass (Kính mờ kỹ thuật)", "Glass (technical frosted)") },
+            ItemsSource = new[] { Loc.T("Nổi chuẩn CAD", "Floating (CAD standard)"), Loc.T("Gọn 1 dòng", "Compact (single line)"), Loc.T("Kính mờ kỹ thuật", "Glass (technical frosted)") },
             SelectedIndex = 0
         };
         varStack.Children.Add(variantCombo);
@@ -2475,7 +2484,7 @@ commandLine.CommandInvoked += (s, e) =>
         var placeCombo = new ComboBox
         {
             Height = 28,
-            ItemsSource = new[] { Loc.T("Tự động (Auto-flip)", "Automatic (auto-flip)"), Loc.T("Bên phải (Right)", "Right"), Loc.T("Bên trái (Left)", "Left"), Loc.T("Phía trên (Above)", "Above") },
+            ItemsSource = new[] { Loc.T("Tự động lật", "Automatic (auto-flip)"), Loc.T("Bên phải", "Right"), Loc.T("Bên trái", "Left"), Loc.T("Phía trên", "Above") },
             SelectedIndex = 0
         };
         placeStack.Children.Add(placeCombo);
@@ -2483,16 +2492,16 @@ commandLine.CommandInvoked += (s, e) =>
         comboRow.Children.Add(placeStack);
         colStyle.Children.Add(comboRow);
 
-        colStyle.Children.Add(AppearanceSlider(Loc.T("Rộng ô (FieldWidth)", "Field width"), 90, 220, input.FieldWidth, 10, "{0:0} px", v => input.FieldWidth = v));
-        colStyle.Children.Add(AppearanceSlider(Loc.T("Bo góc (CornerRadius)", "Corner radius"), 0, 16, input.CornerRadius.TopLeft, 1, "{0:0} px", v => input.CornerRadius = new CornerRadius(v)));
-        colStyle.Children.Add(AppearanceSlider(Loc.T("Độ nổi bóng (Elevation)", "Elevation"), 0, 4, input.Elevation, 1, "{0:0}", v => input.Elevation = (int)v));
+        colStyle.Children.Add(AppearanceSlider(Loc.T("Rộng ô", "Field width"), 90, 220, input.FieldWidth, 10, "{0:0} px", v => input.FieldWidth = v));
+        colStyle.Children.Add(AppearanceSlider(Loc.T("Bo góc", "Corner radius"), 0, 16, input.CornerRadius.TopLeft, 1, "{0:0} px", v => input.CornerRadius = new CornerRadius(v)));
+        colStyle.Children.Add(AppearanceSlider(Loc.T("Độ nổi bóng", "Elevation"), 0, 4, input.Elevation, 1, "{0:0}", v => input.Elevation = (int)v));
 
         Grid.SetColumn(colStyle, 0);
         controlGrid.Children.Add(colStyle);
 
         // Cột 1: Tính năng nhập liệu & Chế độ bắt điểm
         var colFeatures = new StackPanel { Margin = new Thickness(14, 0, 0, 0) };
-        colFeatures.Children.Add(CadGroupHeader(Loc.T("TÍNH NĂNG NHẬP LIỆU & BẮT ĐIỂM (CAD DRAFTING MODES)", "INPUT & SNAP (CAD DRAFTING MODES)")));
+        colFeatures.Children.Add(CadGroupHeader(Loc.T("TÍNH NĂNG NHẬP LIỆU & BẮT ĐIỂM", "INPUT & SNAP (CAD DRAFTING MODES)")));
 
         var togglesWrap = new WrapPanel { Margin = new Thickness(0, 4, 0, 10) };
         togglesWrap.Children.Add(AppearanceToggle(Loc.T("Đơn vị (mm)", "Unit (mm)"), input.ShowUnit, v => input.ShowUnit = v));
@@ -2501,7 +2510,7 @@ commandLine.CommandInvoked += (s, e) =>
         colFeatures.Children.Add(togglesWrap);
 
         // Thẻ hiển thị trạng thái thời gian thực
-        var statusCard = CreateCalloutCard(Loc.T("Đang vẽ đoạn số 3: Chiều dài L = 3,200 mm | Góc nghiêng α = 22.8° | Gõ chiều dài rồi Enter để hoàn tất.", "Drawing segment 3: length L = 3,200 mm | angle α = 22.8° | type a length then press Enter."));
+        var statusCard = CreateCalloutCard(Loc.T("Đang vẽ đoạn số 3: Chiều dài L = 3,200 mm | Góc nghiêng α = 22.8° | Gõ chiều dài rồi nhấn phím xác nhận để hoàn tất.", "Drawing segment 3: length L = 3,200 mm | angle α = 22.8° | type a length then press Enter."));
         colFeatures.Children.Add(statusCard);
 
         void SetStatus(string message)
@@ -2522,7 +2531,7 @@ commandLine.CommandInvoked += (s, e) =>
 
         // Hàng nút thao tác nhanh
         var actRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 10, 0, 0) };
-        var btnEnter = SecondaryButton(Loc.T("✓ Vẽ đoạn (Enter)", "✓ Draw segment (Enter)"));
+        var btnEnter = SecondaryButton(Loc.T("✓ Vẽ đoạn", "✓ Draw segment (Enter)"));
         var btnSample3200 = SecondaryButton("3,200 mm");
         var btnSampleAngle = SecondaryButton(Loc.T("Góc 45°", "Angle 45°"));
         var btnReset = SecondaryButton(Loc.T("↺ Đặt lại bản vẽ", "↺ Reset drawing"));
@@ -2643,7 +2652,7 @@ commandLine.CommandInvoked += (s, e) =>
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Hộp nhập liệu con trỏ kỹ thuật CAD (DynamicInput)", "CAD dynamic input (DynamicInput)"),
+            Loc.T("Hộp nhập liệu con trỏ kỹ thuật CAD", "CAD dynamic input (DynamicInput)"),
             content,
             xaml: @"<ui:ViewportControl x:Name=""Viewport"">
     <ui:ViewportControl.Overlay>
@@ -2740,7 +2749,7 @@ LiveInput.ValueCommitted += (_, e) =>
         };
 
         var statusCallout = CreateCalloutCard(Loc.T(
-            "Sẵn sàng: Bấm các công tắc trên thanh CAD StatusBar để xem phản hồi trạng thái thời gian thực.",
+            "Sẵn sàng: Bấm các công tắc trên thanh trạng thái CAD để xem phản hồi thời gian thực.",
             "Ready: press the toggles on the CAD StatusBar to see live state feedback."));
 
         void UpdateCallout(string msg)
@@ -2753,7 +2762,7 @@ LiveInput.ValueCommitted += (_, e) =>
         }
 
         bar.ToggleChanged += (_, e) => UpdateCallout(Loc.F("Công tắc: {0} = {1}", "Toggle: {0} = {1}",
-            e.Toggle, e.IsEnabled ? Loc.T("BẬT (ON)", "ON") : Loc.T("TẮT (OFF)", "OFF")));
+            e.Toggle, e.IsEnabled ? Loc.T("BẬT", "ON") : Loc.T("TẮT", "OFF")));
         bar.WorkPlaneChanged += (_, _) =>
             UpdateCallout(Loc.F("Mặt phẳng làm việc UCS: {0}", "UCS work plane: {0}", bar.WorkPlane));
         bar.NotificationSelected += (_, note) =>
@@ -2830,7 +2839,7 @@ LiveInput.ValueCommitted += (_, e) =>
         };
         cadWatermark.Children.Add(new TextBlock
         {
-            Text = "CAD DRAWING VIEWPORT (2D/3D)",
+            Text = Loc.T("KHUNG VẼ BẢN VẼ CAD (2D/3D)", "CAD DRAWING VIEWPORT (2D/3D)"),
             FontSize = 13,
             FontWeight = FontWeights.Bold,
             Foreground = new SolidColorBrush(Color.FromArgb(160, 148, 163, 184)),
@@ -2875,7 +2884,7 @@ LiveInput.ValueCommitted += (_, e) =>
         var col1 = new StackPanel();
         var head1 = new TextBlock
         {
-            Text = Loc.T("KIỂU DÁNG VÀ HÌNH HỌC (GEOMETRY & STYLE)", "GEOMETRY & STYLE"),
+            Text = Loc.T("KIỂU DÁNG VÀ HÌNH HỌC", "GEOMETRY & STYLE"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 12)
@@ -2891,9 +2900,9 @@ LiveInput.ValueCommitted += (_, e) =>
             Width = 145,
             ItemsSource = new[]
             {
-                Loc.T("Floating (Nổi)", "Floating"),
-                Loc.T("Seamless (Phẳng)", "Seamless"),
-                Loc.T("Glass (Kính mờ)", "Glass")
+                Loc.T("Nổi", "Floating"),
+                Loc.T("Phẳng", "Seamless"),
+                Loc.T("Kính mờ", "Glass")
             },
             SelectedIndex = 0,
             Margin = new Thickness(0, 0, 16, 0)
@@ -2901,14 +2910,14 @@ LiveInput.ValueCommitted += (_, e) =>
         variantCombo.SelectionChanged += (_, _) =>
         {
             bar.Variant = (CadStatusBarVariant)Math.Max(0, variantCombo.SelectedIndex);
-            UpdateCallout(Loc.F("Đổi kiểu hiển thị CadStatusBar sang: {0}", "Switched the CadStatusBar style to {0}", bar.Variant));
+            UpdateCallout(Loc.F("Đổi kiểu hiển thị thanh trạng thái sang: {0}", "Switched the CadStatusBar style to {0}", bar.Variant));
         };
         variantRow.Children.Add(varLbl);
         variantRow.Children.Add(variantCombo);
         col1.Children.Add(variantRow);
 
         col1.Children.Add(AppearanceSlider(Loc.T("Cao nút", "Button height"), 20, 36, bar.ControlHeight, 2, "0", v => bar.ControlHeight = v));
-        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ icon", "Icon size"), 10, 20, bar.IconSize, 1, "0", v => bar.IconSize = v));
+        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ biểu tượng", "Icon size"), 10, 20, bar.IconSize, 1, "0", v => bar.IconSize = v));
         col1.Children.Add(AppearanceSlider(Loc.T("Bo góc", "Corner radius"), 0, 16, bar.CornerRadius.TopLeft, 1, "0", v => bar.CornerRadius = new CornerRadius(v)));
         col1.Children.Add(AppearanceSlider(Loc.T("Độ nổi", "Elevation"), 0, 4, bar.Elevation, 1, "0", v => bar.Elevation = (int)v));
 
@@ -2919,7 +2928,7 @@ LiveInput.ValueCommitted += (_, e) =>
         var col2 = new StackPanel();
         var head2 = new TextBlock
         {
-            Text = Loc.T("TÍNH NĂNG VÀ TRẠNG THÁI HOẠT ĐỘNG (FEATURES & STATUS)", "FEATURES & STATUS"),
+            Text = Loc.T("TÍNH NĂNG VÀ TRẠNG THÁI HOẠT ĐỘNG", "FEATURES & STATUS"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 12)
@@ -2929,9 +2938,9 @@ LiveInput.ValueCommitted += (_, e) =>
 
         var switches = new WrapPanel { Margin = new Thickness(0, 0, 0, 10) };
         switches.Children.Add(AppearanceToggle(Loc.T("Tóm tắt chọn", "Selection summary"), bar.ShowSelection, v => bar.ShowSelection = v));
-        switches.Children.Add(AppearanceToggle(Loc.T("Mặt phẳng UCS", "UCS work plane"), bar.ShowWorkPlane, v => bar.ShowWorkPlane = v));
+        switches.Children.Add(AppearanceToggle(Loc.T("Mặt phẳng tọa độ", "UCS work plane"), bar.ShowWorkPlane, v => bar.ShowWorkPlane = v));
         switches.Children.Add(AppearanceToggle(Loc.T("Cụm công tắc", "Toggle cluster"), bar.ShowToggles, v => bar.ShowToggles = v));
-        switches.Children.Add(AppearanceToggle(Loc.T("Nhãn SNAP/ORTHO", "SNAP/ORTHO labels"), bar.ShowToggleLabels, v => bar.ShowToggleLabels = v));
+        switches.Children.Add(AppearanceToggle(Loc.T("Nhãn công tắc", "SNAP/ORTHO labels"), bar.ShowToggleLabels, v => bar.ShowToggleLabels = v));
         switches.Children.Add(AppearanceToggle(Loc.T("Tác vụ nền", "Background tasks"), bar.ShowTaskQueue, v => bar.ShowTaskQueue = v));
         switches.Children.Add(AppearanceToggle(Loc.T("Thông báo", "Notifications"), bar.ShowNotifications, v => bar.ShowNotifications = v));
         switches.Children.Add(AppearanceToggle(Loc.T("Toạ độ", "Coordinates"), bar.ShowCoordinates, v => bar.ShowCoordinates = v));
@@ -2959,7 +2968,7 @@ LiveInput.ValueCommitted += (_, e) =>
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            "Thanh trang thai CAD (CadStatusBar)",
+            Loc.T("Thanh trạng thái CAD", "CAD status bar (CadStatusBar)"),
             stageHost,
             xaml: @"<ui:CadStatusBar Variant=""Floating""
                  ControlHeight=""26"" IconSize=""13""
@@ -2996,32 +3005,32 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
     private static void FillProjectTree(ProjectBrowser browser)
     {
         var project = browser.AddRoot(
-            Loc.T("Landmark Tower 2026 (45 tầng)", "Landmark Tower 2026 (45 floors)"), ProjectNodeKind.Project);
+            Loc.T("Tháp Landmark 2026 (45 tầng)", "Landmark Tower 2026 (45 floors)"), ProjectNodeKind.Project);
 
-        var views = project.Add(Loc.T("Mặt Bằng & Khung Nhìn (Views)", "Plans & views"), ProjectNodeKind.Folder);
+        var views = project.Add(Loc.T("Mặt Bằng & Khung Nhìn", "Plans & views"), ProjectNodeKind.Folder);
         views.Add(Loc.T("Mặt Bằng Tầng 1 (+0.000)", "Level 1 Plan (+0.000)"), ProjectNodeKind.View).IsModified = true;
         views.Add(Loc.T("Mặt Bằng Tầng 2 (+3.600)", "Level 2 Plan (+3.600)"), ProjectNodeKind.View);
         views.Add(Loc.T("Mặt Bằng Tầng 18 (+64.800)", "Level 18 Plan (+64.800)"), ProjectNodeKind.View);
-        views.Add(Loc.T("Mặt Đứng Trục 1-12 (South)", "Grid 1-12 Elevation (South)"), ProjectNodeKind.View);
+        views.Add(Loc.T("Mặt Đứng Trục 1-12 (Hướng Nam)", "Grid 1-12 Elevation (South)"), ProjectNodeKind.View);
         views.Add(Loc.T("Mặt Cắt Điển Hình A-A", "Typical Section A-A"), ProjectNodeKind.View);
-        views.Add(Loc.T("Khung Không Gian 3D Central", "Central 3D Space Frame"), ProjectNodeKind.View);
+        views.Add(Loc.T("Khung Không Gian 3D Trung Tâm", "Central 3D Space Frame"), ProjectNodeKind.View);
 
-        var sheets = project.Add(Loc.T("Tập Bản Vẽ Phát Hành (Sheets)", "Issued sheets"), ProjectNodeKind.Sheet);
+        var sheets = project.Add(Loc.T("Tập Bản Vẽ Phát Hành", "Issued sheets"), ProjectNodeKind.Sheet);
         sheets.Add(Loc.T("KT-01: Mặt Bằng Tổng Thể 1:500", "A-01: General Arrangement Plan 1:500"), ProjectNodeKind.Sheet);
         sheets.Add(Loc.T("KC-18: Mặt Bằng Kết Cấu Tầng 18 1:100", "S-18: Level 18 Structural Plan 1:100"), ProjectNodeKind.Sheet);
         sheets.Add(Loc.T("MEP-06: Sơ Đồ Cấp Thoát Nước", "MEP-06: Water Supply & Drainage Diagram"), ProjectNodeKind.Sheet);
 
-        var schedules = project.Add(Loc.T("Bảng Thống Kê & Dự Toán (Schedules)", "Schedules & quantities"), ProjectNodeKind.Schedule);
+        var schedules = project.Add(Loc.T("Bảng Thống Kê & Dự Toán", "Schedules & quantities"), ProjectNodeKind.Schedule);
         schedules.Add(Loc.T("Tiên Lượng Bê Tông Cốt Thép Tầng 18", "Level 18 Concrete & Rebar Quantities"), ProjectNodeKind.Schedule);
         schedules.Add(Loc.T("Bảng Dự Toán Chi Phí Gói Thầu Kết Cấu", "Structural Package Cost Estimate"), ProjectNodeKind.Schedule);
         schedules.Add(Loc.T("Thống Kê Khối Lượng Thép Hình SS400", "SS400 Structural Steel Take-off"), ProjectNodeKind.Schedule);
 
-        var families = project.Add(Loc.T("Thư Viện Cấu Kiện BIM (Families)", "BIM families"), ProjectNodeKind.Family);
+        var families = project.Add(Loc.T("Thư Viện Cấu Kiện BIM", "BIM families"), ProjectNodeKind.Family);
         families.Add(Loc.T("Cột Bê Tông Cốt Thép C600x600", "RC Column C600x600"), ProjectNodeKind.Family);
         families.Add(Loc.T("Dầm Bê Tông B30 D300x600", "RC Beam B30 D300x600"), ProjectNodeKind.FamilySymbol);
         families.Add(Loc.T("Cửa Đi 2 Cánh Kính Thủy Lực D-0912", "Double-Leaf Hydraulic Glass Door D-0912"), ProjectNodeKind.FamilySymbol);
 
-        var levels = project.Add(Loc.T("Cao Độ & Lưới Trục (Levels)", "Levels & grid"), ProjectNodeKind.Level);
+        var levels = project.Add(Loc.T("Cao Độ & Lưới Trục", "Levels & grid"), ProjectNodeKind.Level);
         levels.Add(Loc.T("Cao Độ Tầng Hầm B1 (-3.600)", "Basement B1 Level (-3.600)"), ProjectNodeKind.Level);
         levels.Add(Loc.T("Cao Độ Tầng Trệt L1 (+0.000)", "Ground Floor L1 Level (+0.000)"), ProjectNodeKind.Level);
         levels.Add(Loc.T("Cao Độ Tầng Điển Hình L18 (+64.800)", "Typical Floor L18 Level (+64.800)"), ProjectNodeKind.Level);
@@ -3052,7 +3061,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
             HorizontalAlignment = HorizontalAlignment.Stretch,
             Height = 420,
             Variant = ProjectBrowserVariant.Card,
-            SearchPlaceholder = Loc.T("Tìm view, sheet, family…", "Find a view, sheet, family…"),
+            SearchPlaceholder = Loc.T("Tìm khung nhìn, bản vẽ, cấu kiện…", "Find a view, sheet, family…"),
             AllKindsCaption = Loc.T("Mọi loại", "All types"),
             SortCaptions = new[] { Loc.T("Tên A→Z", "Name A→Z"), Loc.T("Tên Z→A", "Name Z→A"), Loc.T("Theo loại", "By type") },
             EmptyText = Loc.T("Không có mục nào khớp bộ lọc.", "No items match the filter."),
@@ -3063,7 +3072,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
         browser.ExpandAll();
 
         var readout = CadHint(Loc.T(
-            "Mở một view bằng cách bấm đúp; chuột phải để Rename / Duplicate / Delete.",
+            "Mở một khung nhìn bằng cách nhấp đúp; nhấp chuột phải để Đổi tên / Nhân bản / Xóa.",
             "Double-click to open a view; right-click to Rename / Duplicate / Delete."));
 
         browser.OpenRequested += (_, e) =>
@@ -3072,7 +3081,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
             ToastService.Info(Loc.F("Mở {0}", "Open {0}", e.Node.Name), "Project Browser");
         };
 
-        browser.DeleteRequested += (_, e) => readout.Text = Loc.F("Xoá {0} (host quyết định)", "Delete {0} (the host decides)", e.Node.Name);
+        browser.DeleteRequested += (_, e) => readout.Text = Loc.F("Xoá {0} (ứng dụng chủ quyết định)", "Delete {0} (the host decides)", e.Node.Name);
 
         browser.SelectionChanged += (_, _) => readout.Text = Loc.F("Đang chọn: {0}", "Selected: {0}", browser.SelectedNode?.Name ?? Loc.T("(không)", "(none)"));
 
@@ -3095,7 +3104,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
             Height = 27,
             MinHeight = 0,
             Margin = new Thickness(0, 0, 0, 10),
-            ItemsSource = new[] { Loc.T("Card — browser tự vẽ viền", "Card — the browser draws its own border"), Loc.T("Seamless — palette vẽ viền", "Seamless — the palette draws the border"), Loc.T("Floating — nổi trên bản vẽ", "Floating — lifts above the drawing") },
+            ItemsSource = new[] { Loc.T("Thẻ — tự vẽ viền", "Card — the browser draws its own border"), Loc.T("Phẳng — bảng vẽ viền", "Seamless — the palette draws the border"), Loc.T("Nổi — nổi trên bản vẽ", "Floating — lifts above the drawing") },
             SelectedIndex = 0
         };
 
@@ -3125,7 +3134,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
             Margin = new Thickness(0, 0, 0, 10),
             ItemsSource = new[]
             {
-                Loc.T("Cây hiện đại — pill bo tròn, chevron", "Modern tree — rounded pill, chevron"),
+                Loc.T("Cây hiện đại — bo tròn, mũi tên gập", "Modern tree — rounded pill, chevron"),
                 Loc.T("Cây cổ điển — kiểu Revit, ô +/−", "Classic tree — the Revit boxed +/−")
             },
             SelectedIndex = 0
@@ -3158,7 +3167,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
         panel.Children.Add(chromeToggles);
         var sliders = new StackPanel();
         sliders.Children.Add(AppearanceSlider(Loc.T("Cao nút", "Button height"), 18, 34, 24, 1, "{0:0} px", value => browser.ControlHeight = value));
-        sliders.Children.Add(AppearanceSlider(Loc.T("Cỡ icon", "Icon size"), 10, 18, 13, 1, "{0:0} px", value => browser.IconSize = value));
+        sliders.Children.Add(AppearanceSlider(Loc.T("Cỡ biểu tượng", "Icon size"), 10, 18, 13, 1, "{0:0} px", value => browser.IconSize = value));
         sliders.Children.Add(AppearanceSlider(Loc.T("Bo góc", "Corner radius"), 0, 14, 8, 1, "{0:0} px", value => browser.CornerRadius = new CornerRadius(value)));
         sliders.Children.Add(AppearanceSlider(Loc.T("Độ nổi", "Elevation"), 0, 4, 0, 1, "{0:0}", value => browser.Elevation = (int)Math.Round(value)));
 
@@ -3382,7 +3391,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
         {
             Width = 160,
             Height = 28,
-            ItemsSource = new[] { Loc.T("Single (Đơn lẻ)", "Single"), Loc.T("Vertical (Chia dọc)", "Vertical split"), Loc.T("Horizontal (Chia ngang)", "Horizontal split"), Loc.T("Grid (Lưới 2x2)", "2x2 grid") },
+            ItemsSource = new[] { Loc.T("Đơn lẻ", "Single"), Loc.T("Chia dọc", "Vertical split"), Loc.T("Chia ngang", "Horizontal split"), Loc.T("Lưới 2x2", "2x2 grid") },
             SelectedIndex = 0
         };
 
@@ -3399,7 +3408,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
         dirty.Click += (_, _) =>
         {
             foreach (var pane in workspace.Documents) pane.IsDirty = true;
-            readout.Text = Loc.T("Tất cả cửa sổ đang ở trạng thái chưa lưu (*) — Thử đóng tab để kiểm tra chặn đóng an toàn.", "Every window has unsaved changes (*) — try closing a tab to see the safe-close guard.");
+            readout.Text = Loc.T("Tất cả cửa sổ đang ở trạng thái chưa lưu (*) — Thử đóng thẻ để kiểm tra chặn đóng an toàn.", "Every window has unsaved changes (*) — try closing a tab to see the safe-close guard.");
         };
 
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 10, 0, 0) };
@@ -3414,7 +3423,7 @@ bar.Notify(new CadNotification(""Ban ve da luu"", ""Level18.rvt"", CadNotificati
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Vùng cửa sổ tài liệu CAD/BIM đa khung (DocumentWorkspace)", "Multi-frame CAD/BIM document workspace (DocumentWorkspace)"),
+            Loc.T("Vùng cửa sổ tài liệu CAD/BIM đa khung", "Multi-frame CAD/BIM document workspace (DocumentWorkspace)"),
             content,
             xaml: @"<ui:DocumentWorkspace x:Name=""Workspace"" Height=""350""
                       DocumentClosing=""OnDocumentClosing"" />",
@@ -3559,7 +3568,7 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
             botRebar.Y2 = 60 + newH - 8;
         };
 
-        var undoButton = SecondaryButton(Loc.T("Hoàn tác (Undo)", "Undo"));
+        var undoButton = SecondaryButton(Loc.T("Hoàn tác", "Undo"));
         undoButton.Click += (_, _) =>
         {
             undo.Undo();
@@ -3583,7 +3592,7 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Bảng thuộc tính kỹ thuật CAD & BIM (PropertiesPalette)", "CAD & BIM technical property palette (PropertiesPalette)"),
+            Loc.T("Bảng thuộc tính kỹ thuật CAD & BIM", "CAD & BIM technical property palette (PropertiesPalette)"),
             content,
             xaml: @"<ui:PropertiesPalette x:Name=""Palette"" Height=""340""
                        PropertyCommitted=""OnPropertyCommitted"" />",
@@ -3609,8 +3618,8 @@ palette.Build(beam);")));
         // ---------------------------------------------------------------------
         var titleBar = new ApplicationTitleBar
         {
-            ApplicationName = "CONCOST BIM Suite 2026",
-            DocumentTitle = Loc.T("Landmark Tower — Mặt Bằng Kết Cấu Tầng 18", "Landmark Tower — Level 18 Structural Plan"),
+            ApplicationName = "CONCOST BIM 2026",
+            DocumentTitle = Loc.T("Tháp Landmark — Mặt Bằng Kết Cấu Tầng 18", "Landmark Tower — Level 18 Structural Plan"),
             Subtitle = "RVT v2026.2",
             IsDocumentModified = false,
             ShowQuickAccess = true,
@@ -3667,7 +3676,7 @@ palette.Build(beam);")));
         };
 
         var ribbonTabs = new StackPanel { Orientation = Orientation.Horizontal };
-        string[] tabs = { Loc.T("Tệp (File)", "File"), Loc.T("Kiến Trúc", "Architecture"), Loc.T("Kết Cấu", "Structure"), Loc.T("Hệ Thống MEP", "MEP Systems"), Loc.T("Khối Lượng & Chi Phí", "Quantities & Cost"), Loc.T("Phân Tích Tải Trọng", "Load Analysis"), Loc.T("Cài Đặt", "Settings") };
+        string[] tabs = { Loc.T("Tệp", "File"), Loc.T("Kiến Trúc", "Architecture"), Loc.T("Kết Cấu", "Structure"), Loc.T("Hệ Thống MEP", "MEP Systems"), Loc.T("Khối Lượng & Chi Phí", "Quantities & Cost"), Loc.T("Phân Tích Tải Trọng", "Load Analysis"), Loc.T("Cài Đặt", "Settings") };
         for (int i = 0; i < tabs.Length; i++)
         {
             var tabBtn = new Border
@@ -3764,7 +3773,7 @@ palette.Build(beam);")));
         var hudBadge1 = new Border { Background = new SolidColorBrush(Color.FromArgb(0x30, 0x00, 0x00, 0x00)), CornerRadius = new CornerRadius(4), Padding = new Thickness(6, 2, 6, 2), Margin = new Thickness(0, 0, 6, 0) };
         hudBadge1.Child = new TextBlock { Text = Loc.T("[Mặt Bằng Tầng 18]", "[Level 18 Plan]"), FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8)) };
         var hudBadge2 = new Border { Background = new SolidColorBrush(Color.FromArgb(0x30, 0x00, 0x00, 0x00)), CornerRadius = new CornerRadius(4), Padding = new Thickness(6, 2, 6, 2) };
-        hudBadge2.Child = new TextBlock { Text = Loc.T("[Tỉ Lệ 1:100 | Wireframe BIM]", "[Scale 1:100 | BIM Wireframe]"), FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)) };
+        hudBadge2.Child = new TextBlock { Text = Loc.T("[Tỉ Lệ 1:100 | Khung dây BIM]", "[Scale 1:100 | BIM Wireframe]"), FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)) };
         hudLeft.Children.Add(hudBadge1);
         hudLeft.Children.Add(hudBadge2);
         viewportGrid.Children.Add(hudLeft);
@@ -3772,7 +3781,7 @@ palette.Build(beam);")));
         // 2.3 Status Badge (Góc dưới phải)
         var docStatus = new TextBlock
         {
-            Text = Loc.T("Trạng thái: Đã đồng bộ với Central Server", "Status: synced with the Central Server"),
+            Text = Loc.T("Trạng thái: Đã đồng bộ với máy chủ trung tâm", "Status: synced with the Central Server"),
             FontSize = 10,
             Foreground = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99)),
             HorizontalAlignment = HorizontalAlignment.Right,
@@ -3817,12 +3826,12 @@ palette.Build(beam);")));
             isMaximizedState = !isMaximizedState;
             titleBar.IsMaximized = isMaximizedState;
             windowMockup.Height = isMaximizedState ? 380 : 280;
-            ToastService.Info(isMaximizedState ? Loc.T("Cửa sổ: Phóng to tối đa (Maximized)", "Window: maximised") : Loc.T("Cửa sổ: Phục hồi kích thước chuẩn (Restored)", "Window: restored to normal size"), "ApplicationTitleBar");
+            ToastService.Info(isMaximizedState ? Loc.T("Cửa sổ: Phóng to tối đa", "Window: maximised") : Loc.T("Cửa sổ: Phục hồi kích thước chuẩn", "Window: restored to normal size"), "ApplicationTitleBar");
         };
 
         titleBar.MinimizeRequested += (_, _) =>
         {
-            ToastService.Info(Loc.T("Cửa sổ: Thu nhỏ xuống Taskbar", "Window: minimised to the taskbar"), "ApplicationTitleBar");
+            ToastService.Info(Loc.T("Cửa sổ: Thu nhỏ xuống thanh tác vụ", "Window: minimised to the taskbar"), "ApplicationTitleBar");
         };
 
         titleBar.CloseRequested += (_, _) =>
@@ -3847,7 +3856,7 @@ palette.Build(beam);")));
 
         // Document Title TextBox
         var docBoxStack = new StackPanel { Margin = new Thickness(0, 0, 8, 0) };
-        docBoxStack.Children.Add(CadHint(Loc.T("Tên tài liệu / Bản vẽ (DocumentTitle):", "Document / drawing name (DocumentTitle):")));
+        docBoxStack.Children.Add(CadHint(Loc.T("Tên tài liệu / Bản vẽ:", "Document / drawing name (DocumentTitle):")));
         var docTextBox = new TextBox { Text = titleBar.DocumentTitle, Height = 28, Margin = new Thickness(0, 4, 0, 0) };
         docTextBox.TextChanged += (_, _) =>
         {
@@ -3862,7 +3871,7 @@ palette.Build(beam);")));
 
         // Application Name TextBox
         var appBoxStack = new StackPanel { Margin = new Thickness(4, 0, 4, 0) };
-        appBoxStack.Children.Add(CadHint(Loc.T("Tên phần mềm (ApplicationName):", "Application name (ApplicationName):")));
+        appBoxStack.Children.Add(CadHint(Loc.T("Tên phần mềm:", "Application name (ApplicationName):")));
         var appTextBox = new TextBox { Text = titleBar.ApplicationName, Height = 28, Margin = new Thickness(0, 4, 0, 0) };
         appTextBox.TextChanged += (_, _) =>
         {
@@ -3875,7 +3884,7 @@ palette.Build(beam);")));
 
         // User Account TextBox
         var userBoxStack = new StackPanel { Margin = new Thickness(8, 0, 0, 0) };
-        userBoxStack.Children.Add(CadHint(Loc.T("Tài khoản người dùng (UserAccountName):", "User account (UserAccountName):")));
+        userBoxStack.Children.Add(CadHint(Loc.T("Tài khoản người dùng:", "User account (UserAccountName):")));
         var userTextBox = new TextBox { Text = titleBar.UserAccountName, Height = 28, Margin = new Thickness(0, 4, 0, 0) };
         userTextBox.TextChanged += (_, _) => titleBar.UserAccountName = userTextBox.Text;
         userBoxStack.Children.Add(userTextBox);
@@ -3884,18 +3893,18 @@ palette.Build(beam);")));
 
         // Toggles
         var switches = new WrapPanel { Margin = new Thickness(0, 4, 0, 10) };
-        switches.Children.Add(AppearanceToggle(Loc.T("Chưa lưu bản vẽ (Modified *)", "Unsaved drawing (Modified *)"), titleBar.IsDocumentModified, v =>
+        switches.Children.Add(AppearanceToggle(Loc.T("Chưa lưu bản vẽ (*)", "Unsaved drawing (Modified *)"), titleBar.IsDocumentModified, v =>
         {
             titleBar.IsDocumentModified = v;
             docStatus.Text = Loc.F("{0} — Trạng thái: {1}", "{0} — Status: {1}", titleBar.DocumentTitle,
         v ? Loc.T("⚠️ Có thay đổi chưa lưu (*)", "⚠️ Unsaved changes (*)") : Loc.T("Đã đồng bộ", "Synced"));
             readout.Text = Loc.F("Tiêu đề hiện tại: {0}", "Current title: {0}", ApplicationTitleBar.ComposeTitle(titleBar.DocumentTitle, v, titleBar.ApplicationName));
         }));
-        switches.Children.Add(AppearanceToggle(Loc.T("Hiện nút cửa sổ (WindowButtons)", "Window buttons (WindowButtons)"), titleBar.ShowWindowButtons, v => titleBar.ShowWindowButtons = v));
-        switches.Children.Add(AppearanceToggle(Loc.T("Hiện Quick Access Strip", "Quick Access Strip"), titleBar.ShowQuickAccess, v => titleBar.ShowQuickAccess = v));
-        switches.Children.Add(AppearanceToggle(Loc.T("Tìm kiếm lệnh CAD (SearchBox)", "CAD command search (SearchBox)"), titleBar.ShowSearchBox, v => titleBar.ShowSearchBox = v));
-        switches.Children.Add(AppearanceToggle(Loc.T("Hiện tài khoản kỹ sư (UserAccount)", "Engineer account (UserAccount)"), titleBar.ShowUserAccount, v => titleBar.ShowUserAccount = v));
-        switches.Children.Add(AppearanceToggle(Loc.T("Hiện Logo App (AppIcon)", "App logo (AppIcon)"), titleBar.ShowAppIcon, v => titleBar.ShowAppIcon = v));
+        switches.Children.Add(AppearanceToggle(Loc.T("Hiện nút cửa sổ", "Window buttons (WindowButtons)"), titleBar.ShowWindowButtons, v => titleBar.ShowWindowButtons = v));
+        switches.Children.Add(AppearanceToggle(Loc.T("Hiện thanh truy cập nhanh", "Quick Access Strip"), titleBar.ShowQuickAccess, v => titleBar.ShowQuickAccess = v));
+        switches.Children.Add(AppearanceToggle(Loc.T("Tìm kiếm lệnh CAD", "CAD command search (SearchBox)"), titleBar.ShowSearchBox, v => titleBar.ShowSearchBox = v));
+        switches.Children.Add(AppearanceToggle(Loc.T("Hiện tài khoản kỹ sư", "Engineer account (UserAccount)"), titleBar.ShowUserAccount, v => titleBar.ShowUserAccount = v));
+        switches.Children.Add(AppearanceToggle(Loc.T("Hiện biểu tượng ứng dụng", "App logo (AppIcon)"), titleBar.ShowAppIcon, v => titleBar.ShowAppIcon = v));
 
         // Combo Row
         var comboRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 2, 0, 10) };
@@ -3906,20 +3915,20 @@ palette.Build(beam);")));
         var alignCombo = new ComboBox
         {
             Width = 170,
-            ItemsSource = new[] { Loc.T("Chính giữa (Center)", "Centre"), Loc.T("Căn trái (Left)", "Left") },
+            ItemsSource = new[] { Loc.T("Chính giữa", "Centre"), Loc.T("Căn trái", "Left") },
             SelectedIndex = 0,
             Margin = new Thickness(0, 0, 18, 0)
         };
         alignCombo.SelectionChanged += (_, _) =>
             titleBar.TitleAlignment = alignCombo.SelectedIndex == 1 ? HorizontalAlignment.Left : HorizontalAlignment.Center;
 
-        var themeLabel = CadHint(Loc.T("Màu sắc TitleBar:", "Title bar colour:"));
+        var themeLabel = CadHint(Loc.T("Màu thanh tiêu đề:", "Title bar colour:"));
         themeLabel.VerticalAlignment = VerticalAlignment.Center;
         themeLabel.Margin = new Thickness(0, 0, 8, 0);
         var themeCombo = new ComboBox
         {
             Width = 190,
-            ItemsSource = new[] { Loc.T("Mặc định (Trong suốt)", "Default (transparent)"), "Dark Carbon", "Navy CAD", "Titanium Glass" },
+            ItemsSource = new[] { Loc.T("Mặc định (Trong suốt)", "Default (transparent)"), Loc.T("Đen cacbon", "Dark Carbon"), Loc.T("Xanh hải quân CAD", "Navy CAD"), Loc.T("Kính titan", "Titanium Glass") },
             SelectedIndex = 0,
             Margin = new Thickness(0, 0, 18, 0)
         };
@@ -3948,7 +3957,7 @@ palette.Build(beam);")));
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Thanh tiêu đề ứng dụng (ApplicationTitleBar)", "Application title bar (ApplicationTitleBar)"),
+            Loc.T("Thanh tiêu đề ứng dụng", "Application title bar (ApplicationTitleBar)"),
             content,
             xaml: Loc.Code(@"<ui:ApplicationTitleBar ApplicationName=""CONCOST BIM Suite 2026""
                        DocumentTitle=""Landmark Tower — Mặt Bằng Kết Cấu""
@@ -3979,17 +3988,17 @@ titleBar.MaximizeRequested += (_, _) => ToggleMaximize();")));
 
         // Default: Clash detection warning
         infoBar.ActionText = Loc.T("Định vị vị trí va chạm", "Locate clash");
-        infoBar.Show(Loc.T("Phát hiện va chạm mô hình (Clash Detection)", "Model clash detection"),
+        infoBar.Show(Loc.T("Phát hiện va chạm mô hình", "Model clash detection"),
             Loc.T("Dầm kết cấu D1-T18 giao cắt ống cấp nước MEP đường kính D150 tại trục 3-C.", "Structural beam D1-L18 clashes with the D150 MEP water supply pipe at grid 3-C."),
             CadNotificationSeverity.Warning);
 
         var readout = CadHint(Loc.T(
-            "Hệ thống thông báo kỹ thuật công trình (BIM Alert Bar) hỗ trợ 4 mức độ: Info, Success, Warning, Error.",
+            "Hệ thống thông báo kỹ thuật công trình hỗ trợ 4 mức độ: Thông tin, Thành công, Cảnh báo, Lỗi.",
             "The BIM alert bar supports four severities: Info, Success, Warning, Error."));
 
         infoBar.ActionInvoked += (_, _) =>
         {
-            readout.Text = Loc.T("Hành động: Đã điều hướng Camera Viewport đến toạ độ va chạm tại trục 3-C.", "Action: the viewport camera moved to the clash at grid 3-C.");
+            readout.Text = Loc.T("Hành động: Đã điều hướng góc nhìn đến toạ độ va chạm tại trục 3-C.", "Action: the viewport camera moved to the clash at grid 3-C.");
             ToastService.Info(Loc.T("Đang tiêu điểm vị trí va chạm: Dầm D1 x Ống MEP D150", "Clash focus: beam D1 × MEP pipe D150"), "BIM Clash");
         };
 
@@ -4000,7 +4009,7 @@ titleBar.MaximizeRequested += (_, _) => ToggleMaximize();")));
 
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 10, 0, 0) };
 
-        var btnWarning = SecondaryButton(Loc.T("⚠️ Va chạm MEP (Warning)", "⚠️ MEP clash (Warning)"));
+        var btnWarning = SecondaryButton(Loc.T("⚠️ Va chạm MEP", "⚠️ MEP clash (Warning)"));
         btnWarning.Click += (_, _) =>
         {
             infoBar.ActionText = Loc.T("Định vị va chạm", "Locate clash");
@@ -4008,7 +4017,7 @@ titleBar.MaximizeRequested += (_, _) => ToggleMaximize();")));
         };
         buttons.Children.Add(btnWarning);
 
-        var btnError = SecondaryButton(Loc.T("❌ Vượt tải trọng (Error)", "❌ Overload (Error)"));
+        var btnError = SecondaryButton(Loc.T("❌ Vượt tải trọng", "❌ Overload (Error)"));
         btnError.Click += (_, _) =>
         {
             infoBar.ActionText = Loc.T("Tự động tăng tiết diện", "Auto-enlarge section");
@@ -4016,15 +4025,15 @@ titleBar.MaximizeRequested += (_, _) => ToggleMaximize();")));
         };
         buttons.Children.Add(btnError);
 
-        var btnSuccess = SecondaryButton(Loc.T("✅ Đồng bộ Central (Success)", "✅ Central sync (Success)"));
+        var btnSuccess = SecondaryButton(Loc.T("✅ Đồng bộ máy chủ", "✅ Central sync (Success)"));
         btnSuccess.Click += (_, _) =>
         {
             infoBar.ActionText = Loc.T("Xem lịch sử", "View history");
-            infoBar.Show(Loc.T("Đồng bộ thành công", "Sync complete"), Loc.T("Mô hình Landmark Tower đã được đồng bộ an toàn với Central BIM 360.", "The Landmark Tower model was safely synced with Central BIM 360."), CadNotificationSeverity.Success);
+            infoBar.Show(Loc.T("Đồng bộ thành công", "Sync complete"), Loc.T("Mô hình Tháp Landmark đã được đồng bộ an toàn với máy chủ trung tâm.", "The Landmark Tower model was safely synced with Central BIM 360."), CadNotificationSeverity.Success);
         };
         buttons.Children.Add(btnSuccess);
 
-        var btnInfo = SecondaryButton(Loc.T("ℹ️ Cập nhật TCVN (Info)", "ℹ️ TCVN update (Info)"));
+        var btnInfo = SecondaryButton(Loc.T("ℹ️ Cập nhật TCVN", "ℹ️ TCVN update (Info)"));
         btnInfo.Click += (_, _) =>
         {
             infoBar.ActionText = Loc.T("Xem chi tiết", "View details");
@@ -4039,7 +4048,7 @@ titleBar.MaximizeRequested += (_, _) => ToggleMaximize();")));
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Thanh thông báo kỹ thuật công trình (ApplicationInfoBar)", "Project information bar (ApplicationInfoBar)"),
+            Loc.T("Thanh thông báo kỹ thuật công trình", "Project information bar (ApplicationInfoBar)"),
             content,
             xaml: Loc.Code(@"<ui:ApplicationInfoBar IsClosable=""True""
                        ActionText=""Định vị vị trí va chạm""
@@ -4053,7 +4062,7 @@ infoBar.Show(""Cảnh báo va chạm"", ""Dầm D1 giao cắt ống MEP"", CadNo
 
     private object CreateBackstageViewDemo()
     {
-        var backstage = new RibbonBackstageView { Height = 360, ApplicationName = "CONCOST BIM Suite" };
+        var backstage = new RibbonBackstageView { Height = 360, ApplicationName = "CONCOST BIM" };
 
         // 1. Tab Thông Tin Dự Án (Project Info Dashboard)
         var infoPanel = new StackPanel { Margin = new Thickness(24) };
@@ -4064,13 +4073,13 @@ infoBar.Show(""Cảnh báo va chạm"", ""Dầm D1 giao cắt ống MEP"", CadNo
         metaGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
         string[][] metaData = {
-            new[] { Loc.T("Tên công trình:", "Project name:"), Loc.T("LANDMARK TOWER 2026 — KHU PHỨC HỢP THƯƠNG MẠI", "LANDMARK TOWER 2026 — MIXED-USE COMMERCIAL COMPLEX") },
+            new[] { Loc.T("Tên công trình:", "Project name:"), Loc.T("THÁP LANDMARK 2026 — KHU PHỨC HỢP THƯƠNG MẠI", "LANDMARK TOWER 2026 — MIXED-USE COMMERCIAL COMPLEX") },
             new[] { Loc.T("Chủ đầu tư:", "Client:"), Loc.T("TẬP ĐOÀN ĐẦU TƯ ĐỊA ỐC QUỐC TẾ", "INTERNATIONAL REAL ESTATE INVESTMENT GROUP") },
             new[] { Loc.T("Địa điểm:", "Location:"), Loc.T("Khu đô thị mới Thủ Thiêm, TP. Hồ Chí Minh", "Thu Thiem New Urban Area, Ho Chi Minh City") },
             new[] { Loc.T("Quy mô:", "Scope:"), Loc.T("45 tầng nổi + 3 tầng hầm (Tổng diện tích sàn 125,000 m²)", "45 storeys + 3 basements (125,000 m² gross floor area)") },
             new[] { Loc.T("Kỹ sư chủ trì:", "Lead engineer:"), Loc.T("KTS. Lê Hoàng Minh — Chứng chỉ hành nghề hạng I", "Arch. Le Hoang Minh — Class I practising certificate") },
-            new[] { Loc.T("Tiêu chuẩn áp dụng:", "Applied standards:"), "TCVN 5574:2018, QCVN 06:2022/BXD, Eurocode 2" },
-            new[] { Loc.T("Phiên bản tệp BIM:", "BIM file version:"), "Autodesk Revit 2026 RVT / IFC 4.3" }
+            new[] { Loc.T("Tiêu chuẩn áp dụng:", "Applied standards:"), "TCVN 5574:2018, QCVN 06:2022/BXD" },
+            new[] { Loc.T("Phiên bản tệp BIM:", "BIM file version:"), "Revit 2026 RVT / IFC 4.3" }
         };
 
         for (int i = 0; i < metaData.Length; i++)
@@ -4116,10 +4125,10 @@ infoBar.Show(""Cảnh báo va chạm"", ""Dầm D1 giao cắt ống MEP"", CadNo
         exportPanel.Children.Add(new TextBlock { Text = Loc.T("XUẤT DỮ LIỆU & BÁO CÁO THIẾT KẾ", "EXPORT DATA & DESIGN REPORTS"), FontSize = 16, FontWeight = FontWeights.Bold, Foreground = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8)), Margin = new Thickness(0, 0, 0, 14) });
 
         string[][] exportOpts = {
-            new[] { Loc.T("Xuất mô hình chuẩn mở openBIM IFC 4.3", "Export an openBIM IFC 4.3 model"), Loc.T("Tương thích cao với Tekla, Archicad, Solibri", "High compatibility with Tekla, Archicad and Solibri") },
-            new[] { Loc.T("Xuất bản vẽ CAD 2D/3D DWG/DXF", "Export 2D/3D CAD drawings DWG/DXF"), Loc.T("Bao gồm layer chuẩn TCVN, hatch và dimension", "Includes TCVN standard layers, hatches and dimensions") },
+            new[] { Loc.T("Xuất mô hình chuẩn mở IFC 4.3", "Export an openBIM IFC 4.3 model"), Loc.T("Tương thích cao với Tekla, Archicad, Solibri", "High compatibility with Tekla, Archicad and Solibri") },
+            new[] { Loc.T("Xuất bản vẽ CAD 2D/3D DWG/DXF", "Export 2D/3D CAD drawings DWG/DXF"), Loc.T("Bao gồm lớp chuẩn TCVN, mặt cắt và kích thước", "Includes TCVN standard layers, hatches and dimensions") },
             new[] { Loc.T("In ấn tập hồ sơ kỹ thuật PDF đa trang", "Print a multi-page PDF technical dossier"), Loc.T("Khổ giấy A1, A0 độ phân giải vector cao", "A1/A0 sheets at high-resolution vector quality") },
-            new[] { Loc.T("Xuất bảng tiên lượng dự toán Microsoft Excel", "Export the cost take-off to Microsoft Excel"), Loc.T("Tính toán khối lượng tự động theo định mức", "Automatic quantity calculation from norms") }
+            new[] { Loc.T("Xuất bảng tiên lượng dự toán Excel", "Export the cost take-off to Microsoft Excel"), Loc.T("Tính toán khối lượng tự động theo định mức", "Automatic quantity calculation from norms") }
         };
 
         foreach (var opt in exportOpts)
@@ -4137,16 +4146,16 @@ infoBar.Show(""Cảnh báo va chạm"", ""Dầm D1 giao cắt ống MEP"", CadNo
         backstage.Select(Loc.T("Thông tin dự án", "Project information"));
 
         var readout = CadHint(Loc.T(
-            "Giao diện Backstage quản lý toàn diện dự án; phím Esc hoặc nút Mở/Đóng để chuyển trạng thái.",
+            "Giao diện hậu trường quản lý toàn diện dự án; phím Esc hoặc nút Mở/Đóng để chuyển trạng thái.",
             "The Backstage view manages the whole project; Esc or the Open/Close button toggles it."));
 
         backstage.SelectedItemChanged += (_, _) => readout.Text = Loc.F("Đang xem trang: {0}", "Viewing page: {0}", backstage.SelectedItem?.Header);
-        backstage.IsOpenChanged += (_, _) => readout.Text = backstage.IsOpen ? Loc.T("Đang mở Backstage Quản lý Dự án", "Opening the project-management Backstage") : Loc.T("Đã quay trở lại không gian bản vẽ CAD", "Back to the CAD drawing space");
+        backstage.IsOpenChanged += (_, _) => readout.Text = backstage.IsOpen ? Loc.T("Đang mở trung tâm quản lý dự án", "Opening the project-management Backstage") : Loc.T("Đã quay trở lại không gian bản vẽ CAD", "Back to the CAD drawing space");
 
-        var openBtn = SecondaryButton(Loc.T("Mở Backstage", "Open Backstage"));
+        var openBtn = SecondaryButton(Loc.T("Mở trung tâm dự án", "Open Backstage"));
         openBtn.Click += (_, _) => backstage.Open();
 
-        var closeBtn = SecondaryButton(Loc.T("Đóng Backstage", "Close Backstage"));
+        var closeBtn = SecondaryButton(Loc.T("Đóng trung tâm dự án", "Close Backstage"));
         closeBtn.Click += (_, _) => backstage.Close();
 
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 10, 0, 0) };
@@ -4160,7 +4169,7 @@ infoBar.Show(""Cảnh báo va chạm"", ""Dầm D1 giao cắt ống MEP"", CadNo
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Trung tâm quản lý dự án & tập tin (RibbonBackstageView)", "Project & file backstage (RibbonBackstageView)"),
+            Loc.T("Trung tâm quản lý dự án & tập tin", "Project & file backstage (RibbonBackstageView)"),
             content,
             xaml: @"<ui:RibbonBackstageView x:Name=""Backstage""
                       ApplicationName=""CONCOST BIM Suite""
@@ -4284,7 +4293,7 @@ backstage.Open();")));
         var col1 = new StackPanel();
         var head1 = new TextBlock
         {
-            Text = Loc.T("BỘ CHỌN FONT CHỮ BẢN VẼ (TYPOGRAPHY SELECTOR)", "DRAWING TYPOGRAPHY SELECTOR"),
+            Text = Loc.T("BỘ CHỌN PHÔNG CHỮ BẢN VẼ", "DRAWING TYPOGRAPHY SELECTOR"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 10)
@@ -4300,7 +4309,7 @@ backstage.Open();")));
         var col2 = new StackPanel();
         var head2 = new TextBlock
         {
-            Text = Loc.T("FONT KỸ THUẬT TIÊU CHUẨN (CAD/BIM PRESETS)", "STANDARD TECHNICAL FONTS (CAD/BIM PRESETS)"),
+            Text = Loc.T("PHÔNG KỸ THUẬT TIÊU CHUẨN", "STANDARD TECHNICAL FONTS (CAD/BIM PRESETS)"),
             FontSize = 11.5,
             FontWeight = FontWeights.SemiBold,
             Margin = new Thickness(0, 0, 0, 10)
@@ -4315,7 +4324,7 @@ backstage.Open();")));
         var btnArial = SecondaryButton(Loc.T("Arial (TCVN chuẩn)", "Arial (TCVN standard)"));
         btnArial.Click += (_, _) => { picker.SelectedFontFamily = new FontFamily("Arial"); picker.SelectedFontSize = 13; UpdatePreviewFont(); };
 
-        var btnConsolas = SecondaryButton(Loc.T("Consolas (Kỹ thuật Monospace)", "Consolas (technical monospace)"));
+        var btnConsolas = SecondaryButton(Loc.T("Consolas (Đơn cách kỹ thuật)", "Consolas (technical monospace)"));
         btnConsolas.Click += (_, _) => { picker.SelectedFontFamily = new FontFamily("Consolas"); picker.SelectedFontSize = 13; UpdatePreviewFont(); };
 
         presetsRow.Children.Add(btnSegoe);
@@ -4324,11 +4333,11 @@ backstage.Open();")));
         col2.Children.Add(presetsRow);
 
         var infoCard = CreateCalloutCard(
-            Loc.T("QUY TẮC FONT CHỮ BẢN VẼ KỸ THUẬT CAD/BIM:\n", "CAD/BIM DRAWING TYPOGRAPHY RULES:\n") +
-            Loc.T("• Tiêu đề bản vẽ: 14 - 18 pt, Chữ in hoa, SemiBold/Bold.\n", "• Drawing titles: 14 - 18 pt, upper case, SemiBold/Bold.\n") +
-            Loc.T("• Ghi chú kết cấu & thép: 10 - 12 pt, Regular, dễ đọc khi in ở tỷ lệ 1:100.\n", "• Structural & rebar notes: 10 - 12 pt, Regular, legible when printed at 1:100.\n") +
-            Loc.T("• Ký hiệu trục tọa độ: 10 - 12 pt, Bold, nằm trọn trong bong bóng trục Ø8mm.\n", "• Grid bubbles: 10 - 12 pt, Bold, fully inside the Ø8 mm bubble.\n") +
-            Loc.T("• Thay đổi font và kích cỡ ở bên trái để quan sát khung tên mẫu ở trên co giãn trực quan.", "• Change the font and size on the left to watch the sample title block above scale."));
+            Loc.T("QUY TẮC PHÔNG CHỮ BẢN VẼ KỸ THUẬT CAD/BIM:\n", "CAD/BIM DRAWING TYPOGRAPHY RULES:\n") +
+            Loc.T("• Tiêu đề bản vẽ: 14 - 18 pt, Chữ in hoa, Bán đậm / Đậm.\n", "• Drawing titles: 14 - 18 pt, upper case, SemiBold/Bold.\n") +
+            Loc.T("• Ghi chú kết cấu & thép: 10 - 12 pt, Thường, dễ đọc khi in ở tỷ lệ 1:100.\n", "• Structural & rebar notes: 10 - 12 pt, Regular, legible when printed at 1:100.\n") +
+            Loc.T("• Ký hiệu trục tọa độ: 10 - 12 pt, Đậm, nằm trọn trong bong bóng trục Ø8mm.\n", "• Grid bubbles: 10 - 12 pt, Bold, fully inside the Ø8 mm bubble.\n") +
+            Loc.T("• Thay đổi phông và kích cỡ ở bên trái để quan sát khung tên mẫu ở trên co giãn trực quan.", "• Change the font and size on the left to watch the sample title block above scale."));
         col2.Children.Add(infoCard);
 
         Grid.SetColumn(col2, 2);
@@ -4354,7 +4363,7 @@ picker.SelectionChanged += (s, e) =>
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Bộ chọn font bản vẽ kỹ thuật (FontPicker)", "Drawing font picker (FontPicker)"),
+            Loc.T("Bộ chọn phông bản vẽ kỹ thuật", "Drawing font picker (FontPicker)"),
             stageHost,
             xaml: xamlCode,
             csharp: csCode));

@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -175,11 +175,11 @@ public class ShowcaseItem : System.ComponentModel.INotifyPropertyChanged
                 return Category switch
                 {
                     "CAD & Drafting" or "CAD & BIM Engineering" => "CAD & BIM Engineering",
-                    "Data & Grid" or "Dữ liệu & Bảng tính" => "Data & Grid",
+                    "Data & Grid" or "Data Controls" or "Dữ liệu & Bảng tính" => "Data & Grid",
                     "Layout & Shell" or "Navigation" or "Khung nhìn & Điều hướng" => "Viewports & Navigation",
-                    "Input & Forms" or "Soạn thảo & Nhập liệu" => "Editing & Input",
+                    "Input & Forms" or "Input & Drag" or "Soạn thảo & Nhập liệu" => "Editing & Input",
                     "Basic Controls" or "Thành phần cơ bản" => "Foundation Controls",
-                    "Effects & Styling" or "Hiệu ứng & Đồ họa" => "Effects & Graphics",
+                    "Effects & Styling" or "Effects" or "Hiệu ứng & Đồ họa" => "Effects & Graphics",
                     "Custom Controls" or "Advanced" or "Thành phần tùy biến" => "Custom Controls",
                     "Getting Started" or "Bắt đầu" => "Getting Started",
                     _ => Category
@@ -188,12 +188,12 @@ public class ShowcaseItem : System.ComponentModel.INotifyPropertyChanged
 
             return Category switch
             {
-                "CAD & Drafting" or "CAD & BIM Engineering" => "CAD & BIM Engineering",
-                "Data & Grid" or "Dữ liệu & Bảng tính" => "Dữ liệu & Bảng tính",
+                "CAD & Drafting" or "CAD & BIM Engineering" => "Kỹ thuật CAD & BIM",
+                "Data & Grid" or "Data Controls" or "Dữ liệu & Bảng tính" => "Dữ liệu & Bảng tính",
                 "Layout & Shell" or "Navigation" or "Khung nhìn & Điều hướng" => "Khung nhìn & Điều hướng",
-                "Input & Forms" or "Soạn thảo & Nhập liệu" => "Soạn thảo & Nhập liệu",
+                "Input & Forms" or "Input & Drag" or "Soạn thảo & Nhập liệu" => "Soạn thảo & Nhập liệu",
                 "Basic Controls" or "Thành phần cơ bản" => "Thành phần cơ bản",
-                "Effects & Styling" or "Hiệu ứng & Đồ họa" => "Hiệu ứng & Đồ họa",
+                "Effects & Styling" or "Effects" or "Hiệu ứng & Đồ họa" => "Hiệu ứng & Đồ họa",
                 "Custom Controls" or "Advanced" or "Thành phần tùy biến" => "Thành phần tùy biến",
                 "Getting Started" or "Bắt đầu" => "Bắt đầu",
                 _ => Category
@@ -239,9 +239,14 @@ public class ShowcaseCategoryGroup : System.ComponentModel.INotifyPropertyChange
 {
     private bool _isExpanded = true;
     private bool _isVisible = true;
+    private string _displayName = string.Empty;
 
     public string Name { get; set; } = string.Empty;
-    public string DisplayName { get; set; } = string.Empty;
+    public string DisplayName
+    {
+        get => _displayName;
+        set { _displayName = value; OnPropertyChanged(nameof(DisplayName)); }
+    }
     public IconKind Icon { get; set; } = IconKind.Folder;
     public ObservableCollection<ShowcaseItem> Items { get; } = new();
 
@@ -391,12 +396,31 @@ public partial class ShowcaseViewModel : ObservableObject
         if (e.PropertyName != nameof(LocalizationManager.Culture))
             return;
 
+        UpdateCategoryGroupNames();
         ApplyFilter();
         OnPropertyChanged(nameof(CatalogCountText));
         if (SelectedItem?.Name is "Overview" or "Documentation")
         {
             SelectedItem.RefreshContent();
             OnPropertyChanged(nameof(SelectedItem));
+        }
+    }
+
+    private void UpdateCategoryGroupNames()
+    {
+        foreach (var group in CategoryGroups)
+        {
+            group.DisplayName = group.Name switch
+            {
+                "CAD & Drafting" => Loc.T("Kỹ thuật CAD & BIM", "CAD & BIM Engineering"),
+                "Data Controls" => Loc.T("Dữ liệu & Bảng tính", "Data & Grid"),
+                "Layout & Shell" => Loc.T("Khung nhìn & Điều hướng", "Viewports & Navigation"),
+                "Input & Drag" => Loc.T("Soạn thảo & Nhập liệu", "Editing & Input"),
+                "Basic Controls" => Loc.T("Thành phần cơ bản", "Foundation Controls"),
+                "Effects" => Loc.T("Hiệu ứng & Đồ họa", "Effects & Graphics"),
+                "Custom Controls" => Loc.T("Thành phần tùy biến", "Custom Controls"),
+                _ => group.DisplayName
+            };
         }
     }
 
@@ -430,7 +454,7 @@ public partial class ShowcaseViewModel : ObservableObject
         CategoryGroups.Add(new ShowcaseCategoryGroup
         {
             Name = "CAD & Drafting",
-            DisplayName = "CAD & BIM Engineering",
+            DisplayName = Loc.T("Kỹ thuật CAD & BIM", "CAD & BIM Engineering"),
             Icon = IconKind.FileCAD,
             IsExpanded = true
         });
@@ -819,41 +843,41 @@ public partial class ShowcaseViewModel : ObservableObject
 
         var brushGroups = new List<(string GroupName, List<(string TokenName, string BrushKey)> Items)>
         {
-            ("1. Theme & Accent Brushes", new()
+            (Loc.T("1. Cọ màu chủ đề & điểm nhấn", "1. Theme & Accent Brushes"), new()
             {
-                ("Primary Accent", "CONCOST.Brush.Primary"),
-                ("Primary Light", "CONCOST.Brush.PrimaryLight"),
-                ("Primary Dark", "CONCOST.Brush.PrimaryDark"),
-                ("Primary Hover", "CONCOST.Brush.PrimaryHover"),
-                ("Primary Pressed", "CONCOST.Brush.PrimaryPressed"),
+                (Loc.T("Màu chủ đạo", "Primary Accent"), "CONCOST.Brush.Primary"),
+                (Loc.T("Chủ đạo sáng", "Primary Light"), "CONCOST.Brush.PrimaryLight"),
+                (Loc.T("Chủ đạo đậm", "Primary Dark"), "CONCOST.Brush.PrimaryDark"),
+                (Loc.T("Chủ đạo khi trỏ", "Primary Hover"), "CONCOST.Brush.PrimaryHover"),
+                (Loc.T("Chủ đạo khi nhấn", "Primary Pressed"), "CONCOST.Brush.PrimaryPressed"),
             }),
-            ("2. Surface & Background Brushes", new()
+            (Loc.T("2. Cọ màu bề mặt & nền", "2. Surface & Background Brushes"), new()
             {
-                ("Background", "CONCOST.Brush.Background"),
-                ("Surface (Card)", "CONCOST.Brush.Surface"),
-                ("Surface Secondary", "CONCOST.Brush.SurfaceSecondary"),
-                ("Surface Hover", "CONCOST.Brush.SurfaceHover"),
-                ("Surface Pressed", "CONCOST.Brush.SurfacePressed"),
+                (Loc.T("Nền trang", "Background"), "CONCOST.Brush.Background"),
+                (Loc.T("Bề mặt thẻ", "Surface (Card)"), "CONCOST.Brush.Surface"),
+                (Loc.T("Bề mặt phụ", "Surface Secondary"), "CONCOST.Brush.SurfaceSecondary"),
+                (Loc.T("Bề mặt khi trỏ", "Surface Hover"), "CONCOST.Brush.SurfaceHover"),
+                (Loc.T("Bề mặt khi nhấn", "Surface Pressed"), "CONCOST.Brush.SurfacePressed"),
             }),
-            ("3. Border & Line Brushes", new()
+            (Loc.T("3. Cọ màu đường viền", "3. Border & Line Brushes"), new()
             {
-                ("Border Standard", "CONCOST.Brush.Border"),
-                ("Border Secondary", "CONCOST.Brush.BorderSecondary"),
-                ("Border Hover", "CONCOST.Brush.BorderHover"),
+                (Loc.T("Viền tiêu chuẩn", "Border Standard"), "CONCOST.Brush.Border"),
+                (Loc.T("Viền phụ", "Border Secondary"), "CONCOST.Brush.BorderSecondary"),
+                (Loc.T("Viền khi trỏ", "Border Hover"), "CONCOST.Brush.BorderHover"),
             }),
-            ("4. Text & Typography Brushes", new()
+            (Loc.T("4. Cọ màu chữ & văn bản", "4. Text & Typography Brushes"), new()
             {
-                ("Text Primary", "CONCOST.Brush.TextPrimary"),
-                ("Text Secondary", "CONCOST.Brush.TextSecondary"),
-                ("Text Tertiary", "CONCOST.Brush.TextTertiary"),
-                ("Text Disabled", "CONCOST.Brush.TextDisabled"),
+                (Loc.T("Chữ chính", "Text Primary"), "CONCOST.Brush.TextPrimary"),
+                (Loc.T("Chữ phụ", "Text Secondary"), "CONCOST.Brush.TextSecondary"),
+                (Loc.T("Chữ mờ cấp 3", "Text Tertiary"), "CONCOST.Brush.TextTertiary"),
+                (Loc.T("Chữ vô hiệu hóa", "Text Disabled"), "CONCOST.Brush.TextDisabled"),
             }),
-            ("5. Semantic Feedback Brushes", new()
+            (Loc.T("5. Cọ màu phản hồi ngữ nghĩa", "5. Semantic Feedback Brushes"), new()
             {
-                ("Success (Positive)", "CONCOST.Brush.Success"),
-                ("Warning (Caution)", "CONCOST.Brush.Warning"),
-                ("Danger (Error / Alert)", "CONCOST.Brush.Danger"),
-                ("Info (Neutral / Hint)", "CONCOST.Brush.Info"),
+                (Loc.T("Thành công (Tích cực)", "Success (Positive)"), "CONCOST.Brush.Success"),
+                (Loc.T("Cảnh báo (Chú ý)", "Warning (Caution)"), "CONCOST.Brush.Warning"),
+                (Loc.T("Nguy hiểm (Lỗi / Báo động)", "Danger (Error / Alert)"), "CONCOST.Brush.Danger"),
+                (Loc.T("Thông tin (Gợi ý)", "Info (Neutral / Hint)"), "CONCOST.Brush.Info"),
             })
         };
 
@@ -960,8 +984,8 @@ public partial class ShowcaseViewModel : ObservableObject
         OnPropertyChanged(nameof(CatalogCountText));
     }
 
-    // Syntax Highlighter Helper for XAML & C# Code Blocks
-    private static TextBlock CreateXamlSyntaxHighlighter(string code)
+    // Theme-Aware Syntax Highlighter for Code Blocks (XAML, C#, XML, CLI, etc.)
+    private static TextBlock CreateXamlSyntaxHighlighter(string code, string? lang = null)
     {
         var tb = new TextBlock
         {
@@ -971,15 +995,41 @@ public partial class ShowcaseViewModel : ObservableObject
             Padding = new System.Windows.Thickness(16, 14, 16, 14),
             TextWrapping = System.Windows.TextWrapping.Wrap
         };
+        tb.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
 
-        var blueBrush = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0284C7"));   // Tags / C# Keywords
-        var attrBrush = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#B45309"));   // Attributes / Properties
-        var strBrush = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#047857"));    // String Values
-        var commentBrush = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#94A3B8"));// Comments
-        var typeBrush = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#7C3AED"));   // C# Types & Classes
-        var normalBrush = (Brush)App.Current.Resources["CONCOST.Brush.TextPrimary"];
+        if (string.IsNullOrWhiteSpace(code)) return tb;
 
-        var csharpKeywords = new HashSet<string> { "var", "new", "true", "false", "null", "if", "else", "await", "async", "public", "private", "static", "return", "class", "void", "string", "bool", "int", "double" };
+        // Auto-detect language if not provided
+        string l = lang?.Trim().ToUpperInvariant() ?? "";
+        bool isXmlOrXaml = l.Contains("XAML") || l.Contains("XML") || (string.IsNullOrEmpty(l) && code.TrimStart().StartsWith("<"));
+        bool isCSharp = l.Contains("C#") || l.Contains("CS") || (!isXmlOrXaml && (code.Contains("using ") || code.Contains("public ") || code.Contains("class ") || code.Contains("namespace ")));
+
+        // Helper to produce a Run bound to a theme dynamic resource
+        static System.Windows.Documents.Run ThemedRun(string text, string resourceKey, bool italic = false)
+        {
+            var run = new System.Windows.Documents.Run(text);
+            run.SetResourceReference(System.Windows.Documents.TextElement.ForegroundProperty, resourceKey);
+            if (italic) run.FontStyle = System.Windows.FontStyles.Italic;
+            return run;
+        }
+
+        var csharpKeywords = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "abstract", "as", "async", "await", "base", "bool", "break", "byte", "case", "catch", "char",
+            "checked", "class", "const", "continue", "decimal", "default", "delegate", "do", "double",
+            "else", "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for",
+            "foreach", "get", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock",
+            "long", "namespace", "new", "null", "object", "operator", "out", "override", "params",
+            "private", "protected", "public", "readonly", "record", "ref", "return", "sealed", "set",
+            "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
+            "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using", "var",
+            "virtual", "void", "volatile", "when", "where", "while", "yield", "init", "nameof"
+        };
+
+        var cliKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "dotnet", "add", "reference", "package", "build", "run", "restore", "pack", "publish"
+        };
 
         var lines = code.Trim().Split('\n');
         for (int i = 0; i < lines.Length; i++)
@@ -987,73 +1037,154 @@ public partial class ShowcaseViewModel : ObservableObject
             var line = lines[i].TrimEnd('\r');
             if (i > 0) tb.Inlines.Add(new System.Windows.Documents.LineBreak());
 
-            var trimmedLine = line.TrimStart();
-            if (trimmedLine.StartsWith("<!--") || trimmedLine.StartsWith("//"))
+            var trimmed = line.TrimStart();
+            // Full line comments
+            if (trimmed.StartsWith("//"))
             {
-                tb.Inlines.Add(new System.Windows.Documents.Run(line) { Foreground = commentBrush, FontStyle = System.Windows.FontStyles.Italic });
+                tb.Inlines.Add(ThemedRun(line, "CONCOST.Code.Comment", italic: true));
+                continue;
+            }
+            if (trimmed.StartsWith("<!--") && trimmed.EndsWith("-->"))
+            {
+                tb.Inlines.Add(ThemedRun(line, "CONCOST.Code.Comment", italic: true));
                 continue;
             }
 
             int idx = 0;
             while (idx < line.Length)
             {
-                if (line[idx] == '<')
+                char c = line[idx];
+
+                // 1. In-line comments
+                if (c == '/' && idx + 1 < line.Length && line[idx + 1] == '/')
+                {
+                    tb.Inlines.Add(ThemedRun(line.Substring(idx), "CONCOST.Code.Comment", italic: true));
+                    break;
+                }
+                if (c == '<' && idx + 3 < line.Length && line.Substring(idx, 4) == "<!--")
+                {
+                    int end = line.IndexOf("-->", idx + 4, StringComparison.Ordinal);
+                    if (end < 0) end = line.Length;
+                    else end += 3;
+                    tb.Inlines.Add(ThemedRun(line.Substring(idx, end - idx), "CONCOST.Code.Comment", italic: true));
+                    idx = end;
+                    continue;
+                }
+
+                // 2. Strings
+                if (c == '"' || (c == '\'' && !isXmlOrXaml))
+                {
+                    char quote = c;
+                    int end = idx + 1;
+                    while (end < line.Length)
+                    {
+                        if (line[end] == '\\' && end + 1 < line.Length) { end += 2; continue; }
+                        if (line[end] == quote) { end++; break; }
+                        end++;
+                    }
+                    tb.Inlines.Add(ThemedRun(line.Substring(idx, end - idx), "CONCOST.Code.String"));
+                    idx = end;
+                    continue;
+                }
+
+                // 3. XML / XAML Tags
+                if (isXmlOrXaml && c == '<')
                 {
                     int tagEnd = idx + 1;
-                    while (tagEnd < line.Length && !char.IsWhiteSpace(line[tagEnd]) && line[tagEnd] != '>' && line[tagEnd] != '/') tagEnd++;
-                    tb.Inlines.Add(new System.Windows.Documents.Run(line.Substring(idx, tagEnd - idx)) { Foreground = blueBrush, FontWeight = System.Windows.FontWeights.Normal });
+                    if (tagEnd < line.Length && line[tagEnd] == '/') tagEnd++;
+                    while (tagEnd < line.Length && !char.IsWhiteSpace(line[tagEnd]) && line[tagEnd] != '>' && line[tagEnd] != '/')
+                    {
+                        tagEnd++;
+                    }
+                    tb.Inlines.Add(ThemedRun(line.Substring(idx, tagEnd - idx), "CONCOST.Code.Tag"));
                     idx = tagEnd;
+                    continue;
                 }
-                else if (line[idx] == '"')
+                if (isXmlOrXaml && (c == '>' || (c == '/' && idx + 1 < line.Length && line[idx + 1] == '>')))
                 {
-                    int quoteEnd = line.IndexOf('"', idx + 1);
-                    if (quoteEnd == -1) quoteEnd = line.Length - 1;
-                    tb.Inlines.Add(new System.Windows.Documents.Run(line.Substring(idx, quoteEnd - idx + 1)) { Foreground = strBrush });
-                    idx = quoteEnd + 1;
+                    int len = (c == '/') ? 2 : 1;
+                    tb.Inlines.Add(ThemedRun(line.Substring(idx, len), "CONCOST.Code.Tag"));
+                    idx += len;
+                    continue;
                 }
-                else if (line[idx] == '/' && idx + 1 < line.Length && line[idx + 1] == '>')
+
+                // 4. Numbers
+                if (char.IsDigit(c) && (idx == 0 || (!char.IsLetterOrDigit(line[idx - 1]) && line[idx - 1] != '_')))
                 {
-                    tb.Inlines.Add(new System.Windows.Documents.Run("/>") { Foreground = blueBrush, FontWeight = System.Windows.FontWeights.Normal });
-                    idx += 2;
+                    int numEnd = idx + 1;
+                    while (numEnd < line.Length && (char.IsLetterOrDigit(line[numEnd]) || line[numEnd] == '.' || line[numEnd] == '_'))
+                    {
+                        numEnd++;
+                    }
+                    tb.Inlines.Add(ThemedRun(line.Substring(idx, numEnd - idx), "CONCOST.Code.Number"));
+                    idx = numEnd;
+                    continue;
                 }
-                else if (line[idx] == '>')
-                {
-                    tb.Inlines.Add(new System.Windows.Documents.Run(">") { Foreground = blueBrush, FontWeight = System.Windows.FontWeights.Normal });
-                    idx++;
-                }
-                else if (char.IsLetter(line[idx]) || line[idx] == '_' || line[idx] == ':' || line[idx] == '.')
+
+                // 5. Words / Identifiers / Keywords
+                if (char.IsLetter(c) || c == '_' || (isXmlOrXaml && (c == ':' || c == '.')))
                 {
                     int wordEnd = idx;
-                    while (wordEnd < line.Length && (char.IsLetterOrDigit(line[wordEnd]) || line[wordEnd] == '_' || line[wordEnd] == ':' || line[wordEnd] == '.' || line[wordEnd] == '-')) wordEnd++;
+                    while (wordEnd < line.Length && (char.IsLetterOrDigit(line[wordEnd]) || line[wordEnd] == '_' || line[wordEnd] == '.' || line[wordEnd] == ':' || (isXmlOrXaml && line[wordEnd] == '-')))
+                    {
+                        wordEnd++;
+                    }
                     string word = line.Substring(idx, wordEnd - idx);
 
-                    if (wordEnd < line.Length && line[wordEnd] == '=')
+                    // XML Attribute check (word followed by optional spaces and '=')
+                    if (isXmlOrXaml)
                     {
-                        tb.Inlines.Add(new System.Windows.Documents.Run(word) { Foreground = attrBrush });
-                        tb.Inlines.Add(new System.Windows.Documents.Run("=") { Foreground = normalBrush });
-                        idx = wordEnd + 1;
+                        int probe = wordEnd;
+                        while (probe < line.Length && char.IsWhiteSpace(line[probe])) probe++;
+                        if (probe < line.Length && line[probe] == '=')
+                        {
+                            tb.Inlines.Add(ThemedRun(word, "CONCOST.Code.Attribute"));
+                            idx = wordEnd;
+                            continue;
+                        }
                     }
-                    else if (csharpKeywords.Contains(word))
+
+                    if (isCSharp)
                     {
-                        tb.Inlines.Add(new System.Windows.Documents.Run(word) { Foreground = blueBrush, FontWeight = System.Windows.FontWeights.Normal });
+                        if (csharpKeywords.Contains(word))
+                        {
+                            tb.Inlines.Add(ThemedRun(word, "CONCOST.Code.Keyword"));
+                            idx = wordEnd;
+                            continue;
+                        }
+
+                        // Type / Class name (starts with uppercase)
+                        if (char.IsUpper(word[0]))
+                        {
+                            tb.Inlines.Add(ThemedRun(word, "CONCOST.Code.Type"));
+                            idx = wordEnd;
+                            continue;
+                        }
+
+                        // Identifiers, parameters, fields (e.g. pluginRoot, _width):
+                        // Inherit TextBlock.Foreground ("CONCOST.Brush.TextPrimary") dynamically
+                        tb.Inlines.Add(new System.Windows.Documents.Run(word));
                         idx = wordEnd;
+                        continue;
                     }
-                    else if (char.IsUpper(word[0]) && !word.Contains(":"))
+
+                    if (cliKeywords.Contains(word))
                     {
-                        tb.Inlines.Add(new System.Windows.Documents.Run(word) { Foreground = typeBrush, FontWeight = System.Windows.FontWeights.Normal });
+                        tb.Inlines.Add(ThemedRun(word, "CONCOST.Code.Keyword"));
                         idx = wordEnd;
+                        continue;
                     }
-                    else
-                    {
-                        tb.Inlines.Add(new System.Windows.Documents.Run(word) { Foreground = normalBrush });
-                        idx = wordEnd;
-                    }
+
+                    // Default plain word inherits TextPrimary
+                    tb.Inlines.Add(new System.Windows.Documents.Run(word));
+                    idx = wordEnd;
+                    continue;
                 }
-                else
-                {
-                    tb.Inlines.Add(new System.Windows.Documents.Run(line[idx].ToString()) { Foreground = normalBrush });
-                    idx++;
-                }
+
+                // 6. Whitespace, Punctuation, Operators (;, (, ), {, }, =, etc.)
+                // Inherits TextBlock.Foreground ("CONCOST.Brush.TextPrimary") dynamically
+                tb.Inlines.Add(new System.Windows.Documents.Run(c.ToString()));
+                idx++;
             }
         }
         return tb;
@@ -14907,9 +15038,10 @@ OnPropertyChanged(nameof(PagedRecords));";
             var card = new Border
             {
                 BorderThickness = new System.Windows.Thickness(1),
-                CornerRadius = new System.Windows.CornerRadius(10),
-                Padding = new System.Windows.Thickness(24),
-                Margin = new System.Windows.Thickness(0, 0, 0, 18)
+                CornerRadius = new System.Windows.CornerRadius(12),
+                Padding = new System.Windows.Thickness(22, 18, 22, 20),
+                Margin = new System.Windows.Thickness(0, 0, 0, 18),
+                ClipToBounds = true
             };
             card.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
             card.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
@@ -14920,56 +15052,138 @@ OnPropertyChanged(nameof(PagedRecords));";
         void AddCodeCard(string title, string code, string lang = "XAML", string? description = null)
         {
             var sp = new StackPanel();
-            var hdr = new TextBlock { Text = title, FontSize = 16, FontWeight = System.Windows.FontWeights.SemiBold, Margin = new System.Windows.Thickness(0, 0, 0, 6) };
+
+            // 1. Header with Primary Accent Pill
+            var headerPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new System.Windows.Thickness(0, 0, 0, 8)
+            };
+
+            var accentPill = new Border
+            {
+                Width = 3.5,
+                Height = 16,
+                CornerRadius = new System.Windows.CornerRadius(1.75),
+                Margin = new System.Windows.Thickness(0, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            accentPill.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
+            headerPanel.Children.Add(accentPill);
+
+            var hdr = new TextBlock
+            {
+                Text = title,
+                FontSize = 14.5,
+                FontWeight = System.Windows.FontWeights.SemiBold,
+                VerticalAlignment = VerticalAlignment.Center
+            };
             hdr.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-            sp.Children.Add(hdr);
+            headerPanel.Children.Add(hdr);
+            sp.Children.Add(headerPanel);
+
+            // 2. Description
             if (!string.IsNullOrWhiteSpace(description))
             {
                 var explanation = new TextBlock
                 {
                     Text = description,
                     FontSize = 13,
-                    LineHeight = 20,
+                    LineHeight = 21,
                     TextWrapping = System.Windows.TextWrapping.Wrap,
-                    Margin = new System.Windows.Thickness(0, 0, 0, 12)
+                    Margin = new System.Windows.Thickness(14, 0, 0, 14)
                 };
                 explanation.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
                 sp.Children.Add(explanation);
             }
 
-            var codeBorder = new Border { CornerRadius = new System.Windows.CornerRadius(8), BorderThickness = new System.Windows.Thickness(1) };
+            // 3. Syntax-Highlighted Code Box
+            var codeBorder = new Border
+            {
+                CornerRadius = new System.Windows.CornerRadius(8),
+                BorderThickness = new System.Windows.Thickness(1),
+                ClipToBounds = true
+            };
             codeBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
             codeBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
 
             var codeInner = new StackPanel();
-            var codeBar = new Grid { Height = 32, Margin = new System.Windows.Thickness(12, 0, 8, 0) };
+            var codeBar = new Grid
+            {
+                Height = 36,
+                Margin = new System.Windows.Thickness(14, 0, 10, 0)
+            };
             codeBar.ColumnDefinitions.Add(new ColumnDefinition { Width = new System.Windows.GridLength(1, System.Windows.GridUnitType.Star) });
             codeBar.ColumnDefinitions.Add(new ColumnDefinition { Width = System.Windows.GridLength.Auto });
-            var langLbl = new TextBlock { Text = lang, FontSize = 11, FontWeight = System.Windows.FontWeights.Normal, VerticalAlignment = System.Windows.VerticalAlignment.Center };
+
+            var tagSp = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+            var codeIcon = new CONCOST.UI.Icons.Icon
+            {
+                Kind = IconKind.FileCode,
+                Width = 14,
+                Height = 14,
+                Margin = new System.Windows.Thickness(0, 0, 6, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            codeIcon.SetResourceReference(CONCOST.UI.Icons.Icon.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+            tagSp.Children.Add(codeIcon);
+
+            var langLbl = new TextBlock
+            {
+                Text = lang,
+                FontSize = 11.5,
+                FontWeight = System.Windows.FontWeights.Medium,
+                VerticalAlignment = VerticalAlignment.Center
+            };
             langLbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-            Grid.SetColumn(langLbl, 0);
-            codeBar.Children.Add(langLbl);
-            var cpyBtn = new Button { Content = T("Sao chép", "Copy"), Padding = new System.Windows.Thickness(10, 2, 10, 2), FontSize = 11, Height = 22, VerticalAlignment = System.Windows.VerticalAlignment.Center, Cursor = System.Windows.Input.Cursors.Hand };
+            tagSp.Children.Add(langLbl);
+
+            Grid.SetColumn(tagSp, 0);
+            codeBar.Children.Add(tagSp);
+
+            var cpyBtn = new Button
+            {
+                Content = T("Sao chép", "Copy"),
+                Padding = new System.Windows.Thickness(10, 2, 10, 2),
+                FontSize = 11.5,
+                Height = 24,
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
             cpyBtn.SetResourceReference(Button.StyleProperty, "CONCOST.Button.Secondary");
+            CONCOST.UI.AttachedProperties.IconElement.SetKind(cpyBtn, IconKind.Copy);
             CONCOST.UI.AttachedProperties.BorderElement.SetCornerRadius(cpyBtn, new System.Windows.CornerRadius(4));
-            cpyBtn.Click += (s, e) => { try { System.Windows.Clipboard.SetText(code.Trim()); cpyBtn.Content = T("Đã sao chép", "Copied!"); var t = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(2) }; t.Tick += (ts, te) => { cpyBtn.Content = T("Sao chép", "Copy"); t.Stop(); }; t.Start(); } catch { } };
+
+            cpyBtn.Click += (s, e) =>
+            {
+                try
+                {
+                    System.Windows.Clipboard.SetText(code.Trim());
+                    cpyBtn.Content = T("Đã chép!", "Copied!");
+                    CONCOST.UI.AttachedProperties.IconElement.SetKind(cpyBtn, IconKind.Check);
+                    var t = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+                    t.Tick += (ts, te) =>
+                    {
+                        cpyBtn.Content = T("Sao chép", "Copy");
+                        CONCOST.UI.AttachedProperties.IconElement.SetKind(cpyBtn, IconKind.Copy);
+                        t.Stop();
+                    };
+                    t.Start();
+                }
+                catch { }
+            };
             Grid.SetColumn(cpyBtn, 1);
             codeBar.Children.Add(cpyBtn);
             codeInner.Children.Add(codeBar);
+
             var divLine = new Border { Height = 1 };
-            divLine.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Border");
+            divLine.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.BorderSubtle");
             codeInner.Children.Add(divLine);
-            var codeText = new TextBlock
-            {
-                Text = code.Trim(),
-                FontFamily = new System.Windows.Media.FontFamily("Consolas, Courier New"),
-                FontSize = 12,
-                LineHeight = 18,
-                Padding = new System.Windows.Thickness(14, 10, 14, 10),
-                TextWrapping = System.Windows.TextWrapping.Wrap
-            };
-            codeText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-            codeInner.Children.Add(codeText);
+
+            var syntaxView = CreateXamlSyntaxHighlighter(code.Trim(), lang);
+            codeInner.Children.Add(syntaxView);
+
             codeBorder.Child = codeInner;
             sp.Children.Add(codeBorder);
             AddCard(sp);
@@ -15015,15 +15229,15 @@ OnPropertyChanged(nameof(PagedRecords));";
             {
                 CornerRadius = new System.Windows.CornerRadius(8),
                 BorderThickness = new System.Windows.Thickness(1),
-                Padding = new System.Windows.Thickness(14, 8, 14, 8),
-                Margin = new System.Windows.Thickness(0, 0, 10, 8)
+                Padding = new System.Windows.Thickness(16, 10, 16, 10),
+                Margin = new System.Windows.Thickness(0, 0, 12, 8)
             };
-            statBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
+            statBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
             statBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
             var statSp = new StackPanel { HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
-            var valLbl = new TextBlock { Text = val, FontSize = 18, FontWeight = System.Windows.FontWeights.Bold, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
-            valLbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-            var labelLbl = new TextBlock { Text = label, FontSize = 11, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
+            var valLbl = new TextBlock { Text = val, FontSize = 20, FontWeight = System.Windows.FontWeights.Bold, HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
+            valLbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.Primary");
+            var labelLbl = new TextBlock { Text = label, FontSize = 11.5, FontWeight = System.Windows.FontWeights.Medium, Margin = new System.Windows.Thickness(0, 2, 0, 0), HorizontalAlignment = System.Windows.HorizontalAlignment.Center };
             labelLbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
             statSp.Children.Add(valLbl);
             statSp.Children.Add(labelLbl);
@@ -15150,17 +15364,37 @@ public sealed class BeamViewModel : INotifyPropertyChanged
 
         // ── Section 7: Design Tokens ──────────────────────────────────────────
         var tokensSp = new StackPanel();
-        var tokensTitle = new TextBlock { Text = T("7. Hệ thống Design Token", "7. Design Token System"), FontSize = 16, FontWeight = System.Windows.FontWeights.SemiBold, Margin = new System.Windows.Thickness(0, 0, 0, 8) };
+
+        var tokensHeader = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new System.Windows.Thickness(0, 0, 0, 8)
+        };
+        var tokensPill = new Border
+        {
+            Width = 3.5,
+            Height = 16,
+            CornerRadius = new System.Windows.CornerRadius(1.75),
+            Margin = new System.Windows.Thickness(0, 0, 10, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        tokensPill.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
+        tokensHeader.Children.Add(tokensPill);
+
+        var tokensTitle = new TextBlock { Text = T("7. Hệ thống Design Token", "7. Design Token System"), FontSize = 14.5, FontWeight = System.Windows.FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center };
         tokensTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-        tokensSp.Children.Add(tokensTitle);
+        tokensHeader.Children.Add(tokensTitle);
+        tokensSp.Children.Add(tokensHeader);
+
         var tokensDescription = new TextBlock
         {
             Text = T("Token tập trung màu sắc, kiểu chữ, khoảng cách và bo góc. Ưu tiên dùng DynamicResource trong XAML để control phản hồi khi đổi theme hoặc màu nhấn.",
                      "Tokens centralize colors, typography, spacing, and corner radii. Prefer DynamicResource in XAML so controls respond to theme and accent changes."),
             FontSize = 13,
-            LineHeight = 20,
+            LineHeight = 21,
             TextWrapping = System.Windows.TextWrapping.Wrap,
-            Margin = new System.Windows.Thickness(0, 0, 0, 14)
+            Margin = new System.Windows.Thickness(14, 0, 0, 14)
         };
         tokensDescription.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
         tokensSp.Children.Add(tokensDescription);
@@ -15174,6 +15408,15 @@ public sealed class BeamViewModel : INotifyPropertyChanged
             (T("Bo góc", "Radius"), "CONCOST.CornerRadius.Default", T("6 — bo góc control", "6 — control radius"), "CONCOST.CornerRadius.Card → 10"),
         };
 
+        var tokenBorder = new Border
+        {
+            CornerRadius = new System.Windows.CornerRadius(8),
+            BorderThickness = new System.Windows.Thickness(1),
+            ClipToBounds = true
+        };
+        tokenBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+        tokenBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+
         var tokenGrid = new Grid { Margin = new System.Windows.Thickness(0) };
         tokenGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new System.Windows.GridLength(90) });
         tokenGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new System.Windows.GridLength(200) });
@@ -15182,26 +15425,13 @@ public sealed class BeamViewModel : INotifyPropertyChanged
 
         // Header row
         string[] hdrTitles = { T("Nhóm", "Category"), "Key", T("Giá trị mặc định", "Default Value"), T("Token liên quan", "Related Token") };
-        for (int c = 0; c < hdrTitles.Length; c++)
-        {
-            var hdr = new TextBlock { Text = hdrTitles[c], FontWeight = System.Windows.FontWeights.Normal, FontSize = 11.5, Padding = new System.Windows.Thickness(8, 6, 8, 6), Margin = new System.Windows.Thickness(0, 0, 0, 2) };
-            hdr.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-            Grid.SetColumn(hdr, c);
-            Grid.SetRow(hdr, 0);
-            tokenGrid.RowDefinitions.Add(new RowDefinition { Height = System.Windows.GridLength.Auto });
-            tokenGrid.Children.Add(hdr);
-        }
-        // Fix: remove extra row added from loop header, reset
-        tokenGrid.RowDefinitions.Clear();
         tokenGrid.RowDefinitions.Add(new RowDefinition { Height = System.Windows.GridLength.Auto }); // header
         foreach (var (cat, key, val, rel) in tokenCategories)
             tokenGrid.RowDefinitions.Add(new RowDefinition { Height = System.Windows.GridLength.Auto });
 
-        // Re-add header
-        tokenGrid.Children.Clear();
         for (int c = 0; c < hdrTitles.Length; c++)
         {
-            var hdr = new TextBlock { Text = hdrTitles[c], FontWeight = System.Windows.FontWeights.Normal, FontSize = 11.5, Padding = new System.Windows.Thickness(8, 6, 8, 6) };
+            var hdr = new TextBlock { Text = hdrTitles[c], FontWeight = System.Windows.FontWeights.SemiBold, FontSize = 11.5, Padding = new System.Windows.Thickness(12, 8, 12, 8) };
             hdr.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
             Grid.SetColumn(hdr, c);
             Grid.SetRow(hdr, 0);
@@ -15213,8 +15443,8 @@ public sealed class BeamViewModel : INotifyPropertyChanged
             var cells = new[] { cat, key, val, rel };
             for (int c = 0; c < cells.Length; c++)
             {
-                var cell = new Border { Padding = new System.Windows.Thickness(8, 6, 8, 6), BorderThickness = new System.Windows.Thickness(0, 1, 0, 0) };
-                cell.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+                var cell = new Border { Padding = new System.Windows.Thickness(12, 8, 12, 8), BorderThickness = new System.Windows.Thickness(0, 1, 0, 0) };
+                cell.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
                 var cellText = new TextBlock
                 {
                     Text = cells[c],
@@ -15234,14 +15464,34 @@ public sealed class BeamViewModel : INotifyPropertyChanged
             }
             row++;
         }
-        tokensSp.Children.Add(tokenGrid);
+        tokenBorder.Child = tokenGrid;
+        tokensSp.Children.Add(tokenBorder);
         AddCard(tokensSp);
 
         // ── Section 8: Control Categories ────────────────────────────────────
         var catSp = new StackPanel();
-        var catTitle = new TextBlock { Text = T($"8. Danh mục control — {AllItems.Count} mục thuộc 8 nhóm", $"8. Control library — {AllItems.Count} catalog items across 8 categories"), FontSize = 16, FontWeight = System.Windows.FontWeights.SemiBold, Margin = new System.Windows.Thickness(0, 0, 0, 8) };
+
+        var catHeader = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new System.Windows.Thickness(0, 0, 0, 8)
+        };
+        var catPill = new Border
+        {
+            Width = 3.5,
+            Height = 16,
+            CornerRadius = new System.Windows.CornerRadius(1.75),
+            Margin = new System.Windows.Thickness(0, 0, 10, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        catPill.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
+        catHeader.Children.Add(catPill);
+
+        var catTitle = new TextBlock { Text = T($"8. Danh mục control — {AllItems.Count} mục thuộc 8 nhóm", $"8. Control library — {AllItems.Count} catalog items across 8 categories"), FontSize = 14.5, FontWeight = System.Windows.FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center };
         catTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-        catSp.Children.Add(catTitle);
+        catHeader.Children.Add(catTitle);
+        catSp.Children.Add(catHeader);
         var categoryDescription = new TextBlock
         {
             Text = T("Các tên control trong danh sách được giữ nguyên tiếng Anh để khớp với tên lớp, namespace và API trong mã nguồn.",

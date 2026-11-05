@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -122,8 +122,8 @@ public partial class ShowcaseViewModel
             string copyText = isVi ? Loc.T("Sao chép", "Copy") : "Copy";
             string copiedText = isVi ? Loc.T("Đã chép!", "Copied!") : "Copied!";
 
-            FrameworkElement? xamlView = string.IsNullOrEmpty(xaml) ? null : CreateXamlSyntaxHighlighter(xaml!);
-            FrameworkElement? csView = string.IsNullOrEmpty(csharp) ? null : CreatePlainCodeView(csharp!);
+            FrameworkElement? xamlView = string.IsNullOrEmpty(xaml) ? null : CreateXamlSyntaxHighlighter(xaml!, "XAML");
+            FrameworkElement? csView = string.IsNullOrEmpty(csharp) ? null : CreateXamlSyntaxHighlighter(csharp!, "C#");
 
             var codeBox = new Border
             {
@@ -186,7 +186,7 @@ public partial class ShowcaseViewModel
                 Cursor = Cursors.Hand
             };
             copyBtn.SetResourceReference(Button.StyleProperty, "CONCOST.Button.Secondary");
-            IconElement.SetKind(copyBtn, IconKind.Check);
+            IconElement.SetKind(copyBtn, IconKind.Copy);
             BorderElement.SetCornerRadius(copyBtn, new CornerRadius(4));
 
             copyBtn.Click += (_, _) =>
@@ -195,10 +195,12 @@ public partial class ShowcaseViewModel
                 {
                     Clipboard.SetText(currentActiveCode.Trim());
                     copyBtn.Content = copiedText;
+                    IconElement.SetKind(copyBtn, IconKind.Check);
                     var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
                     timer.Tick += (ts, te) =>
                     {
                         copyBtn.Content = copyText;
+                        IconElement.SetKind(copyBtn, IconKind.Copy);
                         timer.Stop();
                     };
                     timer.Start();

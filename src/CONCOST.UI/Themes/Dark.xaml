@@ -53,6 +53,7 @@
     <SolidColorBrush x:Key="CONCOST.Code.Number" Color="#B5CEA8" />
     <SolidColorBrush x:Key="CONCOST.Code.Tag" Color="#569CD6" />
     <SolidColorBrush x:Key="CONCOST.Code.Attribute" Color="#9CDCFE" />
+    <SolidColorBrush x:Key="CONCOST.Code.Type" Color="#4EC9B0" />
 
     <!-- Ribbon. On a dark shell the strip sits below the paper and hover lifts toward blue, so a
          hovered command reads as lit rather than as merely brighter. Pressed is the same hue one
