@@ -14,7 +14,7 @@ namespace CONCOST.UI.Controls.Ribbon;
 /// </summary>
 /// <remarks>
 /// <para>
-/// Drop one of these straight into <see cref="Ribbon.ItemsSource"/>; the ribbon expands it into its
+/// Drop one of these straight into <see cref="Ribbon.ItemsSource"/> or <see cref="Ribbon.Items"/>; the ribbon expands it into its
 /// child tabs and keeps them in the order you wrote them. Nothing else has to change.
 /// </para>
 /// <para>
@@ -29,6 +29,10 @@ public class RibbonContextualTabGroup : HeaderedItemsControl
     public static readonly DependencyProperty AccentProperty =
         DependencyProperty.Register(nameof(Accent), typeof(Brush), typeof(RibbonContextualTabGroup),
             new FrameworkPropertyMetadata(null, OnAccentChanged));
+
+    public static readonly DependencyProperty AutoActivateProperty =
+        DependencyProperty.Register(nameof(AutoActivate), typeof(bool), typeof(RibbonContextualTabGroup),
+            new FrameworkPropertyMetadata(true));
 
     static RibbonContextualTabGroup()
     {
@@ -51,6 +55,16 @@ public class RibbonContextualTabGroup : HeaderedItemsControl
     }
 
     /// <summary>
+    /// Whether the first tab of this group should automatically become active when the group
+    /// becomes visible. Defaults to true.
+    /// </summary>
+    public bool AutoActivate
+    {
+        get => (bool)GetValue(AutoActivateProperty);
+        set => SetValue(AutoActivateProperty, value);
+    }
+
+    /// <summary>
     /// Set to <see cref="Visibility.Collapsed"/> to hide every tab in the group — the way a
     /// contextual group disappears when its mode ends.
     /// </summary>
@@ -62,6 +76,13 @@ public class RibbonContextualTabGroup : HeaderedItemsControl
 
     /// <summary>Tabs of this group, in declaration order.</summary>
     public IReadOnlyList<RibbonTabItem> Tabs => Items.OfType<RibbonTabItem>().ToList();
+
+    protected override void OnHeaderChanged(object oldHeader, object newHeader)
+    {
+        base.OnHeaderChanged(oldHeader, newHeader);
+        Apply();
+        TabsChanged?.Invoke(this, EventArgs.Empty);
+    }
 
     protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
     {
@@ -79,7 +100,7 @@ public class RibbonContextualTabGroup : HeaderedItemsControl
     /// <summary>Pushes the group's caption, colour and visibility down to its tabs.</summary>
     private void Apply()
     {
-        string caption = Header as string ?? string.Empty;
+        string caption = Header as string ?? Header?.ToString() ?? string.Empty;
         bool visible = IsGroupVisible;
 
         foreach (RibbonTabItem tab in Items.OfType<RibbonTabItem>())
@@ -93,7 +114,11 @@ public class RibbonContextualTabGroup : HeaderedItemsControl
 
     private static void OnAccentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is RibbonContextualTabGroup group) group.Apply();
+        if (d is RibbonContextualTabGroup group)
+        {
+            group.Apply();
+            group.TabsChanged?.Invoke(group, EventArgs.Empty);
+        }
     }
 
     private static void OnVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

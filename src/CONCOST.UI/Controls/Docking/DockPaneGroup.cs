@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using CONCOST.UI.Icons;
 
 namespace CONCOST.UI.Controls;
 
@@ -139,10 +141,10 @@ public class DockPaneGroup : Panel
 
     public static readonly DependencyProperty TabPlacementProperty =
         DependencyProperty.Register(nameof(TabPlacement), typeof(DockTabPlacement), typeof(DockPaneGroup),
-            new FrameworkPropertyMetadata(DockTabPlacement.Bottom, FrameworkPropertyMetadataOptions.AffectsMeasure,
+            new FrameworkPropertyMetadata(DockTabPlacement.Top, FrameworkPropertyMetadataOptions.AffectsMeasure,
                 OnTabChromeChanged));
 
-    /// <summary>Which edge of the group its tab strip hugs. Default <see cref="DockTabPlacement.Bottom"/>.</summary>
+    /// <summary>Which edge of the group its tab strip hugs. Default <see cref="DockTabPlacement.Top"/>.</summary>
     public DockTabPlacement TabPlacement
     {
         get => (DockTabPlacement)GetValue(TabPlacementProperty);
@@ -159,6 +161,67 @@ public class DockPaneGroup : Panel
         get => (Brush?)GetValue(SplitterBrushProperty);
         set => SetValue(SplitterBrushProperty, value);
     }
+
+    // ---------------------------------------------------------------- header
+
+    public static readonly DependencyProperty HeaderProperty =
+        DependencyProperty.Register(nameof(Header), typeof(object), typeof(DockPaneGroup),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>
+    /// Caption on the group's own header band.
+    /// </summary>
+    /// <remarks>
+    /// A group hides the headers of the panes it holds — two panels in one group are tabs of a
+    /// single slot, and giving each its own header would put two titles above one panel. That left
+    /// the group with no title at all, so the pane's content started at the very top of the area
+    /// with a floating accent rule above it. This band puts the title back.
+    /// </remarks>
+    public object? Header
+    {
+        get => GetValue(HeaderProperty);
+        set => SetValue(HeaderProperty, value);
+    }
+
+    public static readonly DependencyProperty IconProperty =
+        DependencyProperty.Register(nameof(Icon), typeof(IconKind), typeof(DockPaneGroup),
+            new FrameworkPropertyMetadata(IconKind.None, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>Glyph shown before the group's caption.</summary>
+    public IconKind Icon
+    {
+        get => (IconKind)GetValue(IconProperty);
+        set => SetValue(IconProperty, value);
+    }
+
+    public static readonly DependencyProperty HeaderHeightProperty =
+        DependencyProperty.Register(nameof(HeaderHeight), typeof(double), typeof(DockPaneGroup),
+            new FrameworkPropertyMetadata(28.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    /// <summary>
+    /// Height of the group's own header band, in pixels. Set it to 0 to drop the band entirely and
+    /// let the group's content reach the top of its slot.
+    /// </summary>
+    public double HeaderHeight
+    {
+        get => (double)GetValue(HeaderHeightProperty);
+        set => SetValue(HeaderHeightProperty, value);
+    }
+
+    public static readonly DependencyProperty ShowHeaderProperty =
+        DependencyProperty.Register(nameof(ShowHeader), typeof(bool), typeof(DockPaneGroup),
+            new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    /// <summary>Draw the group's own header band. Default <c>true</c>.</summary>
+    public bool ShowHeader
+    {
+        get => (bool)GetValue(ShowHeaderProperty);
+        set => SetValue(ShowHeaderProperty, value);
+    }
+
+    /// <summary>Thickness of the group's header band, or 0 when there is no band.</summary>
+    private double EffectiveHeaderHeight =>
+        ShowHeader && Header != null && !string.IsNullOrWhiteSpace(Header.ToString()) && HeaderHeight > 0 && HeaderHeight < 200 ? HeaderHeight : 0;
 
     private static void OnTabChromeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -395,6 +458,8 @@ public class DockPaneGroup : Panel
 
         _bands.Clear();
 
+        double header = EffectiveHeaderHeight;
+
         if (Mode == DockGroupMode.Split && nodes.Count > 1)
         {
             bool vertical = Orientation == Orientation.Horizontal;
@@ -402,7 +467,7 @@ public class DockPaneGroup : Panel
             for (int i = 0; i < rects.Count - 1; i++)
             {
                 var band = vertical
-                    ? new Rect(rects[i].Right, 0, SplitterThickness, finalSize.Height)
+                    ? new Rect(rects[i].Right, header, SplitterThickness, Math.Max(0, finalSize.Height - header))
                     : new Rect(0, rects[i].Bottom, finalSize.Width, SplitterThickness);
 
                 bands.Add(band);
@@ -412,8 +477,15 @@ public class DockPaneGroup : Panel
 
         if (Mode == DockGroupMode.Tabs && _tabs is not null)
         {
-            _tabs.Arrange(new Rect(0, Math.Max(0, finalSize.Height - TabStripThickness),
-                finalSize.Width, Math.Min(TabStripThickness, finalSize.Height)));
+            // The strip sits under the group's own header, so the title and the tabs read as one
+            // piece of chrome instead of a caption floating above an unrelated shelf.
+            double stripTop = TabPlacement == DockTabPlacement.Top
+                ? header
+                : Math.Max(header, finalSize.Height - TabStripThickness);
+
+            double stripHeight = Math.Min(TabStripThickness, Math.Max(0, finalSize.Height - header));
+
+            _tabs.Arrange(new Rect(0, stripTop, finalSize.Width, stripHeight));
         }
 
         if (!SameBands(bands.ToArray(), _bandRects))
@@ -447,23 +519,36 @@ public class DockPaneGroup : Panel
         double width = Math.Max(0, size.Width);
         double height = Math.Max(0, size.Height);
 
+        // The group's own header sits above everything it holds, so every slot starts below it.
+        double header = EffectiveHeaderHeight;
+
         if (Mode == DockGroupMode.Tabs)
         {
             var active = ActivePane;
-            double content = Math.Max(0, height - (_tabs is null ? 0 : TabStripThickness));
+
+            // The strip takes a row off the top when it sits there, and one off the bottom when it
+            // hangs below. Either way the content gets what is left.
+            double strip = _tabs is null ? 0 : TabStripThickness;
+            double content = TabPlacement == DockTabPlacement.Top
+                ? Math.Max(0, height - header - strip)
+                : Math.Max(0, height - header - strip);
+
+            double top = TabPlacement == DockTabPlacement.Top ? header + strip : header;
 
             foreach (var node in nodes)
             {
                 bool visible = ReferenceEquals(node, active);
                 node.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-                rects.Add(visible ? new Rect(0, 0, width, content) : new Rect(0, 0, 0, 0));
+                rects.Add(visible
+                    ? new Rect(0, top, width, content)
+                    : new Rect(0, top, 0, 0));
             }
 
             return rects;
         }
 
         bool vertical = Orientation == Orientation.Horizontal;
-        double total = vertical ? width : height;
+        double total = vertical ? width : height - header;
         double splitters = SplitterThickness * (nodes.Count - 1);
         double usable = Math.Max(0, total - splitters);
 
@@ -482,8 +567,8 @@ public class DockPaneGroup : Panel
             if (i == nodes.Count - 1) extent = Math.Max(0, total - offset);
 
             rects.Add(vertical
-                ? new Rect(offset, 0, extent, height)
-                : new Rect(0, offset, width, extent));
+                ? new Rect(offset, header, extent, height - header)
+                : new Rect(0, header + offset, width, extent));
 
             offset += extent + SplitterThickness;
         }
@@ -530,9 +615,16 @@ public class DockPaneGroup : Panel
     {
         base.OnRender(dc);
 
+        DrawHeader(dc);
+
         if (_bandRects.Length == 0) return;
 
-        var line = SplitterBrush ?? TryFindResource("CONCOST.Brush.Border") as Brush ?? Brushes.Gray;
+        var line = SplitterBrush
+            ?? TryFindResource("CONCOST.Brush.BorderSecondary") as Brush
+            ?? TryFindResource("CONCOST.Brush.Border") as Brush
+            ?? Brushes.Gray;
+
+        var hot = TryFindResource("CONCOST.Brush.Primary") as Brush ?? Brushes.Orange;
 
         foreach (var band in _bandRects)
         {
@@ -545,7 +637,72 @@ public class DockPaneGroup : Panel
                 : new Rect(band.X, band.Y + Math.Floor(band.Height / 2), band.Width, 1);
 
             dc.DrawRectangle(line, null, hairline);
+
+            // The gutter under the pointer lights up in the accent colour, the same way the
+            // manager's own splitters do. Without it the divider reads as a printed rule.
+            if (!_hotBand.HasValue || !_hotBand.Value.Equals(band)) continue;
+
+            var glow = band.Width <= band.Height
+                ? new Rect(band.X + Math.Floor(band.Width / 2) - 1, band.Y, 3, band.Height)
+                : new Rect(band.X, band.Y + Math.Floor(band.Height / 2) - 1, band.Width, 3);
+
+            dc.DrawRectangle(hot, null, glow);
         }
+    }
+
+    /// <summary>
+    /// Draws the group's own header band: a tinted strip with a caption, matching the header of a
+    /// <see cref="ToolWindow"/> so a nested group looks like the same kind of panel as a pane.
+    /// </summary>
+    private void DrawHeader(DrawingContext dc)
+    {
+        double header = EffectiveHeaderHeight;
+        if (header <= 0 || ActualWidth <= 0) return;
+
+        var surface = TryFindResource("CONCOST.Brush.SurfaceSecondary") as Brush ?? Brushes.Gainsboro;
+        var border = TryFindResource("CONCOST.Brush.Border") as Brush ?? Brushes.Gray;
+        var text = TryFindResource("CONCOST.Brush.TextPrimary") as Brush ?? Brushes.Black;
+        var accent = TryFindResource("CONCOST.Brush.Primary") as Brush ?? Brushes.Orange;
+
+        dc.DrawRectangle(surface, null, new Rect(0, 0, ActualWidth, header));
+
+        var line = new Pen(border, 1);
+        dc.DrawLine(line, new Point(0, header - 0.5), new Point(ActualWidth, header - 0.5));
+
+        string caption = Header?.ToString() ?? string.Empty;
+        if (string.IsNullOrEmpty(caption)) return;
+
+        // A short accent rule in front of the caption marks the band as a title rather than as a
+        // strip of tint, and it is the one saturated mark the group owns.
+        dc.DrawRectangle(accent, null, new Rect(0, 6, 2.5, header - 12));
+
+        double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+
+        var formatted = new FormattedText(caption, CultureInfo.CurrentUICulture,
+            FlowDirection.LeftToRight, new Typeface("Segoe UI"), 12, text, dpi)
+        {
+            MaxTextWidth = Math.Max(8, ActualWidth - 24),
+            MaxLineCount = 1,
+            Trimming = TextTrimming.CharacterEllipsis
+        };
+
+        dc.DrawText(formatted, new Point(12, (header - formatted.Height) / 2));
+    }
+    private Rect? _hotBand;
+
+    private void UpdateHotBand(Point point)
+    {
+        Rect? found = null;
+
+        foreach (var band in _bandRects)
+        {
+            if (band.Contains(point)) { found = band; break; }
+        }
+
+        if (found.HasValue && _hotBand.HasValue && found.Value == _hotBand.Value) return;
+
+        _hotBand = found;
+        InvalidateVisual();
     }
 
     protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -596,12 +753,14 @@ public class DockPaneGroup : Panel
                 if (!band.Rect.Contains(point)) continue;
 
                 Cursor = band.Vertical ? Cursors.SizeWE : Cursors.SizeNS;
+                UpdateHotBand(point);
                 return;
             }
 
             // Clearing the local value restores inheritance, so pane content does not inherit a
             // resize cursor just because the pointer crossed the group.
             Cursor = null;
+            UpdateHotBand(point);
             return;
         }
 

@@ -45,12 +45,12 @@ public class StatusToBackgroundConverter : IValueConverter
 
         return status.ToUpperInvariant() switch
         {
-            "APPROVED" or "OK" or "DONE" or "HOÀN THÀNH" => new SolidColorBrush(Color.FromRgb(220, 252, 231)),   // #DCFCE7 Emerald light
-            "IN REVIEW" or "REVIEW" or "CHỜ DUYỆT"        => new SolidColorBrush(Color.FromRgb(224, 242, 254)),   // #E0F2FE Sky light
-            "IN PROGRESS" or "ĐANG LÀM"                  => new SolidColorBrush(Color.FromRgb(237, 233, 254)),   // #EDE9FE Violet light
-            "PENDING" or "WARNING" or "TẠM DỪNG"        => new SolidColorBrush(Color.FromRgb(254, 243, 199)),   // #FEF3C7 Amber light
-            "REJECTED" or "ERROR" or "HUỶ"              => new SolidColorBrush(Color.FromRgb(254, 226, 226)),   // #FEE2E2 Red light
-            _                                           => new SolidColorBrush(Color.FromRgb(241, 245, 249))    // #F1F5F9 Slate light
+            "APPROVED" or "OK" or "DONE" or "HOÀN THÀNH" or "AN TOÀN" => new SolidColorBrush(Color.FromRgb(220, 252, 231)),   // #DCFCE7 Emerald light
+            "IN REVIEW" or "REVIEW" or "CHỜ DUYỆT"                    => new SolidColorBrush(Color.FromRgb(224, 242, 254)),   // #E0F2FE Sky light
+            "IN PROGRESS" or "ĐANG LÀM"                              => new SolidColorBrush(Color.FromRgb(237, 233, 254)),   // #EDE9FE Violet light
+            "PENDING" or "WARNING" or "TẠM DỪNG" or "CẢNH BÁO"        => new SolidColorBrush(Color.FromRgb(254, 243, 199)),   // #FEF3C7 Amber light
+            "REJECTED" or "ERROR" or "HUỶ" or "OVERLOAD" or "QUÁ TẢI" => new SolidColorBrush(Color.FromRgb(254, 226, 226)),   // #FEE2E2 Red light
+            _                                                       => new SolidColorBrush(Color.FromRgb(241, 245, 249))    // #F1F5F9 Slate light
         };
     }
 
@@ -67,12 +67,12 @@ public class StatusToForegroundConverter : IValueConverter
 
         return status.ToUpperInvariant() switch
         {
-            "APPROVED" or "OK" or "DONE" or "HOÀN THÀNH" => new SolidColorBrush(Color.FromRgb(22, 101, 52)),     // #166534 Emerald dark
-            "IN REVIEW" or "REVIEW" or "CHỜ DUYỆT"        => new SolidColorBrush(Color.FromRgb(7, 89, 133)),      // #075985 Sky dark
-            "IN PROGRESS" or "ĐANG LÀM"                  => new SolidColorBrush(Color.FromRgb(107, 33, 168)),    // #6B21A8 Violet dark
-            "PENDING" or "WARNING" or "TẠM DỪNG"        => new SolidColorBrush(Color.FromRgb(180, 83, 9)),      // #B45309 Amber dark
-            "REJECTED" or "ERROR" or "HUỶ"              => new SolidColorBrush(Color.FromRgb(153, 27, 27)),     // #991B1B Red dark
-            _                                           => new SolidColorBrush(Color.FromRgb(71, 85, 105))      // #475569 Slate dark
+            "APPROVED" or "OK" or "DONE" or "HOÀN THÀNH" or "AN TOÀN" => new SolidColorBrush(Color.FromRgb(22, 101, 52)),     // #166534 Emerald dark
+            "IN REVIEW" or "REVIEW" or "CHỜ DUYỆT"                    => new SolidColorBrush(Color.FromRgb(7, 89, 133)),      // #075985 Sky dark
+            "IN PROGRESS" or "ĐANG LÀM"                              => new SolidColorBrush(Color.FromRgb(107, 33, 168)),    // #6B21A8 Violet dark
+            "PENDING" or "WARNING" or "TẠM DỪNG" or "CẢNH BÁO"        => new SolidColorBrush(Color.FromRgb(180, 83, 9)),      // #B45309 Amber dark
+            "REJECTED" or "ERROR" or "HUỶ" or "OVERLOAD" or "QUÁ TẢI" => new SolidColorBrush(Color.FromRgb(153, 27, 27)),     // #991B1B Red dark
+            _                                                       => new SolidColorBrush(Color.FromRgb(71, 85, 105))      // #475569 Slate dark
         };
     }
 

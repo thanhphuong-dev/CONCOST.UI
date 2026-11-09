@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using CONCOST.UI.Icons;
 
 namespace CONCOST.UI.Controls;
@@ -399,9 +400,30 @@ public class ToolWindow : ContentControl
 
     private Point ToManagerPoint(MouseEventArgs e)
     {
-        if (ParentElement() is UIElement manager) return e.GetPosition(manager);
-        return e.GetPosition(this);
+        // Walk the visual tree to find the DockingManager ancestor, not just the immediate parent.
+        // For a pane nested inside a DockPaneGroup, the immediate parent is the group — using its
+        // coordinate space would make ResolveDropSide and IsOutside receive wrong coordinates,
+        // causing the pane to be floated instead of docked.
+        var manager = FindDockingManager();
+        return manager is not null
+            ? e.GetPosition(manager)
+            : e.GetPosition(ParentElement() as UIElement ?? this);
     }
+
+    private DockingManager? FindDockingManager()
+    {
+        DependencyObject? node = VisualTreeHelper.GetParent(this);
+        while (node is not null)
+        {
+            if (node is DockingManager manager) return manager;
+            node = VisualTreeHelper.GetParent(node);
+        }
+        // A floated pane has no DockingManager in its visual tree. Keep its logical owner so it can
+        // still participate in the same drag service and dock back into the manager.
+        return DockingOwner;
+    }
+
+    internal DockingManager? DockingOwner { get; set; }
 
     private DependencyObject? ParentElement()
     {

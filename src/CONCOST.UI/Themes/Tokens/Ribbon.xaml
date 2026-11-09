@@ -13,7 +13,7 @@
     <GridLength x:Key="CONCOST.Ribbon.PanelTitleHeight">18</GridLength>
     <sys:Double x:Key="CONCOST.Ribbon.TabHeight">30</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.SeparatorWidth">9</sys:Double>
-    <sys:Double x:Key="CONCOST.Ribbon.LargeIconSize">28</sys:Double>
+    <sys:Double x:Key="CONCOST.Ribbon.LargeIconSize">32</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.MediumIconSize">18</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.SmallIconSize">16</sys:Double>
     <sys:Double x:Key="CONCOST.Ribbon.LauncherSize">14</sys:Double>
@@ -24,6 +24,6 @@
     <Thickness x:Key="CONCOST.Ribbon.ItemPadding">3,2</Thickness>
     <Thickness x:Key="CONCOST.Ribbon.GroupPadding">4,2,4,3</Thickness>
     <CornerRadius x:Key="CONCOST.Ribbon.ItemCornerRadius">3</CornerRadius>
-    <CornerRadius x:Key="CONCOST.Ribbon.ShellCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="CONCOST.Ribbon.ShellCornerRadius">0</CornerRadius>
 
 </ResourceDictionary>

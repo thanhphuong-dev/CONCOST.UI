@@ -13,16 +13,25 @@ namespace CONCOST.UI.Controls;
 /// <summary>One button in the title bar's quick access strip.</summary>
 public class TitleBarAction
 {
-    public TitleBarAction(IconKind icon, string toolTip, ICommand? command = null, object? commandParameter = null)
+    public TitleBarAction(
+        IconKind icon,
+        string toolTip,
+        ICommand? command = null,
+        object? commandParameter = null,
+        Func<ImageSource?>? iconSourceFactory = null)
     {
         Icon = icon;
         ToolTip = toolTip;
         Command = command;
         CommandParameter = commandParameter;
+        IconSourceFactory = iconSourceFactory;
     }
 
     /// <summary>The glyph.</summary>
     public IconKind Icon { get; set; }
+
+    /// <summary>Optional high-resolution artwork supplied by the host for an exact command icon.</summary>
+    public Func<ImageSource?>? IconSourceFactory { get; set; }
 
     /// <summary>What the button says it does.</summary>
     public string ToolTip { get; set; }
@@ -486,6 +495,7 @@ public class ApplicationTitleBar : Grid
     public void RefreshQuickAccess()
     {
         _quickAccess.Children.Clear();
+        _quickAccess.Visibility = ShowQuickAccess ? Visibility.Visible : Visibility.Collapsed;
 
         foreach (var action in QuickAccess)
         {
@@ -505,8 +515,23 @@ public class ApplicationTitleBar : Grid
             {
                 button.Foreground = TitleForeground;
             }
-            IconElement.SetKind(button, action.Icon);
-            IconElement.SetIconSize(button, 14);
+            if (action.IconSourceFactory?.Invoke() is { } iconSource)
+            {
+                button.Content = new Image
+                {
+                    Source = iconSource,
+                    Width = 14,
+                    Height = 14,
+                    Stretch = Stretch.Uniform,
+                    SnapsToDevicePixels = true,
+                    UseLayoutRounding = true,
+                };
+            }
+            else
+            {
+                IconElement.SetKind(button, action.Icon);
+                IconElement.SetIconSize(button, 14);
+            }
 
             _quickAccess.Children.Add(button);
         }
@@ -516,8 +541,9 @@ public class ApplicationTitleBar : Grid
     {
         string document = (documentTitle ?? string.Empty).Trim();
         if (document.Length > 0 && isModified) document += "*";
-        if (string.IsNullOrEmpty(applicationName)) return document;
-        return document.Length == 0 ? applicationName! : $"{document} — {applicationName}";
+        string application = (applicationName ?? string.Empty).Trim();
+        if (application.Length == 0) return document;
+        return document.Length == 0 ? application : $"{document} — {application}";
     }
 
     private void OnBarMouseDown(object sender, MouseButtonEventArgs e)

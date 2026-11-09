@@ -15,6 +15,10 @@ public enum AppTheme
     Light,
     /// <summary>A warm, low-glare light palette for long work sessions.</summary>
     SoftLight,
+    /// <summary>Revit 2024 light palette.</summary>
+    Revit,
+    /// <summary>Revit 2024 dark palette.</summary>
+    RevitDark,
     Dark,
 
     /// <summary>Follow the operating system's light/dark setting.</summary>
@@ -59,6 +63,7 @@ public class ThemeManager : ObservableObject
     private ThemePreset _preset = ThemePreset.Default;
     private SurfaceStyle _surfaceStyle = SurfaceStyle.Flat;
     private Color _accentColor = ColorHelper.FromHex("#FF7900");
+    private bool _accentColorCustomized;
 
     public AppTheme Theme
     {
@@ -103,6 +108,7 @@ public class ThemeManager : ObservableObject
         {
             if (SetProperty(ref _accentColor, value))
             {
+                _accentColorCustomized = true;
                 ApplyAccentColor(value);
             }
         }
@@ -124,6 +130,7 @@ public class ThemeManager : ObservableObject
         }
 
         AccentColor = color;
+        _accentColorCustomized = preset != ThemePreset.Default;
         ApplyBrutalOverrides(preset == ThemePreset.Brutal);
     }
 
@@ -218,12 +225,23 @@ public class ThemeManager : ObservableObject
         if (app == null) return;
 
         var effectiveTheme = ResolveTheme(theme, Application.Current?.MainWindow);
+        var accentColor = ResolveThemeAccent(effectiveTheme);
 
         string themeUri = $"pack://application:,,,/CONCOST.UI;component/Themes/{GetThemeFileName(effectiveTheme)}";
 
         var newDict = new ResourceDictionary { Source = new Uri(themeUri, UriKind.Absolute) };
 
         var merged = app.Resources.MergedDictionaries;
+
+        // Also update any nested ThemeResources.xaml dictionary if present
+        foreach (var dict in merged)
+        {
+            if (dict.Source != null && dict.Source.OriginalString.Contains("ThemeResources.xaml", StringComparison.OrdinalIgnoreCase))
+            {
+                ReplaceThemeDictionary(dict, effectiveTheme);
+            }
+        }
+
         var existing = merged.FirstOrDefault(IsThemeDictionary);
 
         if (existing != null)
@@ -236,7 +254,7 @@ public class ThemeManager : ObservableObject
             merged.Add(newDict);
         }
 
-        ApplyAccentColor(_accentColor);
+        ApplyAccentColor(accentColor);
     }
 
     /// <summary>
@@ -249,12 +267,13 @@ public class ThemeManager : ObservableObject
             throw new InvalidOperationException("Apply the CONCOST.UI theme on the root element's dispatcher thread.");
 
         var effectiveTheme = ResolveTheme(theme, rootElement);
+        var accentColor = ResolveThemeAccent(effectiveTheme);
         var scope = ScopedResources.GetValue(rootElement, CreateScopedResources);
         scope.RequestedTheme = theme;
         EnsureScopedResources(rootElement, scope);
         ReplaceThemeDictionary(scope.ThemeResources, effectiveTheme);
         RefreshScopedResources(rootElement, scope);
-        ApplyAccentColor(rootElement, _accentColor);
+        ApplyAccentColor(rootElement, accentColor, effectiveTheme is AppTheme.Dark or AppTheme.RevitDark);
         ApplySurfaceStyle(rootElement, _surfaceStyle);
     }
 
@@ -339,13 +358,40 @@ public class ThemeManager : ObservableObject
     {
         AppTheme.Dark => "Dark.xaml",
         AppTheme.SoftLight => "SoftLight.xaml",
+        AppTheme.Revit => "Revit.xaml",
+        AppTheme.RevitDark => "RevitDark.xaml",
         _ => "Light.xaml"
     };
 
     private static bool IsThemeDictionary(ResourceDictionary dictionary) =>
         dictionary.Source?.OriginalString.Contains("/Themes/Dark.xaml", StringComparison.OrdinalIgnoreCase) == true ||
         dictionary.Source?.OriginalString.Contains("/Themes/Light.xaml", StringComparison.OrdinalIgnoreCase) == true ||
-        dictionary.Source?.OriginalString.Contains("/Themes/SoftLight.xaml", StringComparison.OrdinalIgnoreCase) == true;
+        dictionary.Source?.OriginalString.Contains("/Themes/SoftLight.xaml", StringComparison.OrdinalIgnoreCase) == true ||
+        dictionary.Source?.OriginalString.Contains("/Themes/Revit.xaml", StringComparison.OrdinalIgnoreCase) == true ||
+        dictionary.Source?.OriginalString.Contains("/Themes/RevitDark.xaml", StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool IsRevitTheme(AppTheme theme) => theme is AppTheme.Revit or AppTheme.RevitDark;
+
+    private Color ResolveThemeAccent(AppTheme theme)
+    {
+        if (_accentColorCustomized)
+            return _accentColor;
+
+        var defaultAccent = theme switch
+        {
+            AppTheme.Revit => ColorHelper.FromHex("#FF0696D7"),
+            AppTheme.RevitDark => ColorHelper.FromHex("#FF38ABDF"),
+            _ => ColorHelper.FromHex("#FF7900")
+        };
+
+        if (_accentColor != defaultAccent)
+        {
+            _accentColor = defaultAccent;
+            OnPropertyChanged(nameof(AccentColor));
+        }
+
+        return _accentColor;
+    }
 
     private static (Color Color, bool Dark) GetPreset(ThemePreset preset) => preset switch
     {
@@ -360,12 +406,16 @@ public class ThemeManager : ObservableObject
     };
 
     public void ApplyAccentColor(FrameworkElement rootElement, Color color)
+        => ApplyAccentColor(rootElement, color, null);
+
+    private void ApplyAccentColor(FrameworkElement rootElement, Color color, bool? darkOverride)
     {
         if (rootElement == null) return;
         if (!rootElement.Dispatcher.CheckAccess())
             throw new InvalidOperationException("Apply CONCOST.UI resources on the root element's dispatcher thread.");
 
-        var palette = AccentPaletteGenerator.Generate(color);
+        bool isDark = darkOverride ?? (_theme is AppTheme.Dark or AppTheme.RevitDark || DetectTheme(rootElement) == AppTheme.Dark);
+        var palette = AccentPaletteGenerator.Generate(color, isDark);
         rootElement.Resources["CONCOST.Color.Primary"] = palette.Primary;
         rootElement.Resources["CONCOST.Brush.Primary"] = ColorHelper.CreateBrush(palette.Primary);
         rootElement.Resources["CONCOST.Brush.PrimaryHover"] = ColorHelper.CreateBrush(palette.PrimaryHover);
@@ -373,7 +423,15 @@ public class ThemeManager : ObservableObject
         rootElement.Resources["CONCOST.Brush.PrimaryLight"] = ColorHelper.CreateBrush(palette.PrimaryLight);
         rootElement.Resources["CONCOST.Brush.PrimaryDark"] = ColorHelper.CreateBrush(palette.PrimaryDark);
         rootElement.Resources["CONCOST.Brush.PrimarySoft"] = ColorHelper.CreateBrush(palette.PrimarySoft);
+        rootElement.Resources["CONCOST.Brush.PrimarySoftLight"] = ColorHelper.CreateBrush(palette.PrimarySoftLight);
+        rootElement.Resources["CONCOST.Brush.PrimarySoftBorder"] = ColorHelper.CreateBrush(palette.PrimarySoftBorder);
+        rootElement.Resources["CONCOST.Brush.PrimarySoftForeground"] = ColorHelper.CreateBrush(palette.PrimarySoftForeground);
         rootElement.Resources["CONCOST.Brush.BorderFocused"] = ColorHelper.CreateBrush(palette.Primary);
+        rootElement.Resources["CONCOST.Brush.Ribbon.ContextualAccent"] = ColorHelper.CreateBrush(palette.Primary);
+        rootElement.Resources["CONCOST.Brush.Ribbon.ContextualTabAccent"] = ColorHelper.CreateBrush(palette.Primary);
+        rootElement.Resources["CONCOST.Brush.Ribbon.ContextualModify"] = ColorHelper.CreateBrush(palette.Primary);
+        rootElement.Resources["CONCOST.Brush.Ribbon.ItemChecked"] = ColorHelper.CreateBrush(palette.PrimarySoftLight);
+        rootElement.Resources["CONCOST.Brush.Ribbon.ItemCheckedBorder"] = ColorHelper.CreateBrush(palette.PrimarySoftBorder);
     }
 
     public void ApplyAccentColor(Color color)
@@ -381,7 +439,19 @@ public class ThemeManager : ObservableObject
         var app = Application.Current;
         if (app == null) return;
 
-        var palette = AccentPaletteGenerator.Generate(color);
+        bool isDark = _theme is AppTheme.Dark or AppTheme.RevitDark;
+        if (!isDark && app.CheckAccess())
+        {
+            try
+            {
+                if (app.MainWindow != null && DetectTheme(app.MainWindow) == AppTheme.Dark)
+                {
+                    isDark = true;
+                }
+            }
+            catch { }
+        }
+        var palette = AccentPaletteGenerator.Generate(color, isDark);
 
         app.Resources["CONCOST.Color.Primary"] = palette.Primary;
         app.Resources["CONCOST.Brush.Primary"] = ColorHelper.CreateBrush(palette.Primary);
@@ -390,7 +460,15 @@ public class ThemeManager : ObservableObject
         app.Resources["CONCOST.Brush.PrimaryLight"] = ColorHelper.CreateBrush(palette.PrimaryLight);
         app.Resources["CONCOST.Brush.PrimaryDark"] = ColorHelper.CreateBrush(palette.PrimaryDark);
         app.Resources["CONCOST.Brush.PrimarySoft"] = ColorHelper.CreateBrush(palette.PrimarySoft);
+        app.Resources["CONCOST.Brush.PrimarySoftLight"] = ColorHelper.CreateBrush(palette.PrimarySoftLight);
+        app.Resources["CONCOST.Brush.PrimarySoftBorder"] = ColorHelper.CreateBrush(palette.PrimarySoftBorder);
+        app.Resources["CONCOST.Brush.PrimarySoftForeground"] = ColorHelper.CreateBrush(palette.PrimarySoftForeground);
         app.Resources["CONCOST.Brush.BorderFocused"] = ColorHelper.CreateBrush(palette.Primary);
+        app.Resources["CONCOST.Brush.Ribbon.ContextualAccent"] = ColorHelper.CreateBrush(palette.Primary);
+        app.Resources["CONCOST.Brush.Ribbon.ContextualTabAccent"] = ColorHelper.CreateBrush(palette.Primary);
+        app.Resources["CONCOST.Brush.Ribbon.ContextualModify"] = ColorHelper.CreateBrush(palette.Primary);
+        app.Resources["CONCOST.Brush.Ribbon.ItemChecked"] = ColorHelper.CreateBrush(palette.PrimarySoftLight);
+        app.Resources["CONCOST.Brush.Ribbon.ItemCheckedBorder"] = ColorHelper.CreateBrush(palette.PrimarySoftBorder);
     }
 
     /// <summary>
@@ -432,6 +510,8 @@ public class ThemeManager : ObservableObject
         AppTheme.Dark => AppTheme.Dark,
         AppTheme.Light => AppTheme.Light,
         AppTheme.SoftLight => AppTheme.SoftLight,
+        AppTheme.Revit => AppTheme.Revit,
+        AppTheme.RevitDark => AppTheme.RevitDark,
         AppTheme.Auto => DetectTheme(probe),
         _ => GetSystemTheme()
     };

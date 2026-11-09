@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,20 +122,7 @@ public partial class ShowcaseViewModel
         return button;
     }
 
-    private static FrameworkElement CreatePlainCodeView(string code)
-    {
-        var text = new TextBlock
-        {
-            Text = code.Trim(),
-            FontFamily = new FontFamily("Consolas, Courier New"),
-            FontSize = 12,
-            LineHeight = 19,
-            Padding = new Thickness(14, 12, 14, 12),
-            TextWrapping = TextWrapping.Wrap
-        };
-        text.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-        return text;
-    }
+    private static FrameworkElement CreatePlainCodeView(string code) => CreateXamlSyntaxHighlighter(code);
 
     private static TextBlock DemoCaption(string text, double top = 0)
     {

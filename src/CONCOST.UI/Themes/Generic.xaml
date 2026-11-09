@@ -526,12 +526,19 @@
         <ControlTemplate TargetType="{x:Type Button}">
           <Border Name="border" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" Padding="{TemplateBinding Control.Padding}" SnapsToDevicePixels="True">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}">
-              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}" Margin="0,0,6,0">
+              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}">
                 <FrameworkElement.Style>
                   <Style TargetType="{x:Type icons:Icon}">
+                    <Setter Property="Margin" Value="0,0,6,0" />
                     <Style.Triggers>
                       <DataTrigger Value="None" Binding="{Binding Path=(attached:IconElement.Kind), RelativeSource={RelativeSource AncestorType=Button}}">
                         <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Value="{x:Null}" Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <Setter Property="Margin" Value="0" />
+                      </DataTrigger>
+                      <DataTrigger Value="" Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=Button}}">
+                        <Setter Property="Margin" Value="0" />
                       </DataTrigger>
                     </Style.Triggers>
                   </Style>
@@ -925,12 +932,19 @@
         <ControlTemplate TargetType="{x:Type ToggleButton}">
           <Border Name="border" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="{TemplateBinding attached:BorderElement.CornerRadius}" Padding="{TemplateBinding Control.Padding}" TextElement.Foreground="{TemplateBinding Control.Foreground}" SnapsToDevicePixels="True">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}">
-              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}" Margin="0,0,6,0">
+              <icons:Icon x:Name="btnIcon" Kind="{TemplateBinding attached:IconElement.Kind}" Width="{TemplateBinding attached:IconElement.IconSize}" Height="{TemplateBinding attached:IconElement.IconSize}" Foreground="{TemplateBinding Control.Foreground}">
                 <FrameworkElement.Style>
                   <Style TargetType="{x:Type icons:Icon}">
+                    <Setter Property="Margin" Value="0,0,6,0" />
                     <Style.Triggers>
                       <DataTrigger Value="None" Binding="{Binding Path=(attached:IconElement.Kind), RelativeSource={RelativeSource AncestorType=ToggleButton}}">
                         <Setter Property="Visibility" Value="Collapsed" />
+                      </DataTrigger>
+                      <DataTrigger Value="{x:Null}" Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}">
+                        <Setter Property="Margin" Value="0" />
+                      </DataTrigger>
+                      <DataTrigger Value="" Binding="{Binding Content, RelativeSource={RelativeSource AncestorType=ToggleButton}}">
+                        <Setter Property="Margin" Value="0" />
                       </DataTrigger>
                     </Style.Triggers>
                   </Style>
@@ -1319,25 +1333,25 @@
     <Setter Property="attached:AccessibleName.FromToolTip" Value="True" />
     <Setter Property="Background" Value="#00FFFFFF" />
     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
-    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="BorderThickness" Value="1" />
     <Setter Property="Padding" Value="6,4" />
     <Setter Property="FrameworkElement.Cursor" Value="Hand" />
     <Setter Property="FrameworkElement.FocusVisualStyle" Value="{x:Null}" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type RadioButton}">
-          <Border Name="bd" Background="{TemplateBinding Control.Background}" CornerRadius="4" Padding="{TemplateBinding Control.Padding}" SnapsToDevicePixels="True">
+          <Border Name="bd" Background="{TemplateBinding Control.Background}" BorderBrush="#00FFFFFF" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="4" Padding="{TemplateBinding Control.Padding}" SnapsToDevicePixels="True">
             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Control.Foreground}" />
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="UIElement.IsMouseOver" Value="True">
-              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.Surface}" Property="Border.Background" />
+              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" Property="Border.Background" />
               <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
             </Trigger>
             <Trigger Property="ToggleButton.IsChecked" Value="True">
-              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
-              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
-              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.Surface}" Property="Border.Background" />
+              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.Border}" Property="Border.BorderBrush" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.Primary}" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -2459,6 +2473,7 @@
     <Setter Property="Width" Value="52" />
     <Setter Property="Height" Value="38" />
     <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="FrameworkElement.FocusVisualStyle" Value="{x:Null}" />
@@ -2469,11 +2484,7 @@
           <Grid>
             <Border Name="HoverBackground" Background="{DynamicResource CONCOST.Brush.SurfaceHover}" CornerRadius="8" Opacity="0" />
             <Border Name="SelectedBackground" Background="{DynamicResource CONCOST.Brush.Primary}" CornerRadius="8" Opacity="0" />
-            <ContentPresenter Name="NormalText" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}">
-              <TextElement.Foreground>
-                <SolidColorBrush Color="{DynamicResource CONCOST.Color.TextPrimary}" />
-              </TextElement.Foreground>
-            </ContentPresenter>
+            <ContentPresenter Name="NormalText" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" />
           </Grid>
           <ControlTemplate.Triggers>
             <Trigger Property="UIElement.IsMouseOver" Value="True">
@@ -2513,6 +2524,7 @@
               <Border Grid.Row="0" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" CornerRadius="8" Padding="4" Margin="4,4,4,8">
                 <Grid Height="34">
                   <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -2997,8 +3009,8 @@
               <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="ListBoxItem.IsSelected" Value="True">
-              <Setter TargetName="Bd" Property="Border.Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="Bd" Property="Border.Background" Value="{DynamicResource CONCOST.Brush.PrimarySoftLight}" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" Property="Border.BorderBrush" />
               <Setter TargetName="Bd" Value="1" Property="Border.BorderThickness" />
               <Setter Value="{DynamicResource CONCOST.Brush.TextPrimary}" Property="Foreground" />
               <Setter Property="FontWeight" Value="Normal" />
@@ -3060,8 +3072,8 @@
               <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.Surface}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="ListBoxItem.IsSelected" Value="True">
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" Property="Border.BorderBrush" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoftLight}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="UIElement.Opacity" Value="0.45" />
@@ -3252,6 +3264,9 @@
   <Style x:Key="{x:Type Menu}" TargetType="{x:Type Menu}" BasedOn="{StaticResource CONCOST.Menu.Base}" />
   <DropShadowEffect x:Key="CONCOST.Effect.Elevation1" BlurRadius="8" Direction="270" ShadowDepth="2" Opacity="0.08" Color="#000000" />
   <DropShadowEffect x:Key="CONCOST.Effect.Elevation2" BlurRadius="16" Direction="270" ShadowDepth="4" Opacity="0.12" Color="#000000" />
+  <DropShadowEffect x:Key="CONCOST.Shadow.Depth1" BlurRadius="6" Direction="270" ShadowDepth="1" Opacity="0.08" Color="#000000" />
+  <DropShadowEffect x:Key="CONCOST.Shadow.Depth2" BlurRadius="12" Direction="270" ShadowDepth="3" Opacity="0.12" Color="#000000" />
+  <DropShadowEffect x:Key="CONCOST.Shadow.Depth3" BlurRadius="20" Direction="270" ShadowDepth="6" Opacity="0.16" Color="#000000" />
   <Style x:Key="CONCOST.ContextMenu.Base" TargetType="{x:Type ContextMenu}">
     <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
@@ -3498,6 +3513,7 @@
     <Setter Property="Background" Value="#00FFFFFF" />
     <Setter Property="BorderBrush" Value="#00FFFFFF" />
     <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
     <Setter Property="Padding" Value="8,0" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="HorizontalContentAlignment" Value="{Binding Path=(attached:DataGridElement.CellHorizontalContentAlignment), RelativeSource={RelativeSource AncestorType=DataGrid}}" />
@@ -3506,11 +3522,23 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type DataGridCell}">
           <Border Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" Padding="{TemplateBinding Control.Padding}" SnapsToDevicePixels="True">
-            <ContentPresenter HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+            <ContentPresenter HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" TextElement.Foreground="{TemplateBinding Control.Foreground}" />
           </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter Property="Background" Value="#00FFFFFF" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsSelected" Value="True">
+        <Setter Property="Background" Value="#00FFFFFF" />
+        <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+      </Trigger>
+    </Style.Triggers>
   </Style>
   <Style x:Key="CONCOST.DataGrid.CheckBox" TargetType="{x:Type CheckBox}">
     <Setter Property="HorizontalAlignment" Value="Center" />
@@ -3566,32 +3594,37 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type DataGridRow}">
-          <Border Name="DGR_Border" Background="{TemplateBinding Control.Background}" BorderBrush="#00FFFFFF" BorderThickness="0" CornerRadius="4" SnapsToDevicePixels="True">
-            <SelectiveScrollingGrid>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-              </Grid.ColumnDefinitions>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-              </Grid.RowDefinitions>
-              <DataGridCellsPresenter Grid.Row="0" Grid.Column="1" MinHeight="{TemplateBinding FrameworkElement.MinHeight}" VerticalContentAlignment="Center" ItemsPanel="{TemplateBinding DataGridRow.ItemsPanel}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-              <DataGridDetailsPresenter Grid.Row="1" Grid.Column="1" Visibility="{TemplateBinding DataGridRow.DetailsVisibility}" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
-            </SelectiveScrollingGrid>
+          <Border Name="DGR_Border" Background="{TemplateBinding Control.Background}" BorderBrush="#00FFFFFF" BorderThickness="1" CornerRadius="4" SnapsToDevicePixels="True">
+            <Grid>
+              <Border Name="DGR_Indicator" HorizontalAlignment="Left" Width="3.5" Background="{DynamicResource CONCOST.Brush.Primary}" CornerRadius="3,0,0,3" Visibility="Collapsed" Panel.ZIndex="3" />
+              <SelectiveScrollingGrid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="*" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <DataGridCellsPresenter Grid.Row="0" Grid.Column="1" MinHeight="{TemplateBinding FrameworkElement.MinHeight}" VerticalContentAlignment="Center" ItemsPanel="{TemplateBinding DataGridRow.ItemsPanel}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                <DataGridDetailsPresenter Grid.Row="1" Grid.Column="1" Visibility="{TemplateBinding DataGridRow.DetailsVisibility}" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+              </SelectiveScrollingGrid>
+            </Grid>
           </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="UIElement.IsMouseOver" Value="True">
+              <Setter TargetName="DGR_Border" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="DataGridRow.IsSelected" Value="True">
+              <Setter TargetName="DGR_Border" Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoftLight}" />
+              <Setter TargetName="DGR_Border" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" />
+              <Setter TargetName="DGR_Indicator" Property="Visibility" Value="Visible" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
-    <Style.Triggers>
-      <Trigger Property="UIElement.IsMouseOver" Value="True">
-        <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
-      </Trigger>
-      <Trigger Property="DataGridRow.IsSelected" Value="True">
-        <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
-        <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
-      </Trigger>
-    </Style.Triggers>
   </Style>
   <Style x:Key="{x:Type DataGridRow}" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource CONCOST.DataGridRow.Base}" />
   <Style x:Key="CONCOST.DataGrid.Base" TargetType="{x:Type DataGrid}">
@@ -3675,31 +3708,36 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type DataGridRow}">
           <Border Name="DGR_Border" Background="{TemplateBinding Control.Background}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" CornerRadius="0" SnapsToDevicePixels="True">
-            <SelectiveScrollingGrid>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-              </Grid.ColumnDefinitions>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-              </Grid.RowDefinitions>
-              <DataGridCellsPresenter Grid.Row="0" Grid.Column="1" MinHeight="{TemplateBinding FrameworkElement.MinHeight}" VerticalContentAlignment="Center" ItemsPanel="{TemplateBinding DataGridRow.ItemsPanel}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-              <DataGridDetailsPresenter Grid.Row="1" Grid.Column="1" Visibility="{TemplateBinding DataGridRow.DetailsVisibility}" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
-            </SelectiveScrollingGrid>
+            <Grid>
+              <Border Name="DGR_Indicator" HorizontalAlignment="Left" Width="3.5" Background="{DynamicResource CONCOST.Brush.Primary}" Visibility="Collapsed" Panel.ZIndex="3" />
+              <SelectiveScrollingGrid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="*" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <DataGridCellsPresenter Grid.Row="0" Grid.Column="1" MinHeight="{TemplateBinding FrameworkElement.MinHeight}" VerticalContentAlignment="Center" ItemsPanel="{TemplateBinding DataGridRow.ItemsPanel}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                <DataGridDetailsPresenter Grid.Row="1" Grid.Column="1" Visibility="{TemplateBinding DataGridRow.DetailsVisibility}" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+              </SelectiveScrollingGrid>
+            </Grid>
           </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="UIElement.IsMouseOver" Value="True">
+              <Setter TargetName="DGR_Border" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+            <Trigger Property="DataGridRow.IsSelected" Value="True">
+              <Setter TargetName="DGR_Border" Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoftLight}" />
+              <Setter TargetName="DGR_Border" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" />
+              <Setter TargetName="DGR_Indicator" Property="Visibility" Value="Visible" />
+              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
-    <Style.Triggers>
-      <Trigger Property="UIElement.IsMouseOver" Value="True">
-        <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
-      </Trigger>
-      <Trigger Property="DataGridRow.IsSelected" Value="True">
-        <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
-        <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
-      </Trigger>
-    </Style.Triggers>
   </Style>
   <Style x:Key="{x:Type DataGrid}" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource CONCOST.DataGrid.Base}" />
   <Style x:Key="CONCOST.DataGrid.Seamless" TargetType="{x:Type DataGrid}">
@@ -5802,11 +5840,10 @@
               </Grid.ColumnDefinitions>
               <TextBlock Grid.Row="0" Grid.Column="0" Text="{TemplateBinding dash:StatisticCard.Title}" ToolTip="{TemplateBinding dash:StatisticCard.Title}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" FontSize="12.5" FontWeight="Normal" />
               <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">
-                <Grid VerticalAlignment="Center">
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                  <TextBlock Grid.Column="0" Text="{TemplateBinding dash:StatisticCard.Value}" ToolTip="{TemplateBinding dash:StatisticCard.Value}" TextTrimming="CharacterEllipsis" FontSize="22" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" />
-                  <TextBlock Grid.Column="1" Text="{TemplateBinding dash:StatisticCard.Unit}" FontSize="13" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="4,0,0,2" VerticalAlignment="Bottom" />
-                </Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                  <TextBlock Text="{TemplateBinding dash:StatisticCard.Value}" ToolTip="{TemplateBinding dash:StatisticCard.Value}" TextTrimming="CharacterEllipsis" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" />
+                  <TextBlock Name="PART_Unit" Text="{TemplateBinding dash:StatisticCard.Unit}" FontSize="13" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="5,0,0,2" VerticalAlignment="Bottom" />
+                </StackPanel>
                 <StackPanel Name="PART_TrendRow" Orientation="Horizontal" Margin="0,3,0,0">
                   <icons:Icon Name="PART_TrendIcon" Kind="TrendUp" Width="12" Height="12" Margin="0,0,4,0" Foreground="{DynamicResource CONCOST.Brush.Success}" VerticalAlignment="Center" />
                   <TextBlock Name="PART_Trend" Text="{TemplateBinding dash:StatisticCard.Trend}" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.Success}" TextTrimming="CharacterEllipsis" />
@@ -5829,6 +5866,7 @@
               <Setter TargetName="PART_TrendIcon" Property="icons:Icon.Kind" Value="TrendNeutral" />
               <Setter TargetName="PART_TrendIcon" Property="Control.Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
             </Trigger>
+            <Trigger Property="dash:StatisticCard.Unit" Value=""><Setter TargetName="PART_Unit" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
             <Trigger Property="dash:StatisticCard.Trend" Value=""><Setter TargetName="PART_TrendRow" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
             <Trigger Property="dash:StatisticCard.Subtitle" Value=""><Setter TargetName="PART_Subtitle" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
           </ControlTemplate.Triggers>
@@ -5858,19 +5896,18 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{TemplateBinding dash:StatisticCard.Title}" ToolTip="{TemplateBinding dash:StatisticCard.Title}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" FontSize="12.5" FontWeight="Normal" />
                 <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">
-                  <Grid VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{TemplateBinding dash:StatisticCard.Value}" ToolTip="{TemplateBinding dash:StatisticCard.Value}" TextTrimming="CharacterEllipsis" FontSize="22" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.Primary}" VerticalAlignment="Center" />
-                    <TextBlock Grid.Column="1" Text="{TemplateBinding dash:StatisticCard.Unit}" FontSize="13" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="4,0,0,2" VerticalAlignment="Bottom" />
-                  </Grid>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{TemplateBinding dash:StatisticCard.Value}" ToolTip="{TemplateBinding dash:StatisticCard.Value}" TextTrimming="CharacterEllipsis" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.Primary}" VerticalAlignment="Center" />
+                    <TextBlock Name="PART_Unit" Text="{TemplateBinding dash:StatisticCard.Unit}" FontSize="13" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="5,0,0,2" VerticalAlignment="Bottom" />
+                  </StackPanel>
                   <StackPanel Name="PART_TrendRow" Orientation="Horizontal" Margin="0,3,0,0">
                     <icons:Icon Name="PART_TrendIcon" Kind="TrendUp" Width="12" Height="12" Margin="0,0,4,0" Foreground="{DynamicResource CONCOST.Brush.Success}" VerticalAlignment="Center" />
                     <TextBlock Name="PART_Trend" Text="{TemplateBinding dash:StatisticCard.Trend}" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.Success}" TextTrimming="CharacterEllipsis" />
                   </StackPanel>
                   <TextBlock Name="PART_Subtitle" Text="{TemplateBinding dash:StatisticCard.Subtitle}" FontSize="10.5" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
-                <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="{DynamicResource CONCOST.Brush.Primary}" CornerRadius="8" Width="42" Height="42" VerticalAlignment="Center">
-                  <icons:Icon Kind="{TemplateBinding dash:StatisticCard.Icon}" Width="20" Height="20" Foreground="{DynamicResource CONCOST.Brush.White}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="{DynamicResource CONCOST.Brush.PrimarySoftLight}" BorderBrush="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" BorderThickness="1" CornerRadius="8" Width="42" Height="42" VerticalAlignment="Center">
+                  <icons:Icon Kind="{TemplateBinding dash:StatisticCard.Icon}" Width="20" Height="20" Foreground="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
               </Grid>
             </Grid>
@@ -5886,6 +5923,7 @@
               <Setter TargetName="PART_TrendIcon" Property="icons:Icon.Kind" Value="TrendNeutral" />
               <Setter TargetName="PART_TrendIcon" Property="Control.Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
             </Trigger>
+            <Trigger Property="dash:StatisticCard.Unit" Value=""><Setter TargetName="PART_Unit" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
             <Trigger Property="dash:StatisticCard.Trend" Value=""><Setter TargetName="PART_TrendRow" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
             <Trigger Property="dash:StatisticCard.Subtitle" Value=""><Setter TargetName="PART_Subtitle" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
           </ControlTemplate.Triggers>
@@ -5917,8 +5955,8 @@
                 <icons:Icon Kind="{TemplateBinding dash:StatisticCard.Icon}" Width="18" Height="18" Foreground="{DynamicResource CONCOST.Brush.Primary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
               </Border>
               <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,6,0,8" VerticalAlignment="Center">
-                <TextBlock Text="{TemplateBinding dash:StatisticCard.Value}" FontSize="20" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
-                <TextBlock Text="{TemplateBinding dash:StatisticCard.Unit}" FontSize="12.5" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="4,0,0,2" VerticalAlignment="Bottom" />
+                <TextBlock Text="{TemplateBinding dash:StatisticCard.Value}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                <TextBlock Name="PART_Unit" Text="{TemplateBinding dash:StatisticCard.Unit}" FontSize="12.5" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="5,0,0,2" VerticalAlignment="Bottom" />
               </StackPanel>
               <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
                 <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
@@ -5944,6 +5982,7 @@
               <Setter TargetName="PART_TrendIcon" Property="icons:Icon.Kind" Value="TrendNeutral" />
               <Setter TargetName="PART_TrendIcon" Property="Control.Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
             </Trigger>
+            <Trigger Property="dash:StatisticCard.Unit" Value=""><Setter TargetName="PART_Unit" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
             <Trigger Property="dash:StatisticCard.Trend" Value=""><Setter TargetName="PART_TrendRow" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
             <Trigger Property="dash:StatisticCard.Subtitle" Value=""><Setter TargetName="PART_Subtitle" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
           </ControlTemplate.Triggers>
@@ -5953,43 +5992,56 @@
   </Style>
   <Style x:Key="CONCOST.StatisticCard.Hero" TargetType="{x:Type dash:StatisticCard}">
     <Setter Property="Height" Value="108" />
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoftLight}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type dash:StatisticCard}">
-          <Border Background="{DynamicResource CONCOST.Brush.Primary}" CornerRadius="10" Padding="18,14">
+          <Border Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="1" CornerRadius="10" ClipToBounds="True">
             <UIElement.Effect>
-              <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270" Color="{DynamicResource CONCOST.Color.Primary}" Opacity="0.3" />
+              <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Color="{DynamicResource CONCOST.Color.Shadow}" Opacity="0.06" />
             </UIElement.Effect>
             <Grid>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-              </Grid.RowDefinitions>
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBlock Grid.Row="0" Grid.Column="0" Text="{TemplateBinding dash:StatisticCard.Title}" ToolTip="{TemplateBinding dash:StatisticCard.Title}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CONCOST.Brush.White}" FontSize="12.5" FontWeight="Normal" />
-              <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">
-                <Grid VerticalAlignment="Center">
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                  <TextBlock Grid.Column="0" Text="{TemplateBinding dash:StatisticCard.Value}" ToolTip="{TemplateBinding dash:StatisticCard.Value}" TextTrimming="CharacterEllipsis" FontSize="22" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.White}" VerticalAlignment="Center" />
-                  <TextBlock Grid.Column="1" Text="{TemplateBinding dash:StatisticCard.Unit}" FontSize="13" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.White}" Opacity="0.85" Margin="4,0,0,2" VerticalAlignment="Bottom" />
-                </Grid>
-                <StackPanel Name="PART_TrendRow" Orientation="Horizontal" Margin="0,3,0,0">
-                  <icons:Icon Name="PART_TrendIcon" Kind="TrendUp" Width="12" Height="12" Margin="0,0,4,0" Foreground="{DynamicResource CONCOST.Brush.White}" VerticalAlignment="Center" />
-                  <TextBlock Name="PART_Trend" Text="{TemplateBinding dash:StatisticCard.Trend}" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource CONCOST.Brush.White}" TextTrimming="CharacterEllipsis" />
+              <Border Height="3" VerticalAlignment="Top" Background="{DynamicResource CONCOST.Brush.Primary}" />
+              <Grid Margin="18,14,18,14">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{TemplateBinding dash:StatisticCard.Title}" ToolTip="{TemplateBinding dash:StatisticCard.Title}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" Opacity="0.9" FontSize="12.5" FontWeight="Medium" />
+                <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{TemplateBinding dash:StatisticCard.Value}" ToolTip="{TemplateBinding dash:StatisticCard.Value}" TextTrimming="CharacterEllipsis" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" VerticalAlignment="Center" />
+                    <TextBlock Name="PART_Unit" Text="{TemplateBinding dash:StatisticCard.Unit}" FontSize="13" FontWeight="Medium" Foreground="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" Opacity="0.85" Margin="5,0,0,2" VerticalAlignment="Bottom" />
+                  </StackPanel>
+                  <StackPanel Name="PART_TrendRow" Orientation="Horizontal" Margin="0,3,0,0">
+                    <icons:Icon Name="PART_TrendIcon" Kind="TrendUp" Width="12" Height="12" Margin="0,0,4,0" Foreground="{DynamicResource CONCOST.Brush.Success}" VerticalAlignment="Center" />
+                    <TextBlock Name="PART_Trend" Text="{TemplateBinding dash:StatisticCard.Trend}" FontSize="11" FontWeight="Medium" Foreground="{DynamicResource CONCOST.Brush.Success}" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                  <TextBlock Name="PART_Subtitle" Text="{TemplateBinding dash:StatisticCard.Subtitle}" FontSize="10.5" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
-                <TextBlock Name="PART_Subtitle" Text="{TemplateBinding dash:StatisticCard.Subtitle}" FontSize="10.5" Foreground="{DynamicResource CONCOST.Brush.White}" Opacity="0.85" TextTrimming="CharacterEllipsis" />
-              </StackPanel>
-              <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="#26FFFFFF" CornerRadius="8" Width="42" Height="42" VerticalAlignment="Center">
-                <icons:Icon Kind="{TemplateBinding dash:StatisticCard.Icon}" Width="20" Height="20" Foreground="#FFFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
-              </Border>
+                <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="{DynamicResource CONCOST.Brush.Primary}" CornerRadius="9" Width="42" Height="42" VerticalAlignment="Center">
+                  <icons:Icon Kind="{TemplateBinding dash:StatisticCard.Icon}" Width="20" Height="20" Foreground="#FFFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+              </Grid>
             </Grid>
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="dash:StatisticCard.TrendDirection" Value="Down"><Setter TargetName="PART_TrendIcon" Property="icons:Icon.Kind" Value="TrendDown" /></Trigger>
-            <Trigger Property="dash:StatisticCard.TrendDirection" Value="Neutral"><Setter TargetName="PART_TrendIcon" Property="icons:Icon.Kind" Value="TrendNeutral" /></Trigger>
+            <Trigger Property="dash:StatisticCard.TrendDirection" Value="Down">
+              <Setter TargetName="PART_Trend" Property="TextBlock.Foreground" Value="{DynamicResource CONCOST.Brush.Danger}" />
+              <Setter TargetName="PART_TrendIcon" Property="icons:Icon.Kind" Value="TrendDown" />
+              <Setter TargetName="PART_TrendIcon" Property="Control.Foreground" Value="{DynamicResource CONCOST.Brush.Danger}" />
+            </Trigger>
+            <Trigger Property="dash:StatisticCard.TrendDirection" Value="Neutral">
+              <Setter TargetName="PART_Trend" Property="TextBlock.Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+              <Setter TargetName="PART_TrendIcon" Property="icons:Icon.Kind" Value="TrendNeutral" />
+              <Setter TargetName="PART_TrendIcon" Property="Control.Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+            </Trigger>
+            <Trigger Property="dash:StatisticCard.Unit" Value=""><Setter TargetName="PART_Unit" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
             <Trigger Property="dash:StatisticCard.Trend" Value=""><Setter TargetName="PART_TrendRow" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
             <Trigger Property="dash:StatisticCard.Subtitle" Value=""><Setter TargetName="PART_Subtitle" Property="UIElement.Visibility" Value="Collapsed" /></Trigger>
           </ControlTemplate.Triggers>
@@ -7022,8 +7074,8 @@
               <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" Property="Border.Background" />
             </Trigger>
             <Trigger Property="TreeViewItem.IsSelected" Value="True">
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" Property="Border.Background" />
-              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimaryLight}" Property="Border.BorderBrush" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoftLight}" Property="Border.Background" />
+              <Setter TargetName="Bd" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" Property="Border.BorderBrush" />
               <Setter TargetName="Bd" Value="1" Property="Border.BorderThickness" />
               <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
               <Setter Property="FontWeight" Value="Normal" />
@@ -7832,6 +7884,157 @@
                         </ItemsControl.ItemTemplate>
                       </ItemsControl>
                     </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="CONCOST.Expander.Revit" TargetType="{x:Type Expander}">
+    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSunken}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Expander}">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ToggleButton x:Name="HeaderToggle" Grid.Row="0" Style="{x:Null}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" Background="{TemplateBinding Control.Background}" BorderThickness="0" Padding="0" IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+              <ToggleButton.Template>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                  <Border x:Name="HeaderSurface" Background="{TemplateBinding Control.Background}" BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}" BorderThickness="0,1,0,1" SnapsToDevicePixels="True" UseLayoutRounding="True">
+                    <ContentPresenter ContentSource="Content" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" />
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="ToggleButton.IsChecked" Value="True">
+                      <Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSunken}" />
+                    </Trigger>
+                    <Trigger Property="UIElement.IsMouseOver" Value="True">
+                      <Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                    </Trigger>
+                    <Trigger Property="ButtonBase.IsPressed" Value="True">
+                      <Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+                    </Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </ToggleButton.Template>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="22" />
+                </Grid.ColumnDefinitions>
+                <ContentPresenter ContentSource="Header" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                <Path x:Name="Arrow" Grid.Column="1" Width="8" Height="5" HorizontalAlignment="Center" VerticalAlignment="Center" Stroke="{TemplateBinding Control.Foreground}" StrokeThickness="1.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M0,0 L4,4 L8,0" />
+              </Grid>
+            </ToggleButton>
+            <ContentPresenter x:Name="ExpandSite" Grid.Row="1" Visibility="Collapsed" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" />
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Expander.IsExpanded" Value="True">
+              <Setter TargetName="ExpandSite" Property="Visibility" Value="Visible" />
+              <Setter TargetName="Arrow" Property="RenderTransform">
+                <Setter.Value><RotateTransform Angle="180" /></Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="UIElement.IsMouseOver" Value="True">
+              <Setter TargetName="HeaderToggle" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <!-- Dense, flat parameter rows and gray category bands match Revit's Properties palette. -->
+  <Style x:Key="CONCOST.PropertyGrid.Revit" TargetType="{x:Type controls:PropertyGrid}" BasedOn="{StaticResource CONCOST.PropertyGrid.Base}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:PropertyGrid}">
+          <Border Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="0" ClipToBounds="True">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <ItemsControl ItemsSource="{TemplateBinding controls:PropertyGrid.Categories}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Expander Style="{StaticResource CONCOST.Expander.Revit}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" HorizontalContentAlignment="Stretch">
+                      <HeaderedContentControl.Header>
+                        <TextBlock MinHeight="18" Padding="5,2" FontWeight="SemiBold" FontSize="11.5" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" Text="{Binding CategoryName}" />
+                      </HeaderedContentControl.Header>
+                      <ItemsControl ItemsSource="{Binding Properties}" HorizontalContentAlignment="Stretch">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <Border BorderBrush="{DynamicResource CONCOST.Brush.BorderSubtle}" BorderThickness="0,0,0,1" Padding="0">
+                              <Grid MinHeight="21">
+                                <Grid.ColumnDefinitions>
+                                  <ColumnDefinition Width="48*" />
+                                  <ColumnDefinition Width="52*" />
+                                </Grid.ColumnDefinitions>
+                                <Border BorderBrush="{DynamicResource CONCOST.Brush.BorderSubtle}" BorderThickness="0,0,1,0" Padding="4,0">
+                                  <TextBlock FontSize="11.5" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding DisplayName}" ToolTip="{Binding Description}" />
+                                </Border>
+                                <Grid Grid.Column="1" Margin="0">
+                                  <TextBox x:Name="EditableValue" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding ValidationError}">
+                                    <TextBox.Style>
+                                      <Style TargetType="TextBox" BasedOn="{StaticResource CONCOST.TextBox.Base}">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="attached:BorderElement.CornerRadius" Value="0" />
+                                        <Setter Property="Padding" Value="3,0" />
+                                        <Setter Property="Height" Value="20" />
+                                        <Setter Property="MinHeight" Value="20" />
+                                        <Setter Property="FontSize" Value="11.5" />
+                                        <Style.Triggers>
+                                          <DataTrigger Binding="{Binding IsReadOnly}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                          <DataTrigger Binding="{Binding EditorType}" Value="Boolean"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                          <DataTrigger Binding="{Binding EditorType}" Value="Enum"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                          <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" /><Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.InputBorder}" /></Trigger>
+                                          <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" /><Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.BorderFocused}" /></Trigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </TextBox.Style>
+                                  </TextBox>
+                                  <TextBlock x:Name="ReadOnlyValue" Visibility="Collapsed" FontSize="11.5" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Value}" ToolTip="{Binding Value}" />
+                                  <CheckBox x:Name="BooleanValue" Visibility="Collapsed" IsChecked="{Binding IsBoolTrue, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                  <ComboBox x:Name="EnumValue" Visibility="Collapsed" ItemsSource="{Binding EnumOptions}" SelectedItem="{Binding Value, Mode=TwoWay}">
+                                    <ComboBox.Style>
+                                      <Style TargetType="ComboBox" BasedOn="{StaticResource CONCOST.ComboBox.Base}">
+                                        <Setter Property="Height" Value="20" />
+                                        <Setter Property="MinHeight" Value="20" />
+                                        <Setter Property="FontSize" Value="11.5" />
+                                        <Setter Property="Padding" Value="3,0,18,0" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="attached:BorderElement.CornerRadius" Value="0" />
+                                        <Style.Triggers>
+                                          <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" /><Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.InputBorder}" /></Trigger>
+                                          <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" /><Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.BorderFocused}" /></Trigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </ComboBox.Style>
+                                  </ComboBox>
+                                </Grid>
+                              </Grid>
+                            </Border>
+                            <DataTemplate.Triggers>
+                              <DataTrigger Binding="{Binding IsReadOnly}" Value="True"><Setter TargetName="ReadOnlyValue" Property="Visibility" Value="Visible" /><Setter TargetName="BooleanValue" Property="IsEnabled" Value="False" /></DataTrigger>
+                              <DataTrigger Binding="{Binding EditorType}" Value="Boolean"><Setter TargetName="BooleanValue" Property="Visibility" Value="Visible" /></DataTrigger>
+                              <DataTrigger Binding="{Binding EditorType}" Value="Enum"><Setter TargetName="EnumValue" Property="Visibility" Value="Visible" /></DataTrigger>
+                            </DataTemplate.Triggers>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </Expander>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -9267,6 +9470,9 @@
   </Style>
   <Style x:Key="{x:Type controls:AutoCompleteTextBox}" TargetType="{x:Type controls:AutoCompleteTextBox}" BasedOn="{StaticResource CONCOST.AutoCompleteTextBox.Base}" />
   <Style x:Key="CONCOST.Spreadsheet.Base" TargetType="{x:Type controls:Spreadsheet}">
+    <Setter Property="Focusable" Value="True" />
+    <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="None" />
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
     <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
     <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
@@ -9355,7 +9561,7 @@
                           </Border>
                           <ControlTemplate.Triggers>
                             <Trigger Property="UIElement.IsMouseOver" Value="True">
-                              <Setter TargetName="bd" Value="{DynamicResource CONCOST.Brush.PrimaryTint}" Property="Border.Background" />
+                              <Setter TargetName="bd" Property="Border.Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
                             </Trigger>
                           </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -9826,24 +10032,24 @@
 
   <!-- ============================ Ribbon application menu ============================ -->
   <Style x:Key="CONCOST.RibbonApplicationMenu.Base" TargetType="{x:Type ribbon:RibbonApplicationMenu}">
-    <!-- A neutral block, not an accent slab. A solid primary rectangle is the loudest thing in the
-         whole ribbon and it competes with the accent, which belongs to the selected tab. Hosts that
-         want the coloured File block back set Background / Foreground on the control. -->
-    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
-    <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
-    <Setter Property="Height" Value="{DynamicResource CONCOST.Ribbon.QuickAccessHeight}" />
+    <!-- The Revit / Office style application tab: sits on the same baseline as the tabs,
+         using the primary theme accent with crisp contrast white text. -->
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Primary}" />
+    <Setter Property="Foreground" Value="#FFFFFF" />
+    <Setter Property="MinHeight" Value="30" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
     <Setter Property="Padding" Value="16,0" />
     <Setter Property="Cursor" Value="Hand" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ribbon:RibbonApplicationMenu}">
-          <Grid>
-            <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
-              <TextBlock Text="{TemplateBinding Header}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" />
+          <Grid VerticalAlignment="Stretch">
+            <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="0" Padding="{TemplateBinding Padding}" VerticalAlignment="Stretch" SnapsToDevicePixels="True">
+              <TextBlock Text="{TemplateBinding Header}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{TemplateBinding Foreground}" />
             </Border>
 
-            <Popup x:Name="Panel" IsOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=Bd}" StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-5" VerticalOffset="2">
-              <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="8" MinWidth="420" SnapsToDevicePixels="True">
+            <Popup x:Name="Panel" IsOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=Bd}" StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-1" VerticalOffset="1">
+              <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1" CornerRadius="8" MinWidth="440" SnapsToDevicePixels="True">
                 <Border.Effect>
                   <DropShadowEffect BlurRadius="24" ShadowDepth="5" Direction="270" Opacity="0.22" Color="#101828" />
                 </Border.Effect>
@@ -9859,9 +10065,9 @@
                     <ItemsControl x:Name="FooterCommands" ItemsSource="{TemplateBinding FooterItems}" />
                   </StackPanel>
 
-                  <Border Grid.Column="1" MinWidth="210" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" CornerRadius="0,8,8,0" Padding="14,12">
+                  <Border Grid.Column="1" MinWidth="260" Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="1,0,0,0" CornerRadius="0,8,8,0" Padding="14,10">
                     <StackPanel>
-                      <TextBlock Text="{TemplateBinding RecentHeader}" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" Margin="0,0,0,6" />
+                      <TextBlock Text="{TemplateBinding RecentHeader}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Margin="4,2,0,8" />
                       <ItemsControl x:Name="RecentList" ItemsSource="{TemplateBinding RecentItems}" />
                     </StackPanel>
                   </Border>
@@ -9871,10 +10077,10 @@
           </Grid>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.PrimaryHover}" />
             </Trigger>
             <Trigger Property="IsOpen" Value="True">
-              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfacePressed}" />
+              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CONCOST.Brush.PrimaryPressed}" />
             </Trigger>
             <Trigger Property="RecentItems" Value="{x:Null}">
               <Setter TargetName="RecentList" Property="Visibility" Value="Collapsed" />
@@ -9919,7 +10125,7 @@
           <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
             <Grid>
               <StackPanel x:Name="LargePanel" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
-                <Image x:Name="LargeIcon" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                <Image x:Name="LargeIcon" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
                 <TextBlock x:Name="LargeLabel" Text="{TemplateBinding Header}" FontSize="11" TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="28" LineHeight="13" LineStackingStrategy="BlockLineHeight" Foreground="{TemplateBinding Foreground}" />
               </StackPanel>
               <Grid x:Name="SmallPanel" HorizontalAlignment="Stretch" VerticalAlignment="Center">
@@ -9974,7 +10180,7 @@
           <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ItemCornerRadius}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
             <Grid>
               <StackPanel x:Name="LargePanel" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
-                <Image x:Name="LargeIcon" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                <Image x:Name="LargeIcon" Source="{TemplateBinding EffectiveIconSource}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding EffectiveIconSource, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
                 <TextBlock x:Name="LargeLabel" Text="{TemplateBinding Header}" FontSize="11" TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="28" LineHeight="13" LineStackingStrategy="BlockLineHeight" Foreground="{TemplateBinding Foreground}" />
               </StackPanel>
               <Grid x:Name="SmallPanel" HorizontalAlignment="Stretch" VerticalAlignment="Center">
@@ -10109,62 +10315,66 @@
           <Border x:Name="GroupBd" BorderBrush="{DynamicResource CONCOST.Brush.Ribbon.Divider}" BorderThickness="0,0,1,0" Padding="{TemplateBinding Padding}">
             <Grid>
               <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
+                <RowDefinition x:Name="ItemsRow" Height="*" />
                 <RowDefinition x:Name="HeaderRow" Height="{DynamicResource CONCOST.Ribbon.PanelTitleHeight}" />
               </Grid.RowDefinitions>
+              <Border x:Name="ContextualGroupTint" Grid.Row="0" Grid.RowSpan="2" Margin="-4,-2,-4,-3" Background="{DynamicResource CONCOST.Brush.Primary}" Opacity="0" IsHitTestVisible="False" />
+              <Border x:Name="ContextualHeaderTint" Grid.Row="1" Margin="-4,4,-4,-3" Background="{DynamicResource CONCOST.Brush.Primary}" Opacity="0" IsHitTestVisible="False" />
               <ItemsPresenter x:Name="ItemsHost" Grid.Row="0" VerticalAlignment="Top" />
-              <Grid x:Name="HeaderHost" Grid.Row="1" Margin="0,4,0,0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                  <TextBlock x:Name="HeaderText" Text="{TemplateBinding Header}" FontSize="10.5" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
+              <Border x:Name="HeaderPill" Grid.Row="1" CornerRadius="3" Padding="4,2" Background="Transparent" Margin="0,2,0,0">
+                <Grid x:Name="HeaderHost">
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock x:Name="HeaderText" Text="{TemplateBinding Header}" FontSize="10.5" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{TemplateBinding Foreground}" />
 
-                  <!-- Faded out at rest: a permanent triangle next to every label makes the group read
-                       as a drop-down button. It fades in when the pointer enters the group, and stays
-                       while its menu is open. Opacity, not Visibility, so the label never shifts. -->
-                  <ToggleButton Style="{x:Null}" x:Name="CollapseToggle" Opacity="0" Width="13" Height="13" Margin="2,0,0,0" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Focusable="False" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ToolTip="{TemplateBinding Header}">
-                    <ToggleButton.Template>
-                      <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Border x:Name="Hb" Background="Transparent" CornerRadius="2">
-                          <Path x:Name="Tri" Data="M0,0 L8,0 L4,4 Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonGroup}}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                          <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Hb" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemHover}" />
-                          </Trigger>
-                        </ControlTemplate.Triggers>
-                      </ControlTemplate>
-                    </ToggleButton.Template>
-                  </ToggleButton>
-                </StackPanel>
+                    <!-- Faded out at rest: a permanent triangle next to every label makes the group read
+                         as a drop-down button. It fades in when the pointer enters the group, and stays
+                         while its menu is open. Opacity, not Visibility, so the label never shifts. -->
+                    <ToggleButton Style="{x:Null}" x:Name="CollapseToggle" Opacity="0" Width="13" Height="13" Margin="2,0,0,0" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Focusable="False" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ToolTip="{TemplateBinding Header}">
+                      <ToggleButton.Template>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                          <Border x:Name="Hb" Background="Transparent" CornerRadius="2">
+                            <Path x:Name="Tri" Data="M0,0 L8,0 L4,4 Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonGroup}}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                          </Border>
+                          <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                              <Setter TargetName="Hb" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemHover}" />
+                            </Trigger>
+                          </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                      </ToggleButton.Template>
+                    </ToggleButton>
+                  </StackPanel>
 
-                <!-- Right edge of the caption row: the slide-out arrow first, then the dialog
-                     launcher, matching the order a ribbon uses for its panel affordances. -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                  <ToggleButton Style="{x:Null}" x:Name="SlideOutToggle" Visibility="Collapsed" Width="13" Height="13" Margin="0,0,2,0" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Focusable="False" IsChecked="{Binding IsSlideOutOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ToolTip="More">
-                    <ToggleButton.Template>
-                      <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Border x:Name="Sb" Background="Transparent" CornerRadius="2">
-                          <Path Data="M0,0 L8,0 L4,4 Z" Fill="{DynamicResource CONCOST.Brush.Ribbon.PanelTitle}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                          <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Sb" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemHover}" />
-                          </Trigger>
-                          <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Sb" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemPressed}" />
-                          </Trigger>
-                        </ControlTemplate.Triggers>
-                      </ControlTemplate>
-                    </ToggleButton.Template>
-                  </ToggleButton>
+                  <!-- Right edge of the caption row: the slide-out arrow first, then the dialog
+                       launcher, matching the order a ribbon uses for its panel affordances. -->
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <ToggleButton Style="{x:Null}" x:Name="SlideOutToggle" Visibility="Collapsed" Width="13" Height="13" Margin="0,0,2,0" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Focusable="False" IsChecked="{Binding IsSlideOutOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ToolTip="More">
+                      <ToggleButton.Template>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                          <Border x:Name="Sb" Background="Transparent" CornerRadius="2">
+                            <Path Data="M0,0 L8,0 L4,4 Z" Fill="{DynamicResource CONCOST.Brush.Ribbon.PanelTitle}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                          </Border>
+                          <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                              <Setter TargetName="Sb" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemHover}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                              <Setter TargetName="Sb" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemPressed}" />
+                            </Trigger>
+                          </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                      </ToggleButton.Template>
+                    </ToggleButton>
 
-                  <!-- Hidden until the group is hovered: a lone arrow parked at the far right of a wide
-                       group reads as a stray mark rather than as a way into the dialog. -->
-                  <ribbon:RibbonGroupLauncher x:Name="Launcher" Opacity="0" Width="{DynamicResource CONCOST.Ribbon.LauncherSize}" Height="{DynamicResource CONCOST.Ribbon.LauncherSize}" VerticalAlignment="Center" Command="{TemplateBinding DialogLauncherCommand}" ToolTip="Group settings" />
-                </StackPanel>
-              </Grid>
+                    <!-- Hidden until the group is hovered: a lone arrow parked at the far right of a wide
+                         group reads as a stray mark rather than as a way into the dialog. -->
+                    <ribbon:RibbonGroupLauncher x:Name="Launcher" Opacity="0" Width="{DynamicResource CONCOST.Ribbon.LauncherSize}" Height="{DynamicResource CONCOST.Ribbon.LauncherSize}" VerticalAlignment="Center" Command="{TemplateBinding DialogLauncherCommand}" ToolTip="Group settings" />
+                  </StackPanel>
+                </Grid>
+              </Border>
 
               <Popup x:Name="SlideOutPopup" IsOpen="{Binding IsSlideOutOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Placement="Bottom" PlacementTarget="{Binding ElementName=HeaderHost}" StaysOpen="False" AllowsTransparency="True">
-                <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Ribbon.Divider}" BorderThickness="1" CornerRadius="{DynamicResource CONCOST.Ribbon.ShellCornerRadius}" Padding="8" Margin="0,2,0,0" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                <Border Background="{DynamicResource CONCOST.Brush.Surface}" BorderBrush="{DynamicResource CONCOST.Brush.Ribbon.Divider}" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,2,0,0" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                   <ContentControl Content="{TemplateBinding SlideOut}" ContentTemplate="{TemplateBinding SlideOutTemplate}" HorizontalAlignment="Left" Focusable="False" />
                 </Border>
               </Popup>
@@ -10172,10 +10382,13 @@
               <ToggleButton Style="{x:Null}" x:Name="CollapsedButton" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ToolTip="{TemplateBinding Header}">
                 <ToggleButton.Template>
                   <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Border x:Name="Cb" Background="Transparent" CornerRadius="5" Padding="8,6">
+                    <Border x:Name="Cb" Background="Transparent" CornerRadius="4" Padding="8,5" MinWidth="52" Cursor="Hand">
                       <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonGroup}}}" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource CONCOST.Brush.Ribbon.ItemForeground}" />
-                        <Path Data="M0,0 L4,4 L8,0" Stroke="{DynamicResource CONCOST.Brush.Ribbon.PanelTitle}" StrokeThickness="1.4" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                        <Image x:Name="CollapsedIcon" Source="{Binding Icon, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonGroup}}}" Width="24" Height="24" Margin="0,0,0,3" HorizontalAlignment="Center" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding Icon, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonGroup}}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                          <TextBlock x:Name="CollapsedText" Text="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type ribbon:RibbonGroup}}}" FontSize="11" FontWeight="Medium" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="76" Foreground="{DynamicResource CONCOST.Brush.Ribbon.ItemForeground}" />
+                          <Path x:Name="CollapsedArrow" Data="M0,0 L4,4 L8,0" Stroke="{DynamicResource CONCOST.Brush.Ribbon.PanelTitle}" StrokeThickness="1.4" VerticalAlignment="Center" Margin="3,1,0,0" />
+                        </StackPanel>
                       </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -10185,6 +10398,18 @@
                       <Trigger Property="IsChecked" Value="True">
                         <Setter TargetName="Cb" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemPressed}" />
                       </Trigger>
+                      <DataTrigger Binding="{Binding SelectedItem.IsContextual, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" Value="True">
+                        <Setter TargetName="CollapsedText" Property="Foreground" Value="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" />
+                        <Setter TargetName="CollapsedArrow" Property="Stroke" Value="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" />
+                      </DataTrigger>
+                      <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                          <Condition Binding="{Binding SelectedItem.IsContextual, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" Value="True" />
+                          <Condition Binding="{Binding SelectedItem.HasCustomContextualColor, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" Value="True" />
+                        </MultiDataTrigger.Conditions>
+                        <Setter TargetName="CollapsedText" Property="Foreground" Value="{Binding SelectedItem.ContextualColor, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" />
+                        <Setter TargetName="CollapsedArrow" Property="Stroke" Value="{Binding SelectedItem.ContextualColor, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" />
+                      </MultiDataTrigger>
                     </ControlTemplate.Triggers>
                   </ControlTemplate>
                 </ToggleButton.Template>
@@ -10221,19 +10446,44 @@
                  chevron lit so the panel still reads as something you can open. -->
             <Trigger Property="IsTitleOnly" Value="True">
               <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="ItemsRow" Property="Height" Value="0" />
               <Setter TargetName="CollapseToggle" Property="Opacity" Value="0.7" />
+              <Setter TargetName="HeaderPill" Property="Cursor" Value="Hand" />
+              <Setter TargetName="HeaderPill" Property="ToolTip" Value="{Binding Header, RelativeSource={RelativeSource TemplatedParent}}" />
             </Trigger>
+            <MultiTrigger>
+              <MultiTrigger.Conditions>
+                <Condition Property="IsTitleOnly" Value="True" />
+                <Condition Property="IsMouseOver" Value="True" />
+              </MultiTrigger.Conditions>
+              <Setter TargetName="HeaderPill" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemHover}" />
+            </MultiTrigger>
             <!-- Folded to panel buttons: the group is one button, and neither row survives. -->
             <Trigger Property="IsButtonOnly" Value="True">
               <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="HeaderPill" Property="Visibility" Value="Collapsed" />
               <Setter TargetName="HeaderHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="HeaderRow" Property="Height" Value="0" />
               <Setter TargetName="CollapsedButton" Property="Visibility" Value="Visible" />
             </Trigger>
             <Trigger Property="IsCollapsed" Value="True">
               <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="HeaderPill" Property="Visibility" Value="Collapsed" />
               <Setter TargetName="HeaderHost" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="HeaderRow" Property="Height" Value="0" />
               <Setter TargetName="CollapsedButton" Property="Visibility" Value="Visible" />
             </Trigger>
+            <DataTrigger Binding="{Binding SelectedItem.IsContextual, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" Value="True">
+              <Setter TargetName="HeaderText" Property="Foreground" Value="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" />
+              <Setter TargetName="HeaderText" Property="FontWeight" Value="SemiBold" />
+            </DataTrigger>
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding SelectedItem.IsContextual, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" Value="True" />
+                <Condition Binding="{Binding SelectedItem.HasCustomContextualColor, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" Value="True" />
+              </MultiDataTrigger.Conditions>
+              <Setter TargetName="HeaderText" Property="Foreground" Value="{Binding SelectedItem.ContextualColor, RelativeSource={RelativeSource AncestorType={x:Type ribbon:Ribbon}}}" />
+            </MultiDataTrigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -10273,7 +10523,7 @@
                    strip, so an above-the-ribbon QAT and a menu bar stack into one continuous strip
                    instead of leaving two white rows above a grey one. -->
               <Border x:Name="QatAboveBand" Grid.Row="0" Background="{DynamicResource CONCOST.Brush.Ribbon.TabStrip}">
-                <ContentControl x:Name="PART_QatAbove" Margin="8,4,8,0" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
+                <ContentControl x:Name="PART_QatAbove" Margin="8,3,8,3" HorizontalAlignment="Left" Visibility="Collapsed" Focusable="False" />
               </Border>
 
               <!-- MenuBar slot above the tab strip. Sits between the QAT (when above) and the tabs. -->
@@ -10283,16 +10533,17 @@
 
               <!-- One compact top row: File block, tab strip, quick-access commands. Everything sits
                    on the same baseline as the tabs, so there is no empty band above them. -->
-              <Grid x:Name="HeaderStrip" Grid.Row="2">
+              <Grid x:Name="HeaderStrip" Grid.Row="2" Height="30">
                 <!-- The chrome band spans the whole row — under the File block, the tabs and the
                      quick-access strip alike. Painting it on the tab ListBox instead left the band
                      only as wide as the tabs, so on a light theme it read as a grey pill floating
                      between two white rows rather than as the ribbon's header. -->
                 <Border x:Name="HeaderBackground" Background="{DynamicResource CONCOST.Brush.Ribbon.TabStrip}" />
-                <Border x:Name="HeaderDivider" BorderBrush="{DynamicResource CONCOST.Brush.Ribbon.Divider}" BorderThickness="0,0,0,1" />
+                <Border x:Name="HeaderDivider" BorderBrush="{DynamicResource CONCOST.Brush.Ribbon.Divider}" BorderThickness="0,0,0,1" SnapsToDevicePixels="True" VerticalAlignment="Bottom" Height="1" Panel.ZIndex="0" />
 
-                <Grid Margin="4,4,4,0">
+                <Grid Margin="0">
                   <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -10301,13 +10552,14 @@
                     <ColumnDefinition Width="Auto" />
                   </Grid.ColumnDefinitions>
 
-                  <ContentControl x:Name="AppMenuHost" Grid.Column="0" Margin="1,0,6,4" Content="{TemplateBinding ApplicationMenu}" VerticalAlignment="Bottom" Focusable="False" />
+                  <ContentControl x:Name="PART_QatLeft" Grid.Column="0" Margin="4,0,4,0" VerticalAlignment="Center" Visibility="Collapsed" Focusable="False" />
+                  <ContentControl x:Name="AppMenuHost" Grid.Column="1" Margin="0" Content="{TemplateBinding ApplicationMenu}" VerticalAlignment="Stretch" Focusable="False" />
 
                   <!-- The strip gets its own clipping viewport: without it the tab panel paints over
                        the quick-access strip as soon as the tabs no longer fit. -->
-                  <ScrollViewer Grid.Column="1" x:Name="PART_TabScroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" CanContentScroll="False" ClipToBounds="True" Focusable="False">
+                  <ScrollViewer Grid.Column="2" x:Name="PART_TabScroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" CanContentScroll="False" ClipToBounds="False" Focusable="False" VerticalAlignment="Stretch" Margin="0">
 
-                  <ListBox x:Name="PART_Tabs" ItemsSource="{TemplateBinding VisibleTabs}" SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="Transparent" BorderThickness="0" Padding="4,3,4,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+                  <ListBox x:Name="PART_Tabs" ItemsSource="{TemplateBinding VisibleTabs}" SelectedIndex="{Binding SelectedIndex, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Background="Transparent" BorderThickness="0" Padding="0" VerticalAlignment="Stretch" Margin="0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
                 <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
                     <ribbon:RibbonTabStripPanel HorizontalAlignment="Left" BandHeight="{DynamicResource CONCOST.Ribbon.ContextualBandHeight}" FontFamily="{DynamicResource CONCOST.FontFamily.Default}" FontSize="{DynamicResource CONCOST.Ribbon.ContextualBandFontSize}" />
@@ -10315,28 +10567,96 @@
                 </ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle>
                   <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Padding" Value="13,5" />
-                    <Setter Property="MinHeight" Value="{DynamicResource CONCOST.Ribbon.TabHeight}" />
-                    <Setter Property="Margin" Value="0,0,1,0" />
+                    <Setter Property="Padding" Value="14,0" />
+                    <Setter Property="MinHeight" Value="30" />
+                    <Setter Property="Height" Value="30" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
                     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.Ribbon.PanelTitle}" />
+                    <!-- The focus ring shows for keyboard navigation only (FocusVisualStyle), never after a
+                         mouse click — a click-focused tab must not grow a box around it. -->
+                    <Setter Property="FocusVisualStyle">
+                      <Setter.Value>
+                        <Style>
+                          <Setter Property="Control.Template">
+                            <Setter.Value>
+                              <ControlTemplate>
+                                <Border Margin="2,2,2,2" BorderBrush="{DynamicResource CONCOST.Brush.Primary}" BorderThickness="1" CornerRadius="2" SnapsToDevicePixels="True" />
+                              </ControlTemplate>
+                            </Setter.Value>
+                          </Setter>
+                        </Style>
+                      </Setter.Value>
+                    </Setter>
                     <Setter Property="Template">
                       <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                          <Grid>
-                            <Border x:Name="TabBd" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" CornerRadius="4,4,0,0" Padding="{TemplateBinding Padding}">
-                              <ContentPresenter />
+                          <Grid SnapsToDevicePixels="True">
+                            <Border x:Name="TabBd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1,1,1,0" CornerRadius="0" SnapsToDevicePixels="True" />
+                            <Border x:Name="ContextualTint" Background="{DynamicResource CONCOST.Brush.Primary}" Opacity="0" SnapsToDevicePixels="True" IsHitTestVisible="False" />
+                            <Border Padding="{TemplateBinding Padding}" VerticalAlignment="Stretch">
+                              <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
                             </Border>
-                            <Border x:Name="Underline" Height="2" Margin="7,0,7,0" VerticalAlignment="Bottom" CornerRadius="1" Background="{DynamicResource CONCOST.Brush.Ribbon.ContextualAccent}" Visibility="Collapsed" />
+                            <Border x:Name="ActiveTabBottomCover" Height="2" VerticalAlignment="Bottom" Margin="0,0,0,-1" Background="{DynamicResource CONCOST.Brush.Ribbon.PanelBackground}" Visibility="Collapsed" SnapsToDevicePixels="True" Panel.ZIndex="5" />
+                            <Border x:Name="KeyboardFocusRing" Margin="2,1" BorderBrush="{DynamicResource CONCOST.Brush.BorderFocused}" BorderThickness="1" CornerRadius="2" Visibility="Collapsed" IsHitTestVisible="False" />
                           </Grid>
                           <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                               <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.ItemHover}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                              <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.TabSelected}" />
-                              <Setter TargetName="Underline" Property="Visibility" Value="Visible" />
-                              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.Ribbon.ContextualAccent}" />
+                              <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.PanelBackground}" />
+                              <Setter TargetName="TabBd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Ribbon.Divider}" />
+                              <Setter TargetName="TabBd" Property="BorderThickness" Value="1,1,1,0" />
+                              <Setter TargetName="ActiveTabBottomCover" Property="Visibility" Value="Visible" />
+                              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.Primary}" />
+                              <Setter Property="FontWeight" Value="SemiBold" />
+                              <Setter Property="Panel.ZIndex" Value="3" />
                             </Trigger>
+                            <!-- Contextual tab: an opaque soft-accent tab. Opaque
+                                 on purpose — a translucent wash over the grey strip turned muddy brown. -->
+                            <DataTrigger Binding="{Binding IsContextual}" Value="True">
+                              <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoftLight}" />
+                              <Setter TargetName="TabBd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" />
+                              <Setter TargetName="TabBd" Property="BorderThickness" Value="1,1,1,0" />
+                              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" />
+                              <Setter Property="FontWeight" Value="SemiBold" />
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                              <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsContextual}" Value="True" />
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                              </MultiDataTrigger.Conditions>
+                              <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoft}" />
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                              <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsContextual}" Value="True" />
+                                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+                              </MultiDataTrigger.Conditions>
+                              <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.PanelBackground}" />
+                              <Setter TargetName="TabBd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Ribbon.Divider}" />
+                              <Setter TargetName="TabBd" Property="BorderThickness" Value="1,1,1,0" />
+                              <Setter TargetName="ActiveTabBottomCover" Property="Visibility" Value="Visible" />
+                              <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.Primary}" />
+                              <Setter Property="Panel.ZIndex" Value="3" />
+                            </MultiDataTrigger>
+                            <!-- A host-supplied colour: the tab sits on the opaque selected surface and the
+                                 colour paints the text and a faint wash. -->
+                            <MultiDataTrigger>
+                              <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsContextual}" Value="True" />
+                                <Condition Binding="{Binding HasCustomContextualColor}" Value="True" />
+                              </MultiDataTrigger.Conditions>
+                              <Setter TargetName="TabBd" Property="Background" Value="{DynamicResource CONCOST.Brush.Ribbon.PanelBackground}" />
+                              <Setter TargetName="TabBd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Ribbon.Divider}" />
+                              <Setter TargetName="ContextualTint" Property="Background" Value="{Binding ContextualColor}" />
+                              <Setter TargetName="ContextualTint" Property="Opacity" Value="0.08" />
+                              <Setter TargetName="ActiveTabBottomCover" Property="Visibility" Value="Visible" />
+                              <Setter Property="Foreground" Value="{Binding ContextualColor}" />
+                              <Setter Property="Panel.ZIndex" Value="3" />
+                            </MultiDataTrigger>
                           </ControlTemplate.Triggers>
                         </ControlTemplate>
                       </Setter.Value>
@@ -10346,9 +10666,14 @@
                 <ListBox.ItemTemplate>
                   <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                      <Image Source="{Binding Icon}" Width="14" Height="14" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality" />
+                      <Border Width="14" Height="14" Margin="0,0,6,0" VerticalAlignment="Center"
+                              Background="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}">
+                        <Border.OpacityMask>
+                          <ImageBrush ImageSource="{Binding Icon}" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" />
+                        </Border.OpacityMask>
+                      </Border>
                       <!-- The implicit TextBlock style pins Foreground, so it has to be bound, not inherited. -->
-                      <TextBlock Text="{Binding Header}" FontSize="12" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
+                      <TextBlock Text="{Binding DisplayHeader}" FontSize="12" VerticalAlignment="Center" FontWeight="{Binding FontWeight, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
                     </StackPanel>
                   </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -10356,7 +10681,7 @@
                   </ScrollViewer>
 
                   <!-- "»" appears only when the tabs no longer fit; it lists every tab. -->
-                  <Button x:Name="TabOverflowButton" Grid.Column="2" Width="24" Height="24" Margin="2,0,0,4" Padding="0" VerticalAlignment="Bottom" Background="Transparent" BorderThickness="0" Cursor="Hand" Visibility="Collapsed" Focusable="False" ToolTip="All tabs" AutomationProperties.Name="All tabs" Command="{x:Static ribbon:Ribbon.ShowTabListCommand}">
+                  <Button x:Name="TabOverflowButton" Grid.Column="3" Width="24" Height="24" Margin="2,0,0,0" Padding="0" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Cursor="Hand" Visibility="Collapsed" Focusable="False" ToolTip="All tabs" AutomationProperties.Name="All tabs" Command="{x:Static ribbon:Ribbon.ShowTabListCommand}">
                     <Button.Template>
                       <ControlTemplate TargetType="{x:Type Button}">
                         <Border x:Name="Ob" Background="Transparent" CornerRadius="3">
@@ -10374,7 +10699,7 @@
                   <!-- The ribbon's own size control, at the end of the tab row the way Revit and
                        Office put it: one click folds the ribbon one step further, and the caret turns
                        to point back up once it is folded. -->
-                  <Button x:Name="MinimizeButton" Grid.Column="3" Width="22" Height="22" Margin="0,0,2,4" Padding="0" VerticalAlignment="Bottom" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False" ToolTip="Minimize the ribbon" AutomationProperties.Name="Minimize the ribbon" Command="{x:Static ribbon:Ribbon.CycleDisplayModeCommand}">
+                  <Button x:Name="MinimizeButton" Grid.Column="4" Width="22" Height="22" Margin="4,0,2,0" Padding="0" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False" ToolTip="Minimize or expand the ribbon (Ctrl+F1)" AutomationProperties.Name="Minimize or expand the ribbon" Command="{x:Static ribbon:Ribbon.ToggleMinimizedCommand}">
                     <Button.Template>
                       <ControlTemplate TargetType="{x:Type Button}">
                         <Border x:Name="Mb" Background="Transparent" CornerRadius="3">
@@ -10398,12 +10723,12 @@
                     </Button.Template>
                   </Button>
 
-                  <ContentControl x:Name="PART_QatInline" Grid.Column="4" Margin="8,0,4,4" VerticalAlignment="Bottom" Focusable="False">
+                  <ContentControl x:Name="PART_QatInline" Grid.Column="5" Margin="4,0,4,0" VerticalAlignment="Center" Focusable="False">
                     <ribbon:RibbonQuickAccessToolBar x:Name="PART_QAT" />
                   </ContentControl>
 
                   <!-- InfoCentre: the read-only status zone a ribbon keeps at the far right. -->
-                  <ContentControl x:Name="PART_InfoCenter" Grid.Column="5" Margin="6,0,4,4" VerticalAlignment="Bottom" Content="{TemplateBinding InfoCenter}" Focusable="False" />
+                  <ContentControl x:Name="PART_InfoCenter" Grid.Column="6" Margin="4,0,8,0" VerticalAlignment="Center" Content="{TemplateBinding InfoCenter}" Focusable="False" />
                 </Grid>
               </Grid>
 
@@ -10413,7 +10738,7 @@
               <Grid x:Name="PART_ContentSlot" Grid.Row="3">
                 <!-- A little air between the tab strip and the first row of commands; the groups are
                      top-aligned, so without it they sit right on the tab underline. -->
-                <Border x:Name="PART_Content" Background="{DynamicResource CONCOST.Brush.Ribbon.PanelBackground}" BorderThickness="0" Padding="0,6,0,0" ClipToBounds="True">
+                <Border x:Name="PART_Content" Background="{DynamicResource CONCOST.Brush.Ribbon.PanelBackground}" BorderThickness="0" Padding="0,4,0,0" ClipToBounds="True">
                   <Grid>
                     <ContentControl Content="{Binding SelectedItem.Content, RelativeSource={RelativeSource TemplatedParent}}" ContentTemplate="{StaticResource CONCOST.Ribbon.TabContentTemplate}" />
 
@@ -10466,6 +10791,9 @@
             <Trigger Property="QuickAccessPlacement" Value="AboveRibbon">
               <Setter TargetName="PART_QatAbove" Property="Visibility" Value="Visible" />
               <Setter TargetName="HeaderDivider" Property="BorderThickness" Value="0,1,0,1" />
+            </Trigger>
+            <Trigger Property="QuickAccessPlacement" Value="HeaderLeft">
+              <Setter TargetName="PART_QatLeft" Property="Visibility" Value="Visible" />
             </Trigger>
             <Trigger Property="QuickAccessPlacement" Value="BelowRibbon">
               <Setter TargetName="PART_QatBelow" Property="Visibility" Value="Visible" />
@@ -10764,7 +11092,7 @@
                 <!-- The body shows BodyHeader/BodyIcon rather than Header/Icon: with RememberLast on,
                      picking a menu entry moves that entry onto the button itself. -->
                 <StackPanel x:Name="LargePanel" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
-                  <Image x:Name="LargeIcon" Source="{TemplateBinding BodyIcon}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding BodyIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
+                  <Image x:Name="LargeIcon" Source="{TemplateBinding BodyIcon}" Width="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Height="{DynamicResource CONCOST.Ribbon.LargeIconSize}" Margin="0,0,0,3" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality" Visibility="{Binding BodyIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource CONCOST.Converter.NullToVisibility}}" />
                   <TextBlock x:Name="LargeLabel" Text="{TemplateBinding BodyHeader}" FontSize="11" TextAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="28" LineHeight="13" LineStackingStrategy="BlockLineHeight" Foreground="{TemplateBinding Foreground}" />
                   <Path x:Name="ChevronLarge" Data="M0,0 L9,0 L4.5,4.6 Z" Fill="{DynamicResource CONCOST.Brush.Ribbon.PanelTitle}" HorizontalAlignment="Center" Margin="0,3,0,0" />
                 </StackPanel>
@@ -11363,70 +11691,91 @@
                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                            ScrollViewer.VerticalScrollBarVisibility="Visible">
                     <ListBox.ItemContainerStyle>
-                      <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource CONCOST.ListBoxItem.Base}">
+                      <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Background" Value="Transparent" />
                         <Setter Property="Padding" Value="10,6" />
-                        <Setter Property="Margin" Value="0" />
-                        <Setter Property="Height" Value="44" />
+                        <Setter Property="Margin" Value="0,1" />
+                        <Setter Property="MinHeight" Value="44" />
                         <Setter Property="Focusable" Value="False" />
-                        <Setter Property="attached:BorderElement.CornerRadius" Value="8" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Template">
+                          <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                              <Border x:Name="ItemBd" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="8" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <Grid>
+                                  <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                  </Grid.ColumnDefinitions>
+
+                                  <Border x:Name="IconHost" Width="28" Height="28" CornerRadius="7" VerticalAlignment="Center"
+                                          Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}">
+                                    <icons:Icon x:Name="ItemIcon" Kind="{Binding Icon}" Width="14" Height="14"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
+                                  </Border>
+
+                                  <StackPanel Grid.Column="1" Margin="10,0,10,0" VerticalAlignment="Center">
+                                    <TextBlock x:Name="ItemTitle" Text="{Binding Title}" FontSize="12.5" FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis"
+                                               Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                                    <TextBlock x:Name="ItemSubtitle" Text="{Binding Subtitle}" FontSize="10.5"
+                                               TextTrimming="CharacterEllipsis"
+                                               Margin="0,1,0,0"
+                                               Foreground="{DynamicResource CONCOST.Brush.TextTertiary}">
+                                      <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                          <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Subtitle}" Value="{x:Null}">
+                                              <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                          </Style.Triggers>
+                                        </Style>
+                                      </TextBlock.Style>
+                                    </TextBlock>
+                                  </StackPanel>
+
+                                  <Border x:Name="ShortcutBadge" Grid.Column="2" CornerRadius="4" Padding="6,1" VerticalAlignment="Center"
+                                          BorderThickness="1"
+                                          BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}"
+                                          Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}">
+                                    <Border.Style>
+                                      <Style TargetType="Border">
+                                        <Style.Triggers>
+                                          <DataTrigger Binding="{Binding Shortcut}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </Border.Style>
+                                    <TextBlock x:Name="ShortcutText" Text="{Binding Shortcut}" FontSize="9"
+                                               FontFamily="Consolas, Cascadia Mono, monospace"
+                                               Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+                                  </Border>
+                                </Grid>
+                              </Border>
+                              <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter TargetName="ItemBd" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                  <Setter TargetName="ItemBd" Property="Background" Value="{DynamicResource CONCOST.Brush.PrimarySoftLight}" />
+                                  <Setter TargetName="ItemBd" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" />
+                                  <Setter TargetName="ItemTitle" Property="Foreground" Value="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" />
+                                  <Setter TargetName="IconHost" Property="Background" Value="{DynamicResource CONCOST.Brush.Primary}" />
+                                  <Setter TargetName="ItemIcon" Property="Foreground" Value="#FFFFFF" />
+                                  <Setter TargetName="ShortcutBadge" Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.PrimarySoftBorder}" />
+                                  <Setter TargetName="ShortcutText" Property="Foreground" Value="{DynamicResource CONCOST.Brush.PrimarySoftForeground}" />
+                                </Trigger>
+                              </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                          </Setter.Value>
+                        </Setter>
                       </Style>
                     </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                      <DataTemplate>
-                        <Grid>
-                          <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                          </Grid.ColumnDefinitions>
-
-                          <Border Width="26" Height="26" CornerRadius="7" VerticalAlignment="Center"
-                                  Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}">
-                            <icons:Icon Kind="{Binding Icon}" Width="14" Height="14"
-                                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                                        Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
-                          </Border>
-
-                          <StackPanel Grid.Column="1" Margin="10,0,10,0" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Title}" FontSize="12.5" FontWeight="SemiBold"
-                                       TextTrimming="CharacterEllipsis"
-                                       Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" />
-                            <TextBlock Text="{Binding Subtitle}" FontSize="10.5"
-                                       TextTrimming="CharacterEllipsis"
-                                       Margin="0,1,0,0"
-                                       Foreground="{DynamicResource CONCOST.Brush.TextTertiary}">
-                              <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                  <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Subtitle}" Value="{x:Null}">
-                                      <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                  </Style.Triggers>
-                                </Style>
-                              </TextBlock.Style>
-                            </TextBlock>
-                          </StackPanel>
-
-                          <Border Grid.Column="2" CornerRadius="4" Padding="6,1" VerticalAlignment="Center"
-                                  BorderThickness="1"
-                                  BorderBrush="{DynamicResource CONCOST.Brush.BorderSecondary}"
-                                  Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}">
-                            <Border.Style>
-                              <Style TargetType="Border">
-                                <Style.Triggers>
-                                  <DataTrigger Binding="{Binding Shortcut}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                  </DataTrigger>
-                                </Style.Triggers>
-                              </Style>
-                            </Border.Style>
-                            <TextBlock Text="{Binding Shortcut}" FontSize="9"
-                                       FontFamily="Consolas, Cascadia Mono, monospace"
-                                       Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
-                          </Border>
-                        </Grid>
-                      </DataTemplate>
-                    </ListBox.ItemTemplate>
                   </ListBox>
 
                   <TextBlock Text="{TemplateBinding controls:CommandPalette.EmptyText}"
@@ -11523,85 +11872,106 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:ToolWindow}">
-          <Border Background="{TemplateBinding Control.Background}"
+          <!-- The pane is a card, not a bare rectangle: the rounded corner is what separates it
+               from the centre area instead of a single hairline that reads as a table grid. -->
+          <Border x:Name="Shell"
+                  Background="{TemplateBinding Control.Background}"
                   BorderBrush="{TemplateBinding Control.BorderBrush}"
                   BorderThickness="{TemplateBinding Control.BorderThickness}"
                   SnapsToDevicePixels="True">
-            <DockPanel>
-              <Grid DockPanel.Dock="Top">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+
+              <!-- The header sits on its own tinted band so the title has something to sit on.
+                   Without it the caption floats in the middle of the content and the pane looks
+                   like an empty box with a word in it. The accent is a child of the band, so
+                   hiding the header hides the accent with it — a rule floating over a pane with
+                   no header said "active" about a title nobody could see. -->
+              <Grid x:Name="HeaderHost" Grid.Row="0">
                 <Border x:Name="HeaderBar"
                         Height="{TemplateBinding controls:ToolWindow.HeaderHeight}"
                         Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
                         BorderBrush="{DynamicResource CONCOST.Brush.Border}"
                         BorderThickness="0,0,0,1"
                         Cursor="SizeAll">
-                  <Grid Margin="10,0,3,0">
-                    <Grid.ColumnDefinitions>
-                      <ColumnDefinition Width="Auto" />
-                      <ColumnDefinition Width="*" />
-                      <ColumnDefinition Width="Auto" />
-                      <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <icons:Icon x:Name="HeaderIcon"
-                                Grid.Column="0"
-                                Kind="{TemplateBinding controls:ToolWindow.Icon}"
-                                Width="{TemplateBinding controls:ToolWindow.IconSize}"
-                                Height="{TemplateBinding controls:ToolWindow.IconSize}"
-                                VerticalAlignment="Center"
-                                Margin="0,0,7,0"
-                                Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" />
-
-                    <ContentPresenter x:Name="Title"
-                                      Grid.Column="1"
-                                      Content="{TemplateBinding controls:ToolWindow.Header}"
-                                      VerticalAlignment="Center"
-                                      TextElement.FontSize="12"
-                                      TextElement.Foreground="{DynamicResource CONCOST.Brush.TextSecondary}"
-                                      Margin="0,0,6,0" />
-
-                    <Button x:Name="PinButton"
-                            Grid.Column="2"
-                            Width="20" Height="20"
-                            MinWidth="0" MinHeight="0"
+                  <Grid>
+                    <!-- The one mark that says which of four adjacent panes the keyboard is
+                         talking to. It rides on the header's own top edge. -->
+                    <Border x:Name="Accent"
+                            Height="2"
+                            VerticalAlignment="Top"
+                            Background="{DynamicResource CONCOST.Brush.Primary}"
                             Visibility="Collapsed"
-                            Style="{StaticResource CONCOST.Button.Icon.Ghost}"
-                            attached:IconElement.Kind="PinItem"
-                            attached:IconElement.IconSize="11"
-                            ToolTip="Ghim / tự ẩn" />
+                            IsHitTestVisible="False" />
 
-                    <Button x:Name="CloseButton"
-                            Grid.Column="3"
-                            Width="20" Height="20"
-                            MinWidth="0" MinHeight="0"
-                            Visibility="Collapsed"
-                            Style="{StaticResource CONCOST.Button.Icon.Ghost}"
-                            attached:IconElement.Kind="Close"
-                            attached:IconElement.IconSize="11"
-                            ToolTip="Đóng" />
+                    <Grid Margin="10,0,6,0">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                      </Grid.ColumnDefinitions>
+
+                      <icons:Icon x:Name="HeaderIcon"
+                                  Grid.Column="0"
+                                  Kind="{TemplateBinding controls:ToolWindow.Icon}"
+                                  Width="{TemplateBinding controls:ToolWindow.IconSize}"
+                                  Height="{TemplateBinding controls:ToolWindow.IconSize}"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,7,0"
+                                  Foreground="{DynamicResource CONCOST.Brush.TextTertiary}" />
+
+                      <ContentPresenter x:Name="Title"
+                                        Grid.Column="1"
+                                        Content="{TemplateBinding controls:ToolWindow.Header}"
+                                        VerticalAlignment="Center"
+                                        TextElement.FontSize="12"
+                                        TextElement.Foreground="{DynamicResource CONCOST.Brush.TextSecondary}"
+                                        Margin="0,0,8,0" />
+
+                      <!-- The buttons get a plate of their own. A ghost button on a tinted band is
+                           invisible until the pointer is already on it, which is one step too late
+                           for a control whose whole job is to be found. -->
+                      <Button x:Name="PinButton"
+                              Grid.Column="2"
+                              Width="22" Height="22"
+                              MinWidth="0" MinHeight="0"
+                              Visibility="Collapsed"
+                              Style="{StaticResource CONCOST.Button.Icon.Ghost}"
+                              attached:IconElement.Kind="PinItem"
+                              attached:IconElement.IconSize="11"
+                              ToolTip="Ghim / tự ẩn" />
+
+                      <Button x:Name="CloseButton"
+                              Grid.Column="3"
+                              Width="22" Height="22"
+                              MinWidth="0" MinHeight="0"
+                              Visibility="Collapsed"
+                              Style="{StaticResource CONCOST.Button.Icon.Ghost}"
+                              attached:IconElement.Kind="Close"
+                              attached:IconElement.IconSize="11"
+                              ToolTip="Đóng" />
+                    </Grid>
                   </Grid>
                 </Border>
-
-                <!-- The one mark that says which of four adjacent panes the keyboard is talking to. -->
-                <Border x:Name="Accent"
-                        Height="2"
-                        VerticalAlignment="Top"
-                        Background="{DynamicResource CONCOST.Brush.Primary}"
-                        Visibility="Collapsed"
-                        IsHitTestVisible="False" />
               </Grid>
 
-              <ContentPresenter Content="{TemplateBinding ContentControl.Content}"
+              <ContentPresenter Grid.Row="1"
+                                Content="{TemplateBinding ContentControl.Content}"
                                 ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
                                 ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
-            </DockPanel>
+            </Grid>
           </Border>
 
           <ControlTemplate.Triggers>
             <Trigger Property="controls:ToolWindow.ShowHeader" Value="False">
               <Setter TargetName="HeaderBar" Property="Visibility" Value="Collapsed" />
+              <Setter TargetName="Accent" Property="Visibility" Value="Collapsed" />
             </Trigger>
 
             <!-- Header buttons: the fill only appears on the pane the user is actually in. -->
@@ -11641,13 +12011,24 @@
               <Setter TargetName="PinButton" Property="Visibility" Value="Collapsed" />
             </Trigger>
 
-            <!-- Active: the header takes the body colour and the title takes the weight. -->
+            <!-- Active: the header comes forward instead of disappearing. Giving the active pane the
+                 body colour was worse than doing nothing — the header stopped being a header. -->
             <Trigger Property="controls:ToolWindow.IsActive" Value="True">
-              <Setter TargetName="HeaderBar" Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+              <Setter TargetName="HeaderBar" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
               <Setter TargetName="Title" Property="TextElement.Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
               <Setter TargetName="Title" Property="TextElement.FontWeight" Value="SemiBold" />
               <Setter TargetName="HeaderIcon" Property="icons:Icon.Foreground" Value="{DynamicResource CONCOST.Brush.Primary}" />
             </Trigger>
+
+            <!-- Hovering an inactive pane lifts its header a little, so the pointer's target
+                 announces itself before the click. -->
+            <MultiTrigger>
+              <MultiTrigger.Conditions>
+                <Condition Property="controls:ToolWindow.IsActive" Value="False" />
+                <Condition Property="UIElement.IsMouseOver" Value="True" />
+              </MultiTrigger.Conditions>
+              <Setter TargetName="HeaderBar" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+            </MultiTrigger>
 
             <MultiTrigger>
               <MultiTrigger.Conditions>
@@ -12137,24 +12518,25 @@
     <Setter Property="FontSize" Value="11.5" />
     <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
     <Setter Property="Height" Value="26" />
-    <Setter Property="Padding" Value="11,0" />
+    <Setter Property="Padding" Value="13,0" />
     <!-- The strip moves this to the other side when the tabs sit on top of the group. -->
-    <Setter Property="BorderThickness" Value="0,0,0,2" />
+    <Setter Property="BorderThickness" Value="0,2,0,0" />
     <Setter Property="FrameworkElement.Cursor" Value="Hand" />
     <Setter Property="Focusable" Value="False" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ToggleButton}">
-          <Grid Background="Transparent">
-            <Border x:Name="Chrome"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    BorderThickness="{TemplateBinding Control.BorderThickness}"
-                    Padding="{TemplateBinding Control.Padding}"
-                    SnapsToDevicePixels="True">
-              <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
-            </Border>
-          </Grid>
+          <!-- The selected tab keeps a white body and loses the rule that separates it from the
+               strip, so it looks joined to the panel below it. Every other tab carries the rule,
+               which is what makes the strip read as a row of tabs rather than a plain shelf. -->
+          <Border x:Name="Chrome"
+                  Background="Transparent"
+                  BorderBrush="{DynamicResource CONCOST.Brush.Border}"
+                  BorderThickness="{TemplateBinding Control.BorderThickness}"
+                  Padding="{TemplateBinding Control.Padding}"
+                  SnapsToDevicePixels="True">
+            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
+          </Border>
 
           <ControlTemplate.Triggers>
             <Trigger Property="UIElement.IsMouseOver" Value="True">
@@ -12178,10 +12560,13 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:DockTabStrip}">
+          <!-- The strip is the shelf the tabs sit on, so it wears the same tint as the header band
+               it continues. A different colour made it read as a separate widget parked under
+               the pane instead of part of it. -->
           <Border x:Name="Strip"
                   Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}"
                   BorderBrush="{DynamicResource CONCOST.Brush.Border}"
-                  BorderThickness="0,1,0,0"
+                  BorderThickness="0,0,0,1"
                   SnapsToDevicePixels="True">
             <ScrollViewer HorizontalScrollBarVisibility="Hidden"
                           VerticalScrollBarVisibility="Disabled"
@@ -12191,8 +12576,9 @@
           </Border>
 
           <ControlTemplate.Triggers>
-            <Trigger Property="controls:DockTabStrip.TabPlacement" Value="Top">
-              <Setter TargetName="Strip" Property="Border.BorderThickness" Value="0,0,0,1" />
+            <!-- A strip that hangs below its group needs its rule on top instead. -->
+            <Trigger Property="controls:DockTabStrip.TabPlacement" Value="Bottom">
+              <Setter TargetName="Strip" Property="Border.BorderThickness" Value="0,1,0,0" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

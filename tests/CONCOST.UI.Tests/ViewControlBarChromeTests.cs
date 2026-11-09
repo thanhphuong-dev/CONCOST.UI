@@ -93,7 +93,11 @@ public class ViewControlBarChromeTests
         Strip(bar).Children.OfType<StackPanel>().First();
 
     private static ToggleButton[] Toggles(ViewControlBar bar) =>
-        ToggleCluster(bar).Children.OfType<ToggleButton>().ToArray();
+        Strip(bar).Children.OfType<StackPanel>()
+            .SelectMany(cluster => cluster.Children.OfType<ToggleButton>()).ToArray();
+
+    private static StackPanel CropToggleCluster(ViewControlBar bar) =>
+        Strip(bar).Children.OfType<StackPanel>().Last();
 
     private static SplitButton Hide(ViewControlBar bar) => Strip(bar).Children.OfType<SplitButton>().First();
 
@@ -167,7 +171,46 @@ public class ViewControlBarChromeTests
                 Assert.Equal(new Thickness(0), command.BorderThickness);
             }
 
-            Assert.Equal(3, Toggles(bar).Length);
+            Assert.Equal(6, Toggles(bar).Length);
+        });
+    }
+
+    [Fact]
+    public void Show_crop_region_is_a_synchronized_view_setting()
+    {
+        RunOnSTA(() =>
+        {
+            var bar = Hosted();
+            var settings = new List<string>();
+            bar.SettingsChanged += (_, name) => settings.Add(name);
+
+            bar.ShowCropRegion = true;
+            bar.ShowAnnotationCropRegion = true;
+            bar.AnnotationCropView = true;
+
+            Assert.True(Toggles(bar)[3].IsChecked);
+            Assert.True(Toggles(bar)[4].IsChecked);
+            Assert.True(Toggles(bar)[5].IsChecked);
+            Assert.Contains(nameof(ViewControlBar.ShowCropRegion), settings);
+            Assert.Contains(nameof(ViewControlBar.ShowAnnotationCropRegion), settings);
+            Assert.Contains(nameof(ViewControlBar.AnnotationCropView), settings);
+        });
+    }
+
+    [Fact]
+    public void Crop_controls_can_be_shown_without_the_unrelated_toggle_cluster()
+    {
+        RunOnSTA(() =>
+        {
+            var bar = Hosted(candidate =>
+            {
+                candidate.ShowToggles = false;
+                candidate.ShowCropControls = true;
+            });
+
+            Assert.Equal(Visibility.Collapsed, ToggleCluster(bar).Visibility);
+            Assert.Equal(Visibility.Visible, CropToggleCluster(bar).Visibility);
+            Assert.Equal(6, Toggles(bar).Length);
         });
     }
 
@@ -262,7 +305,7 @@ public class ViewControlBarChromeTests
             Assert.Equal(26, Scale(bar).ActualHeight);
 
             // The toggle style asks for a 34 px touch target; the bar has to overrule it.
-            foreach (var toggle in Toggles(bar))
+            foreach (var toggle in Toggles(bar).Where(toggle => toggle.IsVisible))
             {
                 Assert.Equal(0, toggle.MinWidth);
                 Assert.Equal(0, toggle.MinHeight);
@@ -278,7 +321,11 @@ public class ViewControlBarChromeTests
         {
             const double Row = 30;
 
-            var bar = Hosted(bar => bar.ControlHeight = Row);
+            var bar = Hosted(bar =>
+            {
+                bar.ControlHeight = Row;
+                bar.ShowCropControls = true;
+            });
 
             foreach (var combo in new[] { Scale(bar), Detail(bar), StyleBox(bar) })
             {

@@ -23,6 +23,8 @@
     <Page Include="Themes\Dark.xaml" />
     <Page Include="Themes\Generic.xaml" />
     <Page Include="Themes\Light.xaml" />
+    <Page Include="Themes\Revit.xaml" />
+    <Page Include="Themes\RevitDark.xaml" />
     <Page Include="Themes\SoftLight.xaml" />
     <Page Include="Themes\ThemeResources.xaml" />
     <Page Include="Themes\Tokens\Colors.xaml" />

@@ -19,7 +19,8 @@ public class SchedulerNowLineTests
     public SchedulerNowLineTests(ITestOutputHelper output) => _output = output;
 
     private const int Width = 320;
-    private const int Height = 200;
+    // 34 (HeaderHeight) + 24 * 8 (HourHeight) = 226px total day span. Use 260 to ensure all 24 hours fit anytime.
+    private const int Height = 260;
 
     private static Scheduler MakeScheduler(Action<Scheduler>? configure = null)
     {

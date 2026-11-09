@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -233,7 +233,7 @@ private void OnRunAnalysisCommand()
     // Executes bound ICommand on SplitButton.Command
     ToastService.Success(""Analysis Completed Successfully"", ""FEA Solver"");
 }";
-        AddCardSection(Loc.T("1. Style ngữ nghĩa và biến thể bề mặt (Primary, Secondary, Success, Warning, Danger, Info, Outline, Ghost)", "1. Semantic styles and surface variants (Primary, Secondary, Success, Warning, Danger, Info, Outline, Ghost)"), sec1Wp, sec1Code);
+        AddCardSection(Loc.T("1. Biến thể style ngữ nghĩa và bề mặt", "1. Semantic styles and surface variants"), sec1Wp, sec1Code);
 
         // =====================================================================
         // SECTION 2: Sizing Scale & Geometry Shapes
@@ -332,7 +332,7 @@ var sb = new SplitButton
     CornerRadius = new CornerRadius(8)
 };
 sb.SetResourceReference(SplitButton.StyleProperty, ""CONCOST.SplitButton.Large"");";
-        AddCardSection(Loc.T("2. Thang kích thước và hình dạng (Lớn 40px, mặc định 34px, nhỏ 28px | Pill, Rounded, Square)", "2. Size scale and shape (Large 40px, default 34px, small 28px | Pill, Rounded, Square)"), sec2Sp, sec2Code);
+        AddCardSection(Loc.T("2. Thang kích thước và hình dạng", "2. Size scale and shape"), sec2Sp, sec2Code);
 
         // =====================================================================
         // SECTION 3: Interaction Modes & Placement Options
@@ -456,7 +456,7 @@ private void OnDropDownOpened(object sender, RoutedEventArgs e)
 {
     ToastService.Info(""Dropdown opened via Hover"", ""Hover Engine"");
 }";
-        AddCardSection(Loc.T("3. Chế độ tương tác và vị trí (HitMode=DropDown, Chevron Left, HoverOpen, IconPlacement, Placement=Top)", "3. Interaction mode and placement (HitMode=DropDown, Chevron Left, HoverOpen, IconPlacement, Placement=Top)"), sec3Wp, sec3Code);
+        AddCardSection(Loc.T("3. Chế độ tương tác và vị trí", "3. Interaction mode and placement"), sec3Wp, sec3Code);
 
         // =====================================================================
         // SECTION 4: Engineering & BIM Workflows (Interactive Checklists)
@@ -581,7 +581,7 @@ private void OnCalculateRebarClicked(object sender, RoutedEventArgs e)
 {
     ToastService.Success(""Rebar Calculation Run Complete"", ""Rebar Suite"");
 }";
-        AddCardSection(Loc.T("4. Quy trình kỹ thuật và BIM (checklist tương tác với AutoCloseOnClick=False, bộ thép, xuất CAD)", "4. Engineering and BIM workflows (interactive checklist with AutoCloseOnClick=False, rebar set, CAD export)"), sec4Wp, sec4Code);
+        AddCardSection(Loc.T("4. Quy trình kỹ thuật và BIM tương tác", "4. Engineering and BIM workflows"), sec4Wp, sec4Code);
 
         return mainSp;
     }

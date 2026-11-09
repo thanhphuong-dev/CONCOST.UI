@@ -1,10 +1,14 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
 
 // CONCOST.UI.Controls.Canvas is a namespace in this library, so the panel needs a distinct alias.
 using KeyTipCanvas = System.Windows.Controls.Canvas;
@@ -16,6 +20,7 @@ namespace CONCOST.UI.Controls.Ribbon;
 /// groups of the selected tab underneath. The tab strip is a real <see cref="ListBox"/> in the
 /// template, so keyboard navigation, focus and selection visuals come for free.
 /// </summary>
+[ContentProperty(nameof(Items))]
 public class Ribbon : Control
 {
     public static readonly DependencyProperty ItemsSourceProperty =
@@ -46,7 +51,7 @@ public class Ribbon : Control
 
     public static readonly DependencyProperty QuickAccessPlacementProperty =
         DependencyProperty.Register(nameof(QuickAccessPlacement), typeof(RibbonQuickAccessPlacement), typeof(Ribbon),
-            new FrameworkPropertyMetadata(RibbonQuickAccessPlacement.HeaderRight, OnQuickAccessPlacementChanged));
+            new FrameworkPropertyMetadata(RibbonQuickAccessPlacement.AboveRibbon, OnQuickAccessPlacementChanged));
 
     public static readonly DependencyProperty MenuBarProperty =
         DependencyProperty.Register(nameof(MenuBar), typeof(object), typeof(Ribbon),
@@ -136,6 +141,10 @@ public class Ribbon : Control
     public static readonly RoutedUICommand CycleDisplayModeCommand =
         new("Cycle ribbon size", nameof(CycleDisplayModeCommand), typeof(Ribbon));
 
+    /// <summary>Toggle between the full ribbon and the tab-only layout used by Ctrl+F1 in Revit.</summary>
+    public static readonly RoutedUICommand ToggleMinimizedCommand =
+        new("Minimize or expand ribbon", nameof(ToggleMinimizedCommand), typeof(Ribbon));
+
     /// <summary>
     /// Attached, inheriting switch that lets every <see cref="RibbonItem"/> hide its caption. The
     /// collapse ladder turns it off to reach the icon-only rung.
@@ -197,8 +206,10 @@ public class Ribbon : Control
     private readonly List<RibbonMenuItem> _quickAccessRows = new();
     private readonly List<RibbonItem> _pinned = new();
     private readonly List<RibbonTabItem> _contextualTabs = new();
+    private readonly ObservableCollection<object> _items = new();
     private RibbonQuickAccessToolBar? _quickAccess;
     private ContentControl? _qatAbove;
+    private ContentControl? _qatLeft;
     private ContentControl? _qatInline;
     private ContentControl? _qatBelow;
     private ContentControl? _menuBarAbove;
@@ -220,10 +231,13 @@ public class Ribbon : Control
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(Ribbon),
             new FrameworkPropertyMetadata(typeof(Ribbon)));
+        ToggleMinimizedCommand.InputGestures.Add(new KeyGesture(Key.F1, ModifierKeys.Control));
     }
 
     public Ribbon()
     {
+        _items.CollectionChanged += OnItemsCollectionChanged;
+
         Loaded += OnRibbonLoaded;
         Unloaded += OnRibbonUnloaded;
 
@@ -231,7 +245,14 @@ public class Ribbon : Control
         // routed command instead of a Click handler.
         CommandBindings.Add(new CommandBinding(ShowTabListCommand, OnShowTabList));
         CommandBindings.Add(new CommandBinding(CycleDisplayModeCommand, (_, _) => CycleState()));
+        CommandBindings.Add(new CommandBinding(ToggleMinimizedCommand, (_, _) => ToggleMinimized()));
     }
+
+    /// <summary>
+    /// Direct collection of tabs and contextual groups. Used when <see cref="ItemsSource"/> is null.
+    /// Supports direct declaration in XAML.
+    /// </summary>
+    public ObservableCollection<object> Items => _items;
 
     /// <summary>
     /// The <see cref="RibbonTabItem"/> instances shown by this ribbon. Entries may also be
@@ -311,6 +332,12 @@ public class Ribbon : Control
 
     /// <summary>Steps to the next display mode: full → tabs → titles → buttons → full.</summary>
     public void CycleState() => ApplyDisplayMode(NextMode(DisplayMode));
+
+    /// <summary>Switches between the full command panels and the tab-only ribbon, preserving other modes.</summary>
+    public void ToggleMinimized() => ApplyDisplayMode(
+        DisplayMode == RibbonDisplayMode.Full
+            ? RibbonDisplayMode.MinimizeToTabs
+            : RibbonDisplayMode.Full);
 
     /// <summary>The state that follows <paramref name="mode"/> in the cycle.</summary>
     public static RibbonDisplayMode NextMode(RibbonDisplayMode mode) => mode switch
@@ -477,7 +504,7 @@ public class Ribbon : Control
     {
         get
         {
-            IReadOnlyList<RibbonTabItem> declared = Expand(ItemsSource);
+            IReadOnlyList<RibbonTabItem> declared = Expand(ItemsSource ?? _items);
             if (_contextualTabs.Count == 0) return declared;
 
             var tabs = new List<RibbonTabItem>(declared);
@@ -589,7 +616,7 @@ public class Ribbon : Control
 
         for (int i = 0; i < tabs.Count; i++)
         {
-            if (!ReferenceEquals(tabs[i], tab)) continue;
+            if (!ReferenceEquals(tabs[i], tab) && (string.IsNullOrEmpty(tabs[i].Id) || !string.Equals(tabs[i].Id, tab.Id, StringComparison.Ordinal))) continue;
 
             SetCurrentValue(SelectedIndexProperty, i);
 
@@ -610,7 +637,7 @@ public class Ribbon : Control
 
         for (int i = 0; i < tabs.Count; i++)
         {
-            if (!ReferenceEquals(tabs[i], previous)) continue;
+            if (!ReferenceEquals(tabs[i], previous) && (string.IsNullOrEmpty(tabs[i].Id) || !string.Equals(tabs[i].Id, previous.Id, StringComparison.Ordinal))) continue;
             SetCurrentValue(SelectedIndexProperty, i);
             return;
         }
@@ -808,7 +835,7 @@ public class Ribbon : Control
             RebuildQuickAccessMenu();
         }
 
-        SyncSelection();
+        SyncSelectionOnTabsRefreshed();
     }
 
     protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
@@ -831,6 +858,8 @@ public class Ribbon : Control
         {
             TabStrip.PreviewMouseLeftButtonUp -= OnTabStripMouseUp;
             TabStrip.PreviewMouseLeftButtonUp += OnTabStripMouseUp;
+            TabStrip.MouseDoubleClick -= OnTabStripMouseDoubleClick;
+            TabStrip.MouseDoubleClick += OnTabStripMouseDoubleClick;
         }
 
         // The overlay and the content slot belong together: the same content host is moved
@@ -860,6 +889,7 @@ public class Ribbon : Control
 
         // Three slots, one strip: the placement property decides which slot holds it.
         _qatAbove = GetTemplateChild("PART_QatAbove") as ContentControl;
+        _qatLeft = GetTemplateChild("PART_QatLeft") as ContentControl;
         _qatInline = GetTemplateChild("PART_QatInline") as ContentControl;
         _qatBelow = GetTemplateChild("PART_QatBelow") as ContentControl;
         PlaceQuickAccess();
@@ -942,6 +972,14 @@ public class Ribbon : Control
         if (IsDescendantOf<ListBoxItem>(e.OriginalSource as DependencyObject) == null) return;
 
         IsOverlayOpen = true;
+    }
+
+    private void OnTabStripMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (IsDescendantOf<ListBoxItem>(e.OriginalSource as DependencyObject) == null) return;
+
+        ToggleMinimized();
+        e.Handled = true;
     }
 
     private static T? IsDescendantOf<T>(DependencyObject? node) where T : DependencyObject
@@ -1230,12 +1268,13 @@ public class Ribbon : Control
         {
             RibbonQuickAccessPlacement.AboveRibbon => _qatAbove,
             RibbonQuickAccessPlacement.BelowRibbon => _qatBelow,
+            RibbonQuickAccessPlacement.HeaderLeft => _qatLeft,
             _ => _qatInline
         };
 
         if (target == null || ReferenceEquals(target.Content, _quickAccess)) return;
 
-        foreach (ContentControl? host in new[] { _qatAbove, _qatInline, _qatBelow })
+        foreach (ContentControl? host in new[] { _qatAbove, _qatLeft, _qatInline, _qatBelow })
         {
             if (host != null && ReferenceEquals(host.Content, _quickAccess)) host.Content = null;
         }
@@ -1362,28 +1401,71 @@ public class Ribbon : Control
     {
         if (source == null) return Array.Empty<RibbonTabItem>();
 
-        var tabs = new List<RibbonTabItem>();
+        var regular = new List<RibbonTabItem>();
+        var contextual = new List<RibbonTabItem>();
 
         foreach (object? entry in source)
         {
             switch (entry)
             {
                 case RibbonTabItem tab:
-                    tabs.Add(tab);
+                    if (tab.IsContextual) contextual.Add(tab);
+                    else regular.Add(tab);
                     break;
 
                 case RibbonContextualTabGroup group:
-                    tabs.AddRange(group.Tabs);
+                    contextual.AddRange(group.Tabs);
                     break;
             }
         }
 
-        return tabs;
+        // In CAD/BIM ribbons (Revit, AutoCAD), contextual tabs always appear at the far right end
+        // of the tab strip after all standard tabs.
+        if (contextual.Count > 0) regular.AddRange(contextual);
+
+        return regular;
+    }
+
+    private void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (ItemsSource != null) return;
+        HandleSourceCollectionChanged(e);
+        RefreshTabs();
+    }
+
+    private void OnItemsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        HandleSourceCollectionChanged(e);
+        RefreshTabs();
+    }
+
+    private void HandleSourceCollectionChanged(NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems != null)
+        {
+            foreach (object? entry in e.OldItems)
+            {
+                if (entry is RibbonContextualTabGroup group) group.TabsChanged -= OnGroupTabsChanged;
+            }
+        }
+
+        if (e.NewItems != null)
+        {
+            foreach (object? entry in e.NewItems)
+            {
+                if (entry is RibbonContextualTabGroup group) group.TabsChanged += OnGroupTabsChanged;
+            }
+        }
     }
 
     private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is not Ribbon ribbon) return;
+
+        if (e.OldValue is INotifyCollectionChanged oldNotify)
+        {
+            oldNotify.CollectionChanged -= ribbon.OnItemsSourceCollectionChanged;
+        }
 
         if (e.OldValue is IEnumerable oldSource)
         {
@@ -1401,6 +1483,11 @@ public class Ribbon : Control
                         break;
                 }
             }
+        }
+
+        if (e.NewValue is INotifyCollectionChanged newNotify)
+        {
+            newNotify.CollectionChanged += ribbon.OnItemsSourceCollectionChanged;
         }
 
         if (e.NewValue is IEnumerable newSource)
@@ -1429,7 +1516,83 @@ public class Ribbon : Control
 
     private void OnTabAvailabilityChanged(object? sender, EventArgs e) => RefreshTabs();
 
-    private void OnGroupTabsChanged(object? sender, EventArgs e) => RefreshTabs();
+    private void OnGroupTabsChanged(object? sender, EventArgs e)
+    {
+        if (sender is RibbonContextualTabGroup group && group.IsGroupVisible && group.AutoActivate)
+        {
+            RibbonTabItem? firstTab = group.Tabs.FirstOrDefault(t => t.IsAvailable);
+            if (firstTab != null)
+            {
+                if (_tabBeforeContextual == null && SelectedItem != null && !group.Tabs.Contains(SelectedItem))
+                {
+                    _tabBeforeContextual = SelectedItem;
+                }
+
+                RefreshTabs();
+                ActivateContextualTab(firstTab);
+                return;
+            }
+        }
+
+        RefreshTabs();
+    }
+
+    private void SyncSelectionOnTabsRefreshed()
+    {
+        IReadOnlyList<RibbonTabItem> tabs = VisibleTabs;
+
+        if (tabs.Count == 0)
+        {
+            SelectedItem = null;
+            return;
+        }
+
+        int targetIndex = -1;
+
+        // 1. Maintain current selected item if it still exists in the visible list
+        if (SelectedItem != null)
+        {
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                if (ReferenceEquals(tabs[i], SelectedItem) ||
+                    (!string.IsNullOrEmpty(tabs[i].Id) && string.Equals(tabs[i].Id, SelectedItem.Id, StringComparison.Ordinal)))
+                {
+                    targetIndex = i;
+                    break;
+                }
+            }
+        }
+
+        // 2. If the active tab disappeared (e.g. contextual tab hidden), restore previous tab
+        if (targetIndex < 0 && _tabBeforeContextual != null)
+        {
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                if (ReferenceEquals(tabs[i], _tabBeforeContextual) ||
+                    (!string.IsNullOrEmpty(tabs[i].Id) && string.Equals(tabs[i].Id, _tabBeforeContextual.Id, StringComparison.Ordinal)))
+                {
+                    targetIndex = i;
+                    break;
+                }
+            }
+            _tabBeforeContextual = null;
+        }
+
+        // 3. Fall back to the clamped SelectedIndex or 0
+        if (targetIndex < 0)
+        {
+            targetIndex = Math.Max(0, Math.Min(SelectedIndex, tabs.Count - 1));
+        }
+
+        if (targetIndex != SelectedIndex)
+        {
+            SetCurrentValue(SelectedIndexProperty, targetIndex);
+        }
+        else
+        {
+            SyncSelection();
+        }
+    }
 
     private void SyncSelection()
     {

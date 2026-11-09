@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CONCOST.UI.Controls.Ribbon;
@@ -48,11 +48,24 @@ public class RibbonGroup : HeaderedItemsControl
 
     public static readonly DependencyProperty IsTitleOnlyProperty =
         DependencyProperty.Register(nameof(IsTitleOnly), typeof(bool), typeof(RibbonGroup),
-            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure));
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure, OnIsTitleOnlyChanged));
 
     public static readonly DependencyProperty IsButtonOnlyProperty =
         DependencyProperty.Register(nameof(IsButtonOnly), typeof(bool), typeof(RibbonGroup),
-            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure));
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure, OnIsButtonOnlyChanged));
+
+    public static readonly DependencyProperty IconProperty =
+        DependencyProperty.Register(nameof(Icon), typeof(System.Windows.Media.ImageSource),
+            typeof(RibbonGroup), new FrameworkPropertyMetadata(null));
+
+    /// <summary>
+    /// Icon representing this group when collapsed to a single button (MinimizeToPanelButtons).
+    /// </summary>
+    public System.Windows.Media.ImageSource? Icon
+    {
+        get => (System.Windows.Media.ImageSource?)GetValue(IconProperty);
+        set => SetValue(IconProperty, value);
+    }
 
     private static readonly DependencyPropertyKey IsLastInStripPropertyKey =
         DependencyProperty.RegisterReadOnly(nameof(IsLastInStrip), typeof(bool), typeof(RibbonGroup),
@@ -189,25 +202,66 @@ public class RibbonGroup : HeaderedItemsControl
     protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() =>
         new RibbonGroupAutomationPeer(this);
 
+    private static void OnIsTitleOnlyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RibbonGroup group) group.UpdateHeaderHostVisibility();
+    }
+
+    private static void OnIsButtonOnlyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RibbonGroup group) group.UpdateHeaderHostVisibility();
+    }
+
     /// <summary>
-    /// Drops the caption row when <see cref="Ribbon.ShowGroupLabels"/> is false. Driven from code
-    /// rather than a template trigger: the property is an inherited attached one, so a binding from
-    /// inside the template has no reliable source to point at.
+    /// Drops the caption row when <see cref="Ribbon.ShowGroupLabels"/> is false or when the group
+    /// is collapsed to a button. Driven from code rather than a template trigger: local values take
+    /// precedence and avoid fighting with the template.
     /// </summary>
     internal void ApplyShowGroupLabels(bool show)
     {
         _showLabels = show;
+        UpdateHeaderHostVisibility();
+    }
+
+    internal void UpdateHeaderHostVisibility()
+    {
+        bool showHeader = (_showLabels || IsTitleOnly) && !IsButtonOnly && !IsCollapsed;
 
         if (Template?.FindName("HeaderHost", this) is UIElement header)
-            header.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            header.Visibility = showHeader ? Visibility.Visible : Visibility.Collapsed;
+
+        if (Template?.FindName("HeaderPill", this) is UIElement pill)
+            pill.Visibility = showHeader ? Visibility.Visible : Visibility.Collapsed;
 
         if (Template?.FindName("HeaderRow", this) is RowDefinition row)
-            row.Height = show ? new GridLength(21) : new GridLength(0);
+            row.Height = showHeader ? (IsTitleOnly ? new GridLength(24) : new GridLength(21)) : new GridLength(0);
+
+        if (Template?.FindName("ItemsRow", this) is RowDefinition itemsRow)
+            itemsRow.Height = IsTitleOnly ? new GridLength(0) : new GridLength(1, GridUnitType.Star);
     }
 
     public override void OnApplyTemplate()
     {
         base.OnApplyTemplate();
+
+        void OnHeaderClicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (IsTitleOnly)
+            {
+                IsDropDownOpen = !IsDropDownOpen;
+                e.Handled = true;
+            }
+        }
+
+        if (Template?.FindName("HeaderHost", this) is FrameworkElement headerHost)
+        {
+            headerHost.MouseLeftButtonDown += OnHeaderClicked;
+        }
+
+        if (Template?.FindName("HeaderPill", this) is FrameworkElement headerPill)
+        {
+            headerPill.MouseLeftButtonDown += OnHeaderClicked;
+        }
 
         // The live inherited value is authoritative: the group may already have inherited false
         // before its template existed.
@@ -218,7 +272,11 @@ public class RibbonGroup : HeaderedItemsControl
 
     private static void OnUserCollapsedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is RibbonGroup group) group.IsCollapsed = (bool)e.NewValue;
+        if (d is RibbonGroup group)
+        {
+            group.IsCollapsed = (bool)e.NewValue;
+            group.UpdateHeaderHostVisibility();
+        }
     }
 
     /// <summary>
@@ -345,7 +403,8 @@ public class RibbonGroup : HeaderedItemsControl
         base.OnPropertyChanged(e);
 
         // Items may have been added or replaced while collapsed.
-        if (e.Property == IsCollapsedProperty && (bool)e.NewValue) _collapsedMenu = null;
+        if ((e.Property == IsCollapsedProperty || e.Property == IsTitleOnlyProperty || e.Property == IsButtonOnlyProperty) && (bool)e.NewValue)
+            _collapsedMenu = null;
 
         // Changing the density must re-pack the items. Invalidating the group alone is not enough:
         // the panel is measured again with the same constraint, so WPF would skip its MeasureOverride.

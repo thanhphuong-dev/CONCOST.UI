@@ -101,6 +101,75 @@ public class RenderSmokeTests
     }
 
     [Fact]
+    public void Button_IconOnly_HasZeroMargin()
+    {
+        RunOnSTA(() =>
+        {
+            var button = new Button();
+            var host = new Border { Child = button };
+            MergeTheme(host);
+            host.Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/CONCOST.UI;component/Themes/Generic.xaml", UriKind.Absolute)
+            });
+            button.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+            CONCOST.UI.AttachedProperties.IconElement.SetKind(button, CONCOST.UI.Icons.IconKind.Bell);
+            host.Measure(new Size(100, 100));
+            host.Arrange(new Rect(0, 0, 100, 100));
+            host.UpdateLayout();
+
+            var border = (Border)VisualTreeHelper.GetChild(button, 0);
+            var panel = (StackPanel)border.Child;
+            var icon = (CONCOST.UI.Icons.Icon)panel.Children[0];
+            Assert.Equal(new Thickness(0), icon.Margin);
+        });
+    }
+
+    [Fact]
+    public void Button_IconWithContent_HasRightMargin()
+    {
+        RunOnSTA(() =>
+        {
+            var button = new Button { Content = "Notifications" };
+            var host = new Border { Child = button };
+            MergeTheme(host);
+            host.Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/CONCOST.UI;component/Themes/Generic.xaml", UriKind.Absolute)
+            });
+            button.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+            CONCOST.UI.AttachedProperties.IconElement.SetKind(button, CONCOST.UI.Icons.IconKind.Bell);
+            host.Measure(new Size(100, 100));
+            host.Arrange(new Rect(0, 0, 100, 100));
+            host.UpdateLayout();
+
+            var border = (Border)VisualTreeHelper.GetChild(button, 0);
+            var panel = (StackPanel)border.Child;
+            var icon = (CONCOST.UI.Icons.Icon)panel.Children[0];
+            Assert.Equal(new Thickness(0, 0, 6, 0), icon.Margin);
+        });
+    }
+
+    [Fact]
+    public void SyntaxHighlighter_ColorsXmlAndCSharp()
+    {
+        RunOnSTA(() =>
+        {
+            var xmlSnippet = "<Button Style=\"{StaticResource CONCOST.Button.Primary}\" />";
+            var xmlBlock = CONCOST.UI.Showcase.ShowcaseViewModel.CreateSyntaxHighlighter(xmlSnippet, "XAML");
+            Assert.NotEmpty(xmlBlock.Inlines);
+            var coloredRuns = xmlBlock.Inlines.OfType<System.Windows.Documents.Run>().Where(r => r.Foreground != null).ToList();
+            Assert.True(coloredRuns.Count >= 3, "Expected colored tokens for tag, attribute and value.");
+
+            var csSnippet = "using System.Windows;\nThemeManager.Current.Theme = AppTheme.Dark;";
+            var csBlock = CONCOST.UI.Showcase.ShowcaseViewModel.CreateSyntaxHighlighter(csSnippet, "C#");
+            Assert.NotEmpty(csBlock.Inlines);
+            var csColoredRuns = csBlock.Inlines.OfType<System.Windows.Documents.Run>().Where(r => r.Foreground != null).ToList();
+            Assert.True(csColoredRuns.Count >= 3, "Expected colored tokens for keyword, types, and properties.");
+        });
+    }
+
+    [Fact]
     public void TextBox_RendersItsChrome()
     {
         RunOnSTA(() =>

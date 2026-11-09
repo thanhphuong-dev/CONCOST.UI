@@ -57,22 +57,21 @@ public class RibbonTabStripPanel : Panel
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        double band = HasContextualBand() ? BandHeight : 0;
         double maxHeight = 0;
         double width = 0;
 
-        var constraints = new Size(double.PositiveInfinity,
-            double.IsInfinity(availableSize.Height) ? double.PositiveInfinity : Math.Max(0, availableSize.Height - band));
+        var constraints = new Size(double.PositiveInfinity, availableSize.Height);
 
-        foreach (UIElement child in InternalChildren)
+        for (int i = 0; i < InternalChildren.Count; i++)
         {
+            UIElement child = InternalChildren[i];
             child.Measure(constraints);
             width += child.DesiredSize.Width;
             maxHeight = Math.Max(maxHeight, child.DesiredSize.Height);
         }
 
         _measuredWidth = width;
-        return new Size(width, band + maxHeight);
+        return new Size(width, maxHeight);
     }
 
     protected override Size ArrangeOverride(Size finalSize)
@@ -80,14 +79,13 @@ public class RibbonTabStripPanel : Panel
         int count = InternalChildren.Count;
         if (_tabRects.Length < count) _tabRects = new Rect[count];
 
-        double band = HasContextualBand() ? BandHeight : 0;
-        double height = Math.Max(0, finalSize.Height - band);
+        double height = Math.Max(0, finalSize.Height);
         double x = 0;
 
         for (int i = 0; i < count; i++)
         {
             UIElement child = InternalChildren[i];
-            var slot = new Rect(x, band, child.DesiredSize.Width, height);
+            var slot = new Rect(x, 0, child.DesiredSize.Width, height);
 
             child.Arrange(slot);
             _tabRects[i] = slot;
@@ -100,82 +98,6 @@ public class RibbonTabStripPanel : Panel
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);
-
-        // A merged band cannot be clipped gracefully: half of it reads as a stray block.
-        if (IsStripClipped()) return;
-
-        int count = InternalChildren.Count;
-        if (count == 0 || _tabRects.Length < count) return;
-
-        Brush? fallback = TryFindResource("CONCOST.Brush.Primary") as Brush ?? Brushes.SteelBlue;
-
-        int index = 0;
-        while (index < count)
-        {
-            RibbonTabItem? tab = TabAt(index);
-            string group = tab?.ContextualGroup ?? string.Empty;
-
-            if (group.Length == 0)
-            {
-                index++;
-                continue;
-            }
-
-            Brush accent = tab!.ContextualColor ?? fallback;
-            double left = _tabRects[index].X;
-            double right = _tabRects[index].Right;
-
-            index++;
-
-            while (index < count && string.Equals(TabAt(index)?.ContextualGroup, group, StringComparison.Ordinal))
-            {
-                right = _tabRects[index].Right;
-                index++;
-            }
-
-            DrawBand(dc, left, right, group, accent);
-        }
-    }
-
-    private void DrawBand(DrawingContext dc, double left, double right, string caption, Brush accent)
-    {
-        double height = BandHeight;
-        if (height <= 0 || right - left < 4) return;
-
-        const double radius = 3;
-        var geometry = new StreamGeometry();
-
-        using (StreamGeometryContext ctx = geometry.Open())
-        {
-            ctx.BeginFigure(new Point(left, height), isFilled: true, isClosed: true);
-            ctx.LineTo(new Point(left, radius), true, false);
-            ctx.ArcTo(new Point(left + radius, 0), new Size(radius, radius), 0, false, SweepDirection.Clockwise, true, false);
-            ctx.LineTo(new Point(right - radius, 0), true, false);
-            ctx.ArcTo(new Point(right, radius), new Size(radius, radius), 0, false, SweepDirection.Clockwise, true, false);
-            ctx.LineTo(new Point(right, height), true, false);
-        }
-
-        geometry.Freeze();
-        dc.DrawGeometry(accent, null, geometry);
-
-        var text = new FormattedText(
-            caption,
-            CultureInfo.CurrentUICulture,
-            FlowDirection.LeftToRight,
-            new Typeface(FontFamily, FontStyles.Normal, FontWeights.SemiBold, FontStretches.Normal),
-            FontSize,
-            Brushes.White,
-            VisualTreeHelper.GetDpi(this).PixelsPerDip)
-        {
-            MaxTextWidth = Math.Max(0, right - left - 8),
-            MaxLineCount = 1,
-            Trimming = TextTrimming.CharacterEllipsis
-        };
-
-        double x = left + Math.Max(4, (right - left - text.WidthIncludingTrailingWhitespace) / 2);
-        double y = Math.Max(0, (height - text.Height) / 2);
-
-        dc.DrawText(text, new Point(x, y));
     }
 
     /// <summary>

@@ -21,5 +21,11 @@ public enum RibbonQuickAccessPlacement
     /// Its own thin strip under the ribbon body, left-aligned — the Office “show below the ribbon”
     /// position. Handy when the strip carries labels and would crowd the tab row.
     /// </summary>
-    BelowRibbon
+    BelowRibbon,
+
+    /// <summary>
+    /// Inline at the start of the tab row, before the application menu and tabs. This matches the
+    /// compact Revit header where quick-access commands sit beside File and the document tabs.
+    /// </summary>
+    HeaderLeft
 }

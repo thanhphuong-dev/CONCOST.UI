@@ -169,7 +169,7 @@ public partial class ShowcaseViewModel
         AddStat(stats, $"{AllItems.Count - guideCount}", L("Showcase.Overview.Interactive", "INTERACTIVE COMPONENTS"), IconKind.Layers, "CONCOST.Brush.Info");
         AddStat(stats, $"{basicCount}", L("Showcase.Overview.Foundation", "FOUNDATION CONTROLS"), IconKind.Check, "CONCOST.Brush.Success");
         AddStat(stats, $"{customCount}", L("Showcase.Overview.Custom", "CUSTOM CONTROLS"), IconKind.TuneAdjust, "CONCOST.Brush.Warning");
-        AddStat(stats, "Light + Dark", L("Showcase.Overview.RuntimeThemes", "RUNTIME THEMES"), IconKind.DarkMode, "CONCOST.Brush.Danger");
+        AddStat(stats, "5 Themes", L("Showcase.Overview.RuntimeThemes", "RUNTIME THEMES"), IconKind.DarkMode, "CONCOST.Brush.Danger");
         root.Children.Add(stats);
 
         // A short curated path lets a client see representative controls immediately.

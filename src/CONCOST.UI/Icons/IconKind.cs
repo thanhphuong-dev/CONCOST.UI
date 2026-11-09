@@ -499,4 +499,12 @@ public enum IconKind
     House,
     ShoppingCart,
     CreditCard
+    ,RevitWall
+    ,RevitDoor
+    ,RevitWindow
+    ,RevitRoof
+    ,RevitFloor
+    ,RevitLevel
+    ,RevitSection
+    ,RevitDimension
 }

@@ -68,7 +68,7 @@ Dùng `DynamicResource` cho **mọi** brush và style cần thay đổi theo the
 using System.Windows.Media;
 using CONCOST.UI.Themes;
 
-ThemeManager.Current.Theme = AppTheme.System;        // Light | Dark | System
+ThemeManager.Current.Theme = AppTheme.SoftLight;     // Light | SoftLight | Dark | Revit | RevitDark | System | Auto
 ThemeManager.Current.Preset = ThemePreset.Default;   // Default | Ocean | Forest | Sunset | Slate | Midnight | HighContrast | Brutal
 ThemeManager.Current.AccentColor = Color.FromRgb(0xFF, 0x79, 0x00);
 ```

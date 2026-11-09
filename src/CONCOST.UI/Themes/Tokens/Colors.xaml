@@ -32,6 +32,7 @@
     <Color x:Key="CONCOST.Color.White">#FFFFFF</Color>
     <Color x:Key="CONCOST.Color.Black">#000000</Color>
     <Color x:Key="CONCOST.Color.Transparent">#00000000</Color>
+    <Color x:Key="CONCOST.Color.TextPrimary">#0F172A</Color>
 
     <!-- Global Base Brushes -->
     <SolidColorBrush x:Key="CONCOST.Brush.Primary" Color="{StaticResource CONCOST.Color.Primary}" />
@@ -40,6 +41,7 @@
     <SolidColorBrush x:Key="CONCOST.Brush.PrimaryLight" Color="{StaticResource CONCOST.Color.PrimaryLight}" />
     <SolidColorBrush x:Key="CONCOST.Brush.PrimaryDark" Color="{StaticResource CONCOST.Color.PrimaryDark}" />
     <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoft" Color="{StaticResource CONCOST.Color.PrimarySoft}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryTint" Color="{StaticResource CONCOST.Color.PrimarySoft}" />
 
     <SolidColorBrush x:Key="CONCOST.Brush.Success" Color="{StaticResource CONCOST.Color.Success}" />
     <SolidColorBrush x:Key="CONCOST.Brush.Warning" Color="{StaticResource CONCOST.Color.Warning}" />
@@ -49,6 +51,19 @@
     <SolidColorBrush x:Key="CONCOST.Brush.WarningSoft" Color="#FFFBEB" />
     <SolidColorBrush x:Key="CONCOST.Brush.DangerSoft" Color="#FEF2F2" />
     <SolidColorBrush x:Key="CONCOST.Brush.InfoSoft" Color="#F0F9FF" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualModify" Color="{DynamicResource CONCOST.Color.Primary}" />
+
+    <!-- TabBar Semantic Tokens -->
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.Background" Color="#F1F5F9" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabActiveBackground" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabInactiveBackground" Color="#F1F5F9" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabHoverBackground" Color="#E2E8F0" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabActiveBorder" Color="{StaticResource CONCOST.Color.Primary}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabInactiveBorder" Color="#E2E8F0" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabTextActive" Color="#0F172A" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabTextInactive" Color="#64748B" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.CloseButtonHover" Color="{StaticResource CONCOST.Color.Danger}" />
 
     <SolidColorBrush x:Key="CONCOST.Brush.White" Color="{StaticResource CONCOST.Color.White}" />
     <SolidColorBrush x:Key="CONCOST.Brush.Black" Color="{StaticResource CONCOST.Color.Black}" />

@@ -123,7 +123,7 @@ public class ShowcaseLocalizationTests
                 string pageText = string.Join("\n", text);
                 Assert.Contains("net48", pageText);
                 Assert.Contains("net10.0-windows", pageText);
-                Assert.Contains("Light, Soft Light, Dark, and System", pageText);
+                Assert.Contains("Light, Soft Light, Dark, Revit", pageText);
                 Assert.Contains($"{vm.AllItems.Count} catalog items across 8 categories", pageText);
             }
             finally

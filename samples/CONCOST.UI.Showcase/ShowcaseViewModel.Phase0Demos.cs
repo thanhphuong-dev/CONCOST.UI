@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -194,8 +194,8 @@ public partial class ShowcaseViewModel
         var lightHost = HostPanel(Color.FromRgb(0xFF, 0xFF, 0xFF), Color.FromRgb(0xE2, 0xE8, 0xF0));
         var darkHost = HostPanel(Color.FromRgb(0x11, 0x18, 0x27), Color.FromRgb(0x33, 0x41, 0x55));
 
-        var lightScope = PluginContent(Loc.T("Host sáng (light window)", "Light host window"));
-        var darkScope = PluginContent(Loc.T("Host tối (dark window)", "Dark host window"));
+        var lightScope = PluginContent(Loc.T("Cửa sổ host sáng", "Light host window"));
+        var darkScope = PluginContent(Loc.T("Cửa sổ host tối", "Dark host window"));
         lightHost.Child = lightScope;
         darkHost.Child = darkScope;
 
@@ -253,7 +253,7 @@ public partial class ShowcaseViewModel
     {
         var note = new TextBlock
         {
-            Text = Loc.T("Nhấn để áp preset Brutal (nền kem, viền mực, accent vàng điện)", "Click to apply the Brutal preset (cream ground, ink border, electric-yellow accent)"),
+            Text = Loc.T("Nhấn để áp dụng mẫu Brutal (nền kem, viền mực, màu nhấn vàng điện)", "Click to apply the Brutal preset (cream ground, ink border, electric-yellow accent)"),
             FontSize = 12,
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 12)

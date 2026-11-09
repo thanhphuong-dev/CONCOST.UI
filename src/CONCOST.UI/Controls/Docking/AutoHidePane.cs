@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -114,7 +115,7 @@ public class AutoHidePane : FrameworkElement
             var pane = _tabs[i];
             string label = pane.Header?.ToString() ?? string.Empty;
 
-            double tabLength = Math.Max(72, Math.Min(180, 16 + label.Length * 7.2));
+            double tabLength = TabLengthFor(label, dpi);
             if (offset >= length) break;
             if (offset + tabLength > length) tabLength = Math.Max(24, length - offset);
 
@@ -128,7 +129,7 @@ public class AutoHidePane : FrameworkElement
                 : new Rect(offset, 0, tabLength, 2));
 
             var formatted = new FormattedText(label, CultureInfo.CurrentUICulture,
-                FlowDirection.LeftToRight, new Typeface("Segoe UI"), 11.5, text, dpi)
+                FlowDirection.LeftToRight, Typeface(), 11.5, text, dpi)
             {
                 MaxTextWidth = Math.Max(8, tabLength - 12),
                 MaxLineCount = 1,
@@ -160,6 +161,45 @@ public class AutoHidePane : FrameworkElement
             double y = Side == DockSide.Top ? ActualHeight - 0.5 : 0.5;
             dc.DrawLine(pen, new Point(0, y), new Point(ActualWidth, y));
         }
+    }
+
+    /// <summary>
+    /// The typeface the strip writes its labels with. It follows the host's own font instead of
+    /// naming one, so a host that picked a different family gets labels that match it.
+    /// </summary>
+    private Typeface Typeface()
+    {
+        // TextElement.GetFontFamily reads the inherited value, so the strip follows whatever family
+        // the host window uses instead of naming one of its own.
+        var family = TextElement.GetFontFamily(this);
+
+        if (family is null || family.Source is null or "Global User Interface")
+            return new Typeface("Segoe UI");
+
+        try
+        {
+            return new Typeface(family, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+        }
+        catch (ArgumentException)
+        {
+            // A family that cannot be resolved must not take the whole strip down with it.
+            return new Typeface("Segoe UI");
+        }
+    }
+
+    /// <summary>
+    /// How much room a label needs along the strip. The text is measured rather than estimated
+    /// from the character count, so a long Vietnamese caption is not clipped and a short one does
+    /// not leave a gap.
+    /// </summary>
+    private double TabLengthFor(string label, double dpi)
+    {
+        if (string.IsNullOrEmpty(label)) return 72;
+
+        var formatted = new FormattedText(label, CultureInfo.CurrentUICulture,
+            FlowDirection.LeftToRight, Typeface(), 11.5, Brushes.Black, dpi);
+
+        return Math.Max(72, Math.Min(180, formatted.Width + 24));
     }
 
     protected override void OnMouseMove(MouseEventArgs e)
@@ -197,12 +237,13 @@ public class AutoHidePane : FrameworkElement
     {
         bool vertical = Side is DockSide.Left or DockSide.Right;
         double offset = vertical ? point.Y : point.X;
+        double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 
         double running = 0;
         for (int i = 0; i < _tabs.Count; i++)
         {
             string label = _tabs[i].Header?.ToString() ?? string.Empty;
-            double tabLength = Math.Max(72, Math.Min(180, 16 + label.Length * 7.2));
+            double tabLength = TabLengthFor(label, dpi);
             if (offset >= running && offset < running + tabLength) return i;
             running += tabLength;
         }

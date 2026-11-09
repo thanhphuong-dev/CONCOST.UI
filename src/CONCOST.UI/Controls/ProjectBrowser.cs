@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -23,7 +23,8 @@ public enum ProjectNodeKind
     Family,
     FamilySymbol,
     Schedule,
-    Level
+    Level,
+    Link
 }
 
 /// <summary>How the tree is grouped.</summary>
@@ -38,7 +39,8 @@ public enum ProjectSortMode
 {
     NameAscending,
     NameDescending,
-    Kind
+    Kind,
+    RegistrationOrder
 }
 
 /// <summary>What the browser is standing on.</summary>
@@ -84,8 +86,14 @@ public class ProjectTreeNode
     /// <summary>What the node is; drives the icon and the context menu.</summary>
     public ProjectNodeKind Kind { get; set; }
 
+    /// <summary>Optional artwork supplied by the host; when absent, the browser uses its standard kind icon.</summary>
+    public ImageSource? IconSource { get; set; }
+
     /// <summary>Shows the unsaved marker next to the name.</summary>
     public bool IsModified { get; set; }
+
+    /// <summary>Marks the view currently shown in the drawing area.</summary>
+    public bool IsActive { get; set; }
 
     /// <summary>The model object behind the node, when there is one.</summary>
     public object? Tag { get; set; }
@@ -167,7 +175,7 @@ public class ProjectNodeEventArgs : EventArgs
 /// </remarks>
 public class ProjectBrowser : Grid
 {
-    private const string DefaultSearchPlaceholder = "Search the project";
+    private const string DefaultSearchPlaceholder = "Search";
     private const string DefaultAllKindsCaption = "All kinds";
     private const string DefaultEmptyText = "Nothing matches this search.";
     private const string DefaultCountCaption = "{0} items";
@@ -953,7 +961,7 @@ public class ProjectBrowser : Grid
                 {
                     var groupItem = new TreeViewItem
                     {
-                        Header = CreateHeader(Enum.GetName(typeof(ProjectNodeKind), group.Key) + "s", group.Key, false),
+                        Header = CreateHeader(Enum.GetName(typeof(ProjectNodeKind), group.Key) + "s", group.Key, false, false, null),
                         IsExpanded = true,
                         Tag = null
                     };
@@ -1004,7 +1012,7 @@ public class ProjectBrowser : Grid
 
         var item = new TreeViewItem
         {
-            Header = CreateHeader(node.Name, node.Kind, node.IsModified),
+            Header = CreateHeader(node.Name, node.Kind, node.IsModified, node.IsActive, node.IconSource),
             Tag = node,
             ContextMenu = CreateMenu(node),
             IsExpanded = expanded.Contains(node) || (searching && children.Count > 0)
@@ -1022,6 +1030,7 @@ public class ProjectBrowser : Grid
     {
         ProjectSortMode.NameDescending => nodes.OrderByDescending(node => node.Name, StringComparer.CurrentCultureIgnoreCase),
         ProjectSortMode.Kind => nodes.OrderBy(node => node.Kind).ThenBy(node => node.Name, StringComparer.CurrentCultureIgnoreCase),
+        ProjectSortMode.RegistrationOrder => nodes,
         _ => nodes.OrderBy(node => node.Name, StringComparer.CurrentCultureIgnoreCase)
     };
 
@@ -1034,7 +1043,7 @@ public class ProjectBrowser : Grid
         return filter.Length == 0 || node.Name.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0;
     }
 
-    private FrameworkElement CreateHeader(string caption, ProjectNodeKind kind, bool isModified)
+    private FrameworkElement CreateHeader(string caption, ProjectNodeKind kind, bool isModified, bool isActive, ImageSource? iconSource)
     {
         // A Grid, not a horizontal StackPanel: a StackPanel measures its children at infinite width,
         // so the caption never has a width to trim against and the tree simply clipped it mid-word.
@@ -1043,24 +1052,44 @@ public class ProjectBrowser : Grid
         panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-        var icon = new Icon
+        FrameworkElement icon;
+        if (iconSource is not null)
         {
-            Kind = IconFor(kind),
-            Width = _itemIcon,
-            Height = _itemIcon,
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(0, 0, 5, 0)
-        };
+            icon = new Image
+            {
+                Source = iconSource,
+                Width = _itemIcon,
+                Height = _itemIcon,
+                Stretch = Stretch.Uniform,
+                SnapsToDevicePixels = true,
+                UseLayoutRounding = true,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 5, 0)
+            };
+        }
+        else
+        {
+            var standardIcon = new Icon
+            {
+                Kind = IconFor(kind),
+                Width = _itemIcon,
+                Height = _itemIcon,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 5, 0)
+            };
+            // A tint per kind: at 13 px two grey outline glyphs are the same glyph, and the tree stopped
+            // telling a schedule from a level.
+            standardIcon.SetResourceReference(Control.ForegroundProperty, BrushFor(kind));
+            icon = standardIcon;
+        }
 
-        // A tint per kind: at 13 px two grey outline glyphs are the same glyph, and the tree stopped
-        // telling a schedule from a level.
-        icon.SetResourceReference(Control.ForegroundProperty, BrushFor(kind));
         SetColumn(icon, 0);
         panel.Children.Add(icon);
 
         var text = new TextBlock
         {
             Text = caption,
+            FontWeight = isActive ? FontWeights.Bold : FontWeights.Normal,
             VerticalAlignment = VerticalAlignment.Center,
             // A palette is narrow and view names are long: clip with an ellipsis, and let the full
             // name stay reachable on hover instead of losing it at the edge.
@@ -1108,6 +1137,7 @@ public class ProjectBrowser : Grid
         ProjectNodeKind.FamilySymbol => IconKind.GridSquare,
         ProjectNodeKind.Schedule => IconKind.Table,
         ProjectNodeKind.Level => IconKind.LevelTool,
+        ProjectNodeKind.Link => IconKind.Link,
         _ => IconKind.FileText
     };
 
@@ -1128,11 +1158,37 @@ public class ProjectBrowser : Grid
             menu.Items.Add(new Separator());
         }
 
-        Item("Rename", () => RenameRequested?.Invoke(this, new ProjectNodeEventArgs(node)));
-        Item("Duplicate", () => DuplicateRequested?.Invoke(this, new ProjectNodeEventArgs(node)));
-        Item("Delete", () => DeleteRequested?.Invoke(this, new ProjectNodeEventArgs(node)));
-        menu.Items.Add(new Separator());
-        Item("Properties", () => PropertiesRequested?.Invoke(this, new ProjectNodeEventArgs(node)));
+        bool hasViewActions = node.Kind == ProjectNodeKind.View;
+        bool hasAction = false;
+        if (hasViewActions && RenameRequested is not null)
+        {
+            Item("Rename", () => RenameRequested?.Invoke(this, new ProjectNodeEventArgs(node)));
+            hasAction = true;
+        }
+
+        if (hasViewActions && DuplicateRequested is not null)
+        {
+            Item("Duplicate", () => DuplicateRequested?.Invoke(this, new ProjectNodeEventArgs(node)));
+            hasAction = true;
+        }
+
+        if (hasViewActions && DeleteRequested is not null)
+        {
+            Item("Delete", () => DeleteRequested?.Invoke(this, new ProjectNodeEventArgs(node)));
+            hasAction = true;
+        }
+
+        if (PropertiesRequested is not null)
+        {
+            if (hasAction) menu.Items.Add(new Separator());
+            Item("Properties", () => PropertiesRequested?.Invoke(this, new ProjectNodeEventArgs(node)));
+            hasAction = true;
+        }
+
+        if (!hasAction && menu.Items.Count > 0 && menu.Items[menu.Items.Count - 1] is Separator)
+        {
+            menu.Items.RemoveAt(menu.Items.Count - 1);
+        }
 
         return menu;
     }

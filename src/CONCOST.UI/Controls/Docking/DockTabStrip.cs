@@ -178,6 +178,8 @@ public class DockTabStrip : Control
     /// <summary>Puts the height, the glyph size and the accent side on every tab.</summary>
     private void ApplyTabMetrics()
     {
+        // The rule goes on the side the strip faces away from: a strip on top of a group puts it
+        // above the tab, a strip hanging below puts it underneath.
         var accent = TabPlacement == DockTabPlacement.Top
             ? new Thickness(0, 2, 0, 0)
             : new Thickness(0, 0, 0, 2);
@@ -293,8 +295,6 @@ public class DockTabStrip : Control
         var manager = FindManager();
         if (manager is null) return;
 
-        manager.EndDropPreview();
-
         var local = e.GetPosition(this);
         var screen = PointToScreen(local);
 
@@ -305,6 +305,7 @@ public class DockTabStrip : Control
             return;
         }
 
+        manager.EndDropPreview();
         manager.DockAt(pane, manager.PointFromScreen(screen));
     }
 

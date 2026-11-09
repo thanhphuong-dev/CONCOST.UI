@@ -186,6 +186,8 @@ public class StackedHeaderDataGrid : DataGrid
     private readonly HashSet<DataGridColumn> _observedColumns = new();
     private System.Windows.Threading.DispatcherOperation? _pendingFooterRebuild;
     private long _footerGeneration;
+    private bool _isHeaderDragging;
+    private bool _isHeaderResizing;
 
     private void OnTreeChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
@@ -827,24 +829,60 @@ public class StackedHeaderDataGrid : DataGrid
 
             border.PreviewMouseMove += (s, e) =>
             {
-                if (e.LeftButton == MouseButtonState.Pressed && !isDragging)
+                if (e.LeftButton == MouseButtonState.Pressed && !isDragging && !_isHeaderResizing)
                 {
                     Point cur = e.GetPosition(null);
                     if (Math.Abs(cur.X - dragStart.X) > SystemParameters.MinimumHorizontalDragDistance ||
                         Math.Abs(cur.Y - dragStart.Y) > SystemParameters.MinimumVerticalDragDistance)
                     {
                         isDragging = true;
+                        _isHeaderDragging = true;
                         string prop = !string.IsNullOrEmpty(leafNode.BindingPath) ? leafNode.BindingPath : leafNode.HeaderText;
                         var data = new DataObject(DataFormats.StringFormat, prop);
                         data.SetData(typeof(string), prop);
-                        DragDrop.DoDragDrop(border, data, DragDropEffects.Move);
+                        data.SetData(typeof(ColumnLeaf), leafNode);
+
+                        try
+                        {
+                            DragDrop.DoDragDrop(border, data, DragDropEffects.Move);
+                        }
+                        finally
+                        {
+                            isDragging = false;
+                            Dispatcher.BeginInvoke(new Action(() => _isHeaderDragging = false),
+                                System.Windows.Threading.DispatcherPriority.Input);
+                        }
                     }
+                }
+            };
+
+            border.AllowDrop = true;
+            border.DragOver += (s, e) =>
+            {
+                if (CanUserReorderColumns && (e.Data.GetDataPresent(typeof(string)) || e.Data.GetDataPresent(typeof(ColumnLeaf)) || e.Data.GetDataPresent(DataFormats.StringFormat)))
+                {
+                    e.Effects = DragDropEffects.Move;
+                    e.Handled = true;
+                }
+            };
+
+            border.Drop += (s, e) =>
+            {
+                if (!CanUserReorderColumns) return;
+                string? prop = e.Data.GetData(typeof(string)) as string ??
+                               e.Data.GetData(DataFormats.StringFormat) as string ??
+                               (e.Data.GetData(typeof(ColumnLeaf)) as ColumnLeaf)?.BindingPath;
+
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    ReorderLeafColumn(prop!, leafNode);
+                    e.Handled = true;
                 }
             };
 
             border.MouseLeftButtonUp += (s, e) =>
             {
-                if (!isDragging && leafNode.CanUserSort && CanUserSortColumns)
+                if (!_isHeaderDragging && !isDragging && !_isHeaderResizing && leafNode.CanUserSort && CanUserSortColumns)
                 {
                     PerformSort(leafNode, leafColumnIndex);
                 }
@@ -855,14 +893,23 @@ public class StackedHeaderDataGrid : DataGrid
             {
                 var gripper = new Thumb
                 {
-                    Width = 5,
+                    Width = 6,
                     HorizontalAlignment = HorizontalAlignment.Right,
                     Cursor = Cursors.SizeWE,
                     Opacity = 0,
-                    Margin = new Thickness(0, 0, -2, 0)
+                    Margin = new Thickness(0, 0, -3, 0)
+                };
+                gripper.PreviewMouseLeftButtonDown += (s, e) =>
+                {
+                    _isHeaderResizing = true;
+                };
+                gripper.DragStarted += (s, e) =>
+                {
+                    _isHeaderResizing = true;
                 };
                 gripper.DragDelta += (s, e) =>
                 {
+                    _isHeaderResizing = true;
                     if (leafColumnIndex >= 0 && leafColumnIndex < Columns.Count)
                     {
                         var targetCol = Columns[leafColumnIndex];
@@ -872,11 +919,71 @@ public class StackedHeaderDataGrid : DataGrid
                         SyncColumnWidths();
                     }
                 };
+                gripper.DragCompleted += (s, e) =>
+                {
+                    Dispatcher.BeginInvoke(new Action(() => _isHeaderResizing = false),
+                        System.Windows.Threading.DispatcherPriority.Input);
+                };
                 grid.Children.Add(gripper);
             }
         }
 
         return grid;
+    }
+
+    private void ReorderLeafColumn(string sourcePropOrHeader, ColumnLeaf targetLeaf)
+    {
+        if (ColumnHeaderTree == null || targetLeaf == null) return;
+        var allLeaves = ColumnHeaderTree.SelectMany(n => n.GetLeaves()).ToList();
+        var sourceLeaf = allLeaves.FirstOrDefault(l =>
+            (!string.IsNullOrEmpty(l.BindingPath) && l.BindingPath.Equals(sourcePropOrHeader, StringComparison.OrdinalIgnoreCase)) ||
+            (!string.IsNullOrEmpty(l.HeaderText) && l.HeaderText.Equals(sourcePropOrHeader, StringComparison.OrdinalIgnoreCase)));
+
+        if (sourceLeaf == null || ReferenceEquals(sourceLeaf, targetLeaf)) return;
+
+        var sourceParent = FindParentCollection(ColumnHeaderTree, sourceLeaf);
+        var targetParent = FindParentCollection(ColumnHeaderTree, targetLeaf);
+
+        if (sourceParent != null && targetParent != null)
+        {
+            int sourceIndex = sourceParent.IndexOf(sourceLeaf);
+            int targetIndex = targetParent.IndexOf(targetLeaf);
+
+            sourceParent.Remove(sourceLeaf);
+
+            if (ReferenceEquals(sourceParent, targetParent))
+            {
+                int newTargetIndex = targetParent.IndexOf(targetLeaf);
+                int insertIndex = sourceIndex < targetIndex ? newTargetIndex + 1 : newTargetIndex;
+                insertIndex = Math.Max(0, Math.Min(targetParent.Count, insertIndex));
+                targetParent.Insert(insertIndex, sourceLeaf);
+            }
+            else
+            {
+                int newTargetIndex = targetParent.IndexOf(targetLeaf);
+                if (newTargetIndex >= 0)
+                    targetParent.Insert(newTargetIndex, sourceLeaf);
+                else
+                    targetParent.Add(sourceLeaf);
+            }
+
+            RebuildFromTree();
+        }
+    }
+
+    private static ObservableCollection<ColumnNode>? FindParentCollection(ObservableCollection<ColumnNode> roots, ColumnNode target)
+    {
+        if (roots.Contains(target)) return roots;
+        foreach (var node in roots)
+        {
+            if (node is ColumnGroup grp)
+            {
+                if (grp.Children.Contains(target)) return grp.Children;
+                var res = FindParentCollection(grp.Children, target);
+                if (res != null) return res;
+            }
+        }
+        return null;
     }
 
     private void PerformSort(ColumnLeaf leaf, int columnIndex)
@@ -890,6 +997,41 @@ public class StackedHeaderDataGrid : DataGrid
 
         var view = CollectionViewSource.GetDefaultView(ItemsSource);
         if (view == null) return;
+
+        // 1. Commit or cancel any pending AddNew or EditItem transaction on DataGrid
+        try
+        {
+            CommitEdit(DataGridEditingUnit.Row, true);
+            CommitEdit(DataGridEditingUnit.Cell, true);
+        }
+        catch
+        {
+            try
+            {
+                CancelEdit(DataGridEditingUnit.Row);
+                CancelEdit(DataGridEditingUnit.Cell);
+            }
+            catch { }
+        }
+
+        // 2. Commit or cancel transaction on IEditableCollectionView
+        if (view is IEditableCollectionView editable)
+        {
+            try
+            {
+                if (editable.IsAddingNew) editable.CommitNew();
+                if (editable.IsEditingItem) editable.CommitEdit();
+            }
+            catch
+            {
+                try
+                {
+                    if (editable.IsAddingNew) editable.CancelNew();
+                    if (editable.IsEditingItem) editable.CancelEdit();
+                }
+                catch { }
+            }
+        }
 
         ListSortDirection newDirection = ListSortDirection.Ascending;
         if (col.SortDirection == ListSortDirection.Ascending)
@@ -911,10 +1053,26 @@ public class StackedHeaderDataGrid : DataGrid
                 arrow.Data = Geometry.Parse("M 0 0 L 4 4 L 8 0 Z");
         }
 
-        using (view.DeferRefresh())
+        // 3. Defensive sort application: handle DeferRefresh safely during transactions
+        try
         {
-            view.SortDescriptions.Clear();
-            view.SortDescriptions.Add(new SortDescription(sortPath, newDirection));
+            using (view.DeferRefresh())
+            {
+                view.SortDescriptions.Clear();
+                view.SortDescriptions.Add(new SortDescription(sortPath, newDirection));
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            try
+            {
+                view.SortDescriptions.Clear();
+                view.SortDescriptions.Add(new SortDescription(sortPath, newDirection));
+            }
+            catch
+            {
+                // Silently handle to prevent application crash
+            }
         }
 
         RebuildFooterSummary();

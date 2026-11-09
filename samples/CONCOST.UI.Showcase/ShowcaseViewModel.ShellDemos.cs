@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using UniformGrid = System.Windows.Controls.Primitives.UniformGrid;
 using System.Windows.Data;
 using System.Windows.Media;
 using CONCOST.UI.Controls;
@@ -409,17 +410,17 @@ public partial class ShowcaseViewModel
 
     private object CreateDockingManagerDemo()
     {
-        var manager = new DockingManager { Height = 460 };
+        var manager = new DockingManager { Height = 500, Variant = DockingManagerVariant.Seamless };
 
         var tree = new ToolWindow
         {
-            Header = Loc.T("Cấu kiện", "Member"),
+            Header = Loc.T("Trình duyệt dự án", "Project Browser"),
             Icon = IconKind.Layers,
             Dock = DockSide.Left,
-            DockSize = 210
+            DockSize = 238
         };
         var treeView = new TreeView { BorderThickness = new Thickness(0) };
-        foreach (var name in new[] { Loc.T("Tầng 1", "Level 1"), Loc.T("Tầng 2", "Level 2"), Loc.T("Mái", "Roof"), Loc.T("Móng", "Foundation") })
+        foreach (var name in new[] { Loc.T("Chế độ xem", "Views"), Loc.T("Mặt bằng", "Floor Plans"), Loc.T("Tầng 1", "Level 1"), Loc.T("Tầng 2", "Level 2"), Loc.T("Mái", "Roof"), Loc.T("Mặt đứng", "Elevations"), Loc.T("Mặt cắt", "Sections"), Loc.T("Bảng thống kê", "Schedules"), Loc.T("Trang tính", "Sheets"), Loc.T("Gia đình", "Families") })
         {
             treeView.Items.Add(new TreeViewItem { Header = name, IsExpanded = true });
         }
@@ -429,13 +430,13 @@ public partial class ShowcaseViewModel
         // behaves, instead of each taking its own slice of the edge.
         var layers = new ToolWindow
         {
-            Header = Loc.T("Lớp", "Layer"),
+            Header = Loc.T("Bản vẽ", "Views"),
             Icon = IconKind.LayerColor,
             Dock = DockSide.Left,
             DockSize = 210
         };
         var layerList = new ListBox { BorderThickness = new Thickness(0) };
-        foreach (var name in new[] { Loc.T("Kết cấu", "Structure"), Loc.T("Kiến trúc", "Architecture"), "MEP", Loc.T("Cảnh quan", "Landscape") })
+        foreach (var name in new[] { Loc.T("Mặt bằng tầng 1", "Level 1 Floor Plan"), Loc.T("Mặt đứng phía Bắc", "North Elevation"), Loc.T("Mặt cắt A-A", "Section A-A"), Loc.T("Phối cảnh 3D", "3D View") })
         {
             layerList.Items.Add(name);
         }
@@ -446,16 +447,17 @@ public partial class ShowcaseViewModel
             Header = Loc.T("Thuộc tính", "Properties"),
             Icon = IconKind.Settings,
             Dock = DockSide.Right,
-            DockSize = 230
+            DockSize = 260
         };
         var propList = new StackPanel { Margin = new Thickness(12) };
         foreach (var (key, value) in new[]
                  {
-                     (Loc.T("Tiết diện", "Section"), "300×600"),
-                     (Loc.T("Chiều dài", "Length"), "6.20 m"),
-                     (Loc.T("Bê tông", "Concrete"), "B25"),
-                     (Loc.T("Thép", "Steel"), "CB400V"),
-                     (Loc.T("Lớp bảo vệ", "Cover"), "25 mm")
+                     (Loc.T("Danh mục", "Category"), Loc.T("Dầm kết cấu", "Structural Framing")),
+                     (Loc.T("Kiểu", "Type"), "M_Beam Concrete 300x600"),
+                     (Loc.T("Kích thước", "Dimensions"), "300 x 600 mm"),
+                     (Loc.T("Vật liệu", "Material"), "Concrete B25"),
+                     (Loc.T("Cao độ", "Elevation"), "+3.600 m"),
+                     (Loc.T("Chiều dài", "Length"), "6.200 m")
                  })
         {
             var row = new Grid { Margin = new Thickness(0, 0, 0, 8) };
@@ -480,7 +482,7 @@ public partial class ShowcaseViewModel
             Header = Loc.T("Nhật ký", "Log"),
             Icon = IconKind.FileText,
             Dock = DockSide.Bottom,
-            DockSize = 120
+            DockSize = 82
         };
         var logBox = new TextBox
         {
@@ -494,30 +496,54 @@ public partial class ShowcaseViewModel
 
         var canvas = new ToolWindow
         {
-            Header = Loc.T("Bản vẽ", "Drawing"),
+            Header = Loc.T("Mặt bằng tầng 1", "Level 1 Floor Plan"),
             Icon = IconKind.Drawing,
             Dock = DockSide.Center,
             ShowHeader = true
         };
         var drawing = new Border { CornerRadius = new CornerRadius(6), Margin = new Thickness(10) };
         drawing.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
-        var drawingText = new TextBlock
+        var plan = new Grid { ClipToBounds = true };
+        plan.SetResourceReference(Panel.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+        for (var i = 0; i < 12; i++)
         {
-            Text = Loc.T("Vùng giữa — kéo header của panel bên cạnh để dock sang đây", "Centre area — drag the header of a neighbouring panel here to dock it"),
-            FontSize = 12,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            TextWrapping = TextWrapping.Wrap,
-            MaxWidth = 280,
-            TextAlignment = TextAlignment.Center
-        };
-        drawingText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        drawing.Child = drawingText;
-        canvas.Content = drawing;
+            var horizontal = new Border { Height = 1, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, (i - 6) * 34, 0, 0), Opacity = .5 };
+            horizontal.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Border");
+            plan.Children.Add(horizontal);
+            var vertical = new Border { Width = 1, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness((i - 6) * 48, 0, 0, 0), Opacity = .5 };
+            vertical.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Border");
+            plan.Children.Add(vertical);
+        }
+        var footprint = new Border { Width = 320, Height = 190, BorderThickness = new Thickness(3), BorderBrush = Brushes.SlateGray, Background = Brushes.Transparent, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        var rooms = new Grid();
+        rooms.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.3, GridUnitType.Star) });
+        rooms.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        rooms.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        rooms.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        foreach (var (label, col, row) in new[] { ("LIVING", 0, 0), ("KITCHEN", 1, 0), ("BEDROOM 01", 0, 1), ("BEDROOM 02", 1, 1) })
+        {
+            var cell = new Border { BorderBrush = Brushes.SlateGray, BorderThickness = new Thickness(1), Child = new TextBlock { Text = label, FontSize = 9, Foreground = Brushes.SlateGray, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center } };
+            Grid.SetColumn(cell, col); Grid.SetRow(cell, row); rooms.Children.Add(cell);
+        }
+        footprint.Child = rooms;
+        plan.Children.Add(footprint);
+        var levelTag = new TextBlock { Text = "LEVEL 1  ·  1:100", FontSize = 10, Margin = new Thickness(12), VerticalAlignment = VerticalAlignment.Bottom, HorizontalAlignment = HorizontalAlignment.Right };
+        levelTag.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        plan.Children.Add(levelTag);
+        drawing.Child = plan;        canvas.Content = drawing;
 
         // Nested groups: the left edge is split into two rows, and the top row is itself a tab group.
         // This is the shape the four-slot version could not express.
-        var leftTabs = new DockPaneGroup { Mode = DockGroupMode.Tabs };
+        //
+        // The inner group carries no header of its own: its tab strip already names what it holds,
+        // and a band above the tabs would push the panel's content down for no information. The
+        // outer group keeps the header, because it is the one that reads as "the left edge".
+        var leftTabs = new DockPaneGroup
+        {
+            Mode = DockGroupMode.Tabs,
+            ShowHeader = false,
+            HeaderHeight = 0
+        };
         DockPaneGroup.SetProportion(leftTabs, 2);
         leftTabs.Children.Add(tree);
         leftTabs.Children.Add(layers);
@@ -548,7 +574,9 @@ public partial class ShowcaseViewModel
             Dock = DockSide.Left,
             DockSize = 250,
             Orientation = Orientation.Vertical,
-            Mode = DockGroupMode.Split
+            Mode = DockGroupMode.Split,
+            Header = Loc.T("Trình duyệt dự án", "Project Browser"),
+            Icon = IconKind.Layers
         };
         leftGroup.Children.Add(leftTabs);
         leftGroup.Children.Add(search);
@@ -565,7 +593,7 @@ public partial class ShowcaseViewModel
         manager.PaneDocked += (_, pane) => readout.Text = Loc.F("Đã dock “{0}” sang {1}.", "Docked “{0}” to {1}.", pane.Header, pane.Dock);
         manager.PaneClosed += (_, pane) => readout.Text = Loc.F("Đã đóng “{0}”.", "Closed “{0}”.", pane.Header);
 
-        var autoHide = new Button { Content = Loc.T("Ghim / tự ẩn panel phải", "Pin / auto-hide the right panel"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 10, 0, 0) };
+        var autoHide = new Button { Content = Loc.T("Ghim / tự ẩn Properties", "Pin / auto-hide Properties"), Padding = new Thickness(12, 5, 12, 5), Margin = new Thickness(0, 10, 0, 0) };
         autoHide.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
         autoHide.HorizontalAlignment = HorizontalAlignment.Left;
         autoHide.Click += (_, _) =>
@@ -626,7 +654,7 @@ public partial class ShowcaseViewModel
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Dock bốn cạnh, kéo để đổi chỗ, ghim để tự ẩn", "Dock on four sides, drag to rearrange, pin to auto-hide"),
+            Loc.T("Không gian làm việc kiểu Revit", "Revit-style project workspace"),
             stack,
             xaml: "<controls:DockingManager>\n" +
                   Loc.T("    <controls:ToolWindow Header=\"Cấu kiện\" Dock=\"Left\" DockSize=\"210\" />\n", "    <controls:ToolWindow Header=\"Members\" Dock=\"Left\" DockSize=\"210\" />\n") +
@@ -868,176 +896,262 @@ public partial class ShowcaseViewModel
 
     private object CreateQuickAccessToolbarDemo()
     {
-        // One strip, with every switch that changes it beside it. Three copies of the same strip
-        // differing only by a property the picker can already set is a gallery, not a workbench.
-        var items = new[]
+        var root = new StackPanel();
+
+        // 100% English command set for QuickAccessToolbar per AGENTS.md
+        QuickAccessItem[] CreateCommands() => new[]
         {
-            new QuickAccessItem(IconKind.Save, Loc.T("Lưu (Ctrl+S)", "Save (Ctrl+S)"), new RelayCommand(() => ToastService.Success(Loc.T("Đã lưu", "Saved")))),
-            new QuickAccessItem(IconKind.Undo, Loc.T("Hoàn tác (Ctrl+Z)", "Undo (Ctrl+Z)"), new RelayCommand(() => ToastService.Info(Loc.T("Hoàn tác", "Undo")))),
-            new QuickAccessItem(IconKind.Redo, Loc.T("Làm lại (Ctrl+Y)", "Redo (Ctrl+Y)"), new RelayCommand(() => ToastService.Info(Loc.T("Làm lại", "Redo")))),
+            new QuickAccessItem(IconKind.Save, "Save (Ctrl+S)", new RelayCommand(() => ToastService.Success("File saved"))),
+            new QuickAccessItem(IconKind.Undo, "Undo (Ctrl+Z)", new RelayCommand(() => ToastService.Info("Undo action"))),
+            new QuickAccessItem(IconKind.Redo, "Redo (Ctrl+Y)", new RelayCommand(() => ToastService.Info("Redo action"))),
             new QuickAccessItem { IsSeparator = true },
-            new QuickAccessItem(IconKind.Print, Loc.T("In (Ctrl+P)", "Print (Ctrl+P)"), new RelayCommand(() => ToastService.Info(Loc.T("In", "Print")))),
-            new QuickAccessItem(IconKind.ZoomIn, Loc.T("Phóng to", "Zoom in"), new RelayCommand(() => ToastService.Info(Loc.T("Phóng to", "Zoom in")))),
-            new QuickAccessItem(IconKind.ZoomOut, Loc.T("Thu nhỏ", "Zoom out"), new RelayCommand(() => ToastService.Info(Loc.T("Thu nhỏ", "Zoom out")))),
+            new QuickAccessItem(IconKind.Print, "Plot / Print (Ctrl+P)", new RelayCommand(() => ToastService.Info("Plot / Print"))),
+            new QuickAccessItem(IconKind.ZoomIn, "Zoom In (+)", new RelayCommand(() => ToastService.Info("Zoom In"))),
+            new QuickAccessItem(IconKind.ZoomOut, "Zoom Out (-)", new RelayCommand(() => ToastService.Info("Zoom Out"))),
             new QuickAccessItem { IsSeparator = true },
-            new QuickAccessItem(IconKind.Settings, Loc.T("Cài đặt", "Settings"), new RelayCommand(() => ToastService.Info(Loc.T("Cài đặt", "Settings"))))
+            new QuickAccessItem(IconKind.Settings, "CAD Options & Settings", new RelayCommand(() => ToastService.Info("Settings")))
         };
 
-        static TextBlock Head(string text)
+        static TextBlock SectionSubhead(string text)
         {
-            var head = new TextBlock
+            var tb = new TextBlock
             {
                 Text = text,
-                FontSize = 11.5,
-                FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 0, 12)
+                FontSize = 11,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 0, 0, 8)
             };
-            head.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-            return head;
+            tb.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+            return tb;
         }
 
-        var strip = new QuickAccessToolbar
+        // =====================================================================
+        // CARD 1: QUICKACCESSTOOLBAR HERO WORKBENCH
+        // =====================================================================
+        var liveStrip = new QuickAccessToolbar
         {
-            ItemsSource = items,
-            Variant = QuickAccessToolbarVariant.Outlined,
-            Width = 360,
+            ItemsSource = CreateCommands(),
+            Variant = QuickAccessToolbarVariant.Plain,
+            ButtonSize = 28,
+            IconSize = 16,
+            Spacing = 3,
+            Width = 380,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            OverflowToolTip = Loc.T("Lệnh không vừa", "Commands that did not fit")
+            OverflowToolTip = "Customize Quick Access Toolbar"
         };
 
-        var readout = new TextBlock
+        // Dedicated Hero Stage: The QuickAccessToolbar is front and center as the MAIN control!
+        var stage = new Border
+        {
+            Height = 76,
+            CornerRadius = new CornerRadius(8),
+            BorderThickness = new Thickness(1),
+            Padding = new Thickness(24, 0, 24, 0),
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        stage.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
+        stage.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+        stage.Child = liveStrip;
+
+        // Control Center (2-Column OCD-friendly layout)
+        var controlGrid = new Grid();
+        controlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        controlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Pixel) });
+        controlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        var vDivider = new Border { Width = 1, Margin = new Thickness(20, 0, 20, 0) };
+        vDivider.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Border");
+        Grid.SetColumn(vDivider, 1);
+        controlGrid.Children.Add(vDivider);
+
+        // ---- Left Column: Geometry & Variant ----
+        var leftCol = new StackPanel();
+
+        // 1. Variant Pills
+        leftCol.Children.Add(SectionSubhead("TOOLBAR VARIANT (DEFAULT: PLAIN)"));
+        var variantPills = new UniformGrid { Columns = 3, Margin = new Thickness(0, 0, 0, 14) };
+        var variantButtons = new Dictionary<QuickAccessToolbarVariant, Button>();
+
+        void UpdateVariantPills(QuickAccessToolbarVariant active)
+        {
+            foreach (var kvp in variantButtons)
+            {
+                bool isCur = kvp.Key == active;
+                kvp.Value.SetResourceReference(FrameworkElement.StyleProperty, isCur ? "CONCOST.Button.Primary" : "CONCOST.Button.Secondary");
+            }
+        }
+
+        Button CreateVariantPill(string label, QuickAccessToolbarVariant v)
+        {
+            var btn = new Button { Content = label, Height = 28, FontSize = 11 };
+            btn.Click += (_, _) =>
+            {
+                liveStrip.Variant = v;
+                UpdateVariantPills(v);
+            };
+            variantButtons[v] = btn;
+            return btn;
+        }
+
+        variantPills.Children.Add(CreateVariantPill("Plain (Default)", QuickAccessToolbarVariant.Plain));
+        variantPills.Children.Add(CreateVariantPill("Outlined", QuickAccessToolbarVariant.Outlined));
+        variantPills.Children.Add(CreateVariantPill("Elevated", QuickAccessToolbarVariant.Elevated));
+        leftCol.Children.Add(variantPills);
+        UpdateVariantPills(liveStrip.Variant);
+
+        // 2. Button Size Pills
+        leftCol.Children.Add(SectionSubhead("BUTTON & ICON METRICS"));
+        var sizePills = new UniformGrid { Columns = 3, Margin = new Thickness(0, 0, 0, 14) };
+        var sizeButtons = new Dictionary<double, Button>();
+
+        void UpdateSizePills(double activeSize)
+        {
+            foreach (var kvp in sizeButtons)
+            {
+                bool isCur = Math.Abs(kvp.Key - activeSize) < 0.5;
+                kvp.Value.SetResourceReference(FrameworkElement.StyleProperty, isCur ? "CONCOST.Button.Primary" : "CONCOST.Button.Secondary");
+            }
+        }
+
+        Button CreateSizePill(string label, double btnSize, double icnSize)
+        {
+            var btn = new Button { Content = label, Height = 28, FontSize = 11 };
+            btn.Click += (_, _) =>
+            {
+                liveStrip.ButtonSize = btnSize;
+                liveStrip.IconSize = icnSize;
+                UpdateSizePills(btnSize);
+            };
+            sizeButtons[btnSize] = btn;
+            return btn;
+        }
+
+        sizePills.Children.Add(CreateSizePill("Compact (22/12px)", 22, 12));
+        sizePills.Children.Add(CreateSizePill("Standard (28/16px)", 28, 16));
+        sizePills.Children.Add(CreateSizePill("Large (34/20px)", 34, 20));
+        leftCol.Children.Add(sizePills);
+        UpdateSizePills(liveStrip.ButtonSize);
+
+        // 3. Responsive Width Slider
+        leftCol.Children.Add(SectionSubhead("RESPONSIVE WIDTH (OVERFLOW TEST)"));
+        leftCol.Children.Add(AppearanceSlider("Toolbar Width", 140, 480, liveStrip.Width, 10, "{0:0} px", v => liveStrip.Width = v));
+
+        Grid.SetColumn(leftCol, 0);
+        controlGrid.Children.Add(leftCol);
+
+        // ---- Right Column: Behavior & Live Monitor ----
+        var rightCol = new StackPanel();
+
+        rightCol.Children.Add(SectionSubhead("BEHAVIOR & FEATURE FLAGS"));
+        var featureGrid = new UniformGrid { Columns = 2, Margin = new Thickness(0, 0, 0, 14) };
+
+        var sepCheck = new CheckBox { Content = "Show Separators", IsChecked = liveStrip.ShowSeparators, Height = 28 };
+        sepCheck.Checked += (_, _) => liveStrip.ShowSeparators = true;
+        sepCheck.Unchecked += (_, _) => liveStrip.ShowSeparators = false;
+        featureGrid.Children.Add(sepCheck);
+
+        var customCheck = new CheckBox { Content = "Customizable Chevron", IsChecked = liveStrip.IsCustomizable, Height = 28 };
+        customCheck.Checked += (_, _) => liveStrip.IsCustomizable = true;
+        customCheck.Unchecked += (_, _) => liveStrip.IsCustomizable = false;
+        featureGrid.Children.Add(customCheck);
+        rightCol.Children.Add(featureGrid);
+
+        rightCol.Children.Add(SectionSubhead("TOOLBAR ACTIONS"));
+        var actionRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 14) };
+        var toggleMenuBtn = new Button { Content = "Toggle Overflow Menu", Height = 28, Padding = new Thickness(12, 0, 12, 0), Margin = new Thickness(0, 0, 8, 0) };
+        toggleMenuBtn.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+        toggleMenuBtn.Click += (_, _) => liveStrip.IsOverflowOpen = !liveStrip.IsOverflowOpen;
+        actionRow.Children.Add(toggleMenuBtn);
+
+        var resetBtn = new Button { Content = "Reset Defaults", Height = 28, Padding = new Thickness(12, 0, 12, 0) };
+        resetBtn.SetResourceReference(FrameworkElement.StyleProperty, "CONCOST.Button.Secondary");
+        resetBtn.Click += (_, _) =>
+        {
+            liveStrip.Width = 380;
+            liveStrip.Variant = QuickAccessToolbarVariant.Plain;
+            liveStrip.ButtonSize = 28;
+            liveStrip.IconSize = 16;
+            liveStrip.ShowSeparators = true;
+            liveStrip.IsCustomizable = true;
+            sepCheck.IsChecked = true;
+            customCheck.IsChecked = true;
+            UpdateVariantPills(QuickAccessToolbarVariant.Plain);
+            UpdateSizePills(28);
+        };
+        actionRow.Children.Add(resetBtn);
+        rightCol.Children.Add(actionRow);
+
+        // Real-time Overflow Status Monitor
+        rightCol.Children.Add(SectionSubhead("LIVE OVERFLOW MONITOR"));
+        var statusCard = new Border
+        {
+            CornerRadius = new CornerRadius(6),
+            BorderThickness = new Thickness(1),
+            Padding = new Thickness(12, 8, 12, 8)
+        };
+        statusCard.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+        statusCard.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+
+        var statusText = new TextBlock
         {
             FontSize = 11,
-            Margin = new Thickness(0, 10, 0, 0),
             TextWrapping = TextWrapping.Wrap,
             LineHeight = 16
         };
-        readout.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        statusText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        statusCard.Child = statusText;
 
-        var openButton = SecondaryButton(Loc.T("Mở menu tràn", "Open the overflow menu"));
-        openButton.Margin = new Thickness(0, 10, 0, 0);
-        openButton.HorizontalAlignment = HorizontalAlignment.Left;
-        openButton.Click += (_, _) => strip.IsOverflowOpen = !strip.IsOverflowOpen;
-
-        strip.LayoutUpdated += (_, _) =>
+        liveStrip.LayoutUpdated += (_, _) =>
         {
-            var hidden = strip.OverflowItems.Cast<object>()
+            var hidden = liveStrip.OverflowItems.Cast<object>()
                 .OfType<QuickAccessItem>()
                 .Where(item => !item.IsSeparator && !string.IsNullOrEmpty(item.ToolTip))
                 .Select(item => item.ToolTip)
                 .ToList();
 
-            readout.Text = hidden.Count > 0
-                ? Loc.F("Bị đẩy vào menu ({0} lệnh): {1}", "Pushed into the menu ({0} commands): {1}",
-                    hidden.Count, string.Join(" · ", hidden))
-                : Loc.T("Đủ chỗ cho cả 8 lệnh — kéo thanh Rộng xuống để xem menu tràn.",
-                        "Room for all 8 commands — pull the width slider down to see the overflow menu.");
+            statusText.Text = hidden.Count > 0
+                ? $"Overflow Active ({hidden.Count} commands hidden): {string.Join(" · ", hidden)}"
+                : "All 8 commands fit comfortably on the toolbar. Drag width slider left to test responsive overflow.";
         };
+        rightCol.Children.Add(statusCard);
 
-        var stage = new Border
-        {
-            Height = 72,
-            CornerRadius = new CornerRadius(10),
-            BorderThickness = new Thickness(1),
-            Padding = new Thickness(16),
-            Child = strip
-        };
-        stage.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
-        stage.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+        Grid.SetColumn(rightCol, 2);
+        controlGrid.Children.Add(rightCol);
 
-        // ---- the panel ----------------------------------------------------
-        var col1 = new StackPanel();
-        col1.Children.Add(Head(Loc.T("KÍCH THƯỚC VÀ NHỊP", "SIZE & RHYTHM")));
-        col1.Children.Add(AppearanceSlider(Loc.T("Cạnh nút", "Button size"), 20, 36, strip.ButtonSize, 1, "{0:0} px", v => strip.ButtonSize = v));
-        col1.Children.Add(AppearanceSlider(Loc.T("Cỡ icon", "Icon size"), 10, 22, strip.IconSize, 1, "{0:0} px", v => strip.IconSize = v));
-        col1.Children.Add(AppearanceSlider(Loc.T("Khoảng cách", "Spacing"), 0, 12, strip.Spacing, 1, "{0:0} px", v => strip.Spacing = v));
-        col1.Children.Add(AppearanceSlider(Loc.T("Bề rộng", "Width"), 140, 460, strip.Width, 10, "{0:0} px", v => strip.Width = v));
+        var card1Stack = new StackPanel();
+        card1Stack.Children.Add(stage);
+        card1Stack.Children.Add(controlGrid);
 
-        var col2 = new StackPanel();
-        col2.Children.Add(Head(Loc.T("HIỂN THỊ", "PRESENTATION")));
-
-        var variantRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 12) };
-        var variantLabel = new TextBlock
-        {
-            Text = Loc.T("Kiểu nền:", "Variant:"),
-            FontSize = 12,
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(0, 0, 10, 0),
-            Width = 92
-        };
-        variantLabel.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-
-        var variantBox = new ComboBox { Width = 158, HorizontalAlignment = HorizontalAlignment.Left };
-        variantBox.Items.Add("Plain");
-        variantBox.Items.Add("Outlined");
-        variantBox.Items.Add("Elevated");
-        variantBox.SelectedIndex = 1;
-        variantBox.SelectionChanged += (_, _) =>
-            strip.Variant = (QuickAccessToolbarVariant)Math.Max(0, variantBox.SelectedIndex);
-
-        variantRow.Children.Add(variantLabel);
-        variantRow.Children.Add(variantBox);
-        col2.Children.Add(variantRow);
-
-        var toggles = new WrapPanel { Width = 401, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 6) };
-        toggles.Children.Add(AppearanceToggle(Loc.T("Vẽ dấu phân cách", "Draw separators"), strip.ShowSeparators, v => strip.ShowSeparators = v));
-        toggles.Children.Add(AppearanceToggle(Loc.T("Luôn hiện chevron", "Always show the chevron"), strip.IsCustomizable, v => strip.IsCustomizable = v));
-        col2.Children.Add(toggles);
-
-        var note = new TextBlock
-        {
-            Text = Loc.T(
-                "Dấu phân cách chỉ vẽ khi ShowSeparators bật. Chevron hiện khi IsCustomizable bật hoặc khi có lệnh bị tràn — tắt cả hai thì dải chỉ còn đúng số icon vừa chỗ.",
-                "A separator is only drawn while ShowSeparators is on. The chevron shows while IsCustomizable is on, or as soon as a command overflows — turn both off and the strip is nothing but the icons that fit."),
-            FontSize = 11,
-            TextWrapping = TextWrapping.Wrap,
-            MaxWidth = 400,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            LineHeight = 16
-        };
-        note.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        col2.Children.Add(note);
-
-        var workbench = new Grid { Margin = new Thickness(0, 18, 0, 0) };
-        workbench.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(410) });
-        workbench.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
-        workbench.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        Grid.SetColumn(col1, 0);
-        Grid.SetColumn(col2, 2);
-        workbench.Children.Add(col1);
-        workbench.Children.Add(col2);
-
-        var deck = new StackPanel();
-        deck.Children.Add(stage);
-        deck.Children.Add(workbench);
-        deck.Children.Add(readout);
-        deck.Children.Add(openButton);
-
-        var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Dải lệnh nhanh", "The quick-access strip"),
-            deck,
+            "QuickAccessToolbar",
+            card1Stack,
             xaml: "<controls:QuickAccessToolbar ItemsSource=\"{Binding QuickCommands}\"\n" +
-                  "    Variant=\"Outlined\"\n" +
-                  "    ButtonSize=\"24\"\n" +
-                  "    IconSize=\"14\"\n" +
-                  "    Spacing=\"2\"\n" +
+                  "    Variant=\"Plain\"\n" +
+                  "    ButtonSize=\"28\"\n" +
+                  "    IconSize=\"16\"\n" +
+                  "    Spacing=\"3\"\n" +
                   "    ShowSeparators=\"True\"\n" +
-                  "    IsCustomizable=\"True\" />",
-            csharp: Loc.T("// Mỗi thuộc tính đều là DependencyProperty nên bind được\n",
-                          "// Every one of these is a DependencyProperty, so all of them bind\n") +
-                    "qat.Variant = QuickAccessToolbarVariant.Outlined;\n" +
-                    "qat.ButtonSize = 30;\n" +
-                    "qat.IconSize = 16;\n" +
-                    "qat.Spacing = 4;\n" +
-                    "qat.Width = 150;            " + Loc.T("// hẹp lại để thấy menu tràn\n", "// narrow it to see the overflow menu\n") +
-                    "qat.ShowSeparators = true;\n" +
-                    "qat.IsCustomizable = true;\n\n" +
-                    Loc.T("// Chevron tự hiện khi panel báo có lệnh không vừa\n",
-                          "// The chevron appears by itself once the panel reports an overflow\n") +
-                    "foreach (QuickAccessItem hidden in qat.OverflowItems)\n" +
-                    "    Debug.WriteLine(hidden.ToolTip);"));
+                  "    IsCustomizable=\"True\"\n" +
+                  "    OverflowToolTip=\"Customize Quick Access Toolbar\" />",
+            csharp: "// Configure QuickAccessToolbar in code-behind / ViewModel\n" +
+                    "var qat = new QuickAccessToolbar\n" +
+                    "{\n" +
+                    "    ItemsSource = new[]\n" +
+                    "    {\n" +
+                    "        new QuickAccessItem(IconKind.Save, \"Save (Ctrl+S)\", SaveCmd),\n" +
+                    "        new QuickAccessItem(IconKind.Undo, \"Undo (Ctrl+Z)\", UndoCmd),\n" +
+                    "        new QuickAccessItem(IconKind.Redo, \"Redo (Ctrl+Y)\", RedoCmd),\n" +
+                    "        new QuickAccessItem { IsSeparator = true },\n" +
+                    "        new QuickAccessItem(IconKind.Print, \"Plot / Print (Ctrl+P)\", PrintCmd),\n" +
+                    "        new QuickAccessItem(IconKind.Settings, \"Settings\", SettingsCmd)\n" +
+                    "    },\n" +
+                    "    Variant = QuickAccessToolbarVariant.Plain, // Plain is default\n" +
+                    "    ButtonSize = 28,\n" +
+                    "    IconSize = 16,\n" +
+                    "    ShowSeparators = true,\n" +
+                    "    IsCustomizable = true\n" +
+                    "};"));
 
         return root;
     }

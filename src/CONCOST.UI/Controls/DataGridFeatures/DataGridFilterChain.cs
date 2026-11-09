@@ -70,7 +70,32 @@ internal static class DataGridFilterChain
             };
         }
 
-        view.Refresh();
+        if (view is IEditableCollectionView editable)
+        {
+            try
+            {
+                if (editable.IsAddingNew) editable.CommitNew();
+                if (editable.IsEditingItem) editable.CommitEdit();
+            }
+            catch
+            {
+                try
+                {
+                    if (editable.IsAddingNew) editable.CancelNew();
+                    if (editable.IsEditingItem) editable.CancelEdit();
+                }
+                catch { }
+            }
+        }
+
+        try
+        {
+            view.Refresh();
+        }
+        catch (InvalidOperationException)
+        {
+            // Defensive against active transaction conflict
+        }
     }
 
     /// <summary>Drops whatever an owner installed, for teardown or when the target grid goes away.</summary>

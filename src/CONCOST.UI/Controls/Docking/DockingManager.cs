@@ -146,6 +146,7 @@ public class DockingManager : Panel
     private ToolWindow? _dragPane;
     private Rect _previewRect;
     private bool _isDraggingPane;
+    private Point _dropPoint;
     private Rect[] _splitterRects = Array.Empty<Rect>();
     private Size _accountedSize;
     private bool _normalizing;
@@ -153,6 +154,7 @@ public class DockingManager : Panel
 
     /// <summary>Floating panes whose close button was pressed, so the window does not re-dock them.</summary>
     private readonly HashSet<ToolWindow> _closingFloating = new();
+    private readonly HashSet<ToolWindow> _dockingFloating = new();
 
     public DockingManager()
     {
@@ -172,6 +174,10 @@ public class DockingManager : Panel
         Children.Add(_documentTabs);
 
         _preview = new DockPreview();
+        // Children added by the host come after the built-in preview and therefore paint above it
+        // in a Panel. The XAML Designer docking compass is an adorner: keep ours in the equivalent
+        // topmost visual layer while leaving hit testing disabled so the drag capture is unaffected.
+        Panel.SetZIndex(_preview, int.MaxValue);
         Children.Add(_preview);
 
         ApplyChrome();
@@ -328,12 +334,16 @@ public class DockingManager : Panel
 
     public static readonly DependencyProperty TabPlacementProperty =
         DependencyProperty.Register(nameof(TabPlacement), typeof(DockTabPlacement), typeof(DockingManager),
-            new FrameworkPropertyMetadata(DockTabPlacement.Bottom, OnChromeChanged));
+            new FrameworkPropertyMetadata(DockTabPlacement.Top, OnChromeChanged));
 
     /// <summary>
-    /// Which edge of a pane group its tabs hug. Default <see cref="DockTabPlacement.Bottom"/>; the
-    /// document strip in the centre always stays on top.
+    /// Which edge of a pane group its tabs hug. Default <see cref="DockTabPlacement.Top"/>.
     /// </summary>
+    /// <remarks>
+    /// The top is where a reader expects the tabs of a group: they sit directly under the group's
+    /// header, where the pane's title would be, and the content starts below them. Hanging them off
+    /// the bottom left a shelf under the content that looked like a separate widget parked there.
+    /// </remarks>
     public DockTabPlacement TabPlacement
     {
         get => (DockTabPlacement)GetValue(TabPlacementProperty);
@@ -356,6 +366,7 @@ public class DockingManager : Panel
 
         foreach (var pane in AllPanes)
         {
+            pane.DockingOwner = this;
             pane.HeaderHeight = header;
             pane.IconSize = icon;
             pane.HeaderButtons = HeaderButtons;
@@ -467,7 +478,12 @@ public class DockingManager : Panel
 
         // A floating panel has to lose its window first, or it would still belong to that host and the
         // insert below would throw "already the logical child of another element".
-        if (_floating.TryGetValue(pane, out var window)) window.Close();
+        if (_floating.TryGetValue(pane, out var window))
+        {
+            _dockingFloating.Add(pane);
+            window.Close();
+            _dockingFloating.Remove(pane);
+        }
 
         // A pane may currently live inside a group; take it out of whichever parent holds it.
         Detach(pane);
@@ -635,6 +651,10 @@ public class DockingManager : Panel
         pane.ShowHeader = true;
 
         var host = new Border { Child = pane, Padding = new Thickness(1) };
+        pane.DockingOwner = this;
+        pane.DragStarted += OnPaneDragStarted;
+        pane.DragMoved += OnPaneDragMoved;
+        pane.DragCompleted += OnPaneDragCompleted;
         host.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
         host.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
 
@@ -657,6 +677,9 @@ public class DockingManager : Panel
 
         window.Closed += (_, _) =>
         {
+            pane.DragStarted -= OnPaneDragStarted;
+            pane.DragMoved -= OnPaneDragMoved;
+            pane.DragCompleted -= OnPaneDragCompleted;
             pane.Closed -= paneClosed;
             _floating.Remove(pane);
             host.Child = null;
@@ -669,6 +692,8 @@ public class DockingManager : Panel
                 PaneClosed?.Invoke(this, pane);
                 return;
             }
+
+            if (_dockingFloating.Remove(pane)) return;
 
             Dock(pane, side);
         };
@@ -811,6 +836,7 @@ public class DockingManager : Panel
 
         if (visualRemoved is ToolWindow removed)
         {
+            removed.DockingOwner = null;
             removed.DragStarted -= OnPaneDragStarted;
             removed.DragMoved -= OnPaneDragMoved;
             removed.DragCompleted -= OnPaneDragCompleted;
@@ -869,13 +895,18 @@ public class DockingManager : Panel
     {
         if (!_isDraggingPane || !ShowDropPreview) return;
 
-        var side = ResolveDropSide(e.Point);
+        var side = ResolveDropSide(e.Point, e.Pane);
+        _dropPoint = e.Point;
+        _preview.CompassCenter = ResolveCompassCenter(e.Point, e.Pane);
+        _preview.HighlightedSide = side;
         var size = ResolveSize(new Size(ActualWidth, ActualHeight));
 
         _preview.Side = side;
-        _previewRect = DropRect(side, size, e.Pane);
+        _preview.IsOuterTarget = TryGetManagerEdgeTarget(e.Point, out _);
+        _previewRect = new Rect(0, 0, size.Width, size.Height);
+        _preview.TargetRect = ResolveDropPreviewRect(e.Pane, e.Point, side, size);
         _preview.IsOpen = true;
-        InvalidateArrange();
+        InvalidateVisual();
     }
 
     private void OnNestedDragCompleted(object? sender, (ToolWindow Pane, Point Point) e)
@@ -890,7 +921,7 @@ public class DockingManager : Panel
             return;
         }
 
-        Dock(e.Pane, ResolveDropSide(e.Point));
+        ApplyDrop(e.Pane, e.Point);
     }
 
     private void OnNestedClosed(object? sender, ToolWindow pane) => ClosePane(pane);
@@ -941,13 +972,18 @@ public class DockingManager : Panel
     {
         if (!_isDraggingPane || _dragPane is null || !ShowDropPreview) return;
 
-        var side = ResolveDropSide(point);
+        var side = ResolveDropSide(point, _dragPane);
+        _dropPoint = point;
+        _preview.CompassCenter = ResolveCompassCenter(point, _dragPane);
+        _preview.HighlightedSide = side;
         var size = ResolveSize(new Size(ActualWidth, ActualHeight));
 
         _preview.Side = side;
-        _previewRect = DropRect(side, size, _dragPane);
+        _preview.IsOuterTarget = TryGetManagerEdgeTarget(point, out _);
+        _previewRect = new Rect(0, 0, size.Width, size.Height);
+        _preview.TargetRect = ResolveDropPreviewRect(_dragPane, point, side, size);
         _preview.IsOpen = true;
-        InvalidateArrange();
+        InvalidateVisual();
     }
 
     private void OnPaneDragCompleted(object? sender, Point point)
@@ -967,7 +1003,7 @@ public class DockingManager : Panel
             return;
         }
 
-        Dock(pane, ResolveDropSide(point));
+        ApplyDrop(pane, point);
     }
 
     /// <summary>
@@ -987,7 +1023,7 @@ public class DockingManager : Panel
             return;
         }
 
-        Dock(pane, ResolveDropSide(point));
+        ApplyDrop(pane, point);
     }
 
     /// <summary>Shows the drop hint for a drag in progress. <paramref name="point"/> is in manager coordinates.</summary>
@@ -995,12 +1031,21 @@ public class DockingManager : Panel
     {
         if (!ShowDropPreview || pane is null) return;
 
+        _isDraggingPane = true;
+        _dragPane = pane;
+        _dropPoint = point;
         var size = ResolveSize(new Size(ActualWidth, ActualHeight));
 
-        _preview.Side = ResolveDropSide(point);
-        _previewRect = DropRect(_preview.Side, size, pane);
+        _preview.Side = ResolveDropSide(point, pane);
+        _preview.IsOuterTarget = TryGetManagerEdgeTarget(point, out _);
+        _preview.HighlightedSide = _preview.Side;
+        _preview.CompassCenter = ResolveCompassCenter(point, pane);
+        _previewRect = new Rect(0, 0, size.Width, size.Height);
+        _preview.TargetRect = ResolveDropPreviewRect(pane, point, _preview.Side, size);
+        bool wasOpen = _preview.IsOpen;
         _preview.IsOpen = !IsOutside(point);
-        InvalidateArrange();
+        if (wasOpen != _preview.IsOpen) InvalidateArrange();
+        else InvalidateVisual();
     }
 
     /// <summary>Hides the drop hint.</summary>
@@ -1009,24 +1054,258 @@ public class DockingManager : Panel
         if (!_preview.IsOpen) return;
 
         _preview.IsOpen = false;
+        _isDraggingPane = false;
+        _dragPane = null;
         InvalidateArrange();
     }
 
     private bool IsOutside(Point point) =>
         point.X < 0 || point.Y < 0 || point.X > ActualWidth || point.Y > ActualHeight;
 
+    private void ApplyDrop(ToolWindow pane, Point point)
+    {
+        if (IsOutside(point))
+        {
+            Float(pane);
+            return;
+        }
+
+        var target = FindDropPane(point, pane);
+        var side = ResolveDropSide(point, pane);
+
+        if (target is null)
+        {
+            Dock(pane, side);
+            return;
+        }
+
+        if (side == DockSide.Center) DockAsTab(pane, target);
+        else SplitBeside(pane, target, side);
+    }
+
+    private ToolWindow? FindDropPane(Point point, ToolWindow draggedPane)
+    {
+        if (TryGetManagerEdgeTarget(point, out _)) return null;
+        var size = ResolveSize(new Size(ActualWidth, ActualHeight));
+        var layout = ComputeLayout(Deflate(size));
+        layout.Offset(FrameInset.Left, FrameInset.Top);
+        return layout.Nodes
+            .Where(pair => pair.Key is ToolWindow candidate && !ReferenceEquals(candidate, draggedPane)
+                && pair.Value.Width > 0 && pair.Value.Height > 0 && pair.Value.Contains(point))
+            .OrderBy(pair => pair.Value.Width * pair.Value.Height)
+            .Select(pair => pair.Key as ToolWindow)
+            .FirstOrDefault();
+    }
+
+    private Rect ResolveDropPreviewRect(ToolWindow draggedPane, Point point, DockSide side, Size size)
+    {
+        var target = FindDropPane(point, draggedPane);
+        if (target is null) return DropRect(side, size, draggedPane);
+
+        var layout = ComputeLayout(Deflate(size));
+        layout.Offset(FrameInset.Left, FrameInset.Top);
+        if (!layout.Nodes.TryGetValue(target, out var bounds)) return DropRect(side, size, draggedPane);
+        if (side == DockSide.Center) return bounds;
+
+        const double splitter = 6;
+        return side switch
+        {
+            DockSide.Left => new Rect(bounds.X, bounds.Y, Math.Max(0, (bounds.Width - splitter) / 2), bounds.Height),
+            DockSide.Right => new Rect(bounds.X + (bounds.Width + splitter) / 2, bounds.Y, Math.Max(0, (bounds.Width - splitter) / 2), bounds.Height),
+            DockSide.Top => new Rect(bounds.X, bounds.Y, bounds.Width, Math.Max(0, (bounds.Height - splitter) / 2)),
+            _ => new Rect(bounds.X, bounds.Y + (bounds.Height + splitter) / 2, bounds.Width, Math.Max(0, (bounds.Height - splitter) / 2))
+        };
+    }
+
+    private void DockAsTab(ToolWindow pane, ToolWindow target)
+    {
+        if (target.Parent == this)
+        {
+            Dock(pane, target.Dock);
+            return;
+        }
+
+        PreparePaneForDrop(pane);
+        pane.Dock = target.Dock;
+        pane.IsAutoHidden = false;
+        pane.IsFlyoutOpen = false;
+
+        if (target.Parent is DockPaneGroup tabs && tabs.Mode == DockGroupMode.Tabs)
+        {
+            var index = Math.Max(0, tabs.Children.IndexOf(target) + 1);
+            tabs.Children.Insert(index, pane);
+            target.SetCurrentValue(ToolWindow.IsActiveProperty, false);
+        }
+        else if (target.Parent is Panel parent)
+        {
+            var tabGroup = new DockPaneGroup
+            {
+                Mode = DockGroupMode.Tabs,
+                Dock = target.Dock,
+                DockSize = target.DockSize,
+                ShowHeader = false,
+                HeaderHeight = 0
+            };
+            ReplaceChild(parent, target, tabGroup);
+            tabGroup.Children.Add(target);
+            tabGroup.Children.Add(pane);
+        }
+        else
+        {
+            Dock(pane, target.Dock);
+            return;
+        }
+
+        pane.SetCurrentValue(ToolWindow.IsActiveProperty, true);
+        ApplyChrome();
+        InvalidateMeasure();
+        PaneDocked?.Invoke(this, pane);
+    }
+
+    private void SplitBeside(ToolWindow pane, ToolWindow target, DockSide side)
+    {
+        PreparePaneForDrop(pane);
+        pane.Dock = target.Dock;
+        pane.IsAutoHidden = false;
+        pane.IsFlyoutOpen = false;
+
+        var parent = target.Parent as Panel;
+        if (parent is null)
+        {
+            Dock(pane, side);
+            return;
+        }
+
+        if (ReferenceEquals(parent, this))
+        {
+            var siblings = Panes.Where(candidate => candidate.Dock == target.Dock && !candidate.IsAutoHidden).ToList();
+            int index = siblings.Select(Children.IndexOf).Where(i => i >= 0).DefaultIfEmpty(Children.IndexOf(target)).Min();
+            var tabs = new DockPaneGroup
+            {
+                Mode = DockGroupMode.Tabs,
+                Dock = target.Dock,
+                DockSize = target.DockSize,
+                ShowHeader = false,
+                HeaderHeight = 0
+            };
+            foreach (var sibling in siblings)
+            {
+                Children.Remove(sibling);
+                tabs.Children.Add(sibling);
+            }
+            var split = CreateSplitGroup(target.Dock, target.DockSize, side);
+            var insertNewFirst = side is DockSide.Left or DockSide.Top;
+            split.Children.Add(insertNewFirst ? pane : tabs);
+            split.Children.Add(insertNewFirst ? tabs : pane);
+            DockPaneGroup.SetProportion(split.Children[0], 1);
+            DockPaneGroup.SetProportion(split.Children[1], 1);
+            Children.Insert(Math.Max(0, index), split);
+        }
+        else if (parent is DockPaneGroup parentGroup)
+        {
+            UIElement targetUnit = parentGroup.Mode == DockGroupMode.Tabs ? parentGroup : target;
+            Panel? destination = targetUnit is FrameworkElement targetElement
+                ? targetElement.Parent as Panel
+                : null;
+            if (destination is null) return;
+
+            double proportion = DockPaneGroup.GetProportion(targetUnit);
+            var split = CreateSplitGroup(target.Dock, target.DockSize, side);
+            ReplaceChild(destination, targetUnit, split, proportion);
+            bool insertNewFirst = side is DockSide.Left or DockSide.Top;
+            split.Children.Add(insertNewFirst ? pane : targetUnit);
+            split.Children.Add(insertNewFirst ? targetUnit : pane);
+            DockPaneGroup.SetProportion(split.Children[0], 1);
+            DockPaneGroup.SetProportion(split.Children[1], 1);
+        }
+
+        pane.SetCurrentValue(ToolWindow.IsActiveProperty, true);
+        ApplyChrome();
+        InvalidateMeasure();
+        PaneDocked?.Invoke(this, pane);
+    }
+
+    private DockPaneGroup CreateSplitGroup(DockSide dock, double dockSize, DockSide side) => new()
+    {
+        Mode = DockGroupMode.Split,
+        Orientation = side is DockSide.Left or DockSide.Right ? Orientation.Horizontal : Orientation.Vertical,
+        Dock = dock,
+        DockSize = dockSize,
+        ShowHeader = false,
+        HeaderHeight = 0,
+        SplitterThickness = SplitterThickness
+    };
+
+    private static void ReplaceChild(Panel parent, UIElement oldChild, UIElement replacement, double? proportion = null)
+    {
+        int index = parent.Children.IndexOf(oldChild);
+        if (index < 0) return;
+        proportion ??= DockPaneGroup.GetProportion(oldChild);
+        parent.Children.RemoveAt(index);
+        parent.Children.Insert(index, replacement);
+        DockPaneGroup.SetProportion(replacement, proportion.Value);
+    }
+
+    private void PreparePaneForDrop(ToolWindow pane)
+    {
+        if (_floating.TryGetValue(pane, out var window))
+        {
+            _dockingFloating.Add(pane);
+            window.Close();
+            _dockingFloating.Remove(pane);
+        }
+        Detach(pane);
+    }
+
+    /// <summary>Places the compass over the pane currently under the pointer, like the XAML Designer.</summary>
+    private Point ResolveCompassCenter(Point point, ToolWindow? draggedPane = null)
+    {
+        var size = ResolveSize(new Size(ActualWidth, ActualHeight));
+        var layout = ComputeLayout(Deflate(size));
+        layout.Offset(FrameInset.Left, FrameInset.Top);
+
+        var target = layout.Nodes
+            .Where(pair => pair.Key is ToolWindow candidate && !ReferenceEquals(candidate, draggedPane) && pair.Value.Contains(point))
+            .OrderBy(pair => pair.Value.Width * pair.Value.Height)
+            .Select(pair => (Rect?)pair.Value)
+            .FirstOrDefault();
+
+        return target is Rect rect
+            ? new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2)
+            : new Point(size.Width / 2, size.Height / 2);
+    }
+
     /// <summary>
     /// The five-zone answer: which edge of the pane under the pointer the user is aiming at. Falls back
     /// to the manager's own edges when the pointer is over empty space.
     /// </summary>
-    private DockSide ResolveDropSide(Point point)
+    private DockSide ResolveDropSide(Point point, ToolWindow? draggedPane = null)
     {
         var size = ResolveSize(new Size(ActualWidth, ActualHeight));
-        var layout = ComputeLayout(size);
+        var layout = ComputeLayout(Deflate(size));
+        layout.Offset(FrameInset.Left, FrameInset.Top);
+
+        if (TryGetManagerEdgeTarget(point, out var edgeSide)) return edgeSide;
+
+        // The five compass buttons are real drop targets. Check them before the broader edge zones,
+        // otherwise a pointer over an arrow near the pane centre is interpreted as a centre drop.
+        var compassCenter = ResolveCompassCenter(point, draggedPane);
+        const double targetSize = 36;
+        const double targetGap = 40;
+        var centerTarget = new Rect(compassCenter.X - targetSize / 2, compassCenter.Y - targetSize / 2, targetSize, targetSize);
+        if (centerTarget.Contains(point)) return DockSide.Center;
+        var topTarget = new Rect(compassCenter.X - targetSize / 2, compassCenter.Y - targetGap - targetSize / 2, targetSize, targetSize);
+        if (topTarget.Contains(point)) return DockSide.Top;
+        var rightTarget = new Rect(compassCenter.X + targetGap - targetSize / 2, compassCenter.Y - targetSize / 2, targetSize, targetSize);
+        if (rightTarget.Contains(point)) return DockSide.Right;
+        var bottomTarget = new Rect(compassCenter.X - targetSize / 2, compassCenter.Y + targetGap - targetSize / 2, targetSize, targetSize);
+        if (bottomTarget.Contains(point)) return DockSide.Bottom;
+        var leftTarget = new Rect(compassCenter.X - targetGap - targetSize / 2, compassCenter.Y - targetSize / 2, targetSize, targetSize);
+        if (leftTarget.Contains(point)) return DockSide.Left;
 
         foreach (var pair in layout.Nodes)
         {
-            if (pair.Key is not ToolWindow) continue;
+            if (pair.Key is not ToolWindow candidate || ReferenceEquals(candidate, draggedPane)) continue;
 
             var rect = pair.Value;
             if (rect.Width <= 0 || rect.Height <= 0 || !rect.Contains(point)) continue;
@@ -1053,6 +1332,33 @@ public class DockingManager : Panel
         if (point.Y > h - edgeY) return DockSide.Bottom;
 
         return DockSide.Center;
+    }
+
+    private bool TryGetManagerEdgeTarget(Point point, out DockSide side)
+    {
+        const double button = 32;
+        const double inset = 8;
+        var targets = new[]
+        {
+            (new Rect(ActualWidth / 2 - button / 2, inset, button, button), DockSide.Top),
+            (new Rect(ActualWidth - button - inset, ActualHeight / 2 - button / 2, button, button), DockSide.Right),
+            (new Rect(ActualWidth / 2 - button / 2, ActualHeight - button - inset, button, button), DockSide.Bottom),
+            (new Rect(inset, ActualHeight / 2 - button / 2, button, button), DockSide.Left)
+        };
+        foreach (var (target, targetSide) in targets)
+        {
+            if (!target.Contains(point)) continue;
+            side = targetSide;
+            return true;
+        }
+
+        const double edgeTargetThickness = 8;
+        if (point.X <= edgeTargetThickness) { side = DockSide.Left; return true; }
+        if (point.X >= ActualWidth - edgeTargetThickness) { side = DockSide.Right; return true; }
+        if (point.Y <= edgeTargetThickness) { side = DockSide.Top; return true; }
+        if (point.Y >= ActualHeight - edgeTargetThickness) { side = DockSide.Bottom; return true; }
+        side = DockSide.Center;
+        return false;
     }
 
     /// <summary>Where the dragged pane will actually land, so the hint never lies.</summary>
@@ -1181,7 +1487,12 @@ public class DockingManager : Panel
                 else
                 {
                     var pane = group[0];
-                    if (!pane.ShowHeader && !pane.IsAutoHidden)
+                    // The center slot is the drawing surface, not a tool palette. Revit starts its
+                    // view tabs immediately below the ribbon, so restoring the singleton header
+                    // here would add a stray "Drawing Area" band above every view.
+                    if (side == DockSide.Center && pane.ShowHeader)
+                        pane.SetCurrentValue(ToolWindow.ShowHeaderProperty, false);
+                    else if (side != DockSide.Center && !pane.ShowHeader && !pane.IsAutoHidden)
                         pane.SetCurrentValue(ToolWindow.ShowHeaderProperty, true);
                 }
             }
@@ -1245,7 +1556,11 @@ public class DockingManager : Panel
             _documentTabs.Visibility = Visibility.Collapsed;
         }
 
-        _preview.Arrange(_preview.IsOpen ? _previewRect : new Rect(0, 0, 0, 0));
+        // Keep the docking compass above every pane throughout the drag; only its dashed target
+        // geometry represents the prospective drop area.
+        _preview.Arrange(_preview.Visibility == Visibility.Visible
+            ? new Rect(0, 0, finalSize.Width, finalSize.Height)
+            : new Rect(0, 0, 0, 0));
 
         var bands = new Rect[layout.Splitters.Count];
         for (int i = 0; i < bands.Length; i++) bands[i] = layout.Splitters[i].Rect;
@@ -1306,7 +1621,15 @@ public class DockingManager : Panel
 
         if (_splitterRects.Length == 0) return;
 
-        var line = SplitterBrush ?? TryFindResource("CONCOST.Brush.Border") as Brush ?? Brushes.Gray;
+        // The seam between two panes is a structural line, not a decorative one. The plain border
+        // token is the lightest step in the theme and it disappeared against a white surface, which
+        // left the dock looking like one undifferentiated sheet of panels.
+        var line = SplitterBrush
+            ?? TryFindResource("CONCOST.Brush.BorderSecondary") as Brush
+            ?? TryFindResource("CONCOST.Brush.Border") as Brush
+            ?? Brushes.Gray;
+
+        var hot = TryFindResource("CONCOST.Brush.Primary") as Brush ?? Brushes.Orange;
 
         foreach (var band in _splitterRects)
         {
@@ -1319,7 +1642,38 @@ public class DockingManager : Panel
                 : new Rect(band.X, band.Y + Math.Floor(band.Height / 2), band.Width, 1);
 
             dc.DrawRectangle(line, null, hairline);
+
+            // The band the pointer is over turns into the accent colour and grows a second line.
+            // A hairline that never changes tells the user there is a divider but not that it can
+            // be grabbed; the highlight is what turns a rule into an affordance.
+            if (!_hotSplitter.HasValue || !_hotSplitter.Value.Equals(band)) continue;
+
+            var glow = band.Width <= band.Height
+                ? new Rect(band.X + Math.Floor(band.Width / 2) - 1, band.Y, 3, band.Height)
+                : new Rect(band.X, band.Y + Math.Floor(band.Height / 2) - 1, band.Width, 3);
+
+            dc.DrawRectangle(hot, null, glow);
         }
+    }
+
+    private Rect? _hotSplitter;
+
+    /// <summary>
+    /// Remembers which splitter band the pointer is over so the render pass can highlight it.
+    /// </summary>
+    private void UpdateHotSplitter(Point point)
+    {
+        Rect? found = null;
+
+        foreach (var band in _splitterRects)
+        {
+            if (band.Contains(point)) { found = band; break; }
+        }
+
+        if (found.HasValue && _hotSplitter.HasValue && found.Value == _hotSplitter.Value) return;
+
+        _hotSplitter = found;
+        InvalidateVisual();
     }
 
     /// <summary>
@@ -1678,6 +2032,8 @@ public class DockingManager : Panel
             var layout = ComputeLayout(ResolveSize(new Size(ActualWidth, ActualHeight)));
             var hit = layout.Splitters.FirstOrDefault(s => s.Rect.Contains(point));
             Cursor = hit.Owner is null ? Cursors.Arrow : hit.Vertical ? Cursors.SizeWE : Cursors.SizeNS;
+
+            UpdateHotSplitter(point);
             return;
         }
 
@@ -1714,5 +2070,19 @@ public class DockingManager : Panel
         _drag = null;
         Cursor = Cursors.Arrow;
         ReleaseMouseCapture();
+    }
+
+    /// <summary>
+    /// Drops the splitter highlight when the pointer leaves the dock, so the accent does not stay
+    /// lit on a band the user has already moved away from.
+    /// </summary>
+    protected override void OnMouseLeave(MouseEventArgs e)
+    {
+        base.OnMouseLeave(e);
+
+        if (_hotSplitter is null) return;
+
+        _hotSplitter = null;
+        InvalidateVisual();
     }
 }

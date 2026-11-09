@@ -476,6 +476,8 @@ public partial class ShowcaseViewModel
 
         ThemeButton(t("Sáng", "Light"), AppTheme.Light);
         ThemeButton("Soft Light", AppTheme.SoftLight);
+        ThemeButton("Revit Light", AppTheme.Revit);
+        ThemeButton("Revit Dark", AppTheme.RevitDark);
         ThemeButton(t("Tối", "Dark"), AppTheme.Dark);
         ThemeButton(t("Theo Windows", "Follow Windows"), AppTheme.System);
 
@@ -485,9 +487,11 @@ public partial class ShowcaseViewModel
             t("Accent và theme", "Accent and theme"),
             root,
             csharp:
-                "// The accent is regenerated into a full palette: hover, pressed, soft tint, border.\n" +
-                "ThemeManager.Current.AccentColor = ColorHelper.FromHex(\"#0284C7\");\n" +
-                "ThemeManager.Current.Theme = AppTheme.Dark;\n\n" +
+                "// Revit themes use the extracted Autodesk light/dark palettes by default.\n" +
+                "ThemeManager.Current.Theme = AppTheme.Revit;\n" +
+                "ThemeManager.Current.Theme = AppTheme.RevitDark;\n\n" +
+                "// Optional: set a custom accent, which overrides the Revit default.\n" +
+                "ThemeManager.Current.AccentColor = ColorHelper.FromHex(\"#0284C7\");\n\n" +
                 "// Attached shadows listen for those changes and rebuild themselves, so a card\n" +
                 "// keeps a soft light shadow on paper and a deep one on ink.");
     }

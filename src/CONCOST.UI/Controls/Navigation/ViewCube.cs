@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using CONCOST.UI.Services;
+using CONCOST.UI.Themes;
 
 namespace CONCOST.UI.Controls;
 
@@ -1052,14 +1053,22 @@ public partial class ViewCube : FrameworkElement
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        ThemeManager.Current.PropertyChanged += OnThemeChanged;
         if (_pointerOver) Opacity = 1;
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
+        ThemeManager.Current.PropertyChanged -= OnThemeChanged;
         StopAnimation();
         StopToolsFadeTimer();
         _toolsVisibleAfterLeave = false;
+    }
+
+    private void OnThemeChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(ThemeManager.AccentColor) or nameof(ThemeManager.Theme))
+            Invalidate();
     }
 
     private static void OnInactiveOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>

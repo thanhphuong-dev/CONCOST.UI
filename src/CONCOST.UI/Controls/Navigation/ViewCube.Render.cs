@@ -939,7 +939,8 @@ public partial class ViewCube
         Brush edge = EdgeBrush ?? theme?.Edge ?? FindBrush("CONCOST.Brush.ViewCubeEdge", Brushes.Silver);
         Brush border = BorderBrush ?? theme?.Border ?? FindBrush("CONCOST.Brush.ViewCubeBorder", Brushes.Gray);
         Brush text = TextBrush ?? theme?.Text ?? FindBrush("CONCOST.Brush.ViewCubeText", Brushes.DimGray);
-        Brush highlight = HighlightBrush ?? theme?.Highlight ?? FindBrush("CONCOST.Brush.ViewCubeHighlight", Brushes.DodgerBlue);
+        Brush highlight = HighlightBrush ?? theme?.Highlight ??
+            FindBrush("CONCOST.Brush.Primary", FindBrush("CONCOST.Brush.ViewCubeHighlight", Brushes.DodgerBlue));
         Brush onHighlight = (HighlightBrush ?? theme?.Highlight) is null
             ? FindBrush("CONCOST.Brush.TextInverse", Brushes.White)
             : Brushes.White;

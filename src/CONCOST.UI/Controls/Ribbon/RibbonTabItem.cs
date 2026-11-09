@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -26,9 +26,22 @@ public class RibbonTabItem : HeaderedContentControl
         DependencyProperty.Register(nameof(ContextualColor), typeof(Brush), typeof(RibbonTabItem),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
 
+    private static readonly DependencyPropertyKey HasCustomContextualColorPropertyKey =
+        DependencyProperty.RegisterReadOnly(nameof(HasCustomContextualColor), typeof(bool), typeof(RibbonTabItem),
+            new FrameworkPropertyMetadata(false));
+
+    public static readonly DependencyProperty HasCustomContextualColorProperty =
+        HasCustomContextualColorPropertyKey.DependencyProperty;
+
     public static readonly DependencyProperty ContextualGroupProperty =
         DependencyProperty.Register(nameof(ContextualGroup), typeof(string), typeof(RibbonTabItem),
             new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
+
+    private static readonly DependencyPropertyKey DisplayHeaderPropertyKey =
+        DependencyProperty.RegisterReadOnly(nameof(DisplayHeader), typeof(string), typeof(RibbonTabItem),
+            new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    public static readonly DependencyProperty DisplayHeaderProperty = DisplayHeaderPropertyKey.DependencyProperty;
 
     public static readonly DependencyProperty IsAvailableProperty =
         DependencyProperty.Register(nameof(IsAvailable), typeof(bool), typeof(RibbonTabItem),
@@ -68,11 +81,18 @@ public class RibbonTabItem : HeaderedContentControl
         set => SetValue(IsContextualProperty, value);
     }
 
-    /// <summary>Accent colour of a contextual tab header.</summary>
+    /// <summary>Accent colour of a contextual tab header. Leave null to follow the active theme primary colour.</summary>
     public Brush? ContextualColor
     {
         get => (Brush?)GetValue(ContextualColorProperty);
         set => SetValue(ContextualColorProperty, value);
+    }
+
+    /// <summary>True when an explicit <see cref="ContextualColor"/> brush has been assigned.</summary>
+    public bool HasCustomContextualColor
+    {
+        get => (bool)GetValue(HasCustomContextualColorProperty);
+        private set => SetValue(HasCustomContextualColorPropertyKey, value);
     }
 
     /// <summary>
@@ -84,6 +104,17 @@ public class RibbonTabItem : HeaderedContentControl
     {
         get => (string)GetValue(ContextualGroupProperty);
         set => SetValue(ContextualGroupProperty, value);
+    }
+
+    /// <summary>
+    /// Caption shown on the single-row tab strip. For a contextual tab with a <see cref="ContextualGroup"/>
+    /// (such as "Modify") and a <c>Header</c> (such as "Walls"), formats as "Modify | Walls" the way
+    /// Autodesk Revit labels contextual tabs on the tab row.
+    /// </summary>
+    public string DisplayHeader
+    {
+        get => (string)GetValue(DisplayHeaderProperty);
+        private set => SetValue(DisplayHeaderPropertyKey, value);
     }
 
     /// <summary>
@@ -104,6 +135,42 @@ public class RibbonTabItem : HeaderedContentControl
         base.OnPropertyChanged(e);
 
         if (e.Property == IsAvailableProperty) IsAvailableChanged?.Invoke(this, EventArgs.Empty);
+
+        if (e.Property == ContextualColorProperty)
+        {
+            HasCustomContextualColor = e.NewValue != null;
+        }
+
+        if (e.Property == HeaderProperty || e.Property == ContextualGroupProperty || e.Property == IsContextualProperty)
+        {
+            UpdateDisplayHeader();
+        }
+    }
+
+    private void UpdateDisplayHeader()
+    {
+        string headerText = Header?.ToString() ?? string.Empty;
+        string groupText = ContextualGroup?.Trim() ?? string.Empty;
+
+        if (IsContextual && groupText.Length > 0)
+        {
+            if (headerText.Length == 0)
+            {
+                DisplayHeader = groupText;
+            }
+            else if (headerText.Contains('|') || string.Equals(headerText, groupText, System.StringComparison.OrdinalIgnoreCase))
+            {
+                DisplayHeader = headerText;
+            }
+            else
+            {
+                DisplayHeader = $"{groupText} | {headerText}";
+            }
+        }
+        else
+        {
+            DisplayHeader = headerText;
+        }
     }
 
     /// <summary>Access key shown by the KeyTip layer.</summary>

@@ -25,11 +25,60 @@ public class DataGridGroupPanel : Control
 
     public DataGridGroupPanel()
     {
+        AllowDrop = true;
         Groups = new ObservableCollection<GroupDescriptor>();
         AvailableColumns = new ObservableCollection<ColumnGroupCandidate>();
         CommandBindings.Add(new CommandBinding(RemoveGroupCommand, OnRemoveGroup));
         CommandBindings.Add(new CommandBinding(AddGroupCommand, OnAddGroup));
         CommandBindings.Add(new CommandBinding(ClearGroupsCommand, OnClearGroups));
+    }
+
+    protected override void OnDragOver(DragEventArgs e)
+    {
+        base.OnDragOver(e);
+        if (e.Data.GetDataPresent(typeof(string)) || e.Data.GetDataPresent(DataFormats.StringFormat))
+        {
+            e.Effects = DragDropEffects.Move;
+            e.Handled = true;
+        }
+        else
+        {
+            e.Effects = DragDropEffects.None;
+        }
+    }
+
+    protected override void OnDrop(DragEventArgs e)
+    {
+        base.OnDrop(e);
+        string? prop = e.Data.GetData(typeof(string)) as string ??
+                       e.Data.GetData(DataFormats.StringFormat) as string;
+
+        if (!string.IsNullOrEmpty(prop))
+        {
+            var candidate = AvailableColumns.FirstOrDefault(c =>
+                c.PropertyPath.Equals(prop, StringComparison.OrdinalIgnoreCase) ||
+                c.Header.Equals(prop, StringComparison.OrdinalIgnoreCase));
+
+            if (candidate != null)
+            {
+                AddGroup(candidate.PropertyPath, candidate.Header);
+            }
+            else if (TargetGrid != null)
+            {
+                foreach (var col in TargetGrid.Columns)
+                {
+                    var path = GetBindingPath(col);
+                    var header = DataGridFilterChain.HeaderText(col);
+                    if (string.Equals(path, prop, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(header, prop, StringComparison.OrdinalIgnoreCase))
+                    {
+                        AddGroup(path ?? prop!, header);
+                        break;
+                    }
+                }
+            }
+            e.Handled = true;
+        }
     }
 
     #region Dependency Properties
@@ -229,14 +278,66 @@ public class DataGridGroupPanel : Control
         var view = DataGridFilterChain.ResolveView(TargetGrid);
         if (view is null) return;
 
-        using (view.DeferRefresh())
+        if (TargetGrid != null)
         {
-            view.GroupDescriptions.Clear();
-            foreach (var group in Groups)
+            try
             {
-                if (!string.IsNullOrEmpty(group.PropertyPath))
-                    view.GroupDescriptions.Add(new PropertyGroupDescription(group.PropertyPath));
+                TargetGrid.CommitEdit(DataGridEditingUnit.Row, true);
+                TargetGrid.CommitEdit(DataGridEditingUnit.Cell, true);
             }
+            catch
+            {
+                try
+                {
+                    TargetGrid.CancelEdit(DataGridEditingUnit.Row);
+                    TargetGrid.CancelEdit(DataGridEditingUnit.Cell);
+                }
+                catch { }
+            }
+        }
+
+        if (view is IEditableCollectionView editable)
+        {
+            try
+            {
+                if (editable.IsAddingNew) editable.CommitNew();
+                if (editable.IsEditingItem) editable.CommitEdit();
+            }
+            catch
+            {
+                try
+                {
+                    if (editable.IsAddingNew) editable.CancelNew();
+                    if (editable.IsEditingItem) editable.CancelEdit();
+                }
+                catch { }
+            }
+        }
+
+        try
+        {
+            using (view.DeferRefresh())
+            {
+                view.GroupDescriptions.Clear();
+                foreach (var group in Groups)
+                {
+                    if (!string.IsNullOrEmpty(group.PropertyPath))
+                        view.GroupDescriptions.Add(new PropertyGroupDescription(group.PropertyPath));
+                }
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            try
+            {
+                view.GroupDescriptions.Clear();
+                foreach (var group in Groups)
+                {
+                    if (!string.IsNullOrEmpty(group.PropertyPath))
+                        view.GroupDescriptions.Add(new PropertyGroupDescription(group.PropertyPath));
+                }
+            }
+            catch { }
         }
     }
 

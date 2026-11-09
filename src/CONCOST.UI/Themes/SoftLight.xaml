@@ -65,14 +65,16 @@
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.Divider" Color="#D7DDE6" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelTitle" Color="#586273" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemForeground" Color="#242A33" />
-    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHover" Color="#E7EEF8" />
-    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHoverBorder" Color="#C9D7EA" />
-    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressed" Color="#D9E4F2" />
-    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressedBorder" Color="#B6C9E1" />
-    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemChecked" Color="#DFE9F5" />
-    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemCheckedBorder" Color="#C2D2E7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHover" Color="#DCE2EC" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHoverBorder" Color="#C4CCD7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressed" Color="#C4CCD7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressedBorder" Color="#98A5B6" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemChecked" Color="#F5F1E8" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemCheckedBorder" Color="#E3D7BE" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemDisabledForeground" Color="#929CAB" />
-    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualAccent" Color="#2E86DE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualAccent" Color="#FF7900" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualTabAccent" Color="#FF7900" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualModify" Color="{DynamicResource CONCOST.Color.Primary}" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipBackground" Color="#FCFCFD" />
     <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipText" Color="#242A33" />
 

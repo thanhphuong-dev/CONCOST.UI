@@ -33,6 +33,7 @@ public class PropertiesPalette : Grid
 
     private readonly TextBlock _title;
     private readonly TextBlock _subtitle;
+    private readonly Grid _header;
     private readonly ComboBox _typeSelector;
     private readonly Button _editType;
     private readonly Button _reset;
@@ -88,6 +89,11 @@ public class PropertiesPalette : Grid
         DependencyProperty.Register(nameof(ShowSearch), typeof(bool), typeof(PropertiesPalette),
             new PropertyMetadata(true, OnChromeChanged));
 
+    /// <summary>Uses the flat parameter rows and type selector spacing of Revit's Properties palette.</summary>
+    public static readonly DependencyProperty RevitLayoutProperty =
+        DependencyProperty.Register(nameof(RevitLayout), typeof(bool), typeof(PropertiesPalette),
+            new PropertyMetadata(false, OnChromeChanged));
+
     /// <summary>Creates a palette over the shared services, or over the ones a host passes in.</summary>
     public PropertiesPalette(PropertyManager? properties = null, SelectionManager? selection = null)
     {
@@ -136,17 +142,17 @@ public class PropertiesPalette : Grid
         IconElement.SetIconSize(_reset, 13);
         _reset.Click += (_, _) => ResetLastTouched();
 
-        var header = new Grid { Margin = new Thickness(10, 8, 10, 6) };
-        header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        header.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        _header = new Grid { Margin = new Thickness(10, 8, 10, 6) };
+        _header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        _header.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
         var captions = new StackPanel();
         captions.Children.Add(_title);
         captions.Children.Add(_subtitle);
-        header.Children.Add(captions);
+        _header.Children.Add(captions);
 
         Grid.SetColumn(_reset, 1);
-        header.Children.Add(_reset);
+        _header.Children.Add(_reset);
 
         _search = new SearchBox
         {
@@ -178,8 +184,8 @@ public class PropertiesPalette : Grid
 
         _validation.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.Danger");
 
-        SetRow(header, 0);
-        Children.Add(header);
+        SetRow(_header, 0);
+        Children.Add(_header);
         SetRow(_typeRow, 1);
         Children.Add(_typeRow);
 
@@ -292,6 +298,13 @@ public class PropertiesPalette : Grid
         set => SetValue(ShowSearchProperty, value);
     }
 
+    /// <summary>Uses Revit-style parameter rows without changing the default CONCOST palette.</summary>
+    public bool RevitLayout
+    {
+        get => (bool)GetValue(RevitLayoutProperty);
+        set => SetValue(RevitLayoutProperty, value);
+    }
+
     /// <summary>The grid that renders the rows.</summary>
     public PropertyGrid GridControl { get; }
 
@@ -329,11 +342,23 @@ public class PropertiesPalette : Grid
         _editType.Content = EditTypeText;
         _typeSelector.ToolTip = TypeToolTip;
         _reset.ToolTip = ResetToolTip;
+        GridControl.SetResourceReference(StyleProperty,
+            RevitLayout ? "CONCOST.PropertyGrid.Revit" : "CONCOST.PropertyGrid.Compact");
+        _reset.Visibility = RevitLayout ? Visibility.Collapsed : Visibility.Visible;
+
+        // Keep the chrome in sync when a host switches variants after the palette has
+        // already been built. Revit uses the type selector as its heading; Compact keeps
+        // the object title above it.
+        _header.Visibility = _target is null || !RevitLayout || _target is not ITypeSelectable
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+        _typeRow.Visibility = _target is ITypeSelectable ? Visibility.Visible : Visibility.Collapsed;
 
         if (_target is null)
         {
             _title.Text = EmptyTitle;
             _subtitle.Text = EmptySubtitle;
+            _search.Visibility = Visibility.Collapsed;
             return;
         }
 
@@ -358,12 +383,18 @@ public class PropertiesPalette : Grid
 
             if (target is null)
             {
+                _header.Visibility = Visibility.Visible;
                 _title.Text = EmptyTitle;
                 _subtitle.Text = EmptySubtitle;
+                _subtitle.Visibility = Visibility.Visible;
                 _typeRow.Visibility = Visibility.Collapsed;
                 _search.Visibility = Visibility.Collapsed;
                 return;
             }
+
+            // Revit puts the type selector at the top of the palette. A second "Wall" title above
+            // it consumes a row and duplicates the category already conveyed by the selector.
+            _header.Visibility = target is ITypeSelectable ? Visibility.Collapsed : Visibility.Visible;
 
             _search.Visibility = ShowSearch ? Visibility.Visible : Visibility.Collapsed;
 
@@ -372,11 +403,13 @@ public class PropertiesPalette : Grid
             int total = 0;
             var descriptors = _properties.GetDescriptors(target);
 
-            foreach (var group in descriptors.GroupBy(descriptor => descriptor.Category).OrderBy(group => group.Key, StringComparer.Ordinal))
+            foreach (var group in descriptors.GroupBy(descriptor => descriptor.Category)
+                         .OrderBy(group => CategoryOrder(group.Key))
+                         .ThenBy(group => group.Key, StringComparer.Ordinal))
             {
                 var category = new PropertyCategoryGroup { CategoryName = group.Key, IsExpanded = true };
 
-                foreach (var descriptor in group.OrderBy(descriptor => descriptor.DisplayName, StringComparer.Ordinal))
+                foreach (var descriptor in group)
                 {
                     total++;
 
@@ -390,10 +423,18 @@ public class PropertiesPalette : Grid
                 if (category.Properties.Count > 0) GridControl.Categories.Add(category);
             }
 
-            _title.Text = target.GetType().Name;
-            _subtitle.Text = _selection.Count > 1
-                ? $"{_selection.Count} selected — showing the last one. {total} parameters."
-                : $"{total} parameters.";
+            if (target is IPropertyPaletteDisplay display)
+            {
+                _title.Text = display.PropertyTitle;
+                _subtitle.Text = display.PropertySubtitle;
+            }
+            else
+            {
+                _title.Text = target.GetType().Name;
+                _subtitle.Text = _selection.Count > 1
+                    ? $"{_selection.Count} selected — showing the last one. {total} parameters."
+                    : $"{total} parameters.";
+            }
 
             SyncTypeSelector(target);
         }
@@ -538,16 +579,25 @@ public class PropertiesPalette : Grid
         if (target is not ITypeSelectable selectable)
         {
             _typeRow.Visibility = Visibility.Collapsed;
+            _subtitle.Visibility = Visibility.Visible;
             return;
         }
 
+        var availableTypes = selectable.AvailableTypes;
         _syncing = true;
 
         try
         {
             _typeRow.Visibility = Visibility.Visible;
-            _typeSelector.ItemsSource = selectable.AvailableTypes;
+            var choices = availableTypes.Count == 0 ? new[] { selectable.TypeName } : availableTypes;
+            _typeSelector.ItemsSource = choices;
             _typeSelector.SelectedItem = selectable.TypeName;
+            _typeSelector.IsEnabled = availableTypes.Count > 1;
+            _editType.IsEnabled = EditTypeRequested is not null;
+            _editType.ToolTip = EditTypeRequested is null
+                ? "Type editing is not available in this build."
+                : EditTypeText;
+            _subtitle.Visibility = Visibility.Collapsed;
         }
         finally
         {
@@ -581,5 +631,21 @@ public class PropertiesPalette : Grid
         PropertyEditorKind.Boolean => PropertyEditorType.Boolean,
         PropertyEditorKind.Choice => PropertyEditorType.Enum,
         _ => PropertyEditorType.Text
+    };
+
+    private static int CategoryOrder(string category) => category switch
+    {
+        "Graphics" => 0,
+        "Underlay" => 1,
+        "Extents" => 2,
+        "Constraints" => 3,
+        "Geometric Position" => 4,
+        "Materials and Finishes" => 5,
+        "Structural" => 6,
+        "Dimensions" => 7,
+        "Identity Data" => 8,
+        "Phasing" => 9,
+        "IFC Parameters" => 10,
+        _ => 11,
     };
 }

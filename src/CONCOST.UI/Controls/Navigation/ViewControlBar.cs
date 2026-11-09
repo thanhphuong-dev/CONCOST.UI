@@ -103,6 +103,18 @@ public class ViewControlBar : Grid
     public static readonly DependencyProperty CropViewProperty = DependencyProperty.Register(
         nameof(CropView), typeof(bool), typeof(ViewControlBar), new FrameworkPropertyMetadata(false));
 
+    /// <summary>Identifies the <see cref="AnnotationCropView"/> property.</summary>
+    public static readonly DependencyProperty AnnotationCropViewProperty = DependencyProperty.Register(
+        nameof(AnnotationCropView), typeof(bool), typeof(ViewControlBar), new FrameworkPropertyMetadata(false));
+
+    /// <summary>Identifies the <see cref="ShowCropRegion"/> property.</summary>
+    public static readonly DependencyProperty ShowCropRegionProperty = DependencyProperty.Register(
+        nameof(ShowCropRegion), typeof(bool), typeof(ViewControlBar), new FrameworkPropertyMetadata(false));
+
+    /// <summary>Identifies the <see cref="ShowAnnotationCropRegion"/> property.</summary>
+    public static readonly DependencyProperty ShowAnnotationCropRegionProperty = DependencyProperty.Register(
+        nameof(ShowAnnotationCropRegion), typeof(bool), typeof(ViewControlBar), new FrameworkPropertyMetadata(false));
+
     /// <summary>Identifies the <see cref="RevealHidden"/> property.</summary>
     public static readonly DependencyProperty RevealHiddenProperty = DependencyProperty.Register(
         nameof(RevealHidden), typeof(bool), typeof(ViewControlBar), new FrameworkPropertyMetadata(false));
@@ -157,6 +169,11 @@ public class ViewControlBar : Grid
         nameof(ShowToggles), typeof(bool), typeof(ViewControlBar),
         new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure, OnGroupVisibilityChanged));
 
+    /// <summary>Identifies the <see cref="ShowCropControls"/> property.</summary>
+    public static readonly DependencyProperty ShowCropControlsProperty = DependencyProperty.Register(
+        nameof(ShowCropControls), typeof(bool), typeof(ViewControlBar),
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsMeasure, OnGroupVisibilityChanged));
+
     /// <summary>Identifies the <see cref="ShowHideIsolate"/> property.</summary>
     public static readonly DependencyProperty ShowHideIsolateProperty = DependencyProperty.Register(
         nameof(ShowHideIsolate), typeof(bool), typeof(ViewControlBar),
@@ -181,8 +198,12 @@ public class ViewControlBar : Grid
     private readonly ComboBox _detail;
     private readonly ComboBox _style;
     private readonly StackPanel _toggles;
+    private readonly StackPanel _cropToggles;
     private readonly ToggleButton _shadows;
     private readonly ToggleButton _crop;
+    private readonly ToggleButton _annotationCrop;
+    private readonly ToggleButton _showCropRegion;
+    private readonly ToggleButton _showAnnotationCropRegion;
     private readonly ToggleButton _reveal;
     private readonly SplitButton _hide;
     private readonly ToggleButton[] _toolButtons;
@@ -200,18 +221,28 @@ public class ViewControlBar : Grid
 
         _scale = Combo(76, "View scale");
         _detail = Combo(92, "Detail level");
+        _detail.ItemsSource = new[] { "Coarse", "Medium", "Fine" };
         _style = Combo(112, "Visual style");
+        _style.ItemsSource = new[] { "Wireframe", "Hidden Line", "Shaded", "Realistic" };
 
         _shadows = IconToggle(IconKind.Shadows3D, "Cast shadows");
         _crop = IconToggle(IconKind.GridSquare, "Crop view");
+        _annotationCrop = IconToggle(IconKind.FileText, "Annotation crop");
+        _showCropRegion = IconToggle(IconKind.ImageCrop, "Show crop region");
+        _showAnnotationCropRegion = IconToggle(IconKind.ImageCrop, "Show annotation crop region");
         _reveal = IconToggle(IconKind.EyeOff, "Reveal hidden elements");
 
-        _toolButtons = new[] { _shadows, _crop, _reveal };
+        _toolButtons = new[] { _shadows, _crop, _annotationCrop, _showCropRegion, _showAnnotationCropRegion, _reveal };
 
         _toggles = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         _toggles.Children.Add(_shadows);
-        _toggles.Children.Add(_crop);
         _toggles.Children.Add(_reveal);
+
+        _cropToggles = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+        _cropToggles.Children.Add(_crop);
+        _cropToggles.Children.Add(_annotationCrop);
+        _cropToggles.Children.Add(_showCropRegion);
+        _cropToggles.Children.Add(_showAnnotationCropRegion);
 
         _hide = HideIsolateButton();
         _dividers = new[] { Divider(), Divider() };
@@ -239,6 +270,11 @@ public class ViewControlBar : Grid
 
         _shadows.Click += (_, _) => SetCurrentValue(ShowShadowsProperty, _shadows.IsChecked == true);
         _crop.Click += (_, _) => SetCurrentValue(CropViewProperty, _crop.IsChecked == true);
+        _annotationCrop.Click += (_, _) => SetCurrentValue(
+            AnnotationCropViewProperty, _annotationCrop.IsChecked == true);
+        _showCropRegion.Click += (_, _) => SetCurrentValue(ShowCropRegionProperty, _showCropRegion.IsChecked == true);
+        _showAnnotationCropRegion.Click += (_, _) => SetCurrentValue(
+            ShowAnnotationCropRegionProperty, _showAnnotationCropRegion.IsChecked == true);
         _reveal.Click += (_, _) => SetCurrentValue(RevealHiddenProperty, _reveal.IsChecked == true);
 
         _strip = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(3) };
@@ -248,6 +284,7 @@ public class ViewControlBar : Grid
         _strip.Children.Add(_style);
         _strip.Children.Add(_dividers[0]);
         _strip.Children.Add(_toggles);
+        _strip.Children.Add(_cropToggles);
         _strip.Children.Add(_dividers[1]);
         _strip.Children.Add(_hide);
 
@@ -306,6 +343,27 @@ public class ViewControlBar : Grid
     {
         get => (bool)GetValue(CropViewProperty);
         set => SetValue(CropViewProperty, value);
+    }
+
+    /// <summary>Whether annotations are clipped to their independent crop boundary.</summary>
+    public bool AnnotationCropView
+    {
+        get => (bool)GetValue(AnnotationCropViewProperty);
+        set => SetValue(AnnotationCropViewProperty, value);
+    }
+
+    /// <summary>Whether the crop boundary is visible and editable in the view.</summary>
+    public bool ShowCropRegion
+    {
+        get => (bool)GetValue(ShowCropRegionProperty);
+        set => SetValue(ShowCropRegionProperty, value);
+    }
+
+    /// <summary>Whether the independent annotation crop boundary is visible and editable.</summary>
+    public bool ShowAnnotationCropRegion
+    {
+        get => (bool)GetValue(ShowAnnotationCropRegionProperty);
+        set => SetValue(ShowAnnotationCropRegionProperty, value);
     }
 
     /// <summary>Whether hidden elements are drawn in magenta for editing.</summary>
@@ -385,11 +443,18 @@ public class ViewControlBar : Grid
         set => SetValue(ShowVisualStyleProperty, value);
     }
 
-    /// <summary>Shows the shadows, crop and reveal-hidden toggles as one group.</summary>
+    /// <summary>Shows the shadows and reveal-hidden toggles.</summary>
     public bool ShowToggles
     {
         get => (bool)GetValue(ShowTogglesProperty);
         set => SetValue(ShowTogglesProperty, value);
+    }
+
+    /// <summary>Whether the independent crop view and crop-region controls are visible.</summary>
+    public bool ShowCropControls
+    {
+        get => (bool)GetValue(ShowCropControlsProperty);
+        set => SetValue(ShowCropControlsProperty, value);
     }
 
     /// <summary>Shows the hide / isolate split button.</summary>
@@ -436,6 +501,9 @@ public class ViewControlBar : Grid
 
             _shadows.IsChecked = ShowShadows;
             _crop.IsChecked = CropView;
+            _annotationCrop.IsChecked = AnnotationCropView;
+            _showCropRegion.IsChecked = ShowCropRegion;
+            _showAnnotationCropRegion.IsChecked = ShowAnnotationCropRegion;
             _reveal.IsChecked = RevealHidden;
         }
         finally
@@ -582,6 +650,7 @@ public class ViewControlBar : Grid
         _detail.Visibility = ShowDetailLevel ? Visibility.Visible : Visibility.Collapsed;
         _style.Visibility = ShowVisualStyle ? Visibility.Visible : Visibility.Collapsed;
         _toggles.Visibility = ShowToggles ? Visibility.Visible : Visibility.Collapsed;
+        _cropToggles.Visibility = ShowCropControls ? Visibility.Visible : Visibility.Collapsed;
         _hide.Visibility = ShowHideIsolate ? Visibility.Visible : Visibility.Collapsed;
 
         RefreshDividers();
@@ -593,8 +662,9 @@ public class ViewControlBar : Grid
 
         // A rule also leaves with the group beside it, so a collapsed cluster never leaves a
         // floating line at the end of the bar.
-        _dividers[0].Visibility = on && Shows(_style) && Shows(_toggles) ? Visibility.Visible : Visibility.Collapsed;
-        _dividers[1].Visibility = on && Shows(_toggles) && Shows(_hide) ? Visibility.Visible : Visibility.Collapsed;
+        var hasToggleGroup = Shows(_toggles) || Shows(_cropToggles);
+        _dividers[0].Visibility = on && Shows(_style) && hasToggleGroup ? Visibility.Visible : Visibility.Collapsed;
+        _dividers[1].Visibility = on && hasToggleGroup && Shows(_hide) ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private static bool Shows(UIElement element) => element.Visibility == Visibility.Visible;
@@ -731,6 +801,9 @@ public class ViewControlBar : Grid
         if (property == VisualStyleProperty) return nameof(VisualStyle);
         if (property == ShowShadowsProperty) return nameof(ShowShadows);
         if (property == CropViewProperty) return nameof(CropView);
+        if (property == AnnotationCropViewProperty) return nameof(AnnotationCropView);
+        if (property == ShowCropRegionProperty) return nameof(ShowCropRegion);
+        if (property == ShowAnnotationCropRegionProperty) return nameof(ShowAnnotationCropRegion);
         if (property == RevealHiddenProperty) return nameof(RevealHidden);
 
         return null;

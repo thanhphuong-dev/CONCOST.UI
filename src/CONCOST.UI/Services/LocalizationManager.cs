@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using CONCOST.UI.Core.MVVM;
 
 namespace CONCOST.UI.Services;
@@ -98,7 +98,7 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Header.SearchPlaceholder"] = "Tìm kiếm thành phần trong thư viện...",
             ["Showcase.Header.PaletteTooltip"] = "Chọn màu sắc chủ đạo giao diện",
             ["Showcase.Header.LanguageTooltip"] = "Ngôn ngữ hiển thị",
-            ["Showcase.Header.ThemeTooltip"] = "Chọn giao diện: Light, Soft Light, Dark hoặc theo hệ thống",
+            ["Showcase.Header.ThemeTooltip"] = "Chọn giao diện: Light, Soft Light, Dark, Revit Light, Revit Dark hoặc theo hệ thống",
             ["Showcase.Header.DarkMode"] = "Chế độ tối",
             ["Showcase.Header.ToastTooltip"] = "Thử kích hoạt thông báo Toast",
             ["Showcase.Palette.TechnicalOrange"] = "Cam kỹ thuật (Mặc định)",
@@ -271,7 +271,7 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Description.TreeMap"] = "Biểu đồ phân bổ diện tích TreeMap: trực quan hóa cơ cấu chi phí, khối lượng và tỷ trọng kết cấu.",
             ["Showcase.Description.AnimatedMeshGradient"] = "Nền dải màu chuyển động dạng lưới: hiệu ứng gradient hiện đại cho màn hình chào và khu vực nổi bật.",
             ["Showcase.Description.AnimatedGradientBorder"] = "Viền gradient chuyển động: tạo đường viền phát sáng chạy quanh thẻ thông tin quan trọng.",
-            ["Showcase.Description.FrostedGlass"] = "Hiệu ứng kính mờ (Acrylic / Mica): tạo chiều sâu cho các bảng điều khiển nổi trên bản vẽ.",
+            ["Showcase.Description.FrostedGlass"] = "Hiệu ứng kính mờ Acrylic và Mica: tạo chiều sâu cho các bảng điều khiển nổi trên bản vẽ.",
             ["Showcase.Description.CursorSpotlight"] = "Vệt sáng theo con trỏ chuột: làm nổi bật các thành phần giao diện khi người dùng di chuột qua.",
             ["Showcase.Description.StaggerAnimation"] = "Hiệu ứng xuất hiện so le: hiển thị tuần tự danh sách phần tử tạo cảm giác mượt mà và tự nhiên.",
             ["Showcase.Description.SharedElementTransition"] = "Chuyển cảnh phần tử dùng chung: phóng to thu nhỏ thẻ chi tiết liền mạch giữa các trang.",
@@ -281,7 +281,7 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Description.StatusBar"] = "Thanh trạng thái ứng dụng: hiển thị tiến độ nền, thông tin kết nối, tọa độ con trỏ và tỷ lệ thu phóng.",
             ["Showcase.Description.CommandBar"] = "Thanh lệnh công cụ ngang: nhóm các lệnh thao tác thường dùng kèm phím tắt và menu phụ.",
             ["Showcase.Description.QuickAccessToolbar"] = "Dải công cụ truy cập nhanh: tùy biến các lệnh hay dùng nhất ở góc trên cửa sổ ứng dụng.",
-            ["Showcase.Description.MasonryPanel"] = "Bố cục lưới xếp gạch (Masonry): tự động sắp xếp các thẻ có chiều cao khác nhau một cách tối ưu.",
+            ["Showcase.Description.MasonryPanel"] = "Bố cục lưới xếp gạch: tự động sắp xếp các thẻ có chiều cao khác nhau một cách tối ưu.",
             ["Showcase.Description.TagInput"] = "Ô nhập nhãn gắn thẻ: tạo, tìm kiếm và xóa nhãn tham số, danh mục đối tượng kết cấu.",
             ["Showcase.Description.SignaturePad"] = "Bảng ký chữ ký số: hỗ trợ vẽ, ký xác nhận nghiệm thu công trình và xuất file ảnh.",
             ["Showcase.Description.Wizard"] = "Trình hướng dẫn từng bước: dẫn dắt người dùng qua các giai đoạn thiết lập dự án và xuất báo cáo.",
@@ -343,7 +343,7 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Header.SearchPlaceholder"] = "Search components in the library...",
             ["Showcase.Header.PaletteTooltip"] = "Choose the interface accent colour",
             ["Showcase.Header.LanguageTooltip"] = "Display language",
-            ["Showcase.Header.ThemeTooltip"] = "Choose the interface theme: Light, Soft Light, Dark, or System",
+            ["Showcase.Header.ThemeTooltip"] = "Choose the interface theme: Light, Soft Light, Dark, Revit Light, Revit Dark, or System",
             ["Showcase.Header.DarkMode"] = "Dark mode",
             ["Showcase.Header.ToastTooltip"] = "Fire a test toast",
             ["Showcase.Palette.TechnicalOrange"] = "Technical orange (default)",
@@ -415,6 +415,7 @@ public class LocalizationManager : ObservableObject
             ["Showcase.Description.CheckComboBox"] = "Searchable multi-select with clear selection feedback.",
             ["Showcase.Component.Drawer"] = "Drawer",
             ["Showcase.Description.Drawer"] = "An animated side panel for secondary workflows.",
+            ["Showcase.Description.ViewportControl"] = "Multi-purpose CAD canvas: 2D/3D technical drafting, integrated HUD, snapping, and system telemetry.",
             ["Showcase.Overview.CategoryData"] = "DATA CONTROLS",
             ["Showcase.Overview.CategoryDashboard"] = "DASHBOARD",
             ["Showcase.Overview.CategoryInput"] = "INPUT CONTROLS",

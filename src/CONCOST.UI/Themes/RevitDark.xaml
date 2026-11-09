@@ -1,0 +1,112 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Palette sampled from Revit 2024.3 UIFramework.dll: FullDarkTheme + ThemeColorDark. -->
+    <Color x:Key="CONCOST.Revit.Dark.ChromeBackground">#FF222933</Color>
+    <Color x:Key="CONCOST.Revit.Dark.ChromeForeground">#FFF5F5F5</Color>
+    <Color x:Key="CONCOST.Revit.Dark.ClientArea">#FF2E3440</Color>
+    <Color x:Key="CONCOST.Revit.Dark.RibbonPanel">#FF3B4453</Color>
+    <Color x:Key="CONCOST.Revit.Dark.SelectionFill">#B2222933</Color>
+    <Color x:Key="CONCOST.Revit.Dark.SelectionBorder">#FF38ABDF</Color>
+    <Color x:Key="CONCOST.Revit.Dark.Focus">#FF38ABDF</Color>
+    <Color x:Key="CONCOST.Revit.Dark.Hyperlink">#FF6DD2FF</Color>
+    <Color x:Key="CONCOST.Revit.Dark.Progress">#FF38ABDF</Color>
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Primary" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryHover" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryPressed" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryLight" Color="#2638ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimaryDark" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoft" Color="#2638ABDF" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Background" Color="#FF2E3440" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Surface" Color="#FF3B4453" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSecondary" Color="#FF222933" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceHover" Color="#FF3A4353" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfacePressed" Color="#FF2D3541" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceElevated" Color="#FF454F61" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SurfaceSunken" Color="#FF1A1F25" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Overlay" Color="#B3000000" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Border" Color="#FF485263" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderSubtle" Color="#FF515C6F" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasBackground" Color="#FF2E3440" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewportBackground" Color="#FF2E3440" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderSecondary" Color="#FF687689" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderHover" Color="#FFBCD3EE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.BorderFocused" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SelectionBackground" Color="#B2222933" />
+    <SolidColorBrush x:Key="CONCOST.Brush.SelectionBorder" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Hyperlink" Color="#FF6DD2FF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Progress" Color="#FF38ABDF" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.TextPrimary" Color="#FFF5F5F5" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextSecondary" Color="#FFD0D2D7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextTertiary" Color="#FFA2A6B0" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextDisabled" Color="#FF858B94" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TextInverse" Color="#FF222933" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.InputBackground" Color="#FF2C3440" />
+    <SolidColorBrush x:Key="CONCOST.Brush.InputBorder" Color="#FF687689" />
+    <SolidColorBrush x:Key="CONCOST.Brush.InputHoverBorder" Color="#FFBCD3EE" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasGrid" Color="#FF3B4453" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasGridMajor" Color="#FF515C6F" />
+    <SolidColorBrush x:Key="CONCOST.Brush.CanvasAxis" Color="#FF748397" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeFace" Color="#FF3B4453" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeEdge" Color="#FF748397" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeBorder" Color="#FF8C9DB4" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeText" Color="#FFF5F5F5" />
+    <SolidColorBrush x:Key="CONCOST.Brush.ViewCubeHighlight" Color="#FF38ABDF" />
+
+    <SolidColorBrush x:Key="CONCOST.Code.Keyword" Color="#569CD6" />
+    <SolidColorBrush x:Key="CONCOST.Code.String" Color="#CE9178" />
+    <SolidColorBrush x:Key="CONCOST.Code.Comment" Color="#6A9955" />
+    <SolidColorBrush x:Key="CONCOST.Code.Number" Color="#B5CEA8" />
+    <SolidColorBrush x:Key="CONCOST.Code.Tag" Color="#569CD6" />
+    <SolidColorBrush x:Key="CONCOST.Code.Attribute" Color="#9CDCFE" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.TabStrip" Color="#FF222933" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.TabSelected" Color="#FF2E3440" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelBackground" Color="#FF3B4453" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.Divider" Color="#1ABCD3EE" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.PanelTitle" Color="#FFD0D2D7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemForeground" Color="#FFF5F5F5" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHover" Color="#FF3A4353" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemHoverBorder" Color="#FF7C8BA1" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressed" Color="#FF2D3541" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemPressedBorder" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemChecked" Color="#2638ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemCheckedBorder" Color="#8038ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ItemDisabledForeground" Color="#66F5F5F5" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualAccent" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualTabAccent" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ContextualModify" Color="{DynamicResource CONCOST.Color.Primary}" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipBackground" Color="#FF454F61" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Ribbon.ToolTipText" Color="#FFF5F5F5" />
+
+    <!-- Revit view tabs keep their surfaces in the same dark palette as the drawing area. -->
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.Background" Color="#FF222933" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabActiveBackground" Color="#FF3B4453" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabInactiveBackground" Color="#FF2E3440" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabHoverBackground" Color="#FF3A4353" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabActiveBorder" Color="#FF38ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabInactiveBorder" Color="#FF485263" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabTextActive" Color="#FFF5F5F5" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.TabTextInactive" Color="#FFD0D2D7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.TabBar.CloseButtonHover" Color="#FFE81123" />
+
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.View" Color="#FFD0D2D7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Sheet" Color="#FFD0D2D7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Schedule" Color="#FFD0D2D7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Family" Color="#FFD0D2D7" />
+    <SolidColorBrush x:Key="CONCOST.Brush.Node.Level" Color="#FFD0D2D7" />
+
+    <Color x:Key="CONCOST.Color.Shadow">#33000000</Color>
+    <Color x:Key="CONCOST.Color.ShadowStrong">#66000000</Color>
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftLight" Color="#2638ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftBorder" Color="#8038ABDF" />
+    <SolidColorBrush x:Key="CONCOST.Brush.PrimarySoftForeground" Color="#FFF5F5F5" />
+
+</ResourceDictionary>

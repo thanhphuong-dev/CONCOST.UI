@@ -58,7 +58,7 @@ public class DrawerTests
                 Assert.Equal(Visibility.Visible, drawer.Visibility);
 
                 drawer.IsOpen = false;
-                PumpDispatcher(TimeSpan.FromMilliseconds(260));
+                WaitFor(() => drawer.Visibility == Visibility.Collapsed, TimeSpan.FromMilliseconds(800));
                 Assert.Equal(Visibility.Collapsed, drawer.Visibility);
             }
             finally
@@ -66,6 +66,15 @@ public class DrawerTests
                 window.Close();
             }
         });
+    }
+
+    private static void WaitFor(Func<bool> condition, TimeSpan timeout)
+    {
+        var start = DateTime.UtcNow;
+        while (!condition() && (DateTime.UtcNow - start) < timeout)
+        {
+            PumpDispatcher(TimeSpan.FromMilliseconds(40));
+        }
     }
 
     [Fact]

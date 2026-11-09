@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -208,7 +208,7 @@ public partial class ShowcaseViewModel
 
 // Optional: trigger the effect from code.
 ripple.TriggerRipple(new Point(24, 12));";
-        AddCardSection(Loc.T("2. Tuỳ biến brush và chế độ Ripple (Target và Center)", "2. Custom brush and ripple modes (Target and Center)"), CreateModeRippleSection(), sec2Xaml, sec2Cs);
+        AddCardSection(Loc.T("2. Tuỳ biến brush và chế độ gợn sóng", "2. Custom brush and ripple modes"), CreateModeRippleSection(), sec2Xaml, sec2Cs);
 
         // ---------------------------------------------------------------------
         // SECTION 3: Attached Property RippleElement (Buttons & Cards)
@@ -301,7 +301,7 @@ RippleElement.SetMode(button, RippleMode.Center);
 RippleElement.SetDuration(button, TimeSpan.FromMilliseconds(500));
 RippleElement.SetMaxOpacity(button, 0.28);
 RippleElement.SetMaxConcurrentRipples(button, 3);";
-        AddCardSection(Loc.T("3. Attached property RippleElement (nút và thẻ)", "3. RippleElement attached property (buttons and cards)"), CreateAttachedRippleSection(), sec3Xaml, sec3Cs);
+        AddCardSection(Loc.T("3. Thuộc tính đính kèm RippleElement cho nút và thẻ", "3. RippleElement attached property for buttons and cards"), CreateAttachedRippleSection(), sec3Xaml, sec3Cs);
 
         return mainSp;
     }
@@ -420,7 +420,7 @@ RippleElement.SetMaxConcurrentRipples(button, 3);";
     </StackPanel>
 </Grid>";
 
-        AddCardSection(Loc.T("1. Hình skeleton cơ bản (TextLine, Circle Avatar, hình chữ nhật)", "1. Basic skeleton shapes (TextLine, avatar circle, rectangle)"), CreateBasicShapesSection(), sec1Xaml);
+        AddCardSection(Loc.T("1. Các hình dạng khung chờ cơ bản", "1. Basic skeleton shapes"), CreateBasicShapesSection(), sec1Xaml);
 
         // ---------------------------------------------------------------------
         // SECTION 2: Full Structural KPI Metric Card Placeholders
