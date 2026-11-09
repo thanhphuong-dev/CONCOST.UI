@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -24,5 +24,13 @@
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)build\CONCOST.UI.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <!-- XML documentation for the API reference generator. CS1591 (public member without a
+       summary) stays suppressed: the gate is 0 warnings, and the coverage gaps are reported by
+       docs/tools/ApiGen instead of shouted in every build. -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 </Project>

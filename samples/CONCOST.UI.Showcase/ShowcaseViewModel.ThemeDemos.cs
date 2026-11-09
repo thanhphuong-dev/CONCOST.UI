@@ -17,7 +17,7 @@ namespace CONCOST.UI.Showcase;
 public partial class ShowcaseViewModel
 {
     /// <summary>
-    /// Comprehensive Theme & Palettes Showcase:
+    /// Comprehensive Theme &amp; Palettes Showcase:
     /// Demonstrates all 5 core theme palettes (Light, Soft Light, Dark, Revit Light, Revit Dark),
     /// plus System and Auto modes, with real-time switching, token swatches, and plugin guidance.
     /// </summary>

@@ -56,8 +56,8 @@ public partial class ShowcaseViewModel
 
         if (!string.IsNullOrEmpty(xaml) || !string.IsNullOrEmpty(csharp))
         {
-            FrameworkElement? xamlView = string.IsNullOrEmpty(xaml) ? null : CreateXamlSyntaxHighlighter(xaml!);
-            FrameworkElement? csView = string.IsNullOrEmpty(csharp) ? null : CreatePlainCodeView(csharp!);
+            FrameworkElement? xamlView = string.IsNullOrEmpty(xaml) ? null : CreateXamlSyntaxHighlighter(xaml!, "XAML");
+            FrameworkElement? csView = string.IsNullOrEmpty(csharp) ? null : CreateXamlSyntaxHighlighter(csharp!, "C#");
 
             var codeBox = new Border
             {

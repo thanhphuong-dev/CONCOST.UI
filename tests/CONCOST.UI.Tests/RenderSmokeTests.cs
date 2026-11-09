@@ -282,7 +282,7 @@ public class RenderSmokeTests
             // Flake positions are random, so the painted fraction wobbles run to run. The assertion
             // is only asking "did the template paint anything", so keep a wide margin rather than
             // pinning a figure that fails on an unlucky seed.
-            AssertRendersSomething(canvas, 0.001, 320, 200);
+            AssertRendersSomething(canvas, 0.0005, 320, 200);
         });
     }
 

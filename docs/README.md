@@ -260,6 +260,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | `data/en/*.js` | English overlay per page: title, description, section text, callouts and tables. |
 | `data/en/code.js` | Vietnamese → English dictionary applied to code snippets in EN mode. |
 | `data/sources.generated.js` | **Generated** page → source file map (powers the “edit this page” link). |
+| `api-reference.md` | **Generated** full API catalogue: every public type, dependency/attached property, routed event, CLR event and method, with the XML summaries the build emits. |
 | `vendor/` | Self-hosted fonts, Font Awesome and Prism — no CDN, works offline. |
 | `app.js` / `style.css` / `index.html` | Application shell, design system and language switch. |
 
@@ -270,9 +271,10 @@ python docs/tools/build-props.py     # property tables + C# samples + EN propert
 python docs/tools/check-xaml.py      # validate every XAML snippet against the real API
 node   docs/tools/build-index.js     # rebuild this page map + the source map
 python docs/tools/fetch-fonts.py     # re-download the localised font subsets
+dotnet run --project docs/tools/ApiGen   # the full API reference from the built assembly (+ -- --check for XML-summary coverage)
 ```
 
-Run all three after adding or renaming a `DependencyProperty`; the checker must report **0 issues** before committing.
+Run all of them after adding or renaming a `DependencyProperty`; the checker must report **0 issues** before committing. `ApiGen` reads the XML documentation file, so build the library first and keep the type-level `/// <summary>` in step — `--check` lists the types that lost theirs.
 
 ### Adding a page
 

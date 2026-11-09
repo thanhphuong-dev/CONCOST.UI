@@ -351,19 +351,20 @@
                                   SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}"
                                   ToolTip="{local:Loc Showcase.Header.ThemeTooltip}"
                                   AutomationProperties.Name="Interface theme">
-                            <ComboBoxItem Content="Light" />
-                            <ComboBoxItem Content="Soft Light" />
-                            <ComboBoxItem Content="Dark" />
-                            <ComboBoxItem Content="Revit Light" />
-                            <ComboBoxItem Content="Revit Dark" />
-                            <ComboBoxItem Content="System" />
+                            <ComboBoxItem Content="{local:Loc Showcase.Header.Theme.Light}" />
+                            <ComboBoxItem Content="{local:Loc Showcase.Header.Theme.SoftLight}" />
+                            <ComboBoxItem Content="{local:Loc Showcase.Header.Theme.Dark}" />
+                            <ComboBoxItem Content="{local:Loc Showcase.Header.Theme.Revit}" />
+                            <ComboBoxItem Content="{local:Loc Showcase.Header.Theme.RevitDark}" />
+                            <ComboBoxItem Content="{local:Loc Showcase.Header.Theme.System}" />
                         </ComboBox>
                     </Border>
 
-                    <!-- Toast Notification Trigger Button -->
+                    <!-- Ghost Toast Action Button -->
                     <Button Style="{StaticResource CONCOST.Button.Icon}"
-                            attached:BorderElement.CornerRadius="6"
+                            attached:BorderElement.CornerRadius="10"
                             attached:IconElement.Kind="Bell"
+                            attached:IconElement.IconSize="16"
                             Command="{Binding ShowToastCommand}"
                             ToolTip="{local:Loc Showcase.Header.ToastTooltip}"
                             Width="36"
