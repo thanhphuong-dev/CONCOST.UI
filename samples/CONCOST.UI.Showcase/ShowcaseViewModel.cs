@@ -293,7 +293,7 @@ public partial class ShowcaseViewModel : ObservableObject
 
     public bool IsDarkMode
     {
-        get => ThemeManager.Current.Theme == AppTheme.Dark;
+        get => ThemeManager.Current.Theme is AppTheme.Dark or AppTheme.RevitDark;
         set
         {
             SelectedThemeIndex = value ? 2 : 0;
@@ -309,9 +309,12 @@ public partial class ShowcaseViewModel : ObservableObject
             OnPropertyChanged(nameof(IsDarkMode));
             ThemeManager.Current.Theme = value switch
             {
+                0 => AppTheme.Light,
                 1 => AppTheme.SoftLight,
                 2 => AppTheme.Dark,
-                3 => AppTheme.System,
+                3 => AppTheme.Revit,
+                4 => AppTheme.RevitDark,
+                5 => AppTheme.System,
                 _ => AppTheme.Light
             };
         }
@@ -389,6 +392,40 @@ public partial class ShowcaseViewModel : ObservableObject
         ApplyFilter();
         SelectedItem = FilteredItems.FirstOrDefault(x => x.Name == "Overview") ?? FilteredItems.FirstOrDefault();
         LocalizationManager.Current.PropertyChanged += OnLocalizationChanged;
+
+        _selectedThemeIndex = ThemeManager.Current.Theme switch
+        {
+            AppTheme.Light => 0,
+            AppTheme.SoftLight => 1,
+            AppTheme.Dark => 2,
+            AppTheme.Revit => 3,
+            AppTheme.RevitDark => 4,
+            AppTheme.System => 5,
+            _ => 0
+        };
+
+        ThemeManager.Current.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(ThemeManager.Theme))
+            {
+                int targetIndex = ThemeManager.Current.Theme switch
+                {
+                    AppTheme.Light => 0,
+                    AppTheme.SoftLight => 1,
+                    AppTheme.Dark => 2,
+                    AppTheme.Revit => 3,
+                    AppTheme.RevitDark => 4,
+                    AppTheme.System => 5,
+                    _ => 0
+                };
+                if (_selectedThemeIndex != targetIndex)
+                {
+                    _selectedThemeIndex = targetIndex;
+                    OnPropertyChanged(nameof(SelectedThemeIndex));
+                    OnPropertyChanged(nameof(IsDarkMode));
+                }
+            }
+        };
     }
 
     private void OnLocalizationChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
