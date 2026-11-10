@@ -3977,19 +3977,10 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         Grid.SetColumn(workbench, 2);
         stageGrid.Children.Add(workbench);
 
-        var callout = CreateCalloutCard(Loc.T(
-            "💡 HƯỚNG DẪN: PropertiesPalette là bảng điều khiển thuộc tính chính cho CAD/BIM chuẩn Autodesk Revit. Bảng được neo ở tỉ lệ dock chuẩn (380px), thanh tra đối tượng với bảng phẳng, đường lưới kỹ thuật, bộ chọn TypeSelector và quản lý giao dịch Undo/Redo tức thì.",
-            "💡 GUIDE: PropertiesPalette is the primary CAD/BIM technical properties inspector matching Autodesk Revit standards. Docked at authentic CAD width (380px), it delivers flat gridlines, TypeSelector header, and real-time Undo/Redo transactions."));
-        callout.Margin = new Thickness(0, 16, 0, 0);
-
-        var wholeLayout = new StackPanel();
-        wholeLayout.Children.Add(stageGrid);
-        wholeLayout.Children.Add(callout);
-
         var root = new StackPanel();
         root.Children.Add(DemoSection(
             Loc.T("Bảng thuộc tính đối tượng kỹ thuật CAD & BIM", "CAD & BIM Technical Properties Palette (PropertiesPalette)"),
-            wholeLayout,
+            stageGrid,
             xaml: @"<!-- 1. Bảng thuộc tính PropertiesPalette hiển thị theo chuẩn CONCOST Compact hoặc Revit -->
 <ui:PropertiesPalette x:Name=""ObjectPalette""
                        Height=""480""
