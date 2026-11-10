@@ -38,8 +38,10 @@ public class PropertiesPalette : Grid
     private readonly Button _editType;
     private readonly Button _reset;
     private readonly SearchBox _search;
+    private readonly Border _searchBorder;
     private readonly TextBlock _validation;
     private readonly Grid _typeRow;
+    private readonly Border _typeBorder;
     private readonly Grid _body;
     private readonly StackPanel _emptyState;
     private readonly TextBlock _emptyHint;
@@ -122,12 +124,22 @@ public class PropertiesPalette : Grid
         _editType.SetResourceReference(StyleProperty, "CONCOST.Button.Secondary");
         _editType.Click += (_, _) => EditTypeRequested?.Invoke(this, EventArgs.Empty);
 
-        _typeRow = new Grid { Margin = new Thickness(10, 6, 10, 0), Visibility = Visibility.Collapsed };
+        _typeRow = new Grid();
         _typeRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         _typeRow.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         _typeRow.Children.Add(_typeSelector);
         Grid.SetColumn(_editType, 1);
         _typeRow.Children.Add(_editType);
+
+        _typeBorder = new Border
+        {
+            BorderThickness = new Thickness(0, 0, 0, 1),
+            Padding = new Thickness(8, 6, 8, 6),
+            Visibility = Visibility.Collapsed,
+            SnapsToDevicePixels = true
+        };
+        _typeBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+        _typeBorder.Child = _typeRow;
 
         _reset = new Button
         {
@@ -157,19 +169,29 @@ public class PropertiesPalette : Grid
         _search = new SearchBox
         {
             Placeholder = SearchPlaceholder,
-            Height = 28,
-            Margin = new Thickness(10, 0, 10, 6),
-            FontSize = 12
+            Height = 25,
+            Margin = new Thickness(0),
+            FontSize = 11.5,
+            CornerRadius = new CornerRadius(0)
         };
 
         _search.TextChanged += (_, _) => Build(_target);
+
+        _searchBorder = new Border
+        {
+            BorderThickness = new Thickness(0, 0, 0, 1),
+            Padding = new Thickness(8, 4, 8, 4),
+            SnapsToDevicePixels = true
+        };
+        _searchBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+        _searchBorder.Child = _search;
 
         // No border and no toolbar: the palette already owns the search box, and the grid's own
         // filter passes would do nothing here — the palette fills Categories itself rather than
         // handing the grid a SelectedObject to reflect over.
         GridControl = new PropertyGrid
         {
-            Margin = new Thickness(6, 0, 6, 0),
+            Margin = new Thickness(0),
             BorderThickness = new Thickness(0),
             ShowToolbar = false
         };
@@ -186,8 +208,8 @@ public class PropertiesPalette : Grid
 
         SetRow(_header, 0);
         Children.Add(_header);
-        SetRow(_typeRow, 1);
-        Children.Add(_typeRow);
+        SetRow(_typeBorder, 1);
+        Children.Add(_typeBorder);
 
         // Search and grid travel together in one row so the empty state leaves no gap behind.
         // A Grid, not a StackPanel: the grid's own template is a star row, and a star row measured
@@ -196,7 +218,7 @@ public class PropertiesPalette : Grid
         _body = new Grid();
         _body.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         _body.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        _body.Children.Add(_search);
+        _body.Children.Add(_searchBorder);
 
         SetRow(GridControl, 1);
         _body.Children.Add(GridControl);
@@ -352,17 +374,42 @@ public class PropertiesPalette : Grid
         _header.Visibility = _target is null || !RevitLayout || _target is not ITypeSelectable
             ? Visibility.Visible
             : Visibility.Collapsed;
-        _typeRow.Visibility = _target is ITypeSelectable ? Visibility.Visible : Visibility.Collapsed;
+        _typeBorder.Visibility = _target is ITypeSelectable ? Visibility.Visible : Visibility.Collapsed;
+
+        if (RevitLayout)
+        {
+            _typeBorder.BorderThickness = new Thickness(0, 0, 0, 1);
+            _typeBorder.Padding = new Thickness(8, 6, 8, 6);
+            _searchBorder.BorderThickness = new Thickness(0, 0, 0, 1);
+            _searchBorder.Padding = new Thickness(8, 4, 8, 4);
+            _search.Height = 25;
+            _search.CornerRadius = new CornerRadius(0);
+            _search.Margin = new Thickness(0);
+            GridControl.Margin = new Thickness(0);
+        }
+        else
+        {
+            _typeBorder.BorderThickness = new Thickness(0);
+            _typeBorder.Padding = new Thickness(10, 6, 10, 0);
+            _searchBorder.BorderThickness = new Thickness(0);
+            _searchBorder.Padding = new Thickness(0);
+            _search.Height = 28;
+            _search.CornerRadius = new CornerRadius(6);
+            _search.Margin = new Thickness(10, 0, 10, 6);
+            GridControl.Margin = new Thickness(6, 0, 6, 0);
+        }
 
         if (_target is null)
         {
             _title.Text = EmptyTitle;
             _subtitle.Text = EmptySubtitle;
             _search.Visibility = Visibility.Collapsed;
+            _searchBorder.Visibility = Visibility.Collapsed;
             return;
         }
 
         _search.Visibility = ShowSearch ? Visibility.Visible : Visibility.Collapsed;
+        _searchBorder.Visibility = ShowSearch ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public void Build(object? target)
@@ -387,8 +434,9 @@ public class PropertiesPalette : Grid
                 _title.Text = EmptyTitle;
                 _subtitle.Text = EmptySubtitle;
                 _subtitle.Visibility = Visibility.Visible;
-                _typeRow.Visibility = Visibility.Collapsed;
+                _typeBorder.Visibility = Visibility.Collapsed;
                 _search.Visibility = Visibility.Collapsed;
+                _searchBorder.Visibility = Visibility.Collapsed;
                 return;
             }
 
@@ -397,6 +445,7 @@ public class PropertiesPalette : Grid
             _header.Visibility = target is ITypeSelectable ? Visibility.Collapsed : Visibility.Visible;
 
             _search.Visibility = ShowSearch ? Visibility.Visible : Visibility.Collapsed;
+            _searchBorder.Visibility = ShowSearch ? Visibility.Visible : Visibility.Collapsed;
 
             string filter = _search.Text ?? string.Empty;
 
@@ -579,7 +628,7 @@ public class PropertiesPalette : Grid
     {
         if (target is not ITypeSelectable selectable)
         {
-            _typeRow.Visibility = Visibility.Collapsed;
+            _typeBorder.Visibility = Visibility.Collapsed;
             _subtitle.Visibility = Visibility.Visible;
             return;
         }
@@ -589,7 +638,7 @@ public class PropertiesPalette : Grid
 
         try
         {
-            _typeRow.Visibility = Visibility.Visible;
+            _typeBorder.Visibility = Visibility.Visible;
             var choices = availableTypes.Count == 0 ? new[] { selectable.TypeName } : availableTypes;
             _typeSelector.ItemsSource = choices;
             _typeSelector.SelectedItem = selectable.TypeName;

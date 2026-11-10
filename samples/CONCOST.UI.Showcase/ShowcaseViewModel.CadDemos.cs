@@ -3617,19 +3617,25 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         };
 
         // CAD Dock Header (Authentic Autodesk Revit Dock Panel Titlebar)
-        var dockHeader = new Grid
+        var dockHeaderBorder = new Border
         {
-            Height = 28,
-            Background = (Brush)Application.Current.FindResource("CONCOST.Brush.SurfaceSecondary")
+            Height = 26,
+            BorderThickness = new Thickness(0, 0, 0, 1),
+            SnapsToDevicePixels = true
         };
+        dockHeaderBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+        dockHeaderBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
+
+        var dockHeader = new Grid();
         dockHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         dockHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         dockHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        dockHeaderBorder.Child = dockHeader;
 
         var headerTitleStack = new StackPanel
         {
             Orientation = Orientation.Horizontal,
-            Margin = new Thickness(10, 0, 0, 0),
+            Margin = new Thickness(8, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center
         };
         var dockIcon = new Icon { Kind = IconKind.SettingsSliders, Width = 12, Height = 12, Margin = new Thickness(0, 0, 6, 0) };
@@ -3655,19 +3661,19 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         };
         var pinBtn = new Button
         {
-            Width = 20, Height = 20, Padding = new Thickness(0),
+            Width = 18, Height = 18, MinWidth = 18, MinHeight = 18, Padding = new Thickness(0),
             ToolTip = Loc.T("Ghim bảng thuộc tính", "Pin palette"),
-            Style = (Style)Application.Current.FindResource("CONCOST.Button.Icon")
+            Style = (Style)Application.Current.FindResource("CONCOST.Button.Icon.Ghost")
         };
         IconElement.SetKind(pinBtn, IconKind.PinItem);
         IconElement.SetIconSize(pinBtn, 11);
 
         var closeBtn = new Button
         {
-            Width = 20, Height = 20, Padding = new Thickness(0),
+            Width = 18, Height = 18, MinWidth = 18, MinHeight = 18, Padding = new Thickness(0),
             Margin = new Thickness(2, 0, 0, 0),
             ToolTip = Loc.T("Đóng bảng", "Close palette"),
-            Style = (Style)Application.Current.FindResource("CONCOST.Button.Icon")
+            Style = (Style)Application.Current.FindResource("CONCOST.Button.Icon.Ghost")
         };
         IconElement.SetKind(closeBtn, IconKind.Close);
         IconElement.SetIconSize(closeBtn, 11);
@@ -3681,7 +3687,7 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         dockContent.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         dockContent.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
-        dockContent.Children.Add(dockHeader);
+        dockContent.Children.Add(dockHeaderBorder);
         Grid.SetRow(palette, 1);
         dockContent.Children.Add(palette);
 
@@ -3690,8 +3696,9 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         {
             Width = 380,
             Height = 520,
-            CornerRadius = new CornerRadius(8),
+            CornerRadius = new CornerRadius(0),
             BorderThickness = new Thickness(1),
+            SnapsToDevicePixels = true,
             ClipToBounds = true
         };
         paletteDock.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
@@ -3836,7 +3843,7 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
             paletteDock.Height = v;
         }));
 
-        workbench.Children.Add(AppearanceSlider(Loc.T("Bo góc khung dock", "Corner radius"), 0, 14, 8, 2, "{0:0} px", v =>
+        workbench.Children.Add(AppearanceSlider(Loc.T("Bo góc khung dock", "Corner radius"), 0, 14, 0, 2, "{0:0} px", v =>
         {
             paletteDock.CornerRadius = new CornerRadius(v);
         }));

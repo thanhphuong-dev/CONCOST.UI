@@ -8010,53 +8010,12 @@
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
                     <StackPanel>
-                      <!-- Revit Flat Category Band with Collapsible Chevron -->
-                      <ToggleButton IsChecked="{Binding IsExpanded, Mode=TwoWay}"
-                                    Cursor="Hand"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Stretch"
-                                    Focusable="False">
-                        <ToggleButton.Template>
-                          <ControlTemplate TargetType="{x:Type ToggleButton}">
-                            <Border x:Name="band" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="8,5" SnapsToDevicePixels="True">
-                              <DockPanel LastChildFill="True">
-                                <Path x:Name="chevron"
-                                      DockPanel.Dock="Left"
-                                      Width="7"
-                                      Height="7"
-                                      Stretch="Uniform"
-                                      Margin="1,0,7,0"
-                                      VerticalAlignment="Center"
-                                      Fill="{DynamicResource CONCOST.Brush.TextSecondary}"
-                                      Data="M 0 1.5 L 4 5.5 L 8 1.5 Z" />
-                                <TextBlock x:Name="catTitle" FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" VerticalAlignment="Center" />
-                              </DockPanel>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                              <Trigger Property="IsChecked" Value="False">
-                                <Setter TargetName="chevron" Property="Data" Value="M 1.5 0 L 5.5 4 L 1.5 8 Z" />
-                              </Trigger>
-                              <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="band" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
-                                <Setter TargetName="chevron" Property="Fill" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
-                                <Setter TargetName="catTitle" Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
-                              </Trigger>
-                            </ControlTemplate.Triggers>
-                          </ControlTemplate>
-                        </ToggleButton.Template>
-                      </ToggleButton>
+                      <!-- Revit Flat Category Band (Authentic Autodesk Revit: static clean header strip) -->
+                      <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="8,4" SnapsToDevicePixels="True">
+                        <TextBlock FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" VerticalAlignment="Center" />
+                      </Border>
                       <!-- Revit Tabular Parameter Rows with Crisp Vertical Gridline -->
                       <ItemsControl ItemsSource="{Binding Properties}">
-                        <FrameworkElement.Style>
-                          <Style TargetType="{x:Type ItemsControl}">
-                            <Setter Property="Visibility" Value="Visible" />
-                            <Style.Triggers>
-                              <DataTrigger Binding="{Binding IsExpanded}" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                              </DataTrigger>
-                            </Style.Triggers>
-                          </Style>
-                        </FrameworkElement.Style>
                         <ItemsControl.ItemTemplate>
                           <DataTemplate>
                             <Border BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Background="{DynamicResource CONCOST.Brush.Surface}" SnapsToDevicePixels="True">
