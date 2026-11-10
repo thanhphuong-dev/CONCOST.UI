@@ -128,7 +128,7 @@ public partial class StructuralModelInspectorWindow : Window
             },
             {
                 title: "3. Phương Pháp 2: Khai Báo Tĩnh Trực Tiếp Trong File XAML",
-                desc: "Nếu bạn muốn thiết kế giao diện có hiển thị trực quan (Live Preview) trong trình thiết kế Visual Studio Designer / Blend, bạn có thể nhúng ResourceDictionary trực tiếp vào <code>&lt;Window.Resources&gt;</code> hoặc <code>&lt;UserControl.Resources&gt;</code>:",
+                desc: "Nếu bạn muốn thiết kế giao diện có hiển thị trực quan (Live Preview) trong trình thiết kế Visual Studio Designer / Blend, bạn có thể nhúng ResourceDictionary trực tiếp vào <code class=\"notranslate\">&lt;Window.Resources&gt;</code> hoặc <code class=\"notranslate\">&lt;UserControl.Resources&gt;</code>:",
                 xaml: `<Window x:Class="YourBimPlugin.Views.RevitQuantityTakeoffWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
