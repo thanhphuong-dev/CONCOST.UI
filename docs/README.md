@@ -29,22 +29,21 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Plugin DLL (Revit/AutoCAD)](index.html#class-library) | Hướng dẫn chuyên sâu kiến trúc phát triển giao diện WPF khi đóng gói dưới dạng Class Library (.DLL) hoặc Plugins cho các phần mềm CAD/BIM chuyên nghiệ |
 | [Theme & Design Tokens](index.html#theming) | Toàn bộ bảng màu và phong cách giao diện của CONCOST.UI được quản lý thông qua DynamicResource, cho phép ứng dụng chuyển đổi mượt mà giữa Dark và Ligh |
 | [Attached Properties](index.html#attached-props) | Hệ thống thuộc tính đính kèm phong phú của CONCOST.UI cho phép bạn 'thổi hồn' công nghệ hiện đại vào bất kỳ control WPF nguyên bản nào (Button, TextBo |
+| [Icons Gallery](index.html#icons) | Kho hơn 120+ vector icons độ phân giải vô cực được tối ưu hóa cho ngành kỹ thuật, xây dựng, CAD và BIM. |
 | [Ví dụ sử dụng](index.html#examples) | Bốn tình huống thực tế ghép nhiều control lại với nhau: form nhập thông số dầm, màn hình bảng khối lượng, panel cấu hình trong plugin Revit và dashboa |
 | [FAQ & Troubleshooting](index.html#faq) | Các sự cố thường gặp khi tích hợp CONCOST.UI vào ứng dụng WPF hoặc plugin CAD/BIM, kèm nguyên nhân gốc và cách xử lý. |
 | [Chuyển từ WinForms/WPF](index.html#migration) | Bảng ánh xạ từ WinForms / WPF mặc định sang CONCOST.UI, kèm quy trình chuyển đổi 4 bước và chính sách deprecation. |
 
-### Engineering & CAD
+### Engineering & Structural
 
 | Page | Nội dung |
 | --- | --- |
 | [Spreadsheet](index.html#spreadsheet) | Bảng tính Excel kỹ thuật hiệu năng cao, tự thiết kế renderer trực tiếp qua DrawingContext (hỗ trợ hàng chục ngàn cells mượt mà 60fps), công thức hàm t |
 | [StackedHeaderDataGrid](index.html#stackedheaderdatagrid) | DataGrid tiêu chuẩn xây dựng và dự toán khối lượng chuyên nghiệp, hỗ trợ cấu trúc cây tiêu đề cột gộp đa tầng (Multi-Level Stacked Header Tree), thanh |
-| [ZoomableCanvas & Ruler](index.html#cadcanvas) | Không gian vẽ kỹ thuật CAD 2D tương tác mượt mà bằng chuột: Thu phóng vô hạn (Zoom In/Out quanh con trỏ chuột), Kéo lia màn hình (Pan bằng chuột giữa  |
-| [ChartLine (nội lực)](index.html#diagramchart) | Vẽ biểu đồ mô-men, lực cắt, lực dọc hoặc độ võng từ một chuỗi giá trị. Toàn bộ biểu đồ kế thừa ChartBase nên dùng chung Datas, Title, Unit, ShowLegend |
-| [Charts Suite](index.html#charts) | Bộ biểu đồ vector độ phân giải cao bao gồm ChartBar, ChartLine, ChartPie, ChartRadar và PieControl hiển thị trực quan tỷ trọng khối lượng dự án. |
 | [RebarInput](index.html#rebarinput) | Ô nhập liệu cốt thép thông minh dành riêng cho kỹ sư xây dựng. Tự động nhận diện cú pháp thép dầm/cột/móng (vd: 4D20, 2Ø16, 4Φ20, 2x3D18, D10@200), tự |
 | [Engineering Boxes](index.html#engineeringboxes) | Bộ 6 hộp nhập đại lượng kỹ thuật chuyên sâu kế thừa từ UnitBox: LengthBox (mm, m), AreaBox (m²), VolumeBox (m³), ForceBox (kN), MomentBox (kN.m), Pres |
-| [CompassIndicator](index.html#compassindicator) | La bàn đồ họa chỉ hướng gió và hướng Bắc địa chính (True North / Project North) của dự án công trình, tự động quay kim chỉ hướng theo góc Angle (0 đến |
+| [ChartLine (nội lực)](index.html#diagramchart) | Vẽ biểu đồ mô-men, lực cắt, lực dọc hoặc độ võng từ một chuỗi giá trị. Toàn bộ biểu đồ kế thừa ChartBase nên dùng chung Datas, Title, Unit, ShowLegend |
+| [Charts Suite](index.html#charts) | Bộ biểu đồ vector độ phân giải cao bao gồm ChartBar, ChartLine, ChartPie, ChartRadar và PieControl hiển thị trực quan tỷ trọng khối lượng dự án. |
 
 ### CAD & Drafting
 
@@ -53,6 +52,8 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [ViewportControl](index.html#viewportcontrol) | Bề mặt vẽ: lưới, tâm ngắm, dấu bám điểm, grip, dimension tạm, khung chọn và một lớp overlay. Camera là CameraController thật nên cùng một camera dùng  |
 | [ViewCube](index.html#viewcube) | Khối lập phương vát cạnh ở góc khung vẽ, quay theo camera: 26 vùng bấm — sáu mặt có chữ, mười hai dải cạnh và tám tam giác góc — cùng vòng la bàn trên |
 | [NavigationBar](index.html#navigationbar) | Dải nút cho zoom in/out/extents, pan, orbit, walk và nhãn hệ toạ độ làm việc. Công cụ pan/orbit/walk là bật/tắt giữ trạng thái: bấm lại để thoát, giốn |
+| [CompassIndicator](index.html#compassindicator) | La bàn đồ họa chỉ hướng gió và hướng Bắc địa chính (True North / Project North) của dự án công trình, tự động quay kim chỉ hướng theo góc Angle (0 đến |
+| [ZoomableCanvas & Ruler](index.html#cadcanvas) | Không gian vẽ kỹ thuật CAD 2D tương tác mượt mà bằng chuột: Thu phóng vô hạn (Zoom In/Out quanh con trỏ chuột), Kéo lia màn hình (Pan bằng chuột giữa  |
 | [ViewControlBar](index.html#viewcontrolbar) | Tỉ lệ, mức chi tiết, kiểu hiển thị, đổ bóng, crop, hiện phần tử ẩn và nhóm lệnh hide/isolate. Mỗi thay đổi — do chuột hay do code — đều bắn SettingsCh |
 | [CommandLine](index.html#commandline) | Lịch sử lệnh, ô nhập có gợi ý, nhớ lệnh cũ bằng phím mũi tên, Tab để hoàn tất tên lệnh, và prompt mode cho giá trị mà lệnh còn thiếu. Prompt được ghi  |
 | [DynamicInput](index.html#dynamicinput) | Ô nhập nhỏ đi theo con trỏ trong lúc vẽ: gõ chiều dài, góc hay toạ độ ngay chỗ đang nhìn, không phải nhìn xuống đáy cửa sổ. Một tấm nền, một gạch chân |
@@ -65,44 +66,53 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [BackstageView](index.html#backstageview) | Trang phủ toàn cửa sổ sau nút File: dải mục bên trái (kèm nút Back) và nội dung của mục đang chọn bên phải. Nó là một panel của cửa sổ chứ không phải  |
 | [FontPicker](index.html#fontpicker) | Ô chọn font family và cỡ chữ, hai nút bật đậm/nghiêng, kèm dòng xem trước sống. Đủ cho hộp thoại text style mà không phải tự ghép bốn control. |
 
-### Data & Dashboard
+### Data & Tables
 
 | Page | Nội dung |
 | --- | --- |
-| [DataPager](index.html#datapager) | Phân trang cho DataGrid/ListView: PageIndex, PageSize, TotalItems đều bind two-way và tự ép giá trị hợp lệ. |
-| [StatisticCard (KPI)](index.html#statisticcard) | Thẻ hiển thị số liệu quan trọng trên Dashboard, hỗ trợ chỉ số tăng/giảm phần trăm (Trend) và Icon điểm nhấn. |
-| [Timeline](index.html#timeline) | Hiển thị chuỗi sự kiện hoặc tiến độ thi công công trình theo trục thời gian tuyến tính với các nút trạng thái Semantic, Vector Icon, và đường nối tự đ |
-| [CardCarousel](index.html#cardcarousel) | Bộ điều khiển vòng xoay thẻ 3D Coverflow mượt mà, hỗ trợ tạo phối cảnh chiều sâu không gian (Depth Perspective), gán Z-Index phân tầng, nút điều hướng |
-| [OdometerNumber](index.html#odometernumber) | Số liệu tự “cuộn” từ giá trị cũ sang giá trị mới với easing, dùng cho KPI, dashboard và bảng tổng hợp. Không cần viết Storyboard cho từng lần cập nhật |
-| [Sparkline](index.html#sparkline) | Đường xu hướng cực gọn để nhét vào ô bảng, thẻ KPI hay thanh trạng thái: tự co giãn theo khung, có miền tô gradient và chấm đánh dấu điểm cuối. |
-| [AvatarStack](index.html#avatarstack) | Hiển thị nhóm người phụ trách dưới dạng avatar chồng lên nhau kèm chip +N — pattern quen thuộc của bảng quản lý công việc. Nhận chuỗi (tự lấy chữ cái  |
-| [HeatmapCalendar](index.html#heatmapcalendar) | Lưới ô vuông kiểu GitHub contribution: mỗi ô là một ngày, màu đậm nhạt theo số lượng. Dùng cho nhật ký đổ bê tông, số lượt nghiệm thu, mật độ quan trắ |
+| [DataGrid](index.html#datagrid) | Bảng dữ liệu kỹ thuật kết cấu hỗ trợ sọc vằn (Zebra Striping), cố định dòng, lựa chọn nhiều dòng và hỗ trợ trọn vẹn cả Dark/Light theme. |
+| [DataGrid Panels](index.html#datagridpanels) | Bốn control độc lập gắn vào một DataGrid có sẵn để biến bảng chỉ-đọc thành công cụ dữ liệu: dải lọc theo từng cột, ô tìm kiếm toàn bảng, menu chọn cột |
 | [TreeDataGrid](index.html#treedatagrid) | DataGrid hiển thị cây: bind RootItems và grid tự dẹt cây thành danh sách dòng, mỗi dòng là chính item chứ không phải wrapper — nên mọi cột vẫn bind th |
 | [MultiSelectDataGrid](index.html#multiselectdatagrid) | DataGrid có cột checkbox và checkbox ba trạng thái ở header. Bấm vào ô checkbox là đảo một dòng chứ không xoá lựa chọn cũ, nên chọn hai mươi dòng khôn |
-| [TreeMap](index.html#treemap) | Diện tích mỗi ô tỉ lệ với giá trị, các ô được xếp squarified để gần vuông thay vì thành dải dài. Dùng cho cơ cấu khối lượng, phân bổ chi phí, mức tiêu |
+| [DataPager](index.html#datapager) | Phân trang cho DataGrid/ListView: PageIndex, PageSize, TotalItems đều bind two-way và tự ép giá trị hợp lệ. |
 | [PropertyGrid](index.html#propertygrid) | Bảng duyệt và chỉnh sửa thông số đối tượng CAD / BIM chuyên dụng, tự động gom nhóm Category, hỗ trợ editor nội dòng (TextBox, CheckBox, ComboBox, Colo |
+| [StatisticCard (KPI)](index.html#statisticcard) | Thẻ hiển thị số liệu quan trọng trên Dashboard, hỗ trợ chỉ số tăng/giảm phần trăm (Trend) và Icon điểm nhấn. |
+| [RadialGauge](index.html#radialgauge) | Cung nền + cung giá trị + vạch chia + số ở giữa, vẽ trong OnRender bằng StreamGeometry với đầu nét tròn nên sắc ở mọi kích thước và mọi DPI. Giá trị c |
+| [Sparkline](index.html#sparkline) | Đường xu hướng cực gọn để nhét vào ô bảng, thẻ KPI hay thanh trạng thái: tự co giãn theo khung, có miền tô gradient và chấm đánh dấu điểm cuối. |
+| [OdometerNumber](index.html#odometernumber) | Số liệu tự “cuộn” từ giá trị cũ sang giá trị mới với easing, dùng cho KPI, dashboard và bảng tổng hợp. Không cần viết Storyboard cho từng lần cập nhật |
+| [TreeMap](index.html#treemap) | Diện tích mỗi ô tỉ lệ với giá trị, các ô được xếp squarified để gần vuông thay vì thành dải dài. Dùng cho cơ cấu khối lượng, phân bổ chi phí, mức tiêu |
+| [Timeline](index.html#timeline) | Hiển thị chuỗi sự kiện hoặc tiến độ thi công công trình theo trục thời gian tuyến tính với các nút trạng thái Semantic, Vector Icon, và đường nối tự đ |
+| [HeatmapCalendar](index.html#heatmapcalendar) | Lưới ô vuông kiểu GitHub contribution: mỗi ô là một ngày, màu đậm nhạt theo số lượng. Dùng cho nhật ký đổ bê tông, số lượt nghiệm thu, mật độ quan trắ |
+| [CardCarousel](index.html#cardcarousel) | Bộ điều khiển vòng xoay thẻ 3D Coverflow mượt mà, hỗ trợ tạo phối cảnh chiều sâu không gian (Depth Perspective), gán Z-Index phân tầng, nút điều hướng |
 
-### Input & Form
+### Input & Forms
 
 | Page | Nội dung |
 | --- | --- |
-| [NumericUpDown](index.html#numericupdown) | Bộ nhập giá trị số với 2 nút tăng giảm, hỗ trợ bước nhảy Step, giới hạn Min/Max, định dạng tiền tệ / đơn vị kỹ thuật (mm, m3, kN, MPa). |
 | [TextBox](index.html#textbox) | Ô nhập văn bản nâng cao với placeholder mờ, nút xóa nhanh [X], icon tiền tố/hậu tố và ô nhập mật khẩu với nút bật/tắt hiển thị. |
+| [NumericUpDown](index.html#numericupdown) | Bộ nhập giá trị số với 2 nút tăng giảm, hỗ trợ bước nhảy Step, giới hạn Min/Max, định dạng tiền tệ / đơn vị kỹ thuật (mm, m3, kN, MPa). |
 | [PasswordInput](index.html#passwordinput) | Ô nhập mật khẩu có nút hiện/ẩn, icon khoá và placeholder — thay cho việc tự ghép PasswordBox + ToggleButton. |
 | [OtpInput](index.html#otpinput) | Ô nhập mã OTP nhiều ô, tự nhảy ô và gộp giá trị — phù hợp xác thực 2 lớp, mã kích hoạt bản quyền. Từ 1.2.0: mỗi ký tự một ô thật sự — gõ tự sang ô, Ba |
 | [PinBox](index.html#pinbox) | Bộ nhập mã xác minh bản quyền hoặc OTP từng ô riêng biệt, tự động nhảy con trỏ sang ô tiếp theo và hỗ trợ ẩn mật khẩu. |
-| [CheckComboBox](index.html#checkcombobox) | Hộp thoại chọn danh sách nhiều mục với ô CheckBox cho từng dòng, tích hợp tùy chọn 'Chọn tất cả (Select All)' và đếm số lượng đã chọn. |
 | [ComboBox](index.html#combobox) | Menu chọn thả xuống hiện đại với mũi tên hoạt ảnh và hỗ trợ bo góc, chế độ tìm kiếm tích hợp. |
+| [CheckComboBox](index.html#checkcombobox) | Hộp thoại chọn danh sách nhiều mục với ô CheckBox cho từng dòng, tích hợp tùy chọn 'Chọn tất cả (Select All)' và đếm số lượng đã chọn. |
 | [AutoCompleteTextBox](index.html#autocompletetextbox) | Hộp nhập văn bản thông minh có Popup Dropdown tự động lọc và gợi ý danh sách mã định mức, vật tư, tiêu chuẩn kỹ thuật khi người dùng bắt đầu gõ phím. |
 | [SearchBox](index.html#searchbox) | Ô tìm kiếm tích hợp icon kính lúp, nút xóa trắng nhanh (Clear Button) và sự kiện tìm kiếm tức thời SearchTrigger. |
-| [FilePicker](index.html#filepicker) | Hộp chọn file tích hợp sẵn nút duyệt Browse với hộp thoại OpenFileDialog / FolderBrowserDialog. |
+| [SearchableTreePicker](index.html#searchabletreepicker) | Ô tìm kiếm đặt trước một cây: gõ để thu hẹp cây xuống các mục khớp và những nhánh dẫn tới chúng, rồi chọn một hoặc nhiều mục. |
+| [DatePicker](index.html#datepicker) | Ô nhập ngày kèm lịch thả xuống, restyle cả DatePickerTextBox lẫn Calendar bên trong, với 4 biến thể kích thước và bề mặt. |
+| [Calendar](index.html#calendar) | Lịch tháng được restyle toàn bộ — CalendarItem, CalendarDayButton và CalendarButton — với 4 biến thể, giữ nguyên API Calendar của WPF. |
+| [Clock](index.html#clock) | Đồng hồ tròn phong cách Material để chọn Giờ / Phút / Giây. Cần chọn cả ngày thì dùng CalendarWithClock — trang riêng trong nhóm Thời gian. |
+| [CalendarWithClock](index.html#calendarwithclock) | Lịch chọn ngày kết hợp đồng hồ chọn giờ/phút/giây — dùng cho mốc nghiệm thu, thời điểm quan trắc, lịch thi công. |
 | [ColorPicker](index.html#colorpicker) | Bộ chọn màu chuyên nghiệp với Canvas 2D Saturation-Value, thanh trượt Hue/Alpha, ô nhập mã màu Hex/RGBA và bảng màu mẫu Presets. |
+| [FilePicker](index.html#filepicker) | Hộp chọn file tích hợp sẵn nút duyệt Browse với hộp thoại OpenFileDialog / FolderBrowserDialog. |
 | [RangeSlider](index.html#rangeslider) | Bộ điều khiển thanh trượt 2 đầu (Dual-Thumb Slider) cho phép kỹ sư chọn nhanh một khoảng giá trị liên tục [StartValue ~ EndValue] để lọc dầm theo tiết |
+| [ToggleSwitch](index.html#toggleswitch) | Công tắc gạt bật/tắt thiết lập với chuyển động hoạt ảnh mượt mà. |
 | [Rating](index.html#rating) | Bộ đánh giá xếp hạng chất lượng thi công hoặc nhà thầu theo số sao tương tác. |
 | [Tag / Chip](index.html#tag) | Nhãn trạng thái và phân loại cấu kiện với nút xóa hành động [X], vector icons và các bảng màu trạng thái Semantic. |
-| [ToggleSwitch](index.html#toggleswitch) | Công tắc gạt bật/tắt thiết lập với chuyển động hoạt ảnh mượt mà. |
+| [TagInput](index.html#taginput) | Mỗi giá trị là một chip có nút đóng; dán cả chuỗi “bê tông, thép, cốp pha” thì control tự tách theo dấu phẩy. Có gợi ý, có giới hạn số thẻ, và không c |
+| [SignaturePad](index.html#signaturepad) | Vùng ký dùng StrokeCollection thật của System.Windows.Ink: mỗi nét là một Stroke, nên huỷ nét chỉ là bỏ phần tử cuối, và ảnh chữ ký được dựng lại sau  |
 
-### Navigation
+### Navigation & Workspace
 
 | Page | Nội dung |
 | --- | --- |
@@ -117,6 +127,27 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [DocumentTabControl](index.html#documenttabcontrol) | TabControl cho tài liệu: mỗi tab có icon, chấm đánh dấu chưa lưu và nút đóng. Đóng tab là một yêu cầu — host có thể chặn để hỏi lưu trước. |
 | [TabControl](index.html#tabcontrol) | Bộ chuyển tab điều hướng nội dung với viền chỉ báo vị trí mượt mà (Underline indicator). |
 
+### Layout & Shell
+
+| Page | Nội dung |
+| --- | --- |
+| [Card & Border](index.html#card) | Hệ thống thẻ chứa nội dung tiêu chuẩn hóa với độ bo góc `CornerRadius=10`, hiệu ứng bóng nổi `Depth2/Depth3` và huy hiệu thông báo. |
+| [CONCOSTWindow](index.html#concostwindow) | Cửa sổ WPF với chrome tuỳ biến (title bar, nút min/max/close trong template) — kéo cửa sổ, double-click để maximize đều xử lý sẵn. |
+| [DockingManager](index.html#dockingmanager) | Panel quản lý các ToolWindow ở bốn cạnh và vùng giữa. Cùng một cạnh thì các panel trở thành tab của một nhóm, kích thước co giãn theo tỉ lệ khi đổi cử |
+| [Ribbon](index.html#ribbon) | Ribbon kiểu Office / AutoCAD: dải tab ở trên, mỗi tab chứa các group, mỗi group xếp lệnh trên lưới 3 hàng. Khi hẹp, ribbon tự hạ kích thước lệnh, ẩn n |
+| [Ribbon commands](index.html#ribboncommands) | Bộ lệnh đặt trong ribbon: nút thường, toggle, radio, split button hai vùng, dropdown và menu lồng nhau. Tất cả đều theo ICommand: IsEnabled tự bám Can |
+| [QuickAccessToolbar](index.html#quickaccesstoolbar) | Bản rời của thanh truy cập nhanh trong ribbon: chỉ icon, tự co theo kích thước nút, đặt được ở bất kỳ cửa sổ nào không cần cả ribbon. |
+| [SplitButton](index.html#splitbutton) | Nút hành động chính kèm menu thả xuống — 19 thuộc tính và 13 style variant, thay thế hoàn toàn combo Button + ContextMenu tự chế. |
+| [Expander](index.html#expander) | Khối nội dung thu gọn/mở rộng với 18 style variant (Clean, Card, Filled, Round, Small, Primary/Success/Warning/Danger/Info, hỗ trợ 4 hướng mở). |
+| [Badge](index.html#badge) | Huy hiệu số lượng / trạng thái, dùng độc lập hoặc gắn lên bất kỳ ButtonBase nào qua attached:ButtonElement.Badge. |
+| [Divider](index.html#divider) | Đường kẻ phân chia khu vực bố cục với tiêu đề nhãn văn bản ở giữa. |
+| [AdaptivePanel](index.html#adaptivepanel) | ContentControl tự chọn layout theo bề rộng khả dụng qua danh sách Breakpoint — dùng để chuyển 3 cấp Compact / Normal / Wide mà không cần code-behind. |
+| [MasonryPanel](index.html#masonrypanel) | Panel trả lại chiều cao tự nhiên cho từng con: con nào cao thì chiếm chỗ ấy, và mỗi con rơi vào cột đang ngắn nhất. Không cần đặt chiều cao cho cột, k |
+| [Wizard](index.html#wizard) | Các bước là con của wizard nên form đọc như form trong XAML. Mỗi bước tự giữ IsValid; nút Tiếp chỉ bật khi bước hiện tại hợp lệ, và Navigating cho hos |
+| [StatusBar](index.html#statusbar) | Dải thông tin dưới đáy cửa sổ. Mỗi ô là một StatusBarItem; ô khai Alignment="Right" bám mép phải, phần giữa co giãn theo cửa sổ. |
+| [CommandBar](index.html#commandbar) | Thanh công cụ một dòng: nút có icon + nhãn, và khi hết chỗ thì phần thừa rơi vào menu xổ xuống thay vì bị cắt cụt. |
+| [Drop zone & Drag](index.html#dragdrop) | Ba mảnh của một thao tác kéo thả: FileDropZone nhận tệp, DropTargetHighlight vẽ viền gợi ý quanh bất kỳ phần tử nào, và DragGhost mang nhãn theo con t |
+
 ### Feedback & Status
 
 | Page | Nội dung |
@@ -130,36 +161,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [EmptyState](index.html#emptystate) | Giao diện minh họa thông minh hiển thị khi danh sách hoặc bảng dữ liệu không có phần tử nào. |
 | [Watermark](index.html#watermark) | Lớp phủ hình mờ (DRAFT, CONFIDENTIAL, COPYRIGHT) chống sao chép tài liệu bản vẽ và báo cáo PDF. |
 
-### Layout & Shell
-
-| Page | Nội dung |
-| --- | --- |
-| [SplitButton](index.html#splitbutton) | Nút hành động chính kèm menu thả xuống — 19 thuộc tính và 13 style variant, thay thế hoàn toàn combo Button + ContextMenu tự chế. |
-| [DockingManager](index.html#dockingmanager) | Panel quản lý các ToolWindow ở bốn cạnh và vùng giữa. Cùng một cạnh thì các panel trở thành tab của một nhóm, kích thước co giãn theo tỉ lệ khi đổi cử |
-| [Expander](index.html#expander) | Khối nội dung thu gọn/mở rộng với 18 style variant (Clean, Card, Filled, Round, Small, Primary/Success/Warning/Danger/Info, hỗ trợ 4 hướng mở). |
-| [Card & Border](index.html#card) | Hệ thống thẻ chứa nội dung tiêu chuẩn hóa với độ bo góc `CornerRadius=10`, hiệu ứng bóng nổi `Depth2/Depth3` và huy hiệu thông báo. |
-| [Badge](index.html#badge) | Huy hiệu số lượng / trạng thái, dùng độc lập hoặc gắn lên bất kỳ ButtonBase nào qua attached:ButtonElement.Badge. |
-| [Divider](index.html#divider) | Đường kẻ phân chia khu vực bố cục với tiêu đề nhãn văn bản ở giữa. |
-| [AdaptivePanel](index.html#adaptivepanel) | ContentControl tự chọn layout theo bề rộng khả dụng qua danh sách Breakpoint — dùng để chuyển 3 cấp Compact / Normal / Wide mà không cần code-behind. |
-| [CONCOSTWindow](index.html#concostwindow) | Cửa sổ WPF với chrome tuỳ biến (title bar, nút min/max/close trong template) — kéo cửa sổ, double-click để maximize đều xử lý sẵn. |
-| [Ribbon](index.html#ribbon) | Ribbon kiểu Office / AutoCAD: dải tab ở trên, mỗi tab chứa các group, mỗi group xếp lệnh trên lưới 3 hàng. Khi hẹp, ribbon tự hạ kích thước lệnh, ẩn n |
-| [Ribbon commands](index.html#ribboncommands) | Bộ lệnh đặt trong ribbon: nút thường, toggle, radio, split button hai vùng, dropdown và menu lồng nhau. Tất cả đều theo ICommand: IsEnabled tự bám Can |
-| [StatusBar](index.html#statusbar) | Dải thông tin dưới đáy cửa sổ. Mỗi ô là một StatusBarItem; ô khai Alignment="Right" bám mép phải, phần giữa co giãn theo cửa sổ. |
-| [CommandBar](index.html#commandbar) | Thanh công cụ một dòng: nút có icon + nhãn, và khi hết chỗ thì phần thừa rơi vào menu xổ xuống thay vì bị cắt cụt. |
-| [QuickAccessToolbar](index.html#quickaccesstoolbar) | Bản rời của thanh truy cập nhanh trong ribbon: chỉ icon, tự co theo kích thước nút, đặt được ở bất kỳ cửa sổ nào không cần cả ribbon. |
-| [MasonryPanel](index.html#masonrypanel) | Panel trả lại chiều cao tự nhiên cho từng con: con nào cao thì chiếm chỗ ấy, và mỗi con rơi vào cột đang ngắn nhất. Không cần đặt chiều cao cho cột, k |
-| [Wizard](index.html#wizard) | Các bước là con của wizard nên form đọc như form trong XAML. Mỗi bước tự giữ IsValid; nút Tiếp chỉ bật khi bước hiện tại hợp lệ, và Navigating cho hos |
-
-### Input & Drag
-
-| Page | Nội dung |
-| --- | --- |
-| [SearchableTreePicker](index.html#searchabletreepicker) | Ô tìm kiếm đặt trước một cây: gõ để thu hẹp cây xuống các mục khớp và những nhánh dẫn tới chúng, rồi chọn một hoặc nhiều mục. |
-| [TagInput](index.html#taginput) | Mỗi giá trị là một chip có nút đóng; dán cả chuỗi “bê tông, thép, cốp pha” thì control tự tách theo dấu phẩy. Có gợi ý, có giới hạn số thẻ, và không c |
-| [SignaturePad](index.html#signaturepad) | Vùng ký dùng StrokeCollection thật của System.Windows.Ink: mỗi nét là một Stroke, nên huỷ nét chỉ là bỏ phần tử cuối, và ảnh chữ ký được dựng lại sau  |
-| [Drop zone & Drag](index.html#dragdrop) | Ba mảnh của một thao tác kéo thả: FileDropZone nhận tệp, DropTargetHighlight vẽ viền gợi ý quanh bất kỳ phần tử nào, và DragGhost mang nhãn theo con t |
-
-### App & Tooling
+### Apps & Tools
 
 | Page | Nội dung |
 | --- | --- |
@@ -168,12 +170,14 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [CodeEditor](index.html#codeeditor) | Khung sửa mã có số dòng, phím Tab và tô màu cho C#, XAML, SQL và JSON. Bộ tô màu là một hàm thuần nên test được mà không cần mở cửa sổ. |
 | [MarkdownViewer](index.html#markdownviewer) | Hiển thị Markdown thành FlowDocument để dùng lại được cho cả màn hình lẫn bản in. Chỉ hỗ trợ tập con cần cho tài liệu trợ giúp, và mọi cú pháp lạ đều  |
 | [ImageViewer](index.html#imageviewer) | Xem ảnh bản vẽ với zoom, xoay và kéo, có nền ca-rô để thấy vùng trong suốt. Phép zoom giữ điểm dưới con trỏ đứng yên nên bản vẽ không bị trượt khi lăn |
+| [CompareSlider](index.html#compareslider) | Thanh trượt chia đôi màn hình trực quan cho phép so sánh sự thay đổi giữa 2 hình ảnh bản vẽ thiết kế (Rev 01 vs Rev 02), phối cảnh 3D Render trước/sau |
+| [Magnifier](index.html#magnifier) | Tròng kính lúp phóng to tọa độ điểm ảnh độ nét cao. Khi rê chuột vào khu vực bản vẽ CAD hoặc mặt cắt dầm cột, kính lúp tròn có hồng tâm chữ thập sẽ tự |
 | [MiniMap](index.html#minimap) | Bản đồ thu nhỏ của toàn bộ mặt bằng kèm khung nhìn hiện tại. Click để nhảy tới vùng tương ứng - dùng chung cho bản vẽ, sơ đồ hay ảnh lớn. |
 | [ModelViewer3D](index.html#modelviewer3d) | Chiếu một tập đỉnh/cạnh 3D lên mặt phẳng 2D để xem nhanh mô hình mà không cần renderer. Đủ cho preview, icon mô hình và kiểm tra kết quả xuất. |
 | [CoachMark](index.html#coachmark) | Lớp phủ tối và một thẻ chỉ dẫn trỏ vào control đang được giới thiệu. Thẻ tự lật lên trên khi target ở sát đáy cửa sổ. |
 | [SplashScreen](index.html#splashscreen) | Thẻ khởi động có logo, tên ứng dụng, phiên bản và dòng trạng thái, kèm thanh tiến trình. Là control trong cây giao diện nên chạy được cả trong cửa sổ  |
 
-### Effects & Decoration
+### Effects & Motion
 
 | Page | Nội dung |
 | --- | --- |
@@ -182,8 +186,6 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [MarqueeTicker](index.html#marqueeticker) | Dải chữ chạy liên tục cho thanh trạng thái, bảng tin công trường hoặc ticker chứng khoán. Render trực tiếp và chạy bằng CompositionTarget.Rendering nê |
 | [Mesh gradient & Spotlight](index.html#meshgradient) | Hai hiệu ứng nền: AnimatedMeshGradient cho bốn khối màu “thở” quanh neo cố định, và CursorSpotlight làm tối mọi thứ trừ một vòng quanh con trỏ. |
 | [Kính mờ & viền gradient](index.html#glasscard) | Hai bề mặt: FrostedGlass làm mờ đúng vùng nằm sau nó, và AnimatedGradientBorder cho viền gradient xoay quanh thẻ. |
-| [Stagger & Shared element](index.html#motion) | Hai kiểu chuyển động: danh sách hiện dần từng mục, và một phần tử “lớn ra” từ chỗ nó từng nằm. |
-| [Reduced motion (Trợ năng)](index.html#reducedmotion) | Mọi hiệu ứng của thư viện đọc MotionSettings.AnimationsEnabled, mặc định lấy từ Windows “Show animations” (SystemParameters.ClientAreaAnimation). Ngườ |
 | [AuroraBackground](index.html#aurorabackground) | Nền aurora gồm vài quầng sáng lớn trôi chậm, vẽ trực tiếp bằng RadialGradientBrush nên không dùng BlurEffect — vẫn mượt trên máy yếu. Dùng cho splash  |
 | [BorderBeam](index.html#borderbeam) | Một đốm sáng chạy dọc chu vi khung bo góc, kiểu “border beam” trên các landing page hiện đại. Bọc quanh nội dung bất kỳ, dùng cho item mới, trạng thái |
 | [ConfettiBurst](index.html#confettiburst) | Bắn một đợt pháo giấy ngắn khi thao tác thành công (lưu mô hình, duyệt hồ sơ). Tự mô phỏng vật lý và tự tắt khi hạt tan hết, không cần code hẹn giờ. |
@@ -203,13 +205,10 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [TypewriterText](index.html#typewritertext) | Chữ hiện dần như đang gõ, có caret nhấp nháy. Tốc độ tính theo ký tự/giây; tắt animation hệ thống thì hiện full text ngay. |
 | [TextReveal](index.html#textreveal) | Headline hiện theo từng từ: mỗi từ fade + trượt lên, lệch nhau WordDelay giây. Dùng cho tiêu đề lớn, không dùng cho đoạn văn dài. |
 | [SnowCanvas](index.html#snowcanvas) | Khung vẽ hạt tuyết rơi chuyển động GPU siêu mượt, hỗ trợ tùy chỉnh mật độ số lượng hạt, bán kính Min/Max, tốc độ rơi, độ lắc lư dao động (Oscillation  |
-| [RadialGauge](index.html#radialgauge) | Cung nền + cung giá trị + vạch chia + số ở giữa, vẽ trong OnRender bằng StreamGeometry với đầu nét tròn nên sắc ở mọi kích thước và mọi DPI. Giá trị c |
 | [ParticleField](index.html#particlefield) | Hạt trôi nhẹ làm nền cho hero, splash hoặc empty state. Hạt wrap quanh biên nên nền không bao giờ trống, Seed cho kết quả tái lập, và field tự dựng lạ |
 | [PageTransitionHost](index.html#pagetransitionhost) | Đổi Content là trang mới chạy hiệu ứng vào: fade, trượt từ bốn phía, hoặc scale. Animation nằm ở host nên dùng được với mọi loại nội dung, không cần s |
-| [Sprite](index.html#sprite) | Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button). Sprite luôn nổi phía trên toàn bộ giao diện, cho phép người dùng kéo t |
-| [CompareSlider](index.html#compareslider) | Thanh trượt chia đôi màn hình trực quan cho phép so sánh sự thay đổi giữa 2 hình ảnh bản vẽ thiết kế (Rev 01 vs Rev 02), phối cảnh 3D Render trước/sau |
-| [Magnifier](index.html#magnifier) | Tròng kính lúp phóng to tọa độ điểm ảnh độ nét cao. Khi rê chuột vào khu vực bản vẽ CAD hoặc mặt cắt dầm cột, kính lúp tròn có hồng tâm chữ thập sẽ tự |
-| [Icons Gallery](index.html#icons) | Kho hơn 120+ vector icons độ phân giải vô cực được tối ưu hóa cho ngành kỹ thuật, xây dựng, CAD và BIM. |
+| [Stagger & Shared element](index.html#motion) | Hai kiểu chuyển động: danh sách hiện dần từng mục, và một phần tử “lớn ra” từ chỗ nó từng nằm. |
+| [Reduced motion (Trợ năng)](index.html#reducedmotion) | Mọi hiệu ứng của thư viện đọc MotionSettings.AnimationsEnabled, mặc định lấy từ Windows “Show animations” (SystemParameters.ClientAreaAnimation). Ngườ |
 
 ### Basic Controls
 
@@ -224,21 +223,12 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [ScrollViewer](index.html#scrollviewer) | ScrollViewer với scrollbar tự ẩn và bộ attached ScrollViewerHelper (quán tính, tốc độ cuộn, nút back-to-top). |
 | [ListBox](index.html#listbox) | ListBox restyle với item hover/selected theo theme, kèm biến thể Card cho danh sách dạng khối. |
 | [ListView](index.html#listview) | ListView dùng cho danh sách nhiều cột nhẹ (không cần sort/filter như DataGrid). |
-| [DataGrid](index.html#datagrid) | Bảng dữ liệu kỹ thuật kết cấu hỗ trợ sọc vằn (Zebra Striping), cố định dòng, lựa chọn nhiều dòng và hỗ trợ trọn vẹn cả Dark/Light theme. |
-| [DataGrid Panels](index.html#datagridpanels) | Bốn control độc lập gắn vào một DataGrid có sẵn để biến bảng chỉ-đọc thành công cụ dữ liệu: dải lọc theo từng cột, ô tìm kiếm toàn bảng, menu chọn cột |
 | [TreeView](index.html#treeview) | Cây thư mục phân cấp dự án hiển thị các tầng, khu vực và từng cấu kiện nhỏ. |
 | [GroupBox](index.html#groupbox) | GroupBox với 7 biến thể, dùng để nhóm các trường nhập theo chủ đề kỹ thuật (hình học, vật liệu, tải trọng). |
 | [Menu & ContextMenu](index.html#menu) | Menu ngang và ContextMenu được restyle với 4 biến thể, hỗ trợ submenu nhiều cấp và icon. |
 | [Typography](index.html#textblock) | Thang typography của design system: H1–H4, Body, Caption, Code và các màu ngữ nghĩa — dùng thay vì set FontSize thủ công. |
-
-### Time
-
-| Page | Nội dung |
-| --- | --- |
-| [Clock](index.html#clock) | Đồng hồ tròn phong cách Material để chọn Giờ / Phút / Giây. Cần chọn cả ngày thì dùng CalendarWithClock — trang riêng trong nhóm Thời gian. |
-| [Calendar](index.html#calendar) | Lịch tháng được restyle toàn bộ — CalendarItem, CalendarDayButton và CalendarButton — với 4 biến thể, giữ nguyên API Calendar của WPF. |
-| [DatePicker](index.html#datepicker) | Ô nhập ngày kèm lịch thả xuống, restyle cả DatePickerTextBox lẫn Calendar bên trong, với 4 biến thể kích thước và bề mặt. |
-| [CalendarWithClock](index.html#calendarwithclock) | Lịch chọn ngày kết hợp đồng hồ chọn giờ/phút/giây — dùng cho mốc nghiệm thu, thời điểm quan trắc, lịch thi công. |
+| [AvatarStack](index.html#avatarstack) | Hiển thị nhóm người phụ trách dưới dạng avatar chồng lên nhau kèm chip +N — pattern quen thuộc của bảng quản lý công việc. Nhận chuỗi (tự lấy chữ cái  |
+| [Sprite](index.html#sprite) | Nút trợ lý nổi tương tác thông minh (Assistive Touch / Floating Action Button). Sprite luôn nổi phía trên toàn bộ giao diện, cho phép người dùng kéo t |
 
 ## How this documentation is maintained
 

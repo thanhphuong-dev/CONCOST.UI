@@ -1,222 +1,1037 @@
 // Sidebar structure. Order here defines prev/next navigation and the command palette.
 const DOCS_NAV = [
     {
-        title: "Bắt đầu", titleEn: "Getting started",
-        items: [
-            { id: "intro", name: "Giới thiệu & Cài đặt", nameEn: "Introduction & Setup", icon: "fa-book-open" },
-            { id: "class-library", name: "Plugin DLL (Revit/AutoCAD)", nameEn: "Plugin DLL (Revit/AutoCAD)", icon: "fa-puzzle-piece" },
-            { id: "theming", name: "Theme & Design Tokens", icon: "fa-palette" },
-            { id: "attached-props", name: "Attached Properties", icon: "fa-wand-magic-sparkles" },
-            { id: "examples", name: "Ví dụ sử dụng", nameEn: "Usage examples", icon: "fa-code" },
-            { id: "faq", name: "FAQ & Troubleshooting", icon: "fa-circle-question" },
-            { id: "migration", name: "Chuyển từ WinForms/WPF", nameEn: "Migrating from WinForms/WPF", icon: "fa-code-branch" }
+        "title": "Bắt đầu",
+        "titleEn": "Getting started",
+        "items": [
+            {
+                "id": "intro",
+                "name": "Giới thiệu & Cài đặt",
+                "nameEn": "Introduction & Setup",
+                "icon": "fa-book-open"
+            },
+            {
+                "id": "class-library",
+                "name": "Plugin DLL (Revit/AutoCAD)",
+                "nameEn": "Plugin DLL (Revit/AutoCAD)",
+                "icon": "fa-puzzle-piece"
+            },
+            {
+                "id": "theming",
+                "name": "Theme & Design Tokens",
+                "icon": "fa-palette"
+            },
+            {
+                "id": "attached-props",
+                "name": "Attached Properties",
+                "icon": "fa-wand-magic-sparkles"
+            },
+            {
+                "id": "icons",
+                "name": "Icons Gallery",
+                "icon": "fa-icons"
+            },
+            {
+                "id": "examples",
+                "name": "Ví dụ sử dụng",
+                "nameEn": "Usage examples",
+                "icon": "fa-code"
+            },
+            {
+                "id": "faq",
+                "name": "FAQ & Troubleshooting",
+                "icon": "fa-circle-question"
+            },
+            {
+                "id": "migration",
+                "name": "Chuyển từ WinForms/WPF",
+                "nameEn": "Migrating from WinForms/WPF",
+                "icon": "fa-code-branch"
+            }
         ]
     },
     {
-        title: "Engineering & CAD",
-        items: [
-            { id: "spreadsheet", name: "Spreadsheet", icon: "fa-table-cells" },
-            { id: "stackedheaderdatagrid", name: "StackedHeaderDataGrid", icon: "fa-table-columns" },
-            { id: "cadcanvas", name: "ZoomableCanvas & Ruler", icon: "fa-ruler-combined" },
-            { id: "diagramchart", name: "ChartLine (nội lực)", nameEn: "ChartLine (internal forces)", icon: "fa-chart-area" },
-            { id: "charts", name: "Charts Suite", icon: "fa-chart-pie" },
-            { id: "rebarinput", name: "RebarInput", icon: "fa-cubes-stacked" },
-            { id: "engineeringboxes", name: "Engineering Boxes", icon: "fa-screwdriver-wrench" },
-            { id: "compassindicator", name: "CompassIndicator", icon: "fa-compass" }
+        "title": "Kỹ thuật & Kết cấu",
+        "titleEn": "Engineering & Structural",
+        "items": [
+            {
+                "id": "spreadsheet",
+                "name": "Spreadsheet",
+                "icon": "fa-table-cells"
+            },
+            {
+                "id": "stackedheaderdatagrid",
+                "name": "StackedHeaderDataGrid",
+                "icon": "fa-table-columns"
+            },
+            {
+                "id": "rebarinput",
+                "name": "RebarInput",
+                "icon": "fa-cubes-stacked"
+            },
+            {
+                "id": "engineeringboxes",
+                "name": "Engineering Boxes",
+                "icon": "fa-screwdriver-wrench"
+            },
+            {
+                "id": "diagramchart",
+                "name": "ChartLine (nội lực)",
+                "nameEn": "ChartLine (internal forces)",
+                "icon": "fa-chart-area"
+            },
+            {
+                "id": "charts",
+                "name": "Charts Suite",
+                "icon": "fa-chart-pie"
+            }
         ]
     },
     {
-        title: "CAD & Drafting",
-        items: [
-            { id: "viewportcontrol", name: "ViewportControl", icon: "fa-vector-square", badge: "Mới", badgeEn: "New" },
-            { id: "viewcube", name: "ViewCube", icon: "fa-cube", badge: "Mới", badgeEn: "New" },
-            { id: "navigationbar", name: "NavigationBar", icon: "fa-compass-drafting", badge: "Mới", badgeEn: "New" },
-            { id: "viewcontrolbar", name: "ViewControlBar", icon: "fa-sliders", badge: "Mới", badgeEn: "New" },
-            { id: "commandline", name: "CommandLine", icon: "fa-terminal", badge: "Mới", badgeEn: "New" },
-            { id: "dynamicinput", name: "DynamicInput", icon: "fa-keyboard", badge: "Mới", badgeEn: "New" },
-            { id: "cadstatusbar", name: "CadStatusBar", icon: "fa-window-minimize", badge: "Mới", badgeEn: "New" },
-            { id: "projectbrowser", name: "ProjectBrowser", icon: "fa-folder-tree", badge: "Mới", badgeEn: "New" },
-            { id: "documentworkspace", name: "DocumentWorkspace", icon: "fa-window-restore", badge: "Mới", badgeEn: "New" },
-            { id: "propertiespalette", name: "PropertiesPalette", icon: "fa-table-list", badge: "Mới", badgeEn: "New" },
-            { id: "applicationtitlebar", name: "ApplicationTitleBar", icon: "fa-heading", badge: "Mới", badgeEn: "New" },
-            { id: "applicationinfobar", name: "ApplicationInfoBar", icon: "fa-circle-info", badge: "Mới", badgeEn: "New" },
-            { id: "backstageview", name: "BackstageView", icon: "fa-file-import", badge: "Mới", badgeEn: "New" },
-            { id: "fontpicker", name: "FontPicker", icon: "fa-font", badge: "Mới", badgeEn: "New" }
+        "title": "CAD & Đồ họa kỹ thuật",
+        "titleEn": "CAD & Drafting",
+        "items": [
+            {
+                "id": "viewportcontrol",
+                "name": "ViewportControl",
+                "icon": "fa-vector-square",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "viewcube",
+                "name": "ViewCube",
+                "icon": "fa-cube",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "navigationbar",
+                "name": "NavigationBar",
+                "icon": "fa-compass-drafting",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "compassindicator",
+                "name": "CompassIndicator",
+                "icon": "fa-compass"
+            },
+            {
+                "id": "cadcanvas",
+                "name": "ZoomableCanvas & Ruler",
+                "icon": "fa-ruler-combined"
+            },
+            {
+                "id": "viewcontrolbar",
+                "name": "ViewControlBar",
+                "icon": "fa-sliders",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "commandline",
+                "name": "CommandLine",
+                "icon": "fa-terminal",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "dynamicinput",
+                "name": "DynamicInput",
+                "icon": "fa-keyboard",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "cadstatusbar",
+                "name": "CadStatusBar",
+                "icon": "fa-window-minimize",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "projectbrowser",
+                "name": "ProjectBrowser",
+                "icon": "fa-folder-tree",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "documentworkspace",
+                "name": "DocumentWorkspace",
+                "icon": "fa-window-restore",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "propertiespalette",
+                "name": "PropertiesPalette",
+                "icon": "fa-table-list",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "applicationtitlebar",
+                "name": "ApplicationTitleBar",
+                "icon": "fa-heading",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "applicationinfobar",
+                "name": "ApplicationInfoBar",
+                "icon": "fa-circle-info",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "backstageview",
+                "name": "BackstageView",
+                "icon": "fa-file-import",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "fontpicker",
+                "name": "FontPicker",
+                "icon": "fa-font",
+                "badge": "Mới",
+                "badgeEn": "New"
+            }
         ]
     },
     {
-        title: "Dữ liệu & Dashboard", titleEn: "Data & Dashboard",
-        items: [
-            { id: "datapager", name: "DataPager", icon: "fa-table-list" },
-            { id: "statisticcard", name: "StatisticCard (KPI)", icon: "fa-chart-line" },
-            { id: "timeline", name: "Timeline", icon: "fa-timeline" },
-            { id: "cardcarousel", name: "CardCarousel", icon: "fa-cubes" },
-            { id: "odometernumber", name: "OdometerNumber", icon: "fa-arrow-trend-up", badge: "Mới", badgeEn: "New" },
-            { id: "sparkline", name: "Sparkline", icon: "fa-chart-simple", badge: "Mới", badgeEn: "New" },
-            { id: "avatarstack", name: "AvatarStack", icon: "fa-user-group", badge: "Mới", badgeEn: "New" },
-            { id: "heatmapcalendar", name: "HeatmapCalendar", icon: "fa-calendar-days", badge: "Mới", badgeEn: "New" },
-            { id: "treedatagrid", name: "TreeDataGrid", icon: "fa-diagram-project", badge: "Mới", badgeEn: "New" },
-            { id: "multiselectdatagrid", name: "MultiSelectDataGrid", icon: "fa-square-check", badge: "Mới", badgeEn: "New" },
-            { id: "treemap", name: "TreeMap", icon: "fa-chart-treemap", badge: "Mới", badgeEn: "New" },
-            { id: "propertygrid", name: "PropertyGrid", icon: "fa-sliders" }
+        "title": "Dữ liệu & Bảng biểu",
+        "titleEn": "Data & Tables",
+        "items": [
+            {
+                "id": "datagrid",
+                "name": "DataGrid",
+                "icon": "fa-table"
+            },
+            {
+                "id": "datagridpanels",
+                "name": "DataGrid Panels",
+                "icon": "fa-filter",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "treedatagrid",
+                "name": "TreeDataGrid",
+                "icon": "fa-diagram-project",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "multiselectdatagrid",
+                "name": "MultiSelectDataGrid",
+                "icon": "fa-square-check",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "datapager",
+                "name": "DataPager",
+                "icon": "fa-table-list"
+            },
+            {
+                "id": "propertygrid",
+                "name": "PropertyGrid",
+                "icon": "fa-sliders"
+            },
+            {
+                "id": "statisticcard",
+                "name": "StatisticCard (KPI)",
+                "icon": "fa-chart-line"
+            },
+            {
+                "id": "radialgauge",
+                "name": "RadialGauge",
+                "icon": "fa-gauge-high",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "sparkline",
+                "name": "Sparkline",
+                "icon": "fa-chart-simple",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "odometernumber",
+                "name": "OdometerNumber",
+                "icon": "fa-arrow-trend-up",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "treemap",
+                "name": "TreeMap",
+                "icon": "fa-chart-treemap",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "timeline",
+                "name": "Timeline",
+                "icon": "fa-timeline"
+            },
+            {
+                "id": "heatmapcalendar",
+                "name": "HeatmapCalendar",
+                "icon": "fa-calendar-days",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "cardcarousel",
+                "name": "CardCarousel",
+                "icon": "fa-cubes"
+            }
         ]
     },
     {
-        title: "Nhập liệu & Form", titleEn: "Input & Form",
-        items: [
-            { id: "numericupdown", name: "NumericUpDown", icon: "fa-arrow-up-1-9" },
-            { id: "textbox", name: "TextBox", icon: "fa-pen-to-square" },
-            { id: "passwordinput", name: "PasswordInput", icon: "fa-lock", badge: "Mới", badgeEn: "New" },
-            { id: "otpinput", name: "OtpInput", icon: "fa-shield-halved", badge: "Mới", badgeEn: "New" },
-            { id: "pinbox", name: "PinBox", icon: "fa-key" },
-            { id: "checkcombobox", name: "CheckComboBox", icon: "fa-square-check" },
-            { id: "combobox", name: "ComboBox", icon: "fa-caret-down" },
-            { id: "autocompletetextbox", name: "AutoCompleteTextBox", icon: "fa-list-check" },
-            { id: "searchbox", name: "SearchBox", icon: "fa-magnifying-glass" },
-            { id: "filepicker", name: "FilePicker", icon: "fa-folder-open" },
-            { id: "colorpicker", name: "ColorPicker", icon: "fa-palette" },
-            { id: "rangeslider", name: "RangeSlider", icon: "fa-sliders" },
-            { id: "rating", name: "Rating", icon: "fa-star" },
-            { id: "tag", name: "Tag / Chip", icon: "fa-tag" },
-            { id: "toggleswitch", name: "ToggleSwitch", icon: "fa-toggle-on" }
+        "title": "Nhập liệu & Biểu mẫu",
+        "titleEn": "Input & Forms",
+        "items": [
+            {
+                "id": "textbox",
+                "name": "TextBox",
+                "icon": "fa-pen-to-square"
+            },
+            {
+                "id": "numericupdown",
+                "name": "NumericUpDown",
+                "icon": "fa-arrow-up-1-9"
+            },
+            {
+                "id": "passwordinput",
+                "name": "PasswordInput",
+                "icon": "fa-lock",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "otpinput",
+                "name": "OtpInput",
+                "icon": "fa-shield-halved",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "pinbox",
+                "name": "PinBox",
+                "icon": "fa-key"
+            },
+            {
+                "id": "combobox",
+                "name": "ComboBox",
+                "icon": "fa-caret-down"
+            },
+            {
+                "id": "checkcombobox",
+                "name": "CheckComboBox",
+                "icon": "fa-square-check"
+            },
+            {
+                "id": "autocompletetextbox",
+                "name": "AutoCompleteTextBox",
+                "icon": "fa-list-check"
+            },
+            {
+                "id": "searchbox",
+                "name": "SearchBox",
+                "icon": "fa-magnifying-glass"
+            },
+            {
+                "id": "searchabletreepicker",
+                "name": "SearchableTreePicker",
+                "icon": "fa-magnifying-glass",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "datepicker",
+                "name": "DatePicker",
+                "icon": "fa-calendar-check",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "calendar",
+                "name": "Calendar",
+                "icon": "fa-calendar",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "clock",
+                "name": "Clock",
+                "icon": "fa-clock"
+            },
+            {
+                "id": "calendarwithclock",
+                "name": "CalendarWithClock",
+                "icon": "fa-calendar-days",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "colorpicker",
+                "name": "ColorPicker",
+                "icon": "fa-palette"
+            },
+            {
+                "id": "filepicker",
+                "name": "FilePicker",
+                "icon": "fa-folder-open"
+            },
+            {
+                "id": "rangeslider",
+                "name": "RangeSlider",
+                "icon": "fa-sliders"
+            },
+            {
+                "id": "toggleswitch",
+                "name": "ToggleSwitch",
+                "icon": "fa-toggle-on"
+            },
+            {
+                "id": "rating",
+                "name": "Rating",
+                "icon": "fa-star"
+            },
+            {
+                "id": "tag",
+                "name": "Tag / Chip",
+                "icon": "fa-tag"
+            },
+            {
+                "id": "taginput",
+                "name": "TagInput",
+                "icon": "fa-tags",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "signaturepad",
+                "name": "SignaturePad",
+                "icon": "fa-signature",
+                "badge": "Mới",
+                "badgeEn": "New"
+            }
         ]
     },
     {
-        title: "Điều hướng", titleEn: "Navigation",
-        items: [
-            { id: "navigationview", name: "NavigationView", icon: "fa-sitemap", badge: "Mới", badgeEn: "New" },
-            { id: "sidemenu", name: "SideMenu", icon: "fa-bars" },
-            { id: "drawermenu", name: "DrawerMenu", icon: "fa-table-columns" },
-            { id: "breadcrumb", name: "Breadcrumb", icon: "fa-chevron-right" },
-            { id: "pagination", name: "Pagination", icon: "fa-file-lines" },
-            { id: "stepbar", name: "StepBar", icon: "fa-list-ol" },
-            { id: "transfer", name: "Transfer", icon: "fa-right-left" },
-            { id: "commandpalette", name: "CommandPalette (Ctrl+K)", icon: "fa-magnifying-glass", badge: "Mới", badgeEn: "New" },
-            { id: "documenttabcontrol", name: "DocumentTabControl", icon: "fa-window-restore", badge: "Mới", badgeEn: "New" },
-            { id: "tabcontrol", name: "TabControl", icon: "fa-folder" }
+        "title": "Điều hướng & Cấu trúc",
+        "titleEn": "Navigation & Workspace",
+        "items": [
+            {
+                "id": "navigationview",
+                "name": "NavigationView",
+                "icon": "fa-sitemap",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "sidemenu",
+                "name": "SideMenu",
+                "icon": "fa-bars"
+            },
+            {
+                "id": "drawermenu",
+                "name": "DrawerMenu",
+                "icon": "fa-table-columns"
+            },
+            {
+                "id": "breadcrumb",
+                "name": "Breadcrumb",
+                "icon": "fa-chevron-right"
+            },
+            {
+                "id": "pagination",
+                "name": "Pagination",
+                "icon": "fa-file-lines"
+            },
+            {
+                "id": "stepbar",
+                "name": "StepBar",
+                "icon": "fa-list-ol"
+            },
+            {
+                "id": "transfer",
+                "name": "Transfer",
+                "icon": "fa-right-left"
+            },
+            {
+                "id": "commandpalette",
+                "name": "CommandPalette (Ctrl+K)",
+                "icon": "fa-magnifying-glass",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "documenttabcontrol",
+                "name": "DocumentTabControl",
+                "icon": "fa-window-restore",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "tabcontrol",
+                "name": "TabControl",
+                "icon": "fa-folder"
+            }
         ]
     },
     {
-        title: "Phản hồi & Trạng thái", titleEn: "Feedback & Status",
-        items: [
-            { id: "dialog", name: "Dialog", icon: "fa-window-maximize" },
-            { id: "drawer", name: "Drawer", icon: "fa-bars-staggered" },
-            { id: "growl", name: "Growl (Toast)", icon: "fa-bell" },
-            { id: "loadings", name: "Loading Indicators", icon: "fa-spinner", badge: "Mới", badgeEn: "New" },
-            { id: "loadingoverlay", name: "LoadingOverlay", icon: "fa-circle-notch", badge: "Mới", badgeEn: "New" },
-            { id: "skeleton", name: "Skeleton (Shimmer)", icon: "fa-ghost", badge: "Mới", badgeEn: "New" },
-            { id: "emptystate", name: "EmptyState", icon: "fa-inbox" },
-            { id: "watermark", name: "Watermark", icon: "fa-copyright" }
+        "title": "Bố cục & Khung nhìn",
+        "titleEn": "Layout & Shell",
+        "items": [
+            {
+                "id": "card",
+                "name": "Card & Border",
+                "icon": "fa-id-card"
+            },
+            {
+                "id": "concostwindow",
+                "name": "CONCOSTWindow",
+                "icon": "fa-window-restore",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "dockingmanager",
+                "name": "DockingManager",
+                "icon": "fa-table-columns",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "ribbon",
+                "name": "Ribbon",
+                "icon": "fa-ribbon",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "ribboncommands",
+                "name": "Ribbon commands",
+                "icon": "fa-terminal",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "quickaccesstoolbar",
+                "name": "QuickAccessToolbar",
+                "icon": "fa-bolt",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "splitbutton",
+                "name": "SplitButton",
+                "icon": "fa-angles-right",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "expander",
+                "name": "Expander",
+                "icon": "fa-angles-down",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "badge",
+                "name": "Badge",
+                "icon": "fa-certificate",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "divider",
+                "name": "Divider",
+                "icon": "fa-minus"
+            },
+            {
+                "id": "adaptivepanel",
+                "name": "AdaptivePanel",
+                "icon": "fa-table-cells-large",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "masonrypanel",
+                "name": "MasonryPanel",
+                "icon": "fa-table-cells",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "wizard",
+                "name": "Wizard",
+                "icon": "fa-hat-wizard",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "statusbar",
+                "name": "StatusBar",
+                "icon": "fa-window-minimize",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "commandbar",
+                "name": "CommandBar",
+                "icon": "fa-bars",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "dragdrop",
+                "name": "Drop zone & Drag",
+                "icon": "fa-hand-back-fist",
+                "badge": "Mới",
+                "badgeEn": "New"
+            }
         ]
     },
     {
-        title: "Layout & Shell",
-        items: [
-            { id: "splitbutton", name: "SplitButton", icon: "fa-angles-right", badge: "Mới", badgeEn: "New" },
-            { id: "dockingmanager", name: "DockingManager", icon: "fa-table-columns", badge: "Mới", badgeEn: "New" },
-            { id: "expander", name: "Expander", icon: "fa-angles-down", badge: "Mới", badgeEn: "New" },
-            { id: "card", name: "Card & Border", icon: "fa-id-card" },
-            { id: "badge", name: "Badge", icon: "fa-certificate", badge: "Mới", badgeEn: "New" },
-            { id: "divider", name: "Divider", icon: "fa-minus" },
-            { id: "adaptivepanel", name: "AdaptivePanel", icon: "fa-table-cells-large", badge: "Mới", badgeEn: "New" },
-            { id: "concostwindow", name: "CONCOSTWindow", icon: "fa-window-restore", badge: "Mới", badgeEn: "New" },
-            { id: "ribbon", name: "Ribbon", icon: "fa-table-columns", badge: "Mới", badgeEn: "New" },
-            { id: "ribboncommands", name: "Ribbon commands", icon: "fa-rectangle-list", badge: "Mới", badgeEn: "New" },
-            { id: "statusbar", name: "StatusBar", icon: "fa-window-minimize", badge: "Mới", badgeEn: "New" },
-            { id: "commandbar", name: "CommandBar", icon: "fa-bars", badge: "Mới", badgeEn: "New" },
-            { id: "quickaccesstoolbar", name: "QuickAccessToolbar", icon: "fa-bolt", badge: "Mới", badgeEn: "New" },
-            { id: "masonrypanel", name: "MasonryPanel", icon: "fa-table-cells", badge: "Mới", badgeEn: "New" },
-            { id: "wizard", name: "Wizard", icon: "fa-shoe-prints", badge: "Mới", badgeEn: "New" }
+        "title": "Phản hồi & Trạng thái",
+        "titleEn": "Feedback & Status",
+        "items": [
+            {
+                "id": "dialog",
+                "name": "Dialog",
+                "icon": "fa-window-maximize"
+            },
+            {
+                "id": "drawer",
+                "name": "Drawer",
+                "icon": "fa-bars-staggered"
+            },
+            {
+                "id": "growl",
+                "name": "Growl (Toast)",
+                "icon": "fa-bell"
+            },
+            {
+                "id": "loadings",
+                "name": "Loading Indicators",
+                "icon": "fa-spinner",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "loadingoverlay",
+                "name": "LoadingOverlay",
+                "icon": "fa-circle-notch",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "skeleton",
+                "name": "Skeleton (Shimmer)",
+                "icon": "fa-ghost",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "emptystate",
+                "name": "EmptyState",
+                "icon": "fa-inbox"
+            },
+            {
+                "id": "watermark",
+                "name": "Watermark",
+                "icon": "fa-copyright"
+            }
         ]
     },
     {
-        title: "Nhập liệu & Kéo thả", titleEn: "Input & Drag",
-        items: [
-            { id: "searchabletreepicker", name: "SearchableTreePicker", icon: "fa-magnifying-glass", badge: "Mới", badgeEn: "New" },
-            { id: "taginput", name: "TagInput", icon: "fa-tags", badge: "Mới", badgeEn: "New" },
-            { id: "signaturepad", name: "SignaturePad", icon: "fa-signature", badge: "Mới", badgeEn: "New" },
-            { id: "dragdrop", name: "Drop zone & Drag", icon: "fa-folder-open", badge: "Mới", badgeEn: "New" }
+        "title": "Ứng dụng & Tiện ích",
+        "titleEn": "Apps & Tools",
+        "items": [
+            {
+                "id": "scheduler",
+                "name": "Scheduler",
+                "icon": "fa-calendar-day",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "kanbanboard",
+                "name": "KanbanBoard",
+                "icon": "fa-table-columns",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "codeeditor",
+                "name": "CodeEditor",
+                "icon": "fa-code",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "markdownviewer",
+                "name": "MarkdownViewer",
+                "icon": "fa-file-lines",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "imageviewer",
+                "name": "ImageViewer",
+                "icon": "fa-image",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "compareslider",
+                "name": "CompareSlider",
+                "icon": "fa-arrows-left-right"
+            },
+            {
+                "id": "magnifier",
+                "name": "Magnifier",
+                "icon": "fa-magnifying-glass-plus"
+            },
+            {
+                "id": "minimap",
+                "name": "MiniMap",
+                "icon": "fa-map",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "modelviewer3d",
+                "name": "ModelViewer3D",
+                "icon": "fa-cube",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "coachmark",
+                "name": "CoachMark",
+                "icon": "fa-hand-pointer",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "splashscreen",
+                "name": "SplashScreen",
+                "icon": "fa-rocket",
+                "badge": "Mới",
+                "badgeEn": "New"
+            }
         ]
     },
     {
-        title: "Ứng dụng & Công cụ", titleEn: "App & Tooling",
-        items: [
-            { id: "scheduler", name: "Scheduler", icon: "fa-calendar-day", badge: "Mới", badgeEn: "New" },
-            { id: "kanbanboard", name: "KanbanBoard", icon: "fa-table-columns", badge: "Mới", badgeEn: "New" },
-            { id: "codeeditor", name: "CodeEditor", icon: "fa-code", badge: "Mới", badgeEn: "New" },
-            { id: "markdownviewer", name: "MarkdownViewer", icon: "fa-file-lines", badge: "Mới", badgeEn: "New" },
-            { id: "imageviewer", name: "ImageViewer", icon: "fa-image", badge: "Mới", badgeEn: "New" },
-            { id: "minimap", name: "MiniMap", icon: "fa-map", badge: "Mới", badgeEn: "New" },
-            { id: "modelviewer3d", name: "ModelViewer3D", icon: "fa-cube", badge: "Mới", badgeEn: "New" },
-            { id: "coachmark", name: "CoachMark", icon: "fa-hand-pointer", badge: "Mới", badgeEn: "New" },
-            { id: "splashscreen", name: "SplashScreen", icon: "fa-rocket", badge: "Mới", badgeEn: "New" }
+        "title": "Hiệu ứng & Chuyển động",
+        "titleEn": "Effects & Motion",
+        "items": [
+            {
+                "id": "ripple",
+                "name": "Ripple",
+                "icon": "fa-water",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "spotlightcard",
+                "name": "SpotlightCard",
+                "icon": "fa-wand-sparkles",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "marqueeticker",
+                "name": "MarqueeTicker",
+                "icon": "fa-arrows-left-right-to-line",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "meshgradient",
+                "name": "Mesh gradient & Spotlight",
+                "icon": "fa-palette",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "glasscard",
+                "name": "Kính mờ & viền gradient",
+                "icon": "fa-square",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "aurorabackground",
+                "name": "AuroraBackground",
+                "icon": "fa-sun",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "borderbeam",
+                "name": "BorderBeam",
+                "icon": "fa-border-all",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "confettiburst",
+                "name": "ConfettiBurst",
+                "icon": "fa-champagne-glasses",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "sheensweep",
+                "name": "SheenSweep",
+                "icon": "fa-wand-magic",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "pulsering",
+                "name": "PulseRing",
+                "icon": "fa-circle-notch",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "wavedivider",
+                "name": "WaveDivider",
+                "icon": "fa-water",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "gradienttext",
+                "name": "GradientText",
+                "icon": "fa-font",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "cursorglow",
+                "name": "CursorGlow",
+                "icon": "fa-mouse-pointer",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "gridpattern",
+                "name": "GridPattern",
+                "icon": "fa-border-none",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "shakeelement",
+                "name": "ShakeElement",
+                "icon": "fa-wave-square",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "tiltcard",
+                "name": "TiltCard",
+                "icon": "fa-cube",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "magnetichover",
+                "name": "MagneticHover",
+                "icon": "fa-magnet",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "checkmarkdraw",
+                "name": "CheckMarkDraw",
+                "icon": "fa-check",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "scrollprogressbar",
+                "name": "ScrollProgressBar",
+                "icon": "fa-grip-lines",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "scrollreveal",
+                "name": "ScrollReveal",
+                "icon": "fa-eye",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "parallaxpanel",
+                "name": "ParallaxPanel",
+                "icon": "fa-clone",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "typewritertext",
+                "name": "TypewriterText",
+                "icon": "fa-keyboard",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "textreveal",
+                "name": "TextReveal",
+                "icon": "fa-heading",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "snowcanvas",
+                "name": "SnowCanvas",
+                "icon": "fa-snowflake"
+            },
+            {
+                "id": "particlefield",
+                "name": "ParticleField",
+                "icon": "fa-circle-nodes",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "pagetransitionhost",
+                "name": "PageTransitionHost",
+                "icon": "fa-shuffle",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "motion",
+                "name": "Stagger & Shared element",
+                "icon": "fa-wand-magic-sparkles",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "reducedmotion",
+                "name": "Reduced motion (Trợ năng)",
+                "nameEn": "Reduced motion (A11y)",
+                "icon": "fa-universal-access",
+                "badge": "Trợ năng",
+                "badgeEn": "A11y"
+            }
         ]
     },
     {
-        title: "Hiệu ứng & Trang trí", titleEn: "Effects & Decoration",
-        items: [
-            { id: "ripple", name: "Ripple", icon: "fa-water", badge: "Mới", badgeEn: "New" },
-            { id: "spotlightcard", name: "SpotlightCard", icon: "fa-wand-sparkles", badge: "Mới", badgeEn: "New" },
-            { id: "marqueeticker", name: "MarqueeTicker", icon: "fa-arrows-left-right-to-line", badge: "Mới", badgeEn: "New" },
-            { id: "meshgradient", name: "Mesh gradient & Spotlight", icon: "fa-palette", badge: "Mới", badgeEn: "New" },
-            { id: "glasscard", name: "Kính mờ & viền gradient", icon: "fa-square", badge: "Mới", badgeEn: "New" },
-            { id: "motion", name: "Stagger & Shared element", icon: "fa-wand-magic-sparkles", badge: "Mới", badgeEn: "New" },
-            { id: "reducedmotion", name: "Reduced motion (Trợ năng)", nameEn: "Reduced motion (A11y)", icon: "fa-universal-access", badge: "Mới", badgeEn: "New" },
-            { id: "aurorabackground", name: "AuroraBackground", icon: "fa-sun", badge: "Mới", badgeEn: "New" },
-            { id: "borderbeam", name: "BorderBeam", icon: "fa-border-all", badge: "Mới", badgeEn: "New" },
-            { id: "confettiburst", name: "ConfettiBurst", icon: "fa-champagne-glasses", badge: "Mới", badgeEn: "New" },
-            { id: "sheensweep", name: "SheenSweep", icon: "fa-wand-magic", badge: "Mới", badgeEn: "New" },
-            { id: "pulsering", name: "PulseRing", icon: "fa-circle-notch", badge: "Mới", badgeEn: "New" },
-            { id: "wavedivider", name: "WaveDivider", icon: "fa-water", badge: "Mới", badgeEn: "New" },
-            { id: "gradienttext", name: "GradientText", icon: "fa-font", badge: "Mới", badgeEn: "New" },
-            { id: "cursorglow", name: "CursorGlow", icon: "fa-mouse-pointer", badge: "Mới", badgeEn: "New" },
-            { id: "gridpattern", name: "GridPattern", icon: "fa-border-none", badge: "Mới", badgeEn: "New" },
-            { id: "shakeelement", name: "ShakeElement", icon: "fa-wave-square", badge: "Mới", badgeEn: "New" },
-            { id: "tiltcard", name: "TiltCard", icon: "fa-cube", badge: "Mới", badgeEn: "New" },
-            { id: "magnetichover", name: "MagneticHover", icon: "fa-magnet", badge: "Mới", badgeEn: "New" },
-            { id: "checkmarkdraw", name: "CheckMarkDraw", icon: "fa-check", badge: "Mới", badgeEn: "New" },
-            { id: "scrollprogressbar", name: "ScrollProgressBar", icon: "fa-grip-lines", badge: "Mới", badgeEn: "New" },
-            { id: "scrollreveal", name: "ScrollReveal", icon: "fa-eye", badge: "Mới", badgeEn: "New" },
-            { id: "parallaxpanel", name: "ParallaxPanel", icon: "fa-clone", badge: "Mới", badgeEn: "New" },
-            { id: "typewritertext", name: "TypewriterText", icon: "fa-keyboard", badge: "Mới", badgeEn: "New" },
-            { id: "textreveal", name: "TextReveal", icon: "fa-heading", badge: "Mới", badgeEn: "New" },
-            { id: "snowcanvas", name: "SnowCanvas", icon: "fa-snowflake" },
-            { id: "radialgauge", name: "RadialGauge", icon: "fa-gauge-high", badge: "Mới", badgeEn: "New" },
-            { id: "particlefield", name: "ParticleField", icon: "fa-sparkles", badge: "Mới", badgeEn: "New" },
-            { id: "pagetransitionhost", name: "PageTransitionHost", icon: "fa-shuffle", badge: "Mới", badgeEn: "New" },
-            { id: "sprite", name: "Sprite", icon: "fa-circle-dot" },
-            { id: "compareslider", name: "CompareSlider", icon: "fa-arrows-left-right" },
-            { id: "magnifier", name: "Magnifier", icon: "fa-magnifying-glass-plus" },
-            { id: "icons", name: "Icons Gallery", icon: "fa-icons" }
-        ]
-    },
-    {
-        title: "Controls cơ bản", titleEn: "Basic Controls",
-        items: [
-            { id: "button", name: "Button", icon: "fa-square-check" },
-            { id: "togglebutton", name: "ToggleButton", icon: "fa-toggle-on" },
-            { id: "checkbox", name: "CheckBox", icon: "fa-check-square", badge: "Mới", badgeEn: "New" },
-            { id: "radiobutton", name: "RadioButton", icon: "fa-circle-dot", badge: "Mới", badgeEn: "New" },
-            { id: "slider", name: "Slider", icon: "fa-arrows-up-down", badge: "Mới", badgeEn: "New" },
-            { id: "progressbar", name: "ProgressBar", icon: "fa-bars-progress" },
-            { id: "scrollviewer", name: "ScrollViewer", icon: "fa-arrow-down-up-across-line", badge: "Mới", badgeEn: "New" },
-            { id: "listbox", name: "ListBox", icon: "fa-rectangle-list", badge: "Mới", badgeEn: "New" },
-            { id: "listview", name: "ListView", icon: "fa-list", badge: "Mới", badgeEn: "New" },
-            { id: "datagrid", name: "DataGrid", icon: "fa-table" },
-            { id: "datagridpanels", name: "DataGrid Panels", icon: "fa-filter", badge: "Mới", badgeEn: "New" },
-            { id: "treeview", name: "TreeView", icon: "fa-folder-tree" },
-            { id: "groupbox", name: "GroupBox", icon: "fa-square", badge: "Mới", badgeEn: "New" },
-            { id: "menu", name: "Menu & ContextMenu", icon: "fa-bars-staggered", badge: "Mới", badgeEn: "New" },
-            { id: "textblock", name: "Typography", icon: "fa-font", badge: "Mới", badgeEn: "New" }
-        ]
-    },
-    {
-        title: "Thời gian", titleEn: "Time",
-        items: [
-            { id: "clock", name: "Clock", icon: "fa-clock" },
-            { id: "calendar", name: "Calendar", icon: "fa-calendar", badge: "Mới", badgeEn: "New" },
-            { id: "datepicker", name: "DatePicker", icon: "fa-calendar-check", badge: "Mới", badgeEn: "New" },
-            { id: "calendarwithclock", name: "CalendarWithClock", icon: "fa-calendar-days", badge: "Mới", badgeEn: "New" }
+        "title": "Thành phần cơ bản",
+        "titleEn": "Basic Controls",
+        "items": [
+            {
+                "id": "button",
+                "name": "Button",
+                "icon": "fa-square-check"
+            },
+            {
+                "id": "togglebutton",
+                "name": "ToggleButton",
+                "icon": "fa-toggle-on"
+            },
+            {
+                "id": "checkbox",
+                "name": "CheckBox",
+                "icon": "fa-check-square",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "radiobutton",
+                "name": "RadioButton",
+                "icon": "fa-circle-dot",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "slider",
+                "name": "Slider",
+                "icon": "fa-arrows-up-down",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "progressbar",
+                "name": "ProgressBar",
+                "icon": "fa-bars-progress"
+            },
+            {
+                "id": "scrollviewer",
+                "name": "ScrollViewer",
+                "icon": "fa-arrow-down-up-across-line",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "listbox",
+                "name": "ListBox",
+                "icon": "fa-rectangle-list",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "listview",
+                "name": "ListView",
+                "icon": "fa-list",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "treeview",
+                "name": "TreeView",
+                "icon": "fa-folder-tree"
+            },
+            {
+                "id": "groupbox",
+                "name": "GroupBox",
+                "icon": "fa-square",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "menu",
+                "name": "Menu & ContextMenu",
+                "icon": "fa-bars-staggered",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "textblock",
+                "name": "Typography",
+                "icon": "fa-font",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "avatarstack",
+                "name": "AvatarStack",
+                "icon": "fa-user-group",
+                "badge": "Mới",
+                "badgeEn": "New"
+            },
+            {
+                "id": "sprite",
+                "name": "Sprite",
+                "icon": "fa-film"
+            }
         ]
     }
 ];

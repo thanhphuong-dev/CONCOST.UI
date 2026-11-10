@@ -127,7 +127,7 @@ fs.writeFileSync(path.join(DOCS, "README.md"), out.join("\n"), "utf8");
 
 // ---- page -> source file map (used by the "edit this page" link) ----
 const SOURCE_FILES = ["data/legacy.js", "data/guides.js", "data/examples.js", "data/web.js",
-    "data/custom.js", "data/basic.js", "data/enrich.js"];
+    "data/custom.js", "data/cad.js", "data/basic.js", "data/enrich.js"];
 const sources = {};
 for (const rel of SOURCE_FILES) {
     const c = { window: {}, console };
@@ -138,6 +138,7 @@ for (const rel of SOURCE_FILES) {
         "typeof DOCS_EXAMPLES !== 'undefined' ? DOCS_EXAMPLES : null," +
         "typeof DOCS_WEB !== 'undefined' ? DOCS_WEB : null," +
         "typeof DOCS_CUSTOM !== 'undefined' ? DOCS_CUSTOM : null," +
+        "typeof DOCS_CAD !== 'undefined' ? DOCS_CAD : null," +
         "typeof DOCS_BASIC !== 'undefined' ? DOCS_BASIC : null," +
         "typeof DOCS_ENRICH !== 'undefined' ? DOCS_ENRICH : null" +
         "].filter(Boolean)[0] || {});";
