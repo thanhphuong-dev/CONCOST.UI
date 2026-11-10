@@ -411,49 +411,6 @@ pattern.OffsetY = scrollOffset * 0.08;`,
         ]
     },
 
-    themeauto: {
-        title: "Theme Auto — following the host",
-        desc: "A Revit/AutoCAD plug-in has no <code>Application</code> of its own, so the theme has to come from the host window. <code>AppTheme.Auto</code> reads the nearest painted background around the root and refreshes itself when the host switches light or dark.",
-        sections: [
-            { title: "Attach automatic theming to the plug-in root", desc: "Call it once, after the root is in the visual tree. No <code>Application.Current</code> needed — exactly how an add-in runs inside the host process." },
-            {
-                title: "The ThemeManager API",
-                desc: "Four application-level properties and four per-root calls. Every call must run on the root's dispatcher thread.",
-                table: [
-                    { token: "ThemeManager.Current", desc: "Singleton — one instance per process, even when the host loads several add-ins." },
-                    { token: "ThemeManager.Current.ApplyTheme(root, AppTheme.Auto)", desc: "Themes one root. <code>Auto</code> reads the background of the nearest ancestor that actually paints one." },
-                    { token: "ThemeManager.Current.RefreshAutoTheme(root)", desc: "Call again after the host switches theme. Roots given an explicit <code>Light</code>/<code>Dark</code> are skipped." },
-                    { token: "ThemeManager.DetectTheme(root)", desc: "Returns the <code>AppTheme</code> the host is showing without applying anything — for branching logic." },
-                    { token: "ThemeManager.Current.ApplyAccentColor(root, color)", desc: "Sets an accent for one root without touching the rest of the host." },
-                    { token: "ThemeManager.Current.ApplySurfaceStyle(root, SurfaceStyle)", desc: "Picks flat / raised / frosted glass for that root." },
-                    { token: "ThemeManager.Current.Theme / Preset / AccentColor", desc: "Global state, for when your app owns the <code>Application</code>." }
-                ]
-            },
-            { title: "Refresh when the host switches theme", desc: "<code>RefreshAutoTheme</code> only touches roots sitting at <code>AppTheme.Auto</code>, so it is safe to call unconditionally from the host's theme-changed event." },
-            { title: "An explicit theme still wins", desc: "Set <code>AppTheme.Light</code> or <code>AppTheme.Dark</code> and <code>RefreshAutoTheme</code> leaves that root alone — useful for a print preview or a colour chart." }
-        ]
-    },
-
-    brutaltheme: {
-        title: "ThemePreset.Brutal — neo-brutalism",
-        desc: "The seventh <code>ThemeManager</code> preset: cream surfaces <code>#FFFDF5</code>, ink borders <code>#111111</code> and an electric accent <code>#FFE14D</code> — neo-brutalist spirit that still reads in a business app.",
-        sections: [
-            {
-                title: "Apply and restore",
-                desc: "The preset overrides seven surface/border/text brushes. The first time it runs it <b>snapshots</b> the previous values, so switching back to <code>Default</code> restores them without a restart.",
-                csharp: `ThemeManager.Current.Preset = ThemePreset.Brutal;
-
-// Back to the default palette — restored from the snapshot
-ThemeManager.Current.Preset = ThemePreset.Default;`,
-                callout: {
-                    type: "warn",
-                    title: "A colour preset, not a style set",
-                    body: "It does not change border thickness or corner radius. For true brutalism (2–3px borders, square corners, hard shadows) add a dedicated style variant in <code>Generic.xaml</code>."
-                }
-            }
-        ]
-    },
-
     reducedmotion: {
         title: "Reduced motion — follow the system setting",
         desc: "Every effect reads <code>MotionSettings.AnimationsEnabled</code>, which defaults to the Windows “Show animations” setting (<code>SystemParameters.ClientAreaAnimation</code>). When a user disables animations, effects paint a static frame instead of freezing mid-animation — WCAG 2.2.2.",

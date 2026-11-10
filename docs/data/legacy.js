@@ -3,21 +3,21 @@
 const DOCS_LEGACY = {
     intro: {
         hero: true,
-        title: "Thư viện WPF cho kỹ thuật, CAD & BIM",
+        title: "Thư viện WPF cho Kỹ thuật, CAD & BIM",
         badge: "Bắt Đầu Nhanh",
-        desc: "CONCOST.UI là bộ thư viện giao diện WPF tối ưu cho phần mềm kết cấu, BIM, CAD và ứng dụng desktop kỹ thuật. Thư viện đi kèm hệ thống design tokens tự thích ứng Dark/Light, 6 theme preset và hơn 60 controls.",
+        desc: "CONCOST.UI là bộ thư viện giao diện WPF chuyên nghiệp và toàn diện cho phần mềm kết cấu, BIM, CAD và ứng dụng kỹ thuật cao cấp. Tích hợp sẵn hệ thống Design Tokens chuẩn công nghiệp, 5 bộ Theme đầy đủ (Light, Soft Light, Dark, Autodesk Revit, Revit Dark), 8 Theme Presets và hơn 140+ Controls chuyên dụng tối ưu cho hiệu năng đồ họa CAD.",
         heroStats: [
-            { value: "60+", label: "Controls" },
-            { value: "3", label: "Target frameworks" },
-            { value: "6", label: "Theme presets" },
-            { value: "382", label: "API properties" }
+            { value: "140+", label: "Controls" },
+            { value: "154", label: "Trang tài liệu" },
+            { value: "5 Themes", label: "Bộ theme hoàn chỉnh" },
+            { value: "1,465", label: "Thuộc tính API" }
         ],
         quick: [
             { id: "class-library", title: "Dùng trong plugin DLL", desc: "Revit, AutoCAD, Tekla, Navisworks — không cần App.xaml", icon: "fa-puzzle-piece" },
-            { id: "theming", title: "Theme & Design Tokens", desc: "Đổi màu, preset, dark mode và token hệ thống", icon: "fa-palette" },
+            { id: "theming", title: "Theme & Design Tokens", desc: "Đổi màu, preset, Dark/Light/Revit và Auto host", icon: "fa-palette" },
             { id: "attached-props", title: "Attached Properties", desc: "Icon, badge, placeholder, validation, drag-drop", icon: "fa-wand-magic-sparkles" },
             { id: "spreadsheet", title: "Spreadsheet", desc: "Bảng tính kỹ thuật có công thức và nhiều sheet", icon: "fa-table-cells" },
-            { id: "rebarinput", title: "RebarInput", desc: "Nhập ký hiệu cốt thép, tự tính As (mm²)", icon: "fa-cubes-stacked" },
+            { id: "stackedheaderdatagrid", title: "StackedHeaderDataGrid", desc: "Lưới dữ liệu header phân cấp đa tầng CAD/BIM", icon: "fa-table-columns" },
             { id: "faq", title: "FAQ & Troubleshooting", desc: "Các lỗi thường gặp khi tích hợp thư viện", icon: "fa-circle-question" }
         ],
         sections: [
@@ -331,6 +331,37 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
                     type: "tip",
                     body: "Auto áp theme theo <b>phạm vi root</b> nên không đụng tới theme của cả ứng dụng: hai panel nằm trong hai window khác nhau có thể một sáng một tối cùng lúc. <code>AppTheme.System</code> thì ngược lại — nó theo thiết lập sáng/tối của Windows."
                 }
+            },
+            {
+                title: "3. Bộ 8 Theme Presets & Phong cách Neo-Brutalism",
+                desc: "Ngoài màu sắc tự do qua <code>AccentColor</code>, thư viện cung cấp sẵn 8 bảng màu được cân chỉnh độ tương phản chuẩn WCAG AAA:",
+                table: [
+                    { token: "ThemePreset.Default", desc: "Cam kỹ thuật tiêu chuẩn CONCOST (#FF7900), tương phản cao" },
+                    { token: "ThemePreset.Ocean", desc: "Xanh đại dương công nghệ (#0284C7)" },
+                    { token: "ThemePreset.Forest", desc: "Xanh lục lâm nghiệp & công trình xanh (#059669)" },
+                    { token: "ThemePreset.Sunset", desc: "Đỏ cam hoàng hôn nổi bật (#EA580C)" },
+                    { token: "ThemePreset.Slate", desc: "Xám đá trung tính, tinh giản chuẩn CAD (#475569)" },
+                    { token: "ThemePreset.Midnight", desc: "Xanh tím bóng đêm huyền bí (#6366F1)" },
+                    { token: "ThemePreset.HighContrast", desc: "Độ tương phản cực cao (Hỗ trợ người khiếm thị)" },
+                    { token: "ThemePreset.Brutal", desc: "Phong cách Neo-Brutalism: nền kem #FFFDF5, viền mực #111111, accent vàng điện #FFE14D" }
+                ],
+                csharp: `// Áp dụng Preset Neo-Brutalism
+ThemeManager.Current.Preset = ThemePreset.Brutal;
+
+// Trở về mặc định — toàn bộ brush được khôi phục từ snapshot tự động
+ThemeManager.Current.Preset = ThemePreset.Default;`
+            },
+            {
+                title: "4. Danh mục API đầy đủ của ThemeManager",
+                desc: "ThemeManager cung cấp cả API tĩnh lẫn API singleton cho việc cấu hình toàn cục hoặc cục bộ:",
+                table: [
+                    { token: "ThemeManager.Current", desc: "Singleton quản lý theme toàn cục của tiến trình" },
+                    { token: "ThemeManager.Current.ApplyTheme(root, theme)", desc: "Nạp toàn bộ Resources vào thẻ gốc (Window / UserControl) mà không ô nhiễm phần mềm chủ" },
+                    { token: "ThemeManager.Current.RefreshAutoTheme(root)", desc: "Cập nhật lại theme tự động khi host Revit/AutoCAD đổi sáng - tối" },
+                    { token: "ThemeManager.DetectTheme(root)", desc: "Dò tìm theme hiện tại của cửa sổ chứa root (trả về AppTheme)" },
+                    { token: "ThemeManager.Current.ApplyAccentColor(root, color)", desc: "Đặt màu accent riêng cho root mà không ảnh hưởng phần còn lại của ứng dụng" },
+                    { token: "ThemeManager.Current.ApplySurfaceStyle(root, style)", desc: "Chọn bề mặt phẳng (Flat), nổi (Elevated) hoặc kính mờ (Acrylic/Glass)" }
+                ]
             }
         ]
     },

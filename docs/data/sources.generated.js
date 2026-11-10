@@ -73,8 +73,6 @@ const DOCS_SOURCES = {
   "cursorglow": "data/web.js",
   "gridpattern": "data/web.js",
   "shakeelement": "data/web.js",
-  "themeauto": "data/web.js",
-  "brutaltheme": "data/web.js",
   "reducedmotion": "data/web.js",
   "tiltcard": "data/web.js",
   "magnetichover": "data/web.js",

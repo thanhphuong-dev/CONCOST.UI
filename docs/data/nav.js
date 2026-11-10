@@ -6,11 +6,8 @@ const DOCS_NAV = [
             { id: "intro", name: "Giới thiệu & Cài đặt", nameEn: "Introduction & Setup", icon: "fa-book-open" },
             { id: "class-library", name: "Plugin DLL (Revit/AutoCAD)", nameEn: "Plugin DLL (Revit/AutoCAD)", icon: "fa-puzzle-piece" },
             { id: "theming", name: "Theme & Design Tokens", icon: "fa-palette" },
-            { id: "themeauto", name: "Theme Auto (host)", nameEn: "Theme Auto (host)", icon: "fa-circle-half-stroke", badge: "Mới", badgeEn: "New" },
-            { id: "brutaltheme", name: "Preset Brutal", icon: "fa-swatchbook", badge: "Mới", badgeEn: "New" },
-            { id: "reducedmotion", name: "Reduced motion", icon: "fa-universal-access", badge: "Mới", badgeEn: "New" },
             { id: "attached-props", name: "Attached Properties", icon: "fa-wand-magic-sparkles" },
-            { id: "examples", name: "Ví dụ sử dụng", nameEn: "Usage examples", icon: "fa-code", badge: "Mới", badgeEn: "New" },
+            { id: "examples", name: "Ví dụ sử dụng", nameEn: "Usage examples", icon: "fa-code" },
             { id: "faq", name: "FAQ & Troubleshooting", icon: "fa-circle-question" },
             { id: "migration", name: "Chuyển từ WinForms/WPF", nameEn: "Migrating from WinForms/WPF", icon: "fa-code-branch" }
         ]
@@ -164,6 +161,7 @@ const DOCS_NAV = [
             { id: "meshgradient", name: "Mesh gradient & Spotlight", icon: "fa-palette", badge: "Mới", badgeEn: "New" },
             { id: "glasscard", name: "Kính mờ & viền gradient", icon: "fa-square", badge: "Mới", badgeEn: "New" },
             { id: "motion", name: "Stagger & Shared element", icon: "fa-wand-magic-sparkles", badge: "Mới", badgeEn: "New" },
+            { id: "reducedmotion", name: "Reduced motion (Trợ năng)", nameEn: "Reduced motion (A11y)", icon: "fa-universal-access", badge: "Mới", badgeEn: "New" },
             { id: "aurorabackground", name: "AuroraBackground", icon: "fa-sun", badge: "Mới", badgeEn: "New" },
             { id: "borderbeam", name: "BorderBeam", icon: "fa-border-all", badge: "Mới", badgeEn: "New" },
             { id: "confettiburst", name: "ConfettiBurst", icon: "fa-champagne-glasses", badge: "Mới", badgeEn: "New" },

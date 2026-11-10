@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**156 pages · 1465 documented properties · 125 controls mapped to source · 2 languages (VI / EN).**
+**154 pages · 1465 documented properties · 125 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -25,12 +25,9 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 
 | Page | Nội dung |
 | --- | --- |
-| [Giới thiệu & Cài đặt](index.html#intro) | CONCOST.UI là bộ thư viện giao diện WPF tối ưu cho phần mềm kết cấu, BIM, CAD và ứng dụng desktop kỹ thuật. Thư viện đi kèm hệ thống design tokens tự  |
+| [Giới thiệu & Cài đặt](index.html#intro) | CONCOST.UI là bộ thư viện giao diện WPF chuyên nghiệp và toàn diện cho phần mềm kết cấu, BIM, CAD và ứng dụng kỹ thuật cao cấp. Tích hợp sẵn hệ thống  |
 | [Plugin DLL (Revit/AutoCAD)](index.html#class-library) | Hướng dẫn chuyên sâu kiến trúc phát triển giao diện WPF khi đóng gói dưới dạng Class Library (.DLL) hoặc Plugins cho các phần mềm CAD/BIM chuyên nghiệ |
 | [Theme & Design Tokens](index.html#theming) | Toàn bộ bảng màu và phong cách giao diện của CONCOST.UI được quản lý thông qua DynamicResource, cho phép ứng dụng chuyển đổi mượt mà giữa Dark và Ligh |
-| [Theme Auto (host)](index.html#themeauto) | Plugin Revit/AutoCAD không có Application riêng, nên theme phải đọc từ cửa sổ chủ. AppTheme.Auto dò màu nền gần nhất quanh root rồi tự cập nhật khi ho |
-| [Preset Brutal](index.html#brutaltheme) | Preset thứ bảy của ThemeManager: nền kem #FFFDF5, viền mực #111111, accent vàng điện #FFE14D — tinh thần neo-brutalism nhưng vẫn đọc được trong app ng |
-| [Reduced motion](index.html#reducedmotion) | Mọi hiệu ứng của thư viện đọc MotionSettings.AnimationsEnabled, mặc định lấy từ Windows “Show animations” (SystemParameters.ClientAreaAnimation). Ngườ |
 | [Attached Properties](index.html#attached-props) | Hệ thống thuộc tính đính kèm phong phú của CONCOST.UI cho phép bạn 'thổi hồn' công nghệ hiện đại vào bất kỳ control WPF nguyên bản nào (Button, TextBo |
 | [Ví dụ sử dụng](index.html#examples) | Bốn tình huống thực tế ghép nhiều control lại với nhau: form nhập thông số dầm, màn hình bảng khối lượng, panel cấu hình trong plugin Revit và dashboa |
 | [FAQ & Troubleshooting](index.html#faq) | Các sự cố thường gặp khi tích hợp CONCOST.UI vào ứng dụng WPF hoặc plugin CAD/BIM, kèm nguyên nhân gốc và cách xử lý. |
@@ -186,6 +183,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [Mesh gradient & Spotlight](index.html#meshgradient) | Hai hiệu ứng nền: AnimatedMeshGradient cho bốn khối màu “thở” quanh neo cố định, và CursorSpotlight làm tối mọi thứ trừ một vòng quanh con trỏ. |
 | [Kính mờ & viền gradient](index.html#glasscard) | Hai bề mặt: FrostedGlass làm mờ đúng vùng nằm sau nó, và AnimatedGradientBorder cho viền gradient xoay quanh thẻ. |
 | [Stagger & Shared element](index.html#motion) | Hai kiểu chuyển động: danh sách hiện dần từng mục, và một phần tử “lớn ra” từ chỗ nó từng nằm. |
+| [Reduced motion (Trợ năng)](index.html#reducedmotion) | Mọi hiệu ứng của thư viện đọc MotionSettings.AnimationsEnabled, mặc định lấy từ Windows “Show animations” (SystemParameters.ClientAreaAnimation). Ngườ |
 | [AuroraBackground](index.html#aurorabackground) | Nền aurora gồm vài quầng sáng lớn trôi chậm, vẽ trực tiếp bằng RadialGradientBrush nên không dùng BlurEffect — vẫn mượt trên máy yếu. Dùng cho splash  |
 | [BorderBeam](index.html#borderbeam) | Một đốm sáng chạy dọc chu vi khung bo góc, kiểu “border beam” trên các landing page hiện đại. Bọc quanh nội dung bất kỳ, dùng cho item mới, trạng thái |
 | [ConfettiBurst](index.html#confettiburst) | Bắn một đợt pháo giấy ngắn khi thao tác thành công (lưu mô hình, duyệt hồ sơ). Tự mô phỏng vật lý và tự tắt khi hạt tan hết, không cần code hẹn giờ. |

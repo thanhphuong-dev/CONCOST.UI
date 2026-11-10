@@ -1,4 +1,4 @@
-﻿// Controls ported from modern web UI patterns (spotlight card, number ticker,
+// Controls ported from modern web UI patterns (spotlight card, number ticker,
 // sparkline, avatar stack).
 const DOCS_WEB = {
     spotlightcard: {
@@ -563,86 +563,6 @@ pattern.OffsetY = scrollOffset * 0.08;`,
             }
         ],
         related: ["textbox", "growl", "numericupdown"]
-    },
-
-    themeauto: {
-
-        title: "Theme Auto — bám theo theme của host",
-        badge: "Theme",
-        desc: "Plugin Revit/AutoCAD không có <code>Application</code> riêng, nên theme phải đọc từ cửa sổ chủ. <code>AppTheme.Auto</code> dò màu nền gần nhất quanh root rồi tự cập nhật khi host đổi sáng/tối.",
-        keywords: ["theme", "auto", "revit", "autocad", "plugin", "dark", "light", "detect"],
-        sections: [
-            {
-                title: "Gắn theme tự động cho root của plugin",
-                desc: "Gọi một lần sau khi root đã vào visual tree. Không cần <code>Application.Current</code> — đúng cách một add-in chạy trong tiến trình của host.",
-                xaml: `<UserControl x:Class="MyAddin.PluginRoot"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ui="clr-namespace:CONCOST.UI.Controls;assembly=CONCOST.UI">
-    <Border Background="{DynamicResource CONCOST.Brush.Surface}" Padding="16">
-        <ui:Button Content="Rebar schedule" Style="{DynamicResource CONCOST.Button.Primary}" />
-    </Border>
-</UserControl>`,
-                csharp: `// Root của add-in: dò theme từ window chủ rồi bám theo
-PluginRoot.Loaded += (_, _) =>
-    ThemeManager.Current.ApplyTheme(PluginRoot, AppTheme.Auto);`
-            },
-            {
-                title: "API của ThemeManager",
-                desc: "Bốn thuộc tính cấp ứng dụng và bốn lời gọi theo từng root. Mọi lời gọi phải chạy trên dispatcher thread của root.",
-                table: [
-                    { token: "ThemeManager.Current", desc: "Singleton — cùng một instance cho cả tiến trình, kể cả khi host nạp nhiều add-in." },
-                    { token: "ThemeManager.Current.ApplyTheme(root, AppTheme.Auto)", desc: "Gắn theme cho một root cụ thể. <code>Auto</code> dò màu nền của phần tử cha gần nhất có nền đặc." },
-                    { token: "ThemeManager.Current.RefreshAutoTheme(root)", desc: "Gọi lại sau khi host đổi theme. Root đã đặt <code>Light</code>/<code>Dark</code> tường minh thì bị bỏ qua." },
-                    { token: "ThemeManager.DetectTheme(root)", desc: "Trả về <code>AppTheme</code> mà host đang hiển thị, không áp dụng gì — dùng khi cần rẽ nhánh logic." },
-                    { token: "ThemeManager.Current.ApplyAccentColor(root, color)", desc: "Đặt màu accent riêng cho một root mà không đụng tới phần còn lại của host." },
-                    { token: "ThemeManager.Current.ApplySurfaceStyle(root, SurfaceStyle)", desc: "Chọn bề mặt phẳng / nổi / kính mờ cho root đó." },
-                    { token: "ThemeManager.Current.Theme / Preset / AccentColor", desc: "Trạng thái toàn cục, dùng khi ứng dụng là chủ sở hữu <code>Application</code>." }
-                ]
-            },
-            {
-                title: "Cập nhật khi host đổi theme",
-                desc: "<code>RefreshAutoTheme</code> chỉ tác động root đang ở <code>AppTheme.Auto</code>, nên có thể gọi không điều kiện mỗi khi Revit/AutoCAD phát sự kiện đổi theme.",
-                csharp: `// Revit/AutoCAD vừa chuyển sáng-tối
-ThemeManager.Current.RefreshAutoTheme(PluginRoot);
-
-// Hoặc hỏi trước khi cần quyết định
-AppTheme hostTheme = ThemeManager.DetectTheme(PluginRoot);
-bool hostIsDark = hostTheme == AppTheme.Dark;`
-            },
-            {
-                title: "Theme tường minh vẫn thắng",
-                desc: "Đặt <code>AppTheme.Light</code> hoặc <code>AppTheme.Dark</code> thì <code>RefreshAutoTheme</code> bỏ qua root đó — hữu ích cho cửa sổ xem trước bản in hoặc bảng màu.",
-                csharp: `// Cửa sổ xem trước luôn sáng, bất kể host đang tối
-ThemeManager.Current.ApplyTheme(PrintPreviewRoot, AppTheme.Light);`,
-                callout: { type: "tip", body: "Nếu panel của plugin vẫn ra màu sai, kiểm tra root có <code>Background</code> trong suốt hay không: <code>DetectTheme</code> đi ngược lên tới phần tử đầu tiên thực sự tô nền, nên một panel trong suốt sẽ đọc theme của window chủ — thường đúng ý." }
-            }
-        ],
-        related: ["theming", "brutaltheme", "reducedmotion"]
-    },
-
-    brutaltheme: {
-        title: "ThemePreset.Brutal — neo-brutalism",
-        badge: "Bắt đầu",
-        desc: "Preset thứ bảy của <code>ThemeManager</code>: nền kem <code>#FFFDF5</code>, viền mực <code>#111111</code>, accent vàng điện <code>#FFE14D</code> — tinh thần neo-brutalism nhưng vẫn đọc được trong app nghiệp vụ.",
-        keywords: ["theme", "brutal", "neo-brutalism", "preset"],
-        sections: [
-            {
-                title: "Áp và khôi phục",
-                desc: "Preset ghi đè 7 brush nền/viền/chữ. Lần đầu áp dụng sẽ <b>snapshot</b> giá trị cũ, nên chuyển về <code>Default</code> là khôi phục nguyên trạng — không cần khởi động lại.",
-                xaml: `<!-- Không cần XAML: preset ghi vào Application.Resources -->`,
-                csharp: `ThemeManager.Current.Preset = ThemePreset.Brutal;
-
-// Quay lại mặc định — brush được khôi phục từ snapshot
-ThemeManager.Current.Preset = ThemePreset.Default;`,
-                callout: {
-                    type: "warn",
-                    title: "Đây là preset màu, không phải bộ style",
-                    body: "Nó không đổi độ dày viền hay bo góc. Muốn “brutal” đúng nghĩa (viền 2–3px, bo 0, shadow cứng) thì thêm một style variant riêng trong <code>Generic.xaml</code>."
-                }
-            }
-        ],
-        related: ["theming", "card", "button"]
     },
 
     reducedmotion: {

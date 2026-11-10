@@ -536,14 +536,21 @@
     }
 
     /* ---------- Routing ---------- */
+    const ALIASES = {
+        themeauto: "theming",
+        brutaltheme: "theming"
+    };
+
     function go(id) {
+        id = ALIASES[id] || id;
         if (!PAGES[id]) return;
         if (location.hash.slice(1) !== id) history.pushState({ id: id }, "", "#" + id);
         render(id);
     }
 
     function currentId() {
-        const id = decodeURIComponent(location.hash.slice(1));
+        let id = decodeURIComponent(location.hash.slice(1));
+        id = ALIASES[id] || id;
         return PAGES[id] ? id : (ORDER[0] || "intro");
     }
 

@@ -2,21 +2,21 @@
 Object.assign(DOCS_EN.pages, {
 
     intro: {
-        title: "A WPF library for engineering, CAD &amp; BIM",
-        desc: "CONCOST.UI is a WPF component library tuned for structural, BIM, CAD and technical desktop applications. It ships design tokens that adapt to light and dark, six theme presets and more than 60 controls.",
+        title: "WPF Library for Engineering, CAD &amp; BIM",
+        desc: "CONCOST.UI is a professional WPF component library engineered for structural, BIM, CAD and advanced technical desktop applications. It includes an enterprise design token system, 5 complete themes (Light, Soft Light, Dark, Autodesk Revit, Revit Dark), 8 presets, and over 140+ specialized controls optimized for CAD performance.",
         heroStats: [
             { label: "Controls" },
-            { label: "Target frameworks" },
-            { label: "Theme presets" },
-            { label: "API properties" }
+            { label: "Docs Pages" },
+            { label: "Theme System" },
+            { label: "API Properties" }
         ],
         quick: [
-            { title: "Use inside a plugin DLL", desc: "Revit, AutoCAD, Tekla, Navisworks — no App.xaml required" },
-            { title: "Theme & Design Tokens", desc: "Accent colour, presets, dark mode and system tokens" },
+            { title: "Inside a plugin DLL", desc: "Revit, AutoCAD, Tekla, Navisworks — no App.xaml required" },
+            { title: "Theme & Design Tokens", desc: "Color palettes, presets, Dark/Light/Revit and Auto host" },
             { title: "Attached Properties", desc: "Icon, badge, placeholder, validation, drag-and-drop" },
             { title: "Spreadsheet", desc: "Formula-driven engineering worksheets with multiple sheets" },
-            { title: "RebarInput", desc: "Parse rebar notation and compute As (mm²)" },
-            { title: "FAQ & Troubleshooting", desc: "The integration problems people actually hit" }
+            { title: "StackedHeaderDataGrid", desc: "Multi-level hierarchical header data grid for CAD/BIM" },
+            { title: "FAQ & Troubleshooting", desc: "Common integration issues and solutions" }
         ],
         sections: [
             {
@@ -105,6 +105,32 @@ var hostTheme = ThemeManager.DetectTheme(PluginRoot);`,
                 callout: {
                     type: "tip",
                     body: "Auto applies the theme to a <b>root element</b>, so it never touches the rest of the application: two panels in two different windows can be light and dark at the same time. <code>AppTheme.System</code> is the opposite — it follows the Windows light/dark setting."
+                }
+            },
+            {
+                title: "3. 8 Theme Presets & Neo-Brutalism Style",
+                desc: "Beyond arbitrary custom colors via <code>AccentColor</code>, the library ships 8 contrast-calibrated WCAG AAA presets:",
+                table: {
+                    "ThemePreset.Default": "Standard technical orange (#FF7900), high-visibility CAD accent.",
+                    "ThemePreset.Ocean": "Ocean technology blue (#0284C7).",
+                    "ThemePreset.Forest": "Forest green for environmental and sustainable BIM engineering (#059669).",
+                    "ThemePreset.Sunset": "Vibrant sunset orange-red (#EA580C).",
+                    "ThemePreset.Slate": "Neutral CAD slate gray (#475569).",
+                    "ThemePreset.Midnight": "Deep midnight indigo (#6366F1).",
+                    "ThemePreset.HighContrast": "Ultra-high contrast accessibility palette.",
+                    "ThemePreset.Brutal": "Neo-Brutalism: cream background #FFFDF5, ink border #111111, electric yellow accent #FFE14D."
+                }
+            },
+            {
+                title: "4. Complete ThemeManager API Reference",
+                desc: "ThemeManager provides both global process-level and scoped root-level APIs:",
+                table: {
+                    "ThemeManager.Current": "Singleton instance managing process-wide theme and accent color.",
+                    "ThemeManager.Current.ApplyTheme(root, theme)": "Scope theme styles and brushes to a specific Window or UserControl.",
+                    "ThemeManager.Current.RefreshAutoTheme(root)": "Re-query host background color and update light/dark mode for the root.",
+                    "ThemeManager.DetectTheme(root)": "Detect whether the host window currently displays a light or dark surface.",
+                    "ThemeManager.Current.ApplyAccentColor(root, color)": "Set an isolated accent color on the root element.",
+                    "ThemeManager.Current.ApplySurfaceStyle(root, style)": "Switch between Flat, Elevated, and Acrylic/Glass surfaces."
                 }
             }
         ]
