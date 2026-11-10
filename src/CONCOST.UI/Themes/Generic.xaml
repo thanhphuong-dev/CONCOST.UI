@@ -7886,19 +7886,153 @@
                   <DataTemplate>
                     <StackPanel>
                       <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="10,4">
-                        <TextBlock FontWeight="Normal" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" />
+                        <TextBlock FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" />
                       </Border>
                       <ItemsControl ItemsSource="{Binding Properties}">
                         <ItemsControl.ItemTemplate>
                           <DataTemplate>
-                            <Border BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="10,4">
+                            <Border BorderBrush="{DynamicResource CONCOST.Brush.BorderSubtle}" BorderThickness="0,0,0,1" Padding="8,3">
                               <Grid>
                                 <Grid.ColumnDefinitions>
-                                  <ColumnDefinition Width="160" />
+                                  <ColumnDefinition Width="150" />
                                   <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock FontSize="11.5" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding DisplayName}" />
-                                <TextBox Grid.Column="1" FontSize="11.5" Height="24" Padding="4,1" Style="{DynamicResource CONCOST.TextBox.Base}" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}" />
+                                <TextBlock FontSize="11.5" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding DisplayName}" ToolTip="{Binding Description}" />
+                                <Grid Grid.Column="1">
+                                  <TextBox FontSize="11.5" Height="24" Padding="6,2" VerticalContentAlignment="Center" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}" ToolTip="{Binding ValidationError}">
+                                    <FrameworkElement.Style>
+                                      <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource CONCOST.TextBox.Base}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                          <DataTrigger Value="Boolean" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                          <DataTrigger Value="Enum" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </FrameworkElement.Style>
+                                  </TextBox>
+                                  <ComboBox Height="24" FontSize="11.5" ItemsSource="{Binding EnumOptions}" SelectedItem="{Binding Value, Mode=TwoWay}" VerticalContentAlignment="Center">
+                                    <FrameworkElement.Style>
+                                      <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource CONCOST.ComboBox.Base}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                          <DataTrigger Value="Enum" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </FrameworkElement.Style>
+                                  </ComboBox>
+                                  <CheckBox Height="20" IsChecked="{Binding IsBoolTrue, Mode=TwoWay}" Margin="4,0,0,0" VerticalAlignment="Center">
+                                    <FrameworkElement.Style>
+                                      <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource CONCOST.CheckBox.Base}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                          <DataTrigger Value="Boolean" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </FrameworkElement.Style>
+                                  </CheckBox>
+                                </Grid>
+                              </Grid>
+                            </Border>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <!-- AUTODESK REVIT STYLE PROPERTY GRID -->
+  <Style x:Key="CONCOST.PropertyGrid.Revit" TargetType="{x:Type controls:PropertyGrid}" BasedOn="{StaticResource CONCOST.PropertyGrid.Base}">
+    <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CONCOST.Brush.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls:PropertyGrid}">
+          <Border Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" CornerRadius="0" ClipToBounds="True">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <ItemsControl ItemsSource="{TemplateBinding controls:PropertyGrid.Categories}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel>
+                      <!-- Revit Flat Category Band -->
+                      <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="8,4">
+                        <TextBlock FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" />
+                      </Border>
+                      <!-- Revit Tabular Parameter Rows with Vertical Gridline -->
+                      <ItemsControl ItemsSource="{Binding Properties}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <Border BorderBrush="{DynamicResource CONCOST.Brush.BorderSubtle}" BorderThickness="0,0,0,1" Background="{DynamicResource CONCOST.Brush.Surface}">
+                              <Grid MinHeight="25">
+                                <Grid.ColumnDefinitions>
+                                  <ColumnDefinition Width="145" />
+                                  <ColumnDefinition Width="1" />
+                                  <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <!-- Parameter Name -->
+                                <TextBlock Grid.Column="0" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" Padding="8,3,4,3" TextTrimming="CharacterEllipsis" Text="{Binding DisplayName}" ToolTip="{Binding Description}" />
+                                <!-- Vertical Gridline -->
+                                <Rectangle Grid.Column="1" Fill="{DynamicResource CONCOST.Brush.BorderSubtle}" HorizontalAlignment="Stretch" Width="1" />
+                                <!-- Parameter Value Editor (fills cell) -->
+                                <Grid Grid.Column="2" Background="{DynamicResource CONCOST.Brush.Surface}">
+                                  <TextBox FontSize="11" Height="23" Padding="4,2" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}" ToolTip="{Binding ValidationError}">
+                                    <FrameworkElement.Style>
+                                      <Style TargetType="{x:Type TextBox}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                          <DataTrigger Value="Boolean" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                          <DataTrigger Value="Enum" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                          <DataTrigger Value="True" Binding="{Binding IsReadOnly}">
+                                            <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceSecondary}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextSecondary}" />
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </FrameworkElement.Style>
+                                  </TextBox>
+                                  <ComboBox Height="23" FontSize="11" ItemsSource="{Binding EnumOptions}" SelectedItem="{Binding Value, Mode=TwoWay}" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="4,1">
+                                    <FrameworkElement.Style>
+                                      <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource CONCOST.ComboBox.Base}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                          <DataTrigger Value="Enum" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </FrameworkElement.Style>
+                                  </ComboBox>
+                                  <CheckBox Height="18" IsChecked="{Binding IsBoolTrue, Mode=TwoWay}" Margin="6,0,0,0" VerticalAlignment="Center">
+                                    <FrameworkElement.Style>
+                                      <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource CONCOST.CheckBox.Base}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                          <DataTrigger Value="Boolean" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </FrameworkElement.Style>
+                                  </CheckBox>
+                                </Grid>
                               </Grid>
                             </Border>
                           </DataTemplate>

@@ -3610,29 +3610,98 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
             VerticalAlignment = VerticalAlignment.Stretch,
             HorizontalAlignment = HorizontalAlignment.Stretch,
             ShowSearch = true,
-            RevitLayout = false,
+            RevitLayout = true, // Autodesk Revit Style active by default
             EmptyTitle = Loc.T("Chưa chọn cấu kiện", "Nothing selected"),
             EmptySubtitle = Loc.T("Chọn một đối tượng trên mô hình để chỉnh sửa tham số.", "Select an element to edit its parameters."),
-            EmptyHint = Loc.T("Chọn đối tượng từ danh sách bên dưới hoặc nhấp vào mô hình để nạp thuộc tính.", "Pick an element from the target selector below to inspect parameters.")
+            EmptyHint = Loc.T("Chọn đối tượng từ danh sách để nạp thuộc tính.", "Pick an element from the target selector to inspect parameters.")
         };
 
+        // CAD Dock Header (Authentic Autodesk Revit Dock Panel Titlebar)
+        var dockHeader = new Grid
+        {
+            Height = 28,
+            Background = (Brush)Application.Current.FindResource("CONCOST.Brush.SurfaceSecondary")
+        };
+        dockHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        dockHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        dockHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        var headerTitleStack = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Margin = new Thickness(10, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        var dockIcon = new Icon { Kind = IconKind.SettingsSliders, Width = 12, Height = 12, Margin = new Thickness(0, 0, 6, 0) };
+        dockIcon.SetResourceReference(Control.ForegroundProperty, "CONCOST.Brush.Primary");
+        headerTitleStack.Children.Add(dockIcon);
+
+        var dockTitle = new TextBlock
+        {
+            Text = "PROPERTIES",
+            FontSize = 10.5,
+            FontWeight = FontWeights.Bold,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        dockTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        headerTitleStack.Children.Add(dockTitle);
+        dockHeader.Children.Add(headerTitleStack);
+
+        var dockButtons = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Margin = new Thickness(0, 0, 4, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        var pinBtn = new Button
+        {
+            Width = 20, Height = 20, Padding = new Thickness(0),
+            ToolTip = Loc.T("Ghim bảng thuộc tính", "Pin palette"),
+            Style = (Style)Application.Current.FindResource("CONCOST.Button.Icon")
+        };
+        IconElement.SetKind(pinBtn, IconKind.PinItem);
+        IconElement.SetIconSize(pinBtn, 11);
+
+        var closeBtn = new Button
+        {
+            Width = 20, Height = 20, Padding = new Thickness(0),
+            Margin = new Thickness(2, 0, 0, 0),
+            ToolTip = Loc.T("Đóng bảng", "Close palette"),
+            Style = (Style)Application.Current.FindResource("CONCOST.Button.Icon")
+        };
+        IconElement.SetKind(closeBtn, IconKind.Close);
+        IconElement.SetIconSize(closeBtn, 11);
+
+        dockButtons.Children.Add(pinBtn);
+        dockButtons.Children.Add(closeBtn);
+        Grid.SetColumn(dockButtons, 2);
+        dockHeader.Children.Add(dockButtons);
+
+        var dockContent = new Grid();
+        dockContent.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        dockContent.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+
+        dockContent.Children.Add(dockHeader);
+        Grid.SetRow(palette, 1);
+        dockContent.Children.Add(palette);
+
+        // Standard CAD Docking container (Width 380px, responsive via slider)
         var paletteDock = new Border
         {
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            Height = 460,
+            Width = 380,
+            Height = 520,
             CornerRadius = new CornerRadius(8),
             BorderThickness = new Thickness(1),
             ClipToBounds = true
         };
         paletteDock.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
         paletteDock.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
-        paletteDock.Child = palette;
+        paletteDock.Child = dockContent;
 
-        // Strip status / transaction log directly below palette
+        // Strip status / transaction log
         var activityStrip = new Border
         {
-            Margin = new Thickness(0, 10, 0, 0),
-            Padding = new Thickness(12, 8, 12, 8),
+            Padding = new Thickness(10, 8, 10, 8),
             CornerRadius = new CornerRadius(6),
             BorderThickness = new Thickness(1)
         };
@@ -3642,7 +3711,7 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         var activityText = new TextBlock
         {
             Text = Loc.T("✓ Sẵn sàng: Đã nạp cấu kiện dầm và 7 tham số kỹ thuật qua PropertyManager.", "✓ Ready: RC beam element and 7 engineering parameters loaded via PropertyManager."),
-            FontSize = 11.5,
+            FontSize = 11,
             TextTrimming = TextTrimming.CharacterEllipsis
         };
         activityText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
@@ -3651,8 +3720,8 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         // Palette event handlers
         palette.PropertyCommitted += (_, e) =>
         {
-            activityText.Text = Loc.F("✓ Đã cập nhật thuộc tính [{0}] qua TransactionManager",
-                "✓ Committed property [{0}] via TransactionManager", e.Property);
+            activityText.Text = Loc.F("✓ [{0:HH:mm:ss}] Cập nhật '{1}' thành công qua TransactionManager",
+                "✓ [{0:HH:mm:ss}] Committed property '{1}' via TransactionManager", DateTime.Now, e.Property);
         };
 
         palette.TypeChangeRequested += (_, newType) =>
@@ -3675,7 +3744,7 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
                 else { c.Width = 400; c.Depth = 400; }
                 palette.Build(c);
             }
-            activityText.Text = Loc.F("✓ Đã đổi Type đối tượng sang [{0}]", "✓ Switched instance type to [{0}]", newType);
+            activityText.Text = Loc.F("✓ [{0:HH:mm:ss}] Đã đổi Type đối tượng sang [{1}]", "✓ [{0:HH:mm:ss}] Switched instance type to [{1}]", DateTime.Now, newType);
         };
 
         palette.EditTypeRequested += (_, _) =>
@@ -3685,16 +3754,12 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         };
 
         // =========================================================================
-        // BOTTOM WORKBENCH: Extended Properties, Styles & Interactive Controls
+        // RIGHT WORKBENCH: Extended Properties, Styles & Interactive Controls
         // =========================================================================
-        var configGrid = new Grid { Margin = new Thickness(0, 16, 0, 0) };
-        configGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        configGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
-        configGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        var workbench = new StackPanel { VerticalAlignment = VerticalAlignment.Top };
 
-        // Column 0: Bố cục & Đối tượng
-        var col0 = new StackPanel();
-        col0.Children.Add(PanelCaption(Loc.T("KIỂU DÁNG VÀ BỐ CỤC (PALETTE STYLES)", "LAYOUT & PALETTE STYLES")));
+        // 1. Bố cục & Đối tượng
+        workbench.Children.Add(PanelCaption(Loc.T("KIỂU DÁNG VÀ BỐ CỤC (PALETTE STYLES)", "LAYOUT & PALETTE STYLES")));
 
         var layoutStyleCombo = new ComboBox
         {
@@ -3703,21 +3768,21 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
             Margin = new Thickness(0, 0, 0, 10),
             ItemsSource = new[]
             {
-                Loc.T("Hiện đại - Gọn gàng (CONCOST Compact Layout)", "CONCOST Modern Compact Layout"),
-                Loc.T("Autodesk Revit Phẳng (Revit Properties Style)", "Autodesk Revit Properties Style")
+                Loc.T("Autodesk Revit Phẳng (Revit Properties Style)", "Autodesk Revit Properties Style"),
+                Loc.T("Hiện đại - Gọn gàng (CONCOST Compact Layout)", "CONCOST Modern Compact Layout")
             },
             SelectedIndex = 0
         };
 
-        col0.Children.Add(layoutStyleCombo);
+        workbench.Children.Add(layoutStyleCombo);
 
-        col0.Children.Add(PanelCaption(Loc.T("ĐỐI TƯỢNG CAD / BIM (ACTIVE TARGET)", "ACTIVE CAD / BIM TARGET")));
+        workbench.Children.Add(PanelCaption(Loc.T("ĐỐI TƯỢNG CAD / BIM (ACTIVE TARGET)", "ACTIVE CAD / BIM TARGET")));
 
         var targetObjectCombo = new ComboBox
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
             Height = 28,
-            Margin = new Thickness(0, 0, 0, 10),
+            Margin = new Thickness(0, 0, 0, 12),
             ItemsSource = new[]
             {
                 Loc.T("Dầm bê tông cốt thép (RC Beam D1 - 6000×400×250)", "RC Beam D1 (6000×400×250)"),
@@ -3756,44 +3821,48 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
             activityText.Text = Loc.F("✓ Đã chọn đối tượng: {0}", "✓ Selected object: {0}", targetObjectCombo.SelectedItem);
         };
 
-        col0.Children.Add(targetObjectCombo);
+        workbench.Children.Add(targetObjectCombo);
 
-        col0.Children.Add(AppearanceSlider(Loc.T("Chiều cao bảng", "Palette height"), 380, 600, 460, 20, "{0:0} px", v =>
+        // 2. Kích thước & Tùy biến Docking
+        workbench.Children.Add(PanelCaption(Loc.T("KÍCH THƯỚC BẢNG DOCKING (PALETTE DOCK DIMENSIONS)", "PALETTE DOCK DIMENSIONS")));
+
+        workbench.Children.Add(AppearanceSlider(Loc.T("Chiều rộng bảng (Dock width)", "Palette dock width"), 320, 480, 380, 10, "{0:0} px", v =>
+        {
+            paletteDock.Width = v;
+        }));
+
+        workbench.Children.Add(AppearanceSlider(Loc.T("Chiều cao bảng (Dock height)", "Palette dock height"), 420, 620, 520, 10, "{0:0} px", v =>
         {
             paletteDock.Height = v;
         }));
 
-        col0.Children.Add(AppearanceSlider(Loc.T("Bo góc bảng", "Corner radius"), 0, 16, 8, 2, "{0:0} px", v =>
+        workbench.Children.Add(AppearanceSlider(Loc.T("Bo góc khung dock", "Corner radius"), 0, 14, 8, 2, "{0:0} px", v =>
         {
             paletteDock.CornerRadius = new CornerRadius(v);
         }));
 
-        Grid.SetColumn(col0, 0);
-        configGrid.Children.Add(col0);
-
-        // Column 2: Công tắc tính năng & Thao tác nhanh
-        var col2 = new StackPanel();
-        col2.Children.Add(PanelCaption(Loc.T("CÔNG TẮC THUỘC TÍNH MỞ RỘNG (EXTENDED PROPERTIES)", "EXTENDED PROPERTIES & TOGGLES")));
+        // 3. Công tắc tính năng mở rộng
+        workbench.Children.Add(PanelCaption(Loc.T("CÔNG TẮC THUỘC TÍNH MỞ RỘNG (EXTENDED PROPERTIES)", "EXTENDED PROPERTIES & TOGGLES")));
 
         var switchesGrid = new System.Windows.Controls.Primitives.UniformGrid
         {
             Columns = 2,
-            Margin = new Thickness(0, 0, 0, 8)
+            Margin = new Thickness(0, 0, 0, 10)
         };
 
         switchesGrid.Children.Add(AppearanceToggle(Loc.T("Ô tìm kiếm (ShowSearch)", "Search box (ShowSearch)"), true, v => palette.ShowSearch = v));
 
-        var revitToggle = AppearanceToggle(Loc.T("Bố cục Revit (RevitLayout)", "Revit layout (RevitLayout)"), false, v =>
+        var revitToggle = AppearanceToggle(Loc.T("Bố cục Revit (RevitLayout)", "Revit layout (RevitLayout)"), true, v =>
         {
             palette.RevitLayout = v;
-            layoutStyleCombo.SelectedIndex = v ? 1 : 0;
-            activityText.Text = Loc.F("✓ Chế độ RevitLayout: {0}", "✓ RevitLayout mode: {0}", v ? "BẬT (ON)" : "TẮT (OFF)");
+            layoutStyleCombo.SelectedIndex = v ? 0 : 1;
+            activityText.Text = Loc.F("✓ Bố cục palette: {0}", "✓ Palette layout: {0}", v ? "Autodesk Revit" : "CONCOST Compact");
         });
         switchesGrid.Children.Add(revitToggle);
 
         layoutStyleCombo.SelectionChanged += (_, _) =>
         {
-            bool isRevit = layoutStyleCombo.SelectedIndex == 1;
+            bool isRevit = layoutStyleCombo.SelectedIndex == 0;
             palette.RevitLayout = isRevit;
             if (revitToggle is CheckBox cb && cb.IsChecked != isRevit) cb.IsChecked = isRevit;
             activityText.Text = Loc.F("✓ Bố cục palette: {0}", "✓ Palette layout: {0}", isRevit ? "Autodesk Revit" : "CONCOST Compact");
@@ -3809,9 +3878,10 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
 
         switchesGrid.Children.Add(AppearanceToggle(Loc.T("Chế độ chỉ đọc (ReadOnly)", "Read-only mode"), false, v => palette.IsEnabled = !v));
 
-        col2.Children.Add(switchesGrid);
+        workbench.Children.Add(switchesGrid);
 
-        col2.Children.Add(PanelCaption(Loc.T("THAO TÁC TƯƠNG TÁC NHANH (QUICK ACTIONS)", "QUICK ACTIONS")));
+        // 4. Thao tác tương tác nhanh
+        workbench.Children.Add(PanelCaption(Loc.T("THAO TÁC TƯƠNG TÁC NHANH (QUICK ACTIONS)", "QUICK ACTIONS")));
 
         var actionsRow1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 6) };
         var undoBtn = SecondaryButton(Loc.T("Hoàn tác (Undo)", "Undo"));
@@ -3861,9 +3931,9 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
 
         actionsRow1.Children.Add(undoBtn);
         actionsRow1.Children.Add(resetBtn);
-        col2.Children.Add(actionsRow1);
+        workbench.Children.Add(actionsRow1);
 
-        var actionsRow2 = new StackPanel { Orientation = Orientation.Horizontal };
+        var actionsRow2 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
         var errorBtn = SecondaryButton(Loc.T("Giả lập lỗi (-500)", "Test Error (-500)"));
         IconElement.SetKind(errorBtn, IconKind.Warning);
         errorBtn.Margin = new Thickness(0, 0, 8, 0);
@@ -3882,21 +3952,31 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
 
         actionsRow2.Children.Add(errorBtn);
         actionsRow2.Children.Add(emptyBtn);
-        col2.Children.Add(actionsRow2);
+        workbench.Children.Add(actionsRow2);
 
-        Grid.SetColumn(col2, 2);
-        configGrid.Children.Add(col2);
+        // 5. Nhật ký giao dịch
+        workbench.Children.Add(PanelCaption(Loc.T("NHẬT KÝ GIAO DỊCH (TRANSACTION AUDIT LOG)", "TRANSACTION AUDIT LOG")));
+        workbench.Children.Add(activityStrip);
 
-        // Combined layout
-        var wholeLayout = new StackPanel();
-        wholeLayout.Children.Add(paletteDock);
-        wholeLayout.Children.Add(activityStrip);
-        wholeLayout.Children.Add(configGrid);
+        // Combined CAD Stage Layout: Left Dock Palette (380px) + Right Workbench (1*)
+        var stageGrid = new Grid();
+        stageGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        stageGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
+        stageGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        Grid.SetColumn(paletteDock, 0);
+        stageGrid.Children.Add(paletteDock);
+
+        Grid.SetColumn(workbench, 2);
+        stageGrid.Children.Add(workbench);
 
         var callout = CreateCalloutCard(Loc.T(
-            "💡 HƯỚNG DẪN: PropertiesPalette là bảng điều khiển thuộc tính chính cho CAD/BIM. Bạn có thể đổi kiểu 'CONCOST Compact' ↔ 'Autodesk Revit Style', chọn Dầm/Cột/Tường/Trạng thái rỗng, bật/tắt ô tìm kiếm hoặc giả lập kiểm tra lỗi trực quan.",
-            "💡 GUIDE: PropertiesPalette is the primary CAD/BIM property inspector. Toggle between 'CONCOST Compact' ↔ 'Autodesk Revit Style', select Beam/Column/Wall/Empty state, toggle search box, or simulate inline validation errors."));
+            "💡 HƯỚNG DẪN: PropertiesPalette là bảng điều khiển thuộc tính chính cho CAD/BIM chuẩn Autodesk Revit. Bảng được neo ở tỉ lệ dock chuẩn (380px), thanh tra đối tượng với bảng phẳng, đường lưới kỹ thuật, bộ chọn TypeSelector và quản lý giao dịch Undo/Redo tức thì.",
+            "💡 GUIDE: PropertiesPalette is the primary CAD/BIM technical properties inspector matching Autodesk Revit standards. Docked at authentic CAD width (380px), it delivers flat gridlines, TypeSelector header, and real-time Undo/Redo transactions."));
         callout.Margin = new Thickness(0, 16, 0, 0);
+
+        var wholeLayout = new StackPanel();
+        wholeLayout.Children.Add(stageGrid);
         wholeLayout.Children.Add(callout);
 
         var root = new StackPanel();
