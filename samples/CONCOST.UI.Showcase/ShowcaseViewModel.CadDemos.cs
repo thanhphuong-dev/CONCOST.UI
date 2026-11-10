@@ -3619,7 +3619,7 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         // CAD Dock Header (Authentic Autodesk Revit Dock Panel Titlebar)
         var dockHeaderBorder = new Border
         {
-            Height = 26,
+            Height = 24,
             BorderThickness = new Thickness(0, 0, 0, 1),
             SnapsToDevicePixels = true
         };
@@ -3638,18 +3638,15 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
             Margin = new Thickness(8, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center
         };
-        var dockIcon = new Icon { Kind = IconKind.SettingsSliders, Width = 12, Height = 12, Margin = new Thickness(0, 0, 6, 0) };
-        dockIcon.SetResourceReference(Control.ForegroundProperty, "CONCOST.Brush.Primary");
-        headerTitleStack.Children.Add(dockIcon);
 
         var dockTitle = new TextBlock
         {
-            Text = "PROPERTIES",
-            FontSize = 10.5,
-            FontWeight = FontWeights.Bold,
+            Text = "Properties",
+            FontSize = 11,
+            FontWeight = FontWeights.SemiBold,
             VerticalAlignment = VerticalAlignment.Center
         };
-        dockTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        dockTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
         headerTitleStack.Children.Add(dockTitle);
         dockHeader.Children.Add(headerTitleStack);
 

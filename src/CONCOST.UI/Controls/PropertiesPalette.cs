@@ -74,7 +74,7 @@ public class PropertiesPalette : Grid
     /// <summary>Identifies the <see cref="EditTypeText"/> property.</summary>
     public static readonly DependencyProperty EditTypeTextProperty =
         DependencyProperty.Register(nameof(EditTypeText), typeof(string), typeof(PropertiesPalette),
-            new PropertyMetadata("Edit type", OnChromeChanged));
+            new PropertyMetadata("Edit Type", OnChromeChanged));
 
     /// <summary>Identifies the <see cref="TypeToolTip"/> property.</summary>
     public static readonly DependencyProperty TypeToolTipProperty =
@@ -169,7 +169,7 @@ public class PropertiesPalette : Grid
         _search = new SearchBox
         {
             Placeholder = SearchPlaceholder,
-            Height = 25,
+            Height = 26,
             Margin = new Thickness(0),
             FontSize = 11.5,
             CornerRadius = new CornerRadius(0)
@@ -180,7 +180,8 @@ public class PropertiesPalette : Grid
         _searchBorder = new Border
         {
             BorderThickness = new Thickness(0, 0, 0, 1),
-            Padding = new Thickness(8, 4, 8, 4),
+            Height = 28,
+            Padding = new Thickness(6, 0, 6, 0),
             SnapsToDevicePixels = true
         };
         _searchBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
@@ -399,8 +400,11 @@ public class PropertiesPalette : Grid
             _typeBorder.BorderThickness = new Thickness(0, 0, 0, 1);
             _typeBorder.Padding = new Thickness(8, 6, 8, 6);
             _searchBorder.BorderThickness = new Thickness(0, 0, 0, 1);
-            _searchBorder.Padding = new Thickness(8, 4, 8, 4);
-            _search.Height = 25;
+            _searchBorder.Padding = new Thickness(6, 0, 6, 0);
+            _searchBorder.Height = 28;
+            _search.BorderThickness = new Thickness(0);
+            _search.Background = Brushes.Transparent;
+            _search.Height = 26;
             _search.CornerRadius = new CornerRadius(0);
             _search.Margin = new Thickness(0);
             GridControl.Margin = new Thickness(0);
@@ -411,6 +415,9 @@ public class PropertiesPalette : Grid
             _typeBorder.Padding = new Thickness(10, 6, 10, 0);
             _searchBorder.BorderThickness = new Thickness(0);
             _searchBorder.Padding = new Thickness(0);
+            _searchBorder.Height = double.NaN;
+            _search.BorderThickness = new Thickness(1);
+            _search.ClearValue(Control.BackgroundProperty);
             _search.Height = 28;
             _search.CornerRadius = new CornerRadius(6);
             _search.Margin = new Thickness(10, 0, 10, 6);
