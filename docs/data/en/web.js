@@ -1,4 +1,4 @@
-﻿// English overlay — controls ported from modern web UI patterns.
+// English overlay — controls ported from modern web UI patterns.
 Object.assign(DOCS_EN.pages, {
 
     spotlightcard: {

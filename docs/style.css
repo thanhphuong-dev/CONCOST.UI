@@ -89,7 +89,44 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-::selection { background: var(--accent-soft); color: var(--text); }
+/* ---------- Text Selection ---------- */
+::selection {
+    background: rgba(255, 121, 0, 0.22);
+    background: color-mix(in srgb, var(--accent) 24%, transparent);
+    color: inherit;
+}
+::-moz-selection {
+    background: rgba(255, 121, 0, 0.22);
+    color: inherit;
+}
+
+html[data-theme="dark"] ::selection {
+    background: rgba(255, 121, 0, 0.35);
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    color: inherit;
+}
+html[data-theme="dark"] ::-moz-selection {
+    background: rgba(255, 121, 0, 0.35);
+    color: inherit;
+}
+
+/* High-contrast, clean code selection (VS Code / GitHub dark editor style) */
+.code-inspector ::selection,
+.code-inspector *::selection,
+pre ::selection,
+pre *::selection {
+    background: rgba(56, 139, 253, 0.38) !important;
+    color: inherit !important;
+    text-shadow: none !important;
+}
+.code-inspector ::-moz-selection,
+.code-inspector *::-moz-selection,
+pre ::-moz-selection,
+pre *::-moz-selection {
+    background: rgba(56, 139, 253, 0.38) !important;
+    color: inherit !important;
+    text-shadow: none !important;
+}
 
 /* Scrollbars */
 * { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
@@ -571,6 +608,8 @@ table.props-table {
     padding: 6px 8px 6px 10px;
     background: color-mix(in srgb, var(--bg-code) 82%, #1e293b);
     border-bottom: 1px solid rgba(255, 255, 255, .07);
+    user-select: none;
+    -webkit-user-select: none;
 }
 .code-tabs { display: flex; gap: 2px; }
 .code-tab {
