@@ -7885,10 +7885,52 @@
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
                     <StackPanel>
-                      <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="10,4">
-                        <TextBlock FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" />
-                      </Border>
+                      <!-- Collapsible Category Band -->
+                      <ToggleButton IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                    Cursor="Hand"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    Focusable="False">
+                        <ToggleButton.Template>
+                          <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Border x:Name="band" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="8,5" SnapsToDevicePixels="True">
+                              <DockPanel LastChildFill="True">
+                                <Path x:Name="chevron"
+                                      DockPanel.Dock="Left"
+                                      Width="7"
+                                      Height="7"
+                                      Stretch="Uniform"
+                                      Margin="1,0,7,0"
+                                      VerticalAlignment="Center"
+                                      Fill="{DynamicResource CONCOST.Brush.TextSecondary}"
+                                      Data="M 0 1.5 L 4 5.5 L 8 1.5 Z" />
+                                <TextBlock x:Name="catTitle" FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" VerticalAlignment="Center" />
+                              </DockPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                              <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="chevron" Property="Data" Value="M 1.5 0 L 5.5 4 L 1.5 8 Z" />
+                              </Trigger>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="band" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                                <Setter TargetName="chevron" Property="Fill" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                                <Setter TargetName="catTitle" Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                              </Trigger>
+                            </ControlTemplate.Triggers>
+                          </ControlTemplate>
+                        </ToggleButton.Template>
+                      </ToggleButton>
                       <ItemsControl ItemsSource="{Binding Properties}">
+                        <FrameworkElement.Style>
+                          <Style TargetType="{x:Type ItemsControl}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </FrameworkElement.Style>
                         <ItemsControl.ItemTemplate>
                           <DataTemplate>
                             <Border BorderBrush="{DynamicResource CONCOST.Brush.BorderSubtle}" BorderThickness="0,0,0,1" Padding="8,3">
@@ -7968,15 +8010,56 @@
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
                     <StackPanel>
-                      <!-- Revit Flat Category Band -->
-                      <Border Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="8,4">
-                        <TextBlock FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" />
-                      </Border>
-                      <!-- Revit Tabular Parameter Rows with Vertical Gridline -->
+                      <!-- Revit Flat Category Band with Collapsible Chevron -->
+                      <ToggleButton IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                    Cursor="Hand"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    Focusable="False">
+                        <ToggleButton.Template>
+                          <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Border x:Name="band" Background="{DynamicResource CONCOST.Brush.SurfaceSecondary}" BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Padding="8,5" SnapsToDevicePixels="True">
+                              <DockPanel LastChildFill="True">
+                                <Path x:Name="chevron"
+                                      DockPanel.Dock="Left"
+                                      Width="7"
+                                      Height="7"
+                                      Stretch="Uniform"
+                                      Margin="1,0,7,0"
+                                      VerticalAlignment="Center"
+                                      Fill="{DynamicResource CONCOST.Brush.TextSecondary}"
+                                      Data="M 0 1.5 L 4 5.5 L 8 1.5 Z" />
+                                <TextBlock x:Name="catTitle" FontWeight="SemiBold" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" Text="{Binding CategoryName}" VerticalAlignment="Center" />
+                              </DockPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                              <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="chevron" Property="Data" Value="M 1.5 0 L 5.5 4 L 1.5 8 Z" />
+                              </Trigger>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="band" Property="Background" Value="{DynamicResource CONCOST.Brush.SurfaceHover}" />
+                                <Setter TargetName="chevron" Property="Fill" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                                <Setter TargetName="catTitle" Property="Foreground" Value="{DynamicResource CONCOST.Brush.TextPrimary}" />
+                              </Trigger>
+                            </ControlTemplate.Triggers>
+                          </ControlTemplate>
+                        </ToggleButton.Template>
+                      </ToggleButton>
+                      <!-- Revit Tabular Parameter Rows with Crisp Vertical Gridline -->
                       <ItemsControl ItemsSource="{Binding Properties}">
+                        <FrameworkElement.Style>
+                          <Style TargetType="{x:Type ItemsControl}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </FrameworkElement.Style>
                         <ItemsControl.ItemTemplate>
                           <DataTemplate>
-                            <Border BorderBrush="{DynamicResource CONCOST.Brush.BorderSubtle}" BorderThickness="0,0,0,1" Background="{DynamicResource CONCOST.Brush.Surface}">
+                            <Border BorderBrush="{DynamicResource CONCOST.Brush.Border}" BorderThickness="0,0,0,1" Background="{DynamicResource CONCOST.Brush.Surface}" SnapsToDevicePixels="True">
                               <Grid MinHeight="25">
                                 <Grid.ColumnDefinitions>
                                   <ColumnDefinition Width="145" />
@@ -7985,11 +8068,11 @@
                                 </Grid.ColumnDefinitions>
                                 <!-- Parameter Name -->
                                 <TextBlock Grid.Column="0" FontSize="11" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" VerticalAlignment="Center" Padding="8,3,4,3" TextTrimming="CharacterEllipsis" Text="{Binding DisplayName}" ToolTip="{Binding Description}" />
-                                <!-- Vertical Gridline -->
-                                <Rectangle Grid.Column="1" Fill="{DynamicResource CONCOST.Brush.BorderSubtle}" HorizontalAlignment="Stretch" Width="1" />
+                                <!-- Vertical Gridline (Crisp CAD Grid Border) -->
+                                <Rectangle Grid.Column="1" Fill="{DynamicResource CONCOST.Brush.Border}" HorizontalAlignment="Stretch" Width="1" SnapsToDevicePixels="True" />
                                 <!-- Parameter Value Editor (fills cell) -->
                                 <Grid Grid.Column="2" Background="{DynamicResource CONCOST.Brush.Surface}">
-                                  <TextBox FontSize="11" Height="23" Padding="4,2" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}" ToolTip="{Binding ValidationError}">
+                                  <TextBox FontSize="11" Height="23" Padding="4,2,26,2" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource CONCOST.Brush.TextPrimary}" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}" ToolTip="{Binding ValidationError}">
                                     <FrameworkElement.Style>
                                       <Style TargetType="{x:Type TextBox}">
                                         <Setter Property="Visibility" Value="Visible" />
@@ -8008,6 +8091,28 @@
                                       </Style>
                                     </FrameworkElement.Style>
                                   </TextBox>
+                                  <!-- Optional Unit Suffix (e.g. mm, deg) -->
+                                  <TextBlock Text="{Binding Unit}" FontSize="10" Foreground="{DynamicResource CONCOST.Brush.TextSecondary}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,6,0" IsHitTestVisible="False">
+                                    <FrameworkElement.Style>
+                                      <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                          <DataTrigger Binding="{Binding Unit}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                          <DataTrigger Binding="{Binding Unit}" Value="">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                          <DataTrigger Value="Boolean" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                          <DataTrigger Value="Enum" Binding="{Binding EditorType}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                        </Style.Triggers>
+                                      </Style>
+                                    </FrameworkElement.Style>
+                                  </TextBlock>
                                   <ComboBox Height="23" FontSize="11" ItemsSource="{Binding EnumOptions}" SelectedItem="{Binding Value, Mode=TwoWay}" VerticalContentAlignment="Center" BorderThickness="0" Background="Transparent" Padding="4,1">
                                     <FrameworkElement.Style>
                                       <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource CONCOST.ComboBox.Base}">

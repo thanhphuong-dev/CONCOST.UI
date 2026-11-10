@@ -516,6 +516,7 @@ public class PropertiesPalette : Grid
             EditorType = MapEditor(descriptor),
             EnumOptions = descriptor.Choices?.ToArray(),
             IsReadOnly = descriptor.IsReadOnly,
+            Unit = descriptor.Unit,
             Value = value
         };
 

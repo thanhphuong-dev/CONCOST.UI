@@ -37,6 +37,7 @@ public class PropertyItem : INotifyPropertyChanged
     public PropertyEditorType EditorType { get; set; } = PropertyEditorType.Text;
     public Array? EnumOptions { get; set; }
     public bool IsReadOnly { get; set; }
+    public string? Unit { get; set; }
     public string? ValidationError
     {
         get => _validationError;
