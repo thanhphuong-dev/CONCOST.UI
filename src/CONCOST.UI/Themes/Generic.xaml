@@ -3814,17 +3814,31 @@
       </Setter.Value>
     </Setter>
   </Style>
-  <Style x:Key="CONCOST.DataGrid.Small" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource CONCOST.DataGrid.Base}">
+  <Style x:Key="CONCOST.DataGridRow.Small" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource CONCOST.DataGridRow.Seamless}">
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="FontSize" Value="11" />
+  </Style>
+  <Style x:Key="CONCOST.DataGridRow.Compact" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource CONCOST.DataGridRow.Seamless}">
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="FontSize" Value="11.5" />
+  </Style>
+  <Style x:Key="CONCOST.DataGrid.Small" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource CONCOST.DataGrid.Seamless}">
     <Setter Property="DataGrid.RowHeight" Value="28" />
     <Setter Property="DataGrid.ColumnHeaderHeight" Value="28" />
+    <Setter Property="DataGrid.RowStyle" Value="{StaticResource CONCOST.DataGridRow.Small}" />
     <Setter Property="FontSize" Value="11" />
-    <Setter Property="Padding" Value="4,4,4,2" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
   </Style>
-  <Style x:Key="CONCOST.DataGrid.Compact" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource CONCOST.DataGrid.Base}">
+  <Style x:Key="CONCOST.DataGrid.Compact" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource CONCOST.DataGrid.Seamless}">
     <Setter Property="DataGrid.RowHeight" Value="32" />
     <Setter Property="DataGrid.ColumnHeaderHeight" Value="30" />
+    <Setter Property="DataGrid.RowStyle" Value="{StaticResource CONCOST.DataGridRow.Compact}" />
     <Setter Property="FontSize" Value="11.5" />
-    <Setter Property="Padding" Value="4,4,4,2" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
   </Style>
   <Style x:Key="CONCOST.StackedHeaderDataGrid.Base" TargetType="{x:Type controls:StackedHeaderDataGrid}">
     <Setter Property="Background" Value="{DynamicResource CONCOST.Brush.Surface}" />

@@ -6,7 +6,7 @@ The documentation is a self-contained static site: open [`index.html`](index.htm
 
 Features: command palette search (`Ctrl K` or `/`), per-page table of contents with reading progress, XAML ↔ C# code inspector with copy, light/dark themes, five accent colours, keyboard navigation, deep links (`index.html#splitbutton`) and a fully offline build (no CDN).
 
-**156 pages · 1410 documented properties · 125 controls mapped to source · 2 languages (VI / EN).**
+**156 pages · 1465 documented properties · 125 controls mapped to source · 2 languages (VI / EN).**
 
 ### Languages
 
@@ -92,7 +92,7 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | [NumericUpDown](index.html#numericupdown) | Bộ nhập giá trị số với 2 nút tăng giảm, hỗ trợ bước nhảy Step, giới hạn Min/Max, định dạng tiền tệ / đơn vị kỹ thuật (mm, m3, kN, MPa). |
 | [TextBox](index.html#textbox) | Ô nhập văn bản nâng cao với placeholder mờ, nút xóa nhanh [X], icon tiền tố/hậu tố và ô nhập mật khẩu với nút bật/tắt hiển thị. |
 | [PasswordInput](index.html#passwordinput) | Ô nhập mật khẩu có nút hiện/ẩn, icon khoá và placeholder — thay cho việc tự ghép PasswordBox + ToggleButton. |
-| [OtpInput](index.html#otpinput) | Ô nhập mã OTP nhiều ô, tự nhảy ô và gộp giá trị — phù hợp xác thực 2 lớp, mã kích hoạt bản quyền. |
+| [OtpInput](index.html#otpinput) | Ô nhập mã OTP nhiều ô, tự nhảy ô và gộp giá trị — phù hợp xác thực 2 lớp, mã kích hoạt bản quyền. Từ 1.2.0: mỗi ký tự một ô thật sự — gõ tự sang ô, Ba |
 | [PinBox](index.html#pinbox) | Bộ nhập mã xác minh bản quyền hoặc OTP từng ô riêng biệt, tự động nhảy con trỏ sang ô tiếp theo và hỗ trợ ẩn mật khẩu. |
 | [CheckComboBox](index.html#checkcombobox) | Hộp thoại chọn danh sách nhiều mục với ô CheckBox cho từng dòng, tích hợp tùy chọn 'Chọn tất cả (Select All)' và đếm số lượng đã chọn. |
 | [ComboBox](index.html#combobox) | Menu chọn thả xuống hiện đại với mũi tên hoạt ảnh và hỗ trợ bo góc, chế độ tìm kiếm tích hợp. |
@@ -260,7 +260,6 @@ Vietnamese is the base language (`data/*.js`); English lives in the overlay file
 | `data/en/*.js` | English overlay per page: title, description, section text, callouts and tables. |
 | `data/en/code.js` | Vietnamese → English dictionary applied to code snippets in EN mode. |
 | `data/sources.generated.js` | **Generated** page → source file map (powers the “edit this page” link). |
-| `api-reference.md` | **Generated** full API catalogue: every public type, dependency/attached property, routed event, CLR event and method, with the XML summaries the build emits. |
 | `vendor/` | Self-hosted fonts, Font Awesome and Prism — no CDN, works offline. |
 | `app.js` / `style.css` / `index.html` | Application shell, design system and language switch. |
 
@@ -271,10 +270,9 @@ python docs/tools/build-props.py     # property tables + C# samples + EN propert
 python docs/tools/check-xaml.py      # validate every XAML snippet against the real API
 node   docs/tools/build-index.js     # rebuild this page map + the source map
 python docs/tools/fetch-fonts.py     # re-download the localised font subsets
-dotnet run --project docs/tools/ApiGen   # the full API reference from the built assembly (+ -- --check for XML-summary coverage)
 ```
 
-Run all of them after adding or renaming a `DependencyProperty`; the checker must report **0 issues** before committing. `ApiGen` reads the XML documentation file, so build the library first and keep the type-level `/// <summary>` in step — `--check` lists the types that lost theirs.
+Run all three after adding or renaming a `DependencyProperty`; the checker must report **0 issues** before committing.
 
 ### Adding a page
 

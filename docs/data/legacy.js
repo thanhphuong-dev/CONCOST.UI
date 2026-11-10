@@ -299,8 +299,12 @@ public class OpenCostManagerCommand : IExternalCommand
                     { token: "CONCOST.Brush.TextPrimary", desc: "Màu chữ văn bản chính (Độ tương phản cao)" },
                     { token: "CONCOST.Brush.TextSecondary", desc: "Màu chữ phụ, nhãn thông số, subtitle" }
                 ],
-                csharp: `// Chuyển đổi Dark/Light mode và Màu Accent trong C#:
-ThemeManager.Current.Theme = AppTheme.Dark; // hoặc AppTheme.Light / AppTheme.System
+                csharp: `// Chuyển đổi Theme và Màu Accent trong C#:
+ThemeManager.Current.Theme = AppTheme.SoftLight; // Sáng dịu chống mỏi mắt
+ThemeManager.Current.Theme = AppTheme.Revit;     // Autodesk Revit chuẩn Light
+ThemeManager.Current.Theme = AppTheme.RevitDark; // Autodesk Revit chuẩn Dark (2024+)
+ThemeManager.Current.Theme = AppTheme.Dark;      // Chế độ tối kỹ thuật
+ThemeManager.Current.Theme = AppTheme.System;    // Theo cấu hình Windows
 ThemeManager.Current.AccentColor = ColorHelper.FromHex("#0284C7"); // Ocean Blue
 
 // Chuyển Theme với Hoạt ảnh Quét Sóng Dịu Mắt (Soft Reveal Animation):

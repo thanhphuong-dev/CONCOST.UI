@@ -2314,16 +2314,21 @@ public partial class ShowcaseViewModel : ObservableObject
         // ==============================================================================?
         // SECTION 4: Small & Compact Dense Styles
         // ==============================================================================?
-        var dg4 = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
+        var dg4 = new DataGrid { ItemsSource = sampleBeams, Height = 145 };
         dg4.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Small");
-        dg4.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
-        dg4.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dg4.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dg4.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+        CONCOST.UI.AttachedProperties.DataGridElement.SetHeaderHorizontalContentAlignment(dg4, System.Windows.HorizontalAlignment.Center);
+        CONCOST.UI.AttachedProperties.DataGridElement.SetCellHorizontalContentAlignment(dg4, System.Windows.HorizontalAlignment.Center);
+        dg4.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dg4.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dg4.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dg4.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
-        AddCardSection(Loc.T("4. Kiểu dày đặc (hàng cao 28px)", "4. Dense style (28px rows)"), dg4,
+        AddCardSection(Loc.T("4. Kiểu dày đặc (hàng cao 28px)", "4. Dense compact style (28px rows)"), dg4,
 @"<!-- Small Dense DataGrid -->
-<DataGrid Style=""{StaticResource CONCOST.DataGrid.Small}"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+<DataGrid Style=""{StaticResource CONCOST.DataGrid.Small}""
+          attached:DataGridElement.HeaderHorizontalContentAlignment=""Center""
+          attached:DataGridElement.CellHorizontalContentAlignment=""Center""
+          ItemsSource=""{Binding BeamList}"" Height=""145"">
     <DataGrid.Columns>
         <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
         <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
@@ -2346,7 +2351,7 @@ public partial class ShowcaseViewModel : ObservableObject
         var dg5 = new CONCOST.UI.Controls.StackedHeaderDataGrid
         {
             ItemsSource = sampleStories,
-            Height = 220,
+            Height = 265,
             StackedRowHeight = 34,
             CanUserSortColumns = true,
             CanUserResizeColumns = true
@@ -2846,14 +2851,17 @@ public partial class ShowcaseViewModel : ObservableObject
     </controls:StackedHeaderDataGrid.ColumnHeaderTree>
 </controls:StackedHeaderDataGrid>");
 
-        // ==============================================================================?
-        // SECTION 6: DataGrid Column Chooser
-        // ==============================================================================?
-        var dgChooser = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
-        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
-        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+        // ==============================================================================
+        // SECTION 10: DataGrid Column Chooser
+        // ==============================================================================
+        var dgChooser = new DataGrid { ItemsSource = sampleBeams, Height = 190 };
+        dgChooser.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Seamless");
+        CONCOST.UI.AttachedProperties.DataGridElement.SetHeaderHorizontalContentAlignment(dgChooser, System.Windows.HorizontalAlignment.Center);
+        CONCOST.UI.AttachedProperties.DataGridElement.SetCellHorizontalContentAlignment(dgChooser, System.Windows.HorizontalAlignment.Center);
+        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgChooser.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
         var chooser = new CONCOST.UI.Controls.DataGridColumnChooser
         {
@@ -2866,15 +2874,19 @@ public partial class ShowcaseViewModel : ObservableObject
         dgChooserWrapper.Children.Add(chooser);
         dgChooserWrapper.Children.Add(dgChooser);
 
-        AddCardSection("6. Column Chooser — pick the visible columns", dgChooserWrapper,
+        AddCardSection(Loc.T("10. Bộ chọn ẩn hiện cột (Column Chooser)", "10. Column Chooser — pick the visible columns"), dgChooserWrapper,
 @"<!-- DataGrid with Column Chooser -->
 <StackPanel>
     <controls:DataGridColumnChooser TargetGrid=""{Binding ElementName=myGrid}""
-                                   HeaderText=""Show / Hide Columns""
-                                   HorizontalAlignment=""Left""
-                                   Margin=""0,0,0,8"" />
+                                    HeaderText=""Show / Hide Columns""
+                                    HorizontalAlignment=""Left""
+                                    Margin=""0,0,0,8"" />
 
-    <DataGrid x:Name=""myGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+    <DataGrid x:Name=""myGrid""
+              Style=""{StaticResource CONCOST.DataGrid.Seamless}""
+              attached:DataGridElement.HeaderHorizontalContentAlignment=""Center""
+              attached:DataGridElement.CellHorizontalContentAlignment=""Center""
+              ItemsSource=""{Binding BeamList}"" Height=""190"">
         <DataGrid.Columns>
             <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
             <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
@@ -2884,79 +2896,96 @@ public partial class ShowcaseViewModel : ObservableObject
     </DataGrid>
 </StackPanel>");
 
-        // ==============================================================================?
-        // SECTION 7: DataGrid Filter Panel
-        // ==============================================================================?
-        var dgFilter = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
-        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
-        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+        // ==============================================================================
+        // SECTION 11: DataGrid Filter Panel
+        // ==============================================================================
+        var dgFilter = new DataGrid { ItemsSource = sampleBeams, Height = 190 };
+        dgFilter.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Seamless");
+        CONCOST.UI.AttachedProperties.DataGridElement.SetHeaderHorizontalContentAlignment(dgFilter, System.Windows.HorizontalAlignment.Center);
+        CONCOST.UI.AttachedProperties.DataGridElement.SetCellHorizontalContentAlignment(dgFilter, System.Windows.HorizontalAlignment.Center);
+        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgFilter.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
         var filterPanel = new CONCOST.UI.Controls.DataGridFilterPanel { TargetGrid = dgFilter };
         var filterWrapper = new StackPanel();
         filterWrapper.Children.Add(filterPanel);
         filterWrapper.Children.Add(dgFilter);
 
-        AddCardSection("7. Filter Panel — per-column operator + live text filter", filterWrapper,
+        AddCardSection(Loc.T("11. Bảng lọc điều kiện theo từng cột (Filter Panel)", "11. Filter Panel — per-column operator + live text filter"), filterWrapper,
 @"<!-- DataGrid with Filter Panel (operator selector on by default) -->
-<DataGrid x:Name=""filterGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+<controls:DataGridFilterPanel TargetGrid=""{Binding ElementName=filterGrid}"" />
+<DataGrid x:Name=""filterGrid""
+          Style=""{StaticResource CONCOST.DataGrid.Seamless}""
+          attached:DataGridElement.HeaderHorizontalContentAlignment=""Center""
+          attached:DataGridElement.CellHorizontalContentAlignment=""Center""
+          ItemsSource=""{Binding BeamList}"" Height=""190"">
     <DataGrid.Columns>
         <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
         <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
         <DataGridTextColumn Header=""Depth (mm)"" Binding=""{Binding Height}"" Width=""*"" />
         <DataGridTextColumn Header=""Rebar Layout"" Binding=""{Binding Rebar}"" Width=""1.5*"" />
     </DataGrid.Columns>
-</DataGrid>
-<controls:DataGridFilterPanel TargetGrid=""{Binding ElementName=filterGrid}"" />
+</DataGrid>");
 
-<!-- Compact one-row variant: always Contains -->
-<controls:DataGridFilterPanel TargetGrid=""{Binding ElementName=filterGrid}""
-                              ShowOperatorSelector=""False"" />");
-
-        // ==============================================================================?
-        // SECTION 8: DataGrid Search Panel
-        // ==============================================================================?
-        var dgSearch = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
-        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
-        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+        // ==============================================================================
+        // SECTION 12: DataGrid Search Panel
+        // ==============================================================================
+        var dgSearch = new DataGrid { ItemsSource = sampleBeams, Height = 190 };
+        dgSearch.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Seamless");
+        CONCOST.UI.AttachedProperties.DataGridElement.SetHeaderHorizontalContentAlignment(dgSearch, System.Windows.HorizontalAlignment.Center);
+        CONCOST.UI.AttachedProperties.DataGridElement.SetCellHorizontalContentAlignment(dgSearch, System.Windows.HorizontalAlignment.Center);
+        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgSearch.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
         var searchPanel = new CONCOST.UI.Controls.DataGridSearchPanel { TargetGrid = dgSearch };
         var searchWrapper = new StackPanel();
         searchWrapper.Children.Add(searchPanel);
         searchWrapper.Children.Add(dgSearch);
 
-        AddCardSection("8. Search Panel — global text search across all columns", searchWrapper,
+        AddCardSection(Loc.T("12. Hộp tìm kiếm tức thời trên toàn bảng (Search Panel)", "12. Search Panel — global text search across all columns"), searchWrapper,
 @"<!-- DataGrid with Search Panel -->
-<DataGrid x:Name=""searchGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+<controls:DataGridSearchPanel TargetGrid=""{Binding ElementName=searchGrid}"" />
+<DataGrid x:Name=""searchGrid""
+          Style=""{StaticResource CONCOST.DataGrid.Seamless}""
+          attached:DataGridElement.HeaderHorizontalContentAlignment=""Center""
+          attached:DataGridElement.CellHorizontalContentAlignment=""Center""
+          ItemsSource=""{Binding BeamList}"" Height=""190"">
     <DataGrid.Columns>
         <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
         <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
         <DataGridTextColumn Header=""Depth (mm)"" Binding=""{Binding Height}"" Width=""*"" />
         <DataGridTextColumn Header=""Rebar Layout"" Binding=""{Binding Rebar}"" Width=""1.5*"" />
     </DataGrid.Columns>
-</DataGrid>
-<controls:DataGridSearchPanel TargetGrid=""{Binding ElementName=searchGrid}"" />");
+</DataGrid>");
 
-        // ==============================================================================?
-        // SECTION 9: DataGrid Summary Row
-        // ==============================================================================?
-        var dgSum = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
-        dgSum.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
-        dgSum.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgSum.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgSum.Columns.Add(new DataGridTextColumn { Header = "Length (mm)", Binding = new System.Windows.Data.Binding("Length"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
+        // ==============================================================================
+        // SECTION 13: DataGrid Summary Row
+        // ==============================================================================
+        var dgSum = new DataGrid { ItemsSource = sampleBeams, Height = 190 };
+        dgSum.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Seamless");
+        CONCOST.UI.AttachedProperties.DataGridElement.SetHeaderHorizontalContentAlignment(dgSum, System.Windows.HorizontalAlignment.Center);
+        CONCOST.UI.AttachedProperties.DataGridElement.SetCellHorizontalContentAlignment(dgSum, System.Windows.HorizontalAlignment.Center);
+        dgSum.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgSum.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgSum.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgSum.Columns.Add(new DataGridTextColumn { Header = "Length (mm)", Binding = new System.Windows.Data.Binding("Length"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
         var summaryRow = new CONCOST.UI.Controls.DataGridSummary { TargetGrid = dgSum };
         var sumWrapper = new StackPanel();
         sumWrapper.Children.Add(dgSum);
         sumWrapper.Children.Add(summaryRow);
 
-        AddCardSection("9. Summary Row — aggregates at the bottom of the grid", sumWrapper,
+        AddCardSection(Loc.T("13. Dòng tổng kết / tổng hợp cuối bảng (Summary Row)", "13. Summary Row — aggregates at the bottom of the grid"), sumWrapper,
 @"<!-- DataGrid with Summary Row -->
-<DataGrid x:Name=""sumGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+<DataGrid x:Name=""sumGrid""
+          Style=""{StaticResource CONCOST.DataGrid.Seamless}""
+          attached:DataGridElement.HeaderHorizontalContentAlignment=""Center""
+          attached:DataGridElement.CellHorizontalContentAlignment=""Center""
+          ItemsSource=""{Binding BeamList}"" Height=""190"">
     <DataGrid.Columns>
         <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
         <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
@@ -2967,24 +2996,31 @@ public partial class ShowcaseViewModel : ObservableObject
 <controls:DataGridSummary TargetGrid=""{Binding ElementName=sumGrid}"" />");
 
         // ==============================================================================
-        // SECTION 10: DataGrid Group Panel
+        // SECTION 14: DataGrid Group Panel
         // ==============================================================================
-        var dgGroup = new DataGrid { ItemsSource = sampleBeams, Height = 160 };
-        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
-        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+        var dgGroup = new DataGrid { ItemsSource = sampleBeams, Height = 190 };
+        dgGroup.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Seamless");
+        CONCOST.UI.AttachedProperties.DataGridElement.SetHeaderHorizontalContentAlignment(dgGroup, System.Windows.HorizontalAlignment.Center);
+        CONCOST.UI.AttachedProperties.DataGridElement.SetCellHorizontalContentAlignment(dgGroup, System.Windows.HorizontalAlignment.Center);
+        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgGroup.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
         var groupPanel2 = new CONCOST.UI.Controls.DataGridGroupPanel { TargetGrid = dgGroup };
         var groupWrapper = new StackPanel();
         groupWrapper.Children.Add(groupPanel2);
         groupWrapper.Children.Add(dgGroup);
 
-        AddCardSection("10. Group Panel — group rows by column with visual pills", groupWrapper,
+        AddCardSection(Loc.T("14. Nhóm dòng bằng thẻ trực quan (Group Panel)", "14. Group Panel — group rows by column with visual pills"), groupWrapper,
 @"<!-- DataGrid with Group Panel -->
 <StackPanel>
     <controls:DataGridGroupPanel TargetGrid=""{Binding ElementName=groupGrid}"" />
-    <DataGrid x:Name=""groupGrid"" ItemsSource=""{Binding BeamList}"" Height=""160"">
+    <DataGrid x:Name=""groupGrid""
+              Style=""{StaticResource CONCOST.DataGrid.Seamless}""
+              attached:DataGridElement.HeaderHorizontalContentAlignment=""Center""
+              attached:DataGridElement.CellHorizontalContentAlignment=""Center""
+              ItemsSource=""{Binding BeamList}"" Height=""190"">
         <DataGrid.Columns>
             <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
             <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
@@ -2995,13 +3031,16 @@ public partial class ShowcaseViewModel : ObservableObject
 </StackPanel>");
 
         // ==============================================================================
-        // SECTION 11: DataGrid Export Service
+        // SECTION 15: DataGrid Export Service
         // ==============================================================================
-        var dgExport = new DataGrid { ItemsSource = sampleBeams, Height = 140 };
-        dgExport.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
-        dgExport.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgExport.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
-        dgExport.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star) });
+        var dgExport = new DataGrid { ItemsSource = sampleBeams, Height = 190 };
+        dgExport.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Seamless");
+        CONCOST.UI.AttachedProperties.DataGridElement.SetHeaderHorizontalContentAlignment(dgExport, System.Windows.HorizontalAlignment.Center);
+        CONCOST.UI.AttachedProperties.DataGridElement.SetCellHorizontalContentAlignment(dgExport, System.Windows.HorizontalAlignment.Center);
+        dgExport.Columns.Add(new DataGridTextColumn { Header = "Element Name", Binding = new System.Windows.Data.Binding("Name"), Width = new DataGridLength(2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgExport.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgExport.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(1, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgExport.Columns.Add(new DataGridTextColumn { Header = "Rebar Layout", Binding = new System.Windows.Data.Binding("Rebar"), Width = new DataGridLength(1.5, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
         var exportStatus = new TextBlock
         {
@@ -3032,7 +3071,7 @@ public partial class ShowcaseViewModel : ObservableObject
         var exportButtons = new WrapPanel { Orientation = Orientation.Horizontal };
         void AddExportButton(string label, string extension, Action<string> write)
         {
-            var button = new Button { Content = $"Export {label}", Margin = new System.Windows.Thickness(0, 0, 8, 0) };
+            var button = new Button { Content = $"Export {label}", Style = (System.Windows.Style)App.Current.Resources["CONCOST.Button.Secondary"], Margin = new System.Windows.Thickness(0, 0, 8, 0) };
             button.Click += (_, __) => Export(label, write, extension);
             exportButtons.Children.Add(button);
         }
@@ -3043,12 +3082,18 @@ public partial class ShowcaseViewModel : ObservableObject
 
         var exportWrapper = new StackPanel();
         exportWrapper.Children.Add(dgExport);
-        exportWrapper.Children.Add(exportButtons);
-        exportWrapper.Children.Add(exportStatus);
+        var exportControlsSp = new StackPanel { Margin = new System.Windows.Thickness(0, 8, 0, 0) };
+        exportControlsSp.Children.Add(exportButtons);
+        exportControlsSp.Children.Add(exportStatus);
+        exportWrapper.Children.Add(exportControlsSp);
 
-        AddCardSection("11. Export Service — CSV, Excel XML and HTML without third-party libraries", exportWrapper,
-@"<!-- No markup needed: the service reads the grid -->
-<DataGrid x:Name=""exportGrid"" ItemsSource=""{Binding BeamList}"" Height=""140"">
+        AddCardSection(Loc.T("15. Dịch vụ xuất dữ liệu CSV, Excel XML và HTML", "15. Export Service — CSV, Excel XML and HTML without third-party libraries"), exportWrapper,
+@"<!-- Export Service DataGrid -->
+<DataGrid x:Name=""exportGrid""
+          Style=""{StaticResource CONCOST.DataGrid.Seamless}""
+          attached:DataGridElement.HeaderHorizontalContentAlignment=""Center""
+          attached:DataGridElement.CellHorizontalContentAlignment=""Center""
+          ItemsSource=""{Binding BeamList}"" Height=""190"">
     <DataGrid.Columns>
         <DataGridTextColumn Header=""Element Name"" Binding=""{Binding Name}"" Width=""2*"" />
         <DataGridTextColumn Header=""Width (mm)"" Binding=""{Binding Width}"" Width=""*"" />
@@ -3071,9 +3116,9 @@ private void OnExportExcel(object sender, RoutedEventArgs e) =>
 private void OnExportHtml(object sender, RoutedEventArgs e) =>
     DataGridExportService.ExportToHtml(exportGrid, ""beams.html"", ""Beam Schedule"");");
 
-        // ==============================================================================?
-        // SECTION 12: Large-data switches (DataGridPerformance)
-        // ==============================================================================?
+        // ==============================================================================
+        // SECTION 16: Large-data switches (DataGridPerformance)
+        // ==============================================================================
         var largeRows = Enumerable.Range(0, 100_000)
             .Select(i => new BenchmarkGridItem
             {
@@ -3088,15 +3133,17 @@ private void OnExportHtml(object sender, RoutedEventArgs e) =>
         var dgLarge = new DataGrid
         {
             ItemsSource = largeRows,
-            Height = 260,
+            Height = 320,
             CanUserAddRows = false,
             AutoGenerateColumns = false
         };
-        dgLarge.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Base");
-        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Element", Binding = new System.Windows.Data.Binding("ElementCode"), Width = new DataGridLength(2, DataGridLengthUnitType.Star) });
-        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(110) });
-        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(110) });
-        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Rebar (kg)", Binding = new System.Windows.Data.Binding("RebarWeight"), Width = new DataGridLength(1.2, DataGridLengthUnitType.Star) });
+        dgLarge.SetResourceReference(System.Windows.FrameworkElement.StyleProperty, "CONCOST.DataGrid.Seamless");
+        CONCOST.UI.AttachedProperties.DataGridElement.SetHeaderHorizontalContentAlignment(dgLarge, System.Windows.HorizontalAlignment.Center);
+        CONCOST.UI.AttachedProperties.DataGridElement.SetCellHorizontalContentAlignment(dgLarge, System.Windows.HorizontalAlignment.Center);
+        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Element", Binding = new System.Windows.Data.Binding("ElementCode"), Width = new DataGridLength(2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
+        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Width (mm)", Binding = new System.Windows.Data.Binding("Width"), Width = new DataGridLength(110), EditingElementStyle = editTextBoxStyle });
+        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Depth (mm)", Binding = new System.Windows.Data.Binding("Height"), Width = new DataGridLength(110), EditingElementStyle = editTextBoxStyle });
+        dgLarge.Columns.Add(new DataGridTextColumn { Header = "Rebar (kg)", Binding = new System.Windows.Data.Binding("RebarWeight"), Width = new DataGridLength(1.2, DataGridLengthUnitType.Star), EditingElementStyle = editTextBoxStyle });
 
         DataGridPerformance.SetCachePages(dgLarge, 1);
         DataGridPerformance.SetDeferredScrolling(dgLarge, true);
