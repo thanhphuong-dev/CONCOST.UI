@@ -122,7 +122,7 @@ public class PropertiesPalette : Grid
 
         _editType = new Button { Content = EditTypeText, Height = 26, Padding = new Thickness(8, 0, 8, 0), FontSize = 11, Margin = new Thickness(4, 0, 0, 0) };
         _editType.SetResourceReference(StyleProperty, "CONCOST.Button.Secondary");
-        _editType.Click += (_, _) => EditTypeRequested?.Invoke(this, EventArgs.Empty);
+        _editType.Click += (_, _) => _editTypeRequested?.Invoke(this, EventArgs.Empty);
 
         _typeRow = new Grid();
         _typeRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -342,8 +342,26 @@ public class PropertiesPalette : Grid
     /// <summary>Last validation message, or <c>null</c> when the last write succeeded.</summary>
     public string? ValidationMessage => _validation.Visibility == Visibility.Visible ? _validation.Text : null;
 
+    private EventHandler? _editTypeRequested;
+
     /// <summary>Raised when "Edit type" is pressed.</summary>
-    public event EventHandler? EditTypeRequested;
+    public event EventHandler? EditTypeRequested
+    {
+        add
+        {
+            _editTypeRequested += value;
+            _editType.IsEnabled = true;
+            _editType.ToolTip = EditTypeText;
+        }
+        remove
+        {
+            _editTypeRequested -= value;
+            _editType.IsEnabled = _editTypeRequested != null;
+            _editType.ToolTip = _editTypeRequested == null
+                ? "Type editing is not available in this build."
+                : EditTypeText;
+        }
+    }
 
     /// <summary>Raised when another type is picked in the type selector.</summary>
     public event EventHandler<string>? TypeChangeRequested;
@@ -642,8 +660,8 @@ public class PropertiesPalette : Grid
             _typeSelector.ItemsSource = choices;
             _typeSelector.SelectedItem = selectable.TypeName;
             _typeSelector.IsEnabled = availableTypes.Count > 1;
-            _editType.IsEnabled = EditTypeRequested is not null;
-            _editType.ToolTip = EditTypeRequested is null
+            _editType.IsEnabled = _editTypeRequested is not null;
+            _editType.ToolTip = _editTypeRequested is null
                 ? "Type editing is not available in this build."
                 : EditTypeText;
             _subtitle.Visibility = Visibility.Collapsed;
