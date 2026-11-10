@@ -3444,17 +3444,12 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
         var properties = new PropertyManager(new TransactionManager(undo));
         var selection = new SelectionManager();
 
-        var beam = new CadDemoBeam
-        {
-            Mark = "D1",
-            Length = 6000,
-            Height = 400,
-            Width = 250,
-            Material = Loc.T("Bê tông B25", "Concrete B25"),
-            RebarGrade = "CB400-V",
-            Story = "Level 2 (+3.600m)"
-        };
+        var beam = new CadDemoBeam();
+        var column = new CadDemoColumn();
+        var wall = new CadDemoWall();
+        object? activeTarget = beam;
 
+        // 1. Đăng ký thuộc tính Dầm bê tông cốt thép (RC Beam)
         properties.Register<CadDemoBeam>(
             new PropertyDescriptor("Length", target => ((CadDemoBeam)target).Length, (target, value) => ((CadDemoBeam)target).Length = Convert.ToDouble(value))
             {
@@ -3463,7 +3458,7 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
                 Editor = PropertyEditorKind.Numeric,
                 Unit = "mm",
                 DefaultValue = 6000.0,
-                Validator = (_, value) => value is double length && length > 0 ? null : Loc.T("Chiều dài phải dương.", "Length must be positive.")
+                Validator = (_, value) => value is double length && length > 0 ? null : Loc.T("Chiều dài dầm phải dương (> 0).", "Beam length must be positive (> 0).")
             },
             new PropertyDescriptor("Height", target => ((CadDemoBeam)target).Height, (target, value) => ((CadDemoBeam)target).Height = Convert.ToDouble(value))
             {
@@ -3471,7 +3466,8 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
                 Category = Loc.T("Kích thước hình học", "Geometry"),
                 Editor = PropertyEditorKind.Numeric,
                 Unit = "mm",
-                DefaultValue = 400.0
+                DefaultValue = 400.0,
+                Validator = (_, value) => value is double h && h > 0 ? null : Loc.T("Chiều cao phải dương.", "Depth must be positive.")
             },
             new PropertyDescriptor("Width", target => ((CadDemoBeam)target).Width, (target, value) => ((CadDemoBeam)target).Width = Convert.ToDouble(value))
             {
@@ -3479,7 +3475,8 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
                 Category = Loc.T("Kích thước hình học", "Geometry"),
                 Editor = PropertyEditorKind.Numeric,
                 Unit = "mm",
-                DefaultValue = 250.0
+                DefaultValue = 250.0,
+                Validator = (_, value) => value is double b && b > 0 ? null : Loc.T("Bề rộng phải dương.", "Width must be positive.")
             },
             new PropertyDescriptor("Material", target => ((CadDemoBeam)target).Material, (target, value) => ((CadDemoBeam)target).Material = value as string ?? string.Empty)
             {
@@ -3509,512 +3506,703 @@ workspace.TileMode = DocumentTileMode.Vertical;")));
                 Editor = PropertyEditorKind.Boolean
             });
 
+        // 2. Đăng ký thuộc tính Cột thép tổ hợp (Steel Column)
+        properties.Register<CadDemoColumn>(
+            new PropertyDescriptor("Height", target => ((CadDemoColumn)target).Height, (target, value) => ((CadDemoColumn)target).Height = Convert.ToDouble(value))
+            {
+                DisplayName = Loc.T("Chiều cao tầng (H)", "Story height (H)"),
+                Category = Loc.T("Kích thước hình học", "Geometry"),
+                Editor = PropertyEditorKind.Numeric,
+                Unit = "mm",
+                DefaultValue = 3600.0,
+                Validator = (_, value) => value is double h && h > 0 ? null : Loc.T("Chiều cao cột phải dương (> 0).", "Column height must be positive (> 0).")
+            },
+            new PropertyDescriptor("Width", target => ((CadDemoColumn)target).Width, (target, value) => ((CadDemoColumn)target).Width = Convert.ToDouble(value))
+            {
+                DisplayName = Loc.T("Bề rộng cánh (B)", "Flange width (B)"),
+                Category = Loc.T("Kích thước hình học", "Geometry"),
+                Editor = PropertyEditorKind.Numeric,
+                Unit = "mm",
+                DefaultValue = 400.0
+            },
+            new PropertyDescriptor("Depth", target => ((CadDemoColumn)target).Depth, (target, value) => ((CadDemoColumn)target).Depth = Convert.ToDouble(value))
+            {
+                DisplayName = Loc.T("Chiều cao bụng (Hw)", "Web depth (Hw)"),
+                Category = Loc.T("Kích thước hình học", "Geometry"),
+                Editor = PropertyEditorKind.Numeric,
+                Unit = "mm",
+                DefaultValue = 400.0
+            },
+            new PropertyDescriptor("Material", target => ((CadDemoColumn)target).Material, (target, value) => ((CadDemoColumn)target).Material = value as string ?? string.Empty)
+            {
+                DisplayName = Loc.T("Mác thép kết cấu", "Structural steel grade"),
+                Category = Loc.T("Vật liệu & Tiêu chuẩn", "Materials & Specs"),
+                Editor = PropertyEditorKind.Choice,
+                Choices = new object[] { "SS400", "Q345B", "A572-Gr50", "SM490" },
+                DefaultValue = "SS400"
+            },
+            new PropertyDescriptor("Story", target => ((CadDemoColumn)target).Story)
+            {
+                DisplayName = Loc.T("Tầng định vị", "Story level"),
+                Category = Loc.T("Vị trí & Ràng buộc", "Identity & Constraints")
+            },
+            new PropertyDescriptor("IsLocked", target => ((CadDemoColumn)target).IsLocked, (target, value) => ((CadDemoColumn)target).IsLocked = Convert.ToBoolean(value))
+            {
+                DisplayName = Loc.T("Khoá vị trí cấu kiện", "Lock member position"),
+                Category = Loc.T("Vị trí & Ràng buộc", "Identity & Constraints"),
+                Editor = PropertyEditorKind.Boolean
+            });
+
+        // 3. Đăng ký thuộc tính Tường vây (Diaphragm Wall)
+        properties.Register<CadDemoWall>(
+            new PropertyDescriptor("Length", target => ((CadDemoWall)target).Length, (target, value) => ((CadDemoWall)target).Length = Convert.ToDouble(value))
+            {
+                DisplayName = Loc.T("Chiều dài tường (L)", "Wall length (L)"),
+                Category = Loc.T("Kích thước hình học", "Geometry"),
+                Editor = PropertyEditorKind.Numeric,
+                Unit = "mm",
+                DefaultValue = 5000.0,
+                Validator = (_, value) => value is double l && l > 0 ? null : Loc.T("Chiều dài tường phải dương (> 0).", "Wall length must be positive (> 0).")
+            },
+            new PropertyDescriptor("Height", target => ((CadDemoWall)target).Height, (target, value) => ((CadDemoWall)target).Height = Convert.ToDouble(value))
+            {
+                DisplayName = Loc.T("Chiều cao tường (H)", "Wall height (H)"),
+                Category = Loc.T("Kích thước hình học", "Geometry"),
+                Editor = PropertyEditorKind.Numeric,
+                Unit = "mm",
+                DefaultValue = 3200.0
+            },
+            new PropertyDescriptor("Thickness", target => ((CadDemoWall)target).Thickness, (target, value) => ((CadDemoWall)target).Thickness = Convert.ToDouble(value))
+            {
+                DisplayName = Loc.T("Chiều dày tường (t)", "Wall thickness (t)"),
+                Category = Loc.T("Kích thước hình học", "Geometry"),
+                Editor = PropertyEditorKind.Numeric,
+                Unit = "mm",
+                DefaultValue = 300.0
+            },
+            new PropertyDescriptor("Material", target => ((CadDemoWall)target).Material, (target, value) => ((CadDemoWall)target).Material = value as string ?? string.Empty)
+            {
+                DisplayName = Loc.T("Cấp độ bền bê tông", "Concrete grade"),
+                Category = Loc.T("Vật liệu & Tiêu chuẩn", "Materials & Specs"),
+                Editor = PropertyEditorKind.Choice,
+                Choices = new object[] { Loc.T("Bê tông B30", "Concrete B30"), Loc.T("Bê tông B35", "Concrete B35"), Loc.T("Bê tông B40", "Concrete B40") },
+                DefaultValue = Loc.T("Bê tông B30", "Concrete B30")
+            },
+            new PropertyDescriptor("Story", target => ((CadDemoWall)target).Story)
+            {
+                DisplayName = Loc.T("Tầng định vị", "Story level"),
+                Category = Loc.T("Vị trí & Ràng buộc", "Identity & Constraints")
+            },
+            new PropertyDescriptor("IsLocked", target => ((CadDemoWall)target).IsLocked, (target, value) => ((CadDemoWall)target).IsLocked = Convert.ToBoolean(value))
+            {
+                DisplayName = Loc.T("Khoá vị trí cấu kiện", "Lock member position"),
+                Category = Loc.T("Vị trí & Ràng buộc", "Identity & Constraints"),
+                Editor = PropertyEditorKind.Boolean
+            });
+
         selection.Select(beam);
 
-        // Workbench 2 cột: Trái là CAD Beam Viewport Studio, Phải là PropertiesPalette Dock
-        var workbench = new Grid
+        // =========================================================================
+        // PRIMARY SHOWCASE CONTROL: PropertiesPalette
+        // =========================================================================
+        var palette = new PropertiesPalette(properties, selection)
         {
-            Height = 440,
-            Tag = "full-bleed"
-        };
-        workbench.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        workbench.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(350) });
-
-        // CAD Drawing Viewport (Trái)
-        var drawingBorder = new Border
-        {
-            CornerRadius = new CornerRadius(8),
-            BorderThickness = new Thickness(1),
-            Margin = new Thickness(0, 0, 12, 0),
-            ClipToBounds = true
-        };
-        drawingBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.CanvasBackground");
-        drawingBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
-
-        var viewportGrid = new Grid();
-        viewportGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(42) });
-        viewportGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        viewportGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(34) });
-
-        // 1. Viewport Toolbar (Top Row)
-        var topToolbar = new Border
-        {
-            BorderThickness = new Thickness(0, 0, 0, 1)
-        };
-        topToolbar.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
-        topToolbar.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
-
-        var toolGrid = new Grid { Margin = new Thickness(12, 0, 10, 0) };
-        toolGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        toolGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-        var headerBadgePanel = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-        var cadBadge = new Border
-        {
-            CornerRadius = new CornerRadius(4),
-            Padding = new Thickness(6, 2, 6, 2),
-            Margin = new Thickness(0, 0, 8, 0)
-        };
-        cadBadge.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
-        var cadBadgeText = new TextBlock { Text = "CAD 2D", FontSize = 10.5, FontWeight = FontWeights.Bold, Foreground = Brushes.White };
-        cadBadge.Child = cadBadgeText;
-        headerBadgePanel.Children.Add(cadBadge);
-
-        var headerText = new TextBlock
-        {
-            Text = Loc.F("DẦM BÊ TÔNG CỐT THÉP {0} — {1}", "REINFORCED CONCRETE BEAM {0} — {1}", beam.Mark, beam.Material),
-            FontSize = 12.5,
-            FontWeight = FontWeights.SemiBold,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-        headerText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
-        headerBadgePanel.Children.Add(headerText);
-        Grid.SetColumn(headerBadgePanel, 0);
-        toolGrid.Children.Add(headerBadgePanel);
-
-        // Action tools in top toolbar
-        var actionPanel = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-
-        var undoButton = SecondaryButton(Loc.T("Hoàn tác", "Undo"));
-        undoButton.Padding = new Thickness(10, 3, 10, 3);
-        undoButton.Height = 26;
-        IconElement.SetKind(undoButton, IconKind.Undo);
-
-        var resetDefaultsButton = SecondaryButton(Loc.T("Mặc định", "Default"));
-        resetDefaultsButton.Padding = new Thickness(10, 3, 10, 3);
-        resetDefaultsButton.Height = 26;
-        IconElement.SetKind(resetDefaultsButton, IconKind.Refresh);
-
-        actionPanel.Children.Add(undoButton);
-        actionPanel.Children.Add(resetDefaultsButton);
-        Grid.SetColumn(actionPanel, 1);
-        toolGrid.Children.Add(actionPanel);
-
-        topToolbar.Child = toolGrid;
-        Grid.SetRow(topToolbar, 0);
-        viewportGrid.Children.Add(topToolbar);
-
-        // 2. Viewport Main Drawing Area (Row 1)
-        var canvasContainer = new Grid { ClipToBounds = true };
-
-        // Background GridPattern for authentic CAD workspace
-        var gridPattern = new GridPattern
-        {
-            Pattern = GridPatternType.Dots,
-            CellSize = 22,
-            PatternOpacity = 0.35,
+            VerticalAlignment = VerticalAlignment.Stretch,
             HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch
-        };
-        gridPattern.SetResourceReference(GridPattern.StrokeProperty, "CONCOST.Brush.BorderSubtle");
-        canvasContainer.Children.Add(gridPattern);
-
-        // Structural Drawing Canvas
-        var beamCanvas = new Canvas
-        {
-            Width = 620,
-            Height = 280,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
+            ShowSearch = true,
+            RevitLayout = false,
+            EmptyTitle = Loc.T("Chưa chọn cấu kiện", "Nothing selected"),
+            EmptySubtitle = Loc.T("Chọn một đối tượng trên mô hình để chỉnh sửa tham số.", "Select an element to edit its parameters."),
+            EmptyHint = Loc.T("Chọn đối tượng từ danh sách bên dưới hoặc nhấp vào mô hình để nạp thuộc tính.", "Pick an element from the target selector below to inspect parameters.")
         };
 
-        // --- ELEVATION VIEW (LEFT) ---
-        // Support columns
-        var leftCol = new Rectangle
-        {
-            Width = 36,
-            Height = 150,
-            StrokeThickness = 1
-        };
-        leftCol.SetResourceReference(Shape.StrokeProperty, "CONCOST.Brush.Border");
-        leftCol.SetResourceReference(Shape.FillProperty, "CONCOST.Brush.SurfaceSecondary");
-        Canvas.SetLeft(leftCol, 40);
-        Canvas.SetTop(leftCol, 75);
-        beamCanvas.Children.Add(leftCol);
-
-        var rightCol = new Rectangle
-        {
-            Width = 36,
-            Height = 150,
-            StrokeThickness = 1
-        };
-        rightCol.SetResourceReference(Shape.StrokeProperty, "CONCOST.Brush.Border");
-        rightCol.SetResourceReference(Shape.FillProperty, "CONCOST.Brush.SurfaceSecondary");
-        Canvas.SetLeft(rightCol, 360);
-        Canvas.SetTop(rightCol, 75);
-        beamCanvas.Children.Add(rightCol);
-
-        // Beam body
-        var beamRect = new Rectangle
-        {
-            Width = 284,
-            Height = 72,
-            Stroke = new SolidColorBrush(Color.FromRgb(0x02, 0x84, 0xC7)),
-            StrokeThickness = 2,
-            Fill = new SolidColorBrush(Color.FromArgb(0x28, 0x02, 0x84, 0xC7))
-        };
-        Canvas.SetLeft(beamRect, 76);
-        Canvas.SetTop(beamRect, 85);
-        beamCanvas.Children.Add(beamRect);
-
-        // Top & Bottom Rebar (Red)
-        var topRebar = new Line { X1 = 55, Y1 = 94, X2 = 380, Y2 = 94, Stroke = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)), StrokeThickness = 2.5 };
-        var botRebar = new Line { X1 = 55, Y1 = 148, X2 = 380, Y2 = 148, Stroke = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)), StrokeThickness = 2.5 };
-        beamCanvas.Children.Add(topRebar);
-        beamCanvas.Children.Add(botRebar);
-
-        // Rebar Hooks (90-degree end hooks)
-        var topHookLeft = new Line { X1 = 55, Y1 = 94, X2 = 55, Y2 = 115, Stroke = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)), StrokeThickness = 2.5 };
-        var topHookRight = new Line { X1 = 380, Y1 = 94, X2 = 380, Y2 = 115, Stroke = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)), StrokeThickness = 2.5 };
-        var botHookLeft = new Line { X1 = 55, Y1 = 148, X2 = 55, Y2 = 127, Stroke = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)), StrokeThickness = 2.5 };
-        var botHookRight = new Line { X1 = 380, Y1 = 148, X2 = 380, Y2 = 127, Stroke = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)), StrokeThickness = 2.5 };
-        beamCanvas.Children.Add(topHookLeft);
-        beamCanvas.Children.Add(topHookRight);
-        beamCanvas.Children.Add(botHookLeft);
-        beamCanvas.Children.Add(botHookRight);
-
-        // Stirrup bars (Thép đai)
-        var stirrups = new List<Line>();
-        for (int i = 0; i < 6; i++)
-        {
-            double sx = 95 + i * 49;
-            var stLine = new Line { X1 = sx, Y1 = 94, X2 = sx, Y2 = 148, Stroke = new SolidColorBrush(Color.FromArgb(0x80, 0xEF, 0x44, 0x44)), StrokeThickness = 1.2 };
-            stirrups.Add(stLine);
-            beamCanvas.Children.Add(stLine);
-        }
-
-        // Top Dimension Line (Length)
-        var dimExtLeft = new Line { X1 = 76, Y1 = 80, X2 = 76, Y2 = 45, Stroke = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)), StrokeThickness = 1 };
-        var dimExtRight = new Line { X1 = 360, Y1 = 80, X2 = 360, Y2 = 45, Stroke = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)), StrokeThickness = 1 };
-        var dimMainLen = new Line { X1 = 76, Y1 = 52, X2 = 360, Y2 = 52, Stroke = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)), StrokeThickness = 1 };
-        beamCanvas.Children.Add(dimExtLeft);
-        beamCanvas.Children.Add(dimExtRight);
-        beamCanvas.Children.Add(dimMainLen);
-
-        var dimLen = new TextBlock
-        {
-            Text = $"L = {beam.Length:0} mm",
-            FontSize = 11,
-            FontWeight = FontWeights.Bold,
-            Foreground = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B))
-        };
-        Canvas.SetLeft(dimLen, 175);
-        Canvas.SetTop(dimLen, 34);
-        beamCanvas.Children.Add(dimLen);
-
-        // Left Dimension Line (Height)
-        var dimExtH1 = new Line { X1 = 70, Y1 = 85, X2 = 25, Y2 = 85, Stroke = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)), StrokeThickness = 1 };
-        var dimExtH2 = new Line { X1 = 70, Y1 = 157, X2 = 25, Y2 = 157, Stroke = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)), StrokeThickness = 1 };
-        var dimMainH = new Line { X1 = 30, Y1 = 85, X2 = 30, Y2 = 157, Stroke = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B)), StrokeThickness = 1 };
-        beamCanvas.Children.Add(dimExtH1);
-        beamCanvas.Children.Add(dimExtH2);
-        beamCanvas.Children.Add(dimMainH);
-
-        var dimH = new TextBlock
-        {
-            Text = $"H={beam.Height:0}",
-            FontSize = 10,
-            FontWeight = FontWeights.Bold,
-            Foreground = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B))
-        };
-        Canvas.SetLeft(dimH, 6);
-        Canvas.SetTop(dimH, 112);
-        beamCanvas.Children.Add(dimH);
-
-        var elevTitle = new TextBlock
-        {
-            Text = Loc.T("HÌNH CHIẾU ĐỨNG (ELEVATION)", "ELEVATION VIEW"),
-            FontSize = 10.5,
-            FontWeight = FontWeights.SemiBold
-        };
-        elevTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        Canvas.SetLeft(elevTitle, 140);
-        Canvas.SetTop(elevTitle, 240);
-        beamCanvas.Children.Add(elevTitle);
-
-        // Section Cutting Line 1-1
-        var cutLine = new Line { X1 = 218, Y1 = 75, X2 = 218, Y2 = 168, Stroke = new SolidColorBrush(Color.FromRgb(0x60, 0xA5, 0xFA)), StrokeThickness = 1.5, StrokeDashArray = new DoubleCollection { 4, 3 } };
-        var cutTagTop = new TextBlock { Text = "1", FontSize = 10, FontWeight = FontWeights.Bold, Foreground = new SolidColorBrush(Color.FromRgb(0x60, 0xA5, 0xFA)) };
-        var cutTagBot = new TextBlock { Text = "1", FontSize = 10, FontWeight = FontWeights.Bold, Foreground = new SolidColorBrush(Color.FromRgb(0x60, 0xA5, 0xFA)) };
-        Canvas.SetLeft(cutLine, 0);
-        Canvas.SetTop(cutLine, 0);
-        Canvas.SetLeft(cutTagTop, 214);
-        Canvas.SetTop(cutTagTop, 60);
-        Canvas.SetLeft(cutTagBot, 214);
-        Canvas.SetTop(cutTagBot, 172);
-        beamCanvas.Children.Add(cutLine);
-        beamCanvas.Children.Add(cutTagTop);
-        beamCanvas.Children.Add(cutTagBot);
-
-        // --- SECTION VIEW (RIGHT) ---
-        var secDiv = new Line { X1 = 430, Y1 = 50, X2 = 430, Y2 = 230, StrokeThickness = 1, StrokeDashArray = new DoubleCollection { 2, 4 } };
-        secDiv.SetResourceReference(Shape.StrokeProperty, "CONCOST.Brush.BorderSubtle");
-        beamCanvas.Children.Add(secDiv);
-
-        // Section Concrete Body
-        var secRect = new Rectangle
-        {
-            Width = 55,
-            Height = 72,
-            Stroke = new SolidColorBrush(Color.FromRgb(0x02, 0x84, 0xC7)),
-            StrokeThickness = 2,
-            Fill = new SolidColorBrush(Color.FromArgb(0x28, 0x02, 0x84, 0xC7))
-        };
-        Canvas.SetLeft(secRect, 485);
-        Canvas.SetTop(secRect, 85);
-        beamCanvas.Children.Add(secRect);
-
-        // Section Stirrup Loop
-        var secStirrup = new Rectangle
-        {
-            Width = 43,
-            Height = 60,
-            Stroke = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)),
-            StrokeThickness = 1.5
-        };
-        Canvas.SetLeft(secStirrup, 491);
-        Canvas.SetTop(secStirrup, 91);
-        beamCanvas.Children.Add(secStirrup);
-
-        // 4 Corner Rebar Dots
-        var dotTopLeft = new Ellipse { Width = 6, Height = 6, Fill = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)) };
-        var dotTopRight = new Ellipse { Width = 6, Height = 6, Fill = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)) };
-        var dotBotLeft = new Ellipse { Width = 6, Height = 6, Fill = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)) };
-        var dotBotRight = new Ellipse { Width = 6, Height = 6, Fill = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)) };
-        Canvas.SetLeft(dotTopLeft, 494); Canvas.SetTop(dotTopLeft, 94);
-        Canvas.SetLeft(dotTopRight, 524); Canvas.SetTop(dotTopRight, 94);
-        Canvas.SetLeft(dotBotLeft, 494); Canvas.SetTop(dotBotLeft, 142);
-        Canvas.SetLeft(dotBotRight, 524); Canvas.SetTop(dotBotRight, 142);
-        beamCanvas.Children.Add(dotTopLeft);
-        beamCanvas.Children.Add(dotTopRight);
-        beamCanvas.Children.Add(dotBotLeft);
-        beamCanvas.Children.Add(dotBotRight);
-
-        // Section Dimension B (Bottom)
-        var dimSecB = new TextBlock
-        {
-            Text = $"B = {beam.Width:0} mm",
-            FontSize = 10,
-            FontWeight = FontWeights.Bold,
-            Foreground = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B))
-        };
-        Canvas.SetLeft(dimSecB, 482);
-        Canvas.SetTop(dimSecB, 168);
-        beamCanvas.Children.Add(dimSecB);
-
-        var secTitle = new TextBlock
-        {
-            Text = Loc.F("MẶT CẮT 1-1 ({0:0}×{1:0})", "SECTION 1-1 ({0:0}×{1:0})", beam.Width, beam.Height),
-            FontSize = 10.5,
-            FontWeight = FontWeights.SemiBold
-        };
-        secTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        Canvas.SetLeft(secTitle, 460);
-        Canvas.SetTop(secTitle, 240);
-        beamCanvas.Children.Add(secTitle);
-
-        canvasContainer.Children.Add(beamCanvas);
-        Grid.SetRow(canvasContainer, 1);
-        viewportGrid.Children.Add(canvasContainer);
-
-        // 3. Viewport Footer Status Bar (Row 2)
-        var footerStrip = new Border
-        {
-            BorderThickness = new Thickness(0, 1, 0, 0)
-        };
-        footerStrip.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
-        footerStrip.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
-
-        var footerGrid = new Grid { Margin = new Thickness(12, 0, 12, 0) };
-        footerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        footerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-        var footerCoordText = new TextBlock
-        {
-            Text = Loc.T("Tọa độ: (0.00, 3.60) · Tỷ lệ: 1:25 · Cấu kiện: Dầm BTCT · Hệ trục A-B",
-                         "Coords: (0.00, 3.60) · Scale: 1:25 · Element: RC Beam · Axis A-B"),
-            FontSize = 11,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-        footerCoordText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
-        Grid.SetColumn(footerCoordText, 0);
-        footerGrid.Children.Add(footerCoordText);
-
-        var statusPillBorder = new Border
-        {
-            CornerRadius = new CornerRadius(4),
-            Padding = new Thickness(8, 2, 8, 2),
-            VerticalAlignment = VerticalAlignment.Center
-        };
-        statusPillBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.PrimarySoft");
-
-        var statusPillText = new TextBlock
-        {
-            Text = Loc.T("✓ Sẵn sàng đồng bộ", "✓ Synced with CAD model"),
-            FontSize = 11,
-            FontWeight = FontWeights.SemiBold
-        };
-        statusPillText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.Primary");
-        statusPillBorder.Child = statusPillText;
-        Grid.SetColumn(statusPillBorder, 1);
-        footerGrid.Children.Add(statusPillBorder);
-
-        footerStrip.Child = footerGrid;
-        Grid.SetRow(footerStrip, 2);
-        viewportGrid.Children.Add(footerStrip);
-
-        drawingBorder.Child = viewportGrid;
-        Grid.SetColumn(drawingBorder, 0);
-        workbench.Children.Add(drawingBorder);
-
-        // Right Column: PropertiesPalette Dock Container
         var paletteDock = new Border
         {
+            Height = 480,
             CornerRadius = new CornerRadius(8),
             BorderThickness = new Thickness(1),
             ClipToBounds = true
         };
         paletteDock.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
         paletteDock.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.Border");
-
-        var palette = new PropertiesPalette(properties, selection)
-        {
-            VerticalAlignment = VerticalAlignment.Stretch
-        };
-        palette.Build(beam);
         paletteDock.Child = palette;
-        Grid.SetColumn(paletteDock, 1);
-        workbench.Children.Add(paletteDock);
 
-        // Đồng bộ đồ họa hình học dầm khi sửa thuộc tính
-        void UpdateVisuals(string? changeNotice = null)
+        // =========================================================================
+        // RIGHT COLUMN: Live Model Inspector & Synchronization Hub
+        // =========================================================================
+        var inspectorCard = new Border
         {
-            headerText.Text = Loc.F("DẦM BÊ TÔNG CỐT THÉP {0} — {1}", "REINFORCED CONCRETE BEAM {0} — {1}", beam.Mark, beam.Material);
-            dimLen.Text = $"L = {beam.Length:0} mm";
-            dimH.Text = $"H={beam.Height:0}";
-            dimSecB.Text = $"B = {beam.Width:0} mm";
-            secTitle.Text = Loc.F("MẶT CẮT 1-1 ({0:0}×{1:0})", "SECTION 1-1 ({0:0}×{1:0})", beam.Width, beam.Height);
+            Height = 480,
+            CornerRadius = new CornerRadius(8),
+            BorderThickness = new Thickness(1),
+            Padding = new Thickness(16)
+        };
+        inspectorCard.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.SurfaceSecondary");
+        inspectorCard.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
 
-            // Scale geometry smoothly
-            double newW = Math.Max(180, Math.Min(340, beam.Length * 0.045));
-            double newH = Math.Max(40, Math.Min(95, beam.Height * 0.18));
-            double newB = Math.Max(35, Math.Min(75, beam.Width * 0.22));
+        var inspectorLayout = new Grid();
+        inspectorLayout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        inspectorLayout.RowDefinitions.Add(new RowDefinition { Height = new GridLength(140) });
+        inspectorLayout.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        inspectorLayout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            beamRect.Width = newW;
-            beamRect.Height = newH;
-            Canvas.SetLeft(rightCol, 76 + newW);
+        // Header
+        var headerStack = new StackPanel { Margin = new Thickness(0, 0, 0, 12) };
+        var badgeRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
+        var modelBadge = new Border
+        {
+            CornerRadius = new CornerRadius(4),
+            Padding = new Thickness(6, 2, 6, 2),
+            Margin = new Thickness(0, 0, 8, 0)
+        };
+        modelBadge.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Primary");
+        modelBadge.Child = new TextBlock { Text = "CAD / BIM MODEL", FontSize = 10, FontWeight = FontWeights.Bold, Foreground = Brushes.White };
+        badgeRow.Children.Add(modelBadge);
 
-            topRebar.X2 = 76 + newW + 20;
-            botRebar.X2 = 76 + newW + 20;
-            botRebar.Y1 = 85 + newH - 9;
-            botRebar.Y2 = 85 + newH - 9;
+        var syncPill = new TextBlock { Text = Loc.T("✓ Đồng bộ thời gian thực", "✓ Real-time synced"), FontSize = 11, FontWeight = FontWeights.SemiBold };
+        syncPill.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.Success");
+        badgeRow.Children.Add(syncPill);
+        headerStack.Children.Add(badgeRow);
 
-            Canvas.SetLeft(topHookRight, 76 + newW + 20);
-            topHookRight.Y1 = 94;
-            topHookRight.X2 = 76 + newW + 20;
-            topHookRight.Y2 = 94 + 21;
+        var objectTitle = new TextBlock { FontSize = 14, FontWeight = FontWeights.Bold };
+        objectTitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
+        headerStack.Children.Add(objectTitle);
 
-            Canvas.SetLeft(botHookRight, 76 + newW + 20);
-            botHookRight.Y1 = 85 + newH - 9;
-            botHookRight.X2 = 76 + newW + 20;
-            botHookRight.Y2 = 85 + newH - 9 - 21;
+        var objectSubtitle = new TextBlock { FontSize = 11.5, Margin = new Thickness(0, 2, 0, 0) };
+        objectSubtitle.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        headerStack.Children.Add(objectSubtitle);
 
-            dimExtRight.X1 = 76 + newW;
-            dimExtRight.X2 = 76 + newW;
-            dimMainLen.X2 = 76 + newW;
-            Canvas.SetLeft(dimLen, 76 + (newW - 70) / 2);
+        Grid.SetRow(headerStack, 0);
+        inspectorLayout.Children.Add(headerStack);
 
-            dimExtH2.Y1 = 85 + newH;
-            dimExtH2.Y2 = 85 + newH;
-            dimMainH.Y2 = 85 + newH;
-            Canvas.SetTop(dimH, 85 + (newH - 12) / 2);
+        // 2D Section Preview Canvas
+        var previewBorder = new Border
+        {
+            CornerRadius = new CornerRadius(6),
+            BorderThickness = new Thickness(1),
+            ClipToBounds = true,
+            Margin = new Thickness(0, 0, 0, 12)
+        };
+        previewBorder.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.CanvasBackground");
+        previewBorder.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
 
-            // Update stirrup spacing
-            double step = newW / 6.0;
-            for (int i = 0; i < stirrups.Count; i++)
+        var previewCanvas = new Canvas { ClipToBounds = true };
+        previewBorder.Child = previewCanvas;
+        Grid.SetRow(previewBorder, 1);
+        inspectorLayout.Children.Add(previewBorder);
+
+        // 4 Metrics Grid (2x2)
+        var metricsGrid = new Grid { Margin = new Thickness(0, 0, 0, 12) };
+        metricsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        metricsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        metricsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        metricsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        Border CreateMetricTile(string label, out TextBlock valOut)
+        {
+            var b = new Border
             {
-                double sx = 86 + i * step;
-                stirrups[i].X1 = sx;
-                stirrups[i].X2 = sx;
-                stirrups[i].Y2 = 85 + newH - 9;
+                Margin = new Thickness(3),
+                Padding = new Thickness(10, 6, 10, 6),
+                CornerRadius = new CornerRadius(6),
+                BorderThickness = new Thickness(1)
+            };
+            b.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
+            b.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
+            var sp = new StackPanel();
+            var lbl = new TextBlock { Text = label, FontSize = 10.5, FontWeight = FontWeights.SemiBold };
+            lbl.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+            valOut = new TextBlock { FontSize = 12.5, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 2, 0, 0) };
+            valOut.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextPrimary");
+            sp.Children.Add(lbl);
+            sp.Children.Add(valOut);
+            b.Child = sp;
+            return b;
+        }
+
+        var tile1 = CreateMetricTile(Loc.T("Thể tích / Tiết diện", "Volume / Area"), out var metricVol);
+        var tile2 = CreateMetricTile(Loc.T("Trọng lượng ước tính", "Est. Self-Weight"), out var metricWeight);
+        var tile3 = CreateMetricTile(Loc.T("Vật liệu / Cấp bền", "Material / Grade"), out var metricMaterial);
+        var tile4 = CreateMetricTile(Loc.T("Trạng thái cấu kiện", "Member Status"), out var metricStatus);
+
+        Grid.SetRow(tile1, 0); Grid.SetColumn(tile1, 0); metricsGrid.Children.Add(tile1);
+        Grid.SetRow(tile2, 0); Grid.SetColumn(tile2, 1); metricsGrid.Children.Add(tile2);
+        Grid.SetRow(tile3, 1); Grid.SetColumn(tile3, 0); metricsGrid.Children.Add(tile3);
+        Grid.SetRow(tile4, 1); Grid.SetColumn(tile4, 1); metricsGrid.Children.Add(tile4);
+
+        Grid.SetRow(metricsGrid, 2);
+        inspectorLayout.Children.Add(metricsGrid);
+
+        // Transaction & Activity Strip
+        var activityStrip = new Border
+        {
+            Padding = new Thickness(10, 7, 10, 7),
+            CornerRadius = new CornerRadius(6),
+            BorderThickness = new Thickness(1)
+        };
+        activityStrip.SetResourceReference(Border.BackgroundProperty, "CONCOST.Brush.Surface");
+        activityStrip.SetResourceReference(Border.BorderBrushProperty, "CONCOST.Brush.BorderSubtle");
+
+        var activityText = new TextBlock
+        {
+            Text = Loc.T("✓ Sẵn sàng: Đã nạp 7 tham số kỹ thuật qua PropertyManager.", "✓ Ready: 7 engineering parameters loaded via PropertyManager."),
+            FontSize = 11,
+            TextTrimming = TextTrimming.CharacterEllipsis
+        };
+        activityText.SetResourceReference(TextBlock.ForegroundProperty, "CONCOST.Brush.TextSecondary");
+        activityStrip.Child = activityText;
+        Grid.SetRow(activityStrip, 3);
+        inspectorLayout.Children.Add(activityStrip);
+
+        inspectorCard.Child = inspectorLayout;
+
+        // Visual updater for Right Inspector Card
+        void UpdateInspector()
+        {
+            previewCanvas.Children.Clear();
+            double cWidth = previewCanvas.ActualWidth > 0 ? previewCanvas.ActualWidth : 260;
+            double cHeight = previewCanvas.ActualHeight > 0 ? previewCanvas.ActualHeight : 140;
+
+            if (activeTarget is CadDemoBeam b)
+            {
+                objectTitle.Text = Loc.F("DẦM BÊ TÔNG CỐT THÉP {0} ({1})", "RC BEAM {0} ({1})", b.Mark, b.TypeName);
+                objectSubtitle.Text = Loc.F("{0} · Bề rộng {1} mm · Chiều cao {2} mm · Dài {3} mm", "{0} · Width {1} mm · Depth {2} mm · Length {3} mm", b.Story, b.Width, b.Height, b.Length);
+
+                double vol = (b.Length * b.Height * b.Width) / 1_000_000_000.0;
+                metricVol.Text = $"{vol:F3} m³";
+                metricWeight.Text = $"{(vol * 2500):N0} kg";
+                metricMaterial.Text = $"{b.Material} / {b.RebarGrade}";
+                metricStatus.Text = b.IsLocked ? Loc.T("🔒 Đã khóa vị trí", "🔒 Position locked") : Loc.T("🟢 Khả dụng chỉnh sửa", "🟢 Editable");
+
+                // Draw miniature 2D section
+                double secW = Math.Max(30, Math.Min(90, b.Width * 0.22));
+                double secH = Math.Max(40, Math.Min(95, b.Height * 0.22));
+                double left = (cWidth - secW) / 2;
+                double top = (cHeight - secH) / 2;
+
+                var rect = new Border
+                {
+                    Width = secW,
+                    Height = secH,
+                    BorderThickness = new Thickness(1.5),
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8)),
+                    Background = new SolidColorBrush(Color.FromArgb(0x30, 0x02, 0x84, 0xC7))
+                };
+                Canvas.SetLeft(rect, left);
+                Canvas.SetTop(rect, top);
+                previewCanvas.Children.Add(rect);
+
+                // 4 corner rebar dots
+                double[][] dotOffsets = { new[] { left + 3, top + 3 }, new[] { left + secW - 7, top + 3 }, new[] { left + 3, top + secH - 7 }, new[] { left + secW - 7, top + secH - 7 } };
+                foreach (var pt in dotOffsets)
+                {
+                    var dot = new System.Windows.Shapes.Ellipse { Width = 4, Height = 4, Fill = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)) };
+                    Canvas.SetLeft(dot, pt[0]);
+                    Canvas.SetTop(dot, pt[1]);
+                    previewCanvas.Children.Add(dot);
+                }
+
+                var dimW = new TextBlock { Text = $"B={b.Width}", FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)) };
+                Canvas.SetLeft(dimW, left + secW / 2 - 14);
+                Canvas.SetTop(dimW, top + secH + 3);
+                previewCanvas.Children.Add(dimW);
+
+                var dimH = new TextBlock { Text = $"H={b.Height}", FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)) };
+                Canvas.SetLeft(dimH, Math.Max(2, left - 42));
+                Canvas.SetTop(dimH, top + secH / 2 - 6);
+                previewCanvas.Children.Add(dimH);
             }
-
-            // Update Section View
-            secRect.Width = newB;
-            secRect.Height = newH;
-            secStirrup.Width = Math.Max(20, newB - 12);
-            secStirrup.Height = Math.Max(20, newH - 12);
-            Canvas.SetLeft(dotTopRight, 485 + newB - 9);
-            Canvas.SetLeft(dotBotRight, 485 + newB - 9);
-            Canvas.SetTop(dotBotLeft, 85 + newH - 9);
-            Canvas.SetTop(dotBotRight, 85 + newH - 9);
-
-            Canvas.SetLeft(dimSecB, 485 + (newB - 50) / 2);
-            Canvas.SetTop(dimSecB, 85 + newH + 12);
-            Canvas.SetTop(secTitle, 85 + newH + 32);
-
-            if (!string.IsNullOrEmpty(changeNotice))
+            else if (activeTarget is CadDemoColumn col)
             {
-                statusPillText.Text = changeNotice;
+                objectTitle.Text = Loc.F("CỘT THÉP HÌNH TỔ HỢP {0} ({1})", "STEEL COLUMN {0} ({1})", col.Mark, col.TypeName);
+                objectSubtitle.Text = Loc.F("{0} · Chiều cao {1} mm · Mác thép {2}", "{0} · Height {1} mm · Steel grade {2}", col.Story, col.Height, col.Material);
+
+                double area = (2 * col.Width * 21 + (col.Depth - 42) * 13) / 100.0;
+                metricVol.Text = $"{area:F1} cm²";
+                metricWeight.Text = $"{(area * 7.85 * col.Height / 1000):N0} kg";
+                metricMaterial.Text = col.Material;
+                metricStatus.Text = col.IsLocked ? Loc.T("🔒 Đã khóa vị trí", "🔒 Position locked") : Loc.T("🟢 Khả dụng chỉnh sửa", "🟢 Editable");
+
+                // Draw H-section
+                double sW = 60; double sH = 60;
+                double left = (cWidth - sW) / 2; double top = (cHeight - sH) / 2;
+
+                var flangeTop = new Border { Width = sW, Height = 8, Background = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99)) };
+                var flangeBot = new Border { Width = sW, Height = 8, Background = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99)) };
+                var web = new Border { Width = 7, Height = sH - 16, Background = new SolidColorBrush(Color.FromRgb(0x34, 0xD3, 0x99)) };
+
+                Canvas.SetLeft(flangeTop, left); Canvas.SetTop(flangeTop, top);
+                Canvas.SetLeft(web, left + (sW - 7) / 2); Canvas.SetTop(web, top + 8);
+                Canvas.SetLeft(flangeBot, left); Canvas.SetTop(flangeBot, top + sH - 8);
+
+                previewCanvas.Children.Add(flangeTop);
+                previewCanvas.Children.Add(web);
+                previewCanvas.Children.Add(flangeBot);
+
+                var dim = new TextBlock { Text = $"{col.Width}×{col.Depth} mm", FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)) };
+                Canvas.SetLeft(dim, left + sW / 2 - 25);
+                Canvas.SetTop(dim, top + sH + 3);
+                previewCanvas.Children.Add(dim);
+            }
+            else if (activeTarget is CadDemoWall w)
+            {
+                objectTitle.Text = Loc.F("TƯỜNG VÂY HẦM BÊ TÔNG {0} ({1})", "DIAPHRAGM WALL {0} ({1})", w.Mark, w.TypeName);
+                objectSubtitle.Text = Loc.F("{0} · Chiều dày {1} mm · Chiều dài {2} mm", "{0} · Thickness {1} mm · Length {2} mm", w.Story, w.Thickness, w.Length);
+
+                double vol = (w.Length * w.Height * w.Thickness) / 1_000_000_000.0;
+                metricVol.Text = $"{vol:F2} m³";
+                metricWeight.Text = $"{(vol * 2500):N0} kg";
+                metricMaterial.Text = w.Material;
+                metricStatus.Text = w.IsLocked ? Loc.T("🔒 Đã khóa vị trí", "🔒 Position locked") : Loc.T("🟢 Khả dụng chỉnh sửa", "🟢 Editable");
+
+                double sW = 85; double sH = 75;
+                double left = (cWidth - sW) / 2; double top = (cHeight - sH) / 2;
+
+                var wallBorder = new Border
+                {
+                    Width = sW, Height = sH,
+                    BorderThickness = new Thickness(1.5),
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(0xFB, 0xBF, 0x24)),
+                    Background = new SolidColorBrush(Color.FromArgb(0x30, 0xD9, 0x77, 0x06))
+                };
+                Canvas.SetLeft(wallBorder, left); Canvas.SetTop(wallBorder, top);
+                previewCanvas.Children.Add(wallBorder);
+
+                var dim = new TextBlock { Text = $"t={w.Thickness} mm", FontSize = 10, Foreground = new SolidColorBrush(Color.FromRgb(0x94, 0xA3, 0xB8)) };
+                Canvas.SetLeft(dim, left + sW / 2 - 18); Canvas.SetTop(dim, top + sH + 3);
+                previewCanvas.Children.Add(dim);
+            }
+            else
+            {
+                objectTitle.Text = Loc.T("CHƯA CHỌN CẤU KIỆN", "NOTHING SELECTED");
+                objectSubtitle.Text = Loc.T("Nhấp vào danh sách để chọn dầm, cột hoặc tường.", "Pick a beam, column, or wall from the selector.");
+                metricVol.Text = "—";
+                metricWeight.Text = "—";
+                metricMaterial.Text = "—";
+                metricStatus.Text = Loc.T("⚪ Trống", "⚪ None");
+
+                var emptyPrompt = new TextBlock
+                {
+                    Text = Loc.T("Vui lòng chọn cấu kiện để kiểm tra thông số", "Please pick an element to inspect parameters"),
+                    FontSize = 11,
+                    Foreground = new SolidColorBrush(Color.FromRgb(0x64, 0x74, 0x8B))
+                };
+                Canvas.SetLeft(emptyPrompt, Math.Max(10, (cWidth - 210) / 2));
+                Canvas.SetTop(emptyPrompt, (cHeight - 16) / 2);
+                previewCanvas.Children.Add(emptyPrompt);
             }
         }
 
+        previewCanvas.SizeChanged += (_, _) => UpdateInspector();
+        UpdateInspector();
+
+        // Palette event handlers
         palette.PropertyCommitted += (_, e) =>
         {
-            UpdateVisuals(Loc.F("Đã cập nhật {0}: {1} → {2}", "Updated {0}: {1} → {2}", e.Property.DisplayName, e.OldValue, e.NewValue));
+            activityText.Text = Loc.F("✓ Đã cập nhật thuộc tính [{0}] qua TransactionManager",
+                "✓ Committed property [{0}] via TransactionManager", e.Property);
+            UpdateInspector();
         };
 
-        undoButton.Click += (_, _) =>
+        palette.TypeChangeRequested += (_, newType) =>
         {
-            undo.Undo();
-            palette.Refresh();
-            UpdateVisuals(Loc.T("↶ Đã hoàn tác thay đổi", "↶ Undo completed"));
+            if (activeTarget is CadDemoBeam b)
+            {
+                b.TypeName = newType;
+                if (newType.Contains("300×500")) { b.Width = 300; b.Height = 500; }
+                else if (newType.Contains("350×600")) { b.Width = 350; b.Height = 600; }
+                else if (newType.Contains("400×700")) { b.Width = 400; b.Height = 700; }
+                else { b.Width = 250; b.Height = 400; }
+                palette.Build(b);
+            }
+            else if (activeTarget is CadDemoColumn c)
+            {
+                c.TypeName = newType;
+                if (newType.Contains("300×300")) { c.Width = 300; c.Depth = 300; }
+                else if (newType.Contains("350×350")) { c.Width = 350; c.Depth = 350; }
+                else if (newType.Contains("450×450")) { c.Width = 450; c.Depth = 450; }
+                else { c.Width = 400; c.Depth = 400; }
+                palette.Build(c);
+            }
+            activityText.Text = Loc.F("✓ Đã đổi Type đối tượng sang [{0}]", "✓ Switched instance type to [{0}]", newType);
+            UpdateInspector();
         };
 
-        resetDefaultsButton.Click += (_, _) =>
+        palette.EditTypeRequested += (_, _) =>
         {
-            beam.Length = 6000;
-            beam.Height = 400;
-            beam.Width = 250;
-            beam.Material = Loc.T("Bê tông B25", "Concrete B25");
-            palette.Refresh();
-            UpdateVisuals(Loc.T("↺ Đã khôi phục mặc định", "↺ Restored defaults"));
+            ToastService.Info(Loc.T("Mở hộp thoại chỉnh sửa Type Properties...", "Opening Type Properties dialog..."), "PropertiesPalette");
+            activityText.Text = Loc.T("✓ Nhấn 'Sửa kiểu' (Edit Type): Đã phát sự kiện EditTypeRequested", "✓ Edit Type pressed: raised EditTypeRequested event");
         };
+
+        // =========================================================================
+        // TOP STAGE: 2-Column Grid (PropertiesPalette Left, Inspector Right)
+        // =========================================================================
+        var stageGrid = new Grid();
+        stageGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(400) });
+        stageGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(16) });
+        stageGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        Grid.SetColumn(paletteDock, 0);
+        stageGrid.Children.Add(paletteDock);
+
+        Grid.SetColumn(inspectorCard, 2);
+        stageGrid.Children.Add(inspectorCard);
+
+        // =========================================================================
+        // BOTTOM WORKBENCH: Extended Properties, Styles & Interactive Controls
+        // =========================================================================
+        var configGrid = new Grid { Margin = new Thickness(0, 20, 0, 0) };
+        configGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        configGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
+        configGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        // Column 0: Bố cục & Đối tượng
+        var col0 = new StackPanel();
+        col0.Children.Add(PanelCaption(Loc.T("KIỂU DÁNG VÀ BỐ CỤC (PALETTE STYLES)", "LAYOUT & PALETTE STYLES")));
+
+        var layoutStyleCombo = new ComboBox
+        {
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            Height = 28,
+            Margin = new Thickness(0, 0, 0, 10),
+            ItemsSource = new[]
+            {
+                Loc.T("Hiện đại - Gọn gàng (CONCOST Compact Layout)", "CONCOST Modern Compact Layout"),
+                Loc.T("Autodesk Revit Phẳng (Revit Properties Style)", "Autodesk Revit Properties Style")
+            },
+            SelectedIndex = 0
+        };
+
+        col0.Children.Add(layoutStyleCombo);
+
+        col0.Children.Add(PanelCaption(Loc.T("ĐỐI TƯỢNG CAD / BIM (ACTIVE TARGET)", "ACTIVE CAD / BIM TARGET")));
+
+        var targetObjectCombo = new ComboBox
+        {
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            Height = 28,
+            Margin = new Thickness(0, 0, 0, 10),
+            ItemsSource = new[]
+            {
+                Loc.T("Dầm bê tông cốt thép (RC Beam D1 - 6000×400×250)", "RC Beam D1 (6000×400×250)"),
+                Loc.T("Cột thép hình chữ H (Steel Column H400×400)", "Steel Column H400×400"),
+                Loc.T("Tường vây hầm BTCT (Diaphragm Wall W1 - 5000×3200×300)", "Diaphragm Wall W1 (5000×3200×300)"),
+                Loc.T("(Chưa chọn cấu kiện — Trạng thái rỗng / Empty State)", "(Nothing Selected — Empty State)")
+            },
+            SelectedIndex = 0
+        };
+
+        targetObjectCombo.SelectionChanged += (_, _) =>
+        {
+            switch (targetObjectCombo.SelectedIndex)
+            {
+                case 0:
+                    activeTarget = beam;
+                    selection.Select(beam);
+                    palette.Build(beam);
+                    break;
+                case 1:
+                    activeTarget = column;
+                    selection.Select(column);
+                    palette.Build(column);
+                    break;
+                case 2:
+                    activeTarget = wall;
+                    selection.Select(wall);
+                    palette.Build(wall);
+                    break;
+                default:
+                    activeTarget = null;
+                    selection.Clear();
+                    palette.Build(null);
+                    break;
+            }
+            activityText.Text = Loc.F("✓ Đã chọn đối tượng: {0}", "✓ Selected object: {0}", targetObjectCombo.SelectedItem);
+            UpdateInspector();
+        };
+
+        col0.Children.Add(targetObjectCombo);
+
+        col0.Children.Add(AppearanceSlider(Loc.T("Chiều cao bảng", "Palette height"), 380, 580, 480, 20, "{0:0} px", v =>
+        {
+            paletteDock.Height = v;
+            inspectorCard.Height = v;
+        }));
+
+        col0.Children.Add(AppearanceSlider(Loc.T("Bo góc bảng", "Corner radius"), 0, 16, 8, 2, "{0:0} px", v =>
+        {
+            paletteDock.CornerRadius = new CornerRadius(v);
+        }));
+
+        Grid.SetColumn(col0, 0);
+        configGrid.Children.Add(col0);
+
+        // Column 2: Công tắc tính năng & Thao tác nhanh
+        var col2 = new StackPanel();
+        col2.Children.Add(PanelCaption(Loc.T("CÔNG TẮC THUỘC TÍNH MỞ RỘNG (EXTENDED PROPERTIES)", "EXTENDED PROPERTIES & TOGGLES")));
+
+        var switchesGrid = new System.Windows.Controls.Primitives.UniformGrid
+        {
+            Columns = 2,
+            Margin = new Thickness(0, 0, 0, 8)
+        };
+
+        switchesGrid.Children.Add(AppearanceToggle(Loc.T("Ô tìm kiếm (ShowSearch)", "Search box (ShowSearch)"), true, v => palette.ShowSearch = v));
+
+        var revitToggle = AppearanceToggle(Loc.T("Bố cục Revit (RevitLayout)", "Revit layout (RevitLayout)"), false, v =>
+        {
+            palette.RevitLayout = v;
+            layoutStyleCombo.SelectedIndex = v ? 1 : 0;
+            activityText.Text = Loc.F("✓ Chế độ RevitLayout: {0}", "✓ RevitLayout mode: {0}", v ? "BẬT (ON)" : "TẮT (OFF)");
+        });
+        switchesGrid.Children.Add(revitToggle);
+
+        layoutStyleCombo.SelectionChanged += (_, _) =>
+        {
+            bool isRevit = layoutStyleCombo.SelectedIndex == 1;
+            palette.RevitLayout = isRevit;
+            if (revitToggle is CheckBox cb && cb.IsChecked != isRevit) cb.IsChecked = isRevit;
+            activityText.Text = Loc.F("✓ Bố cục palette: {0}", "✓ Palette layout: {0}", isRevit ? "Autodesk Revit" : "CONCOST Compact");
+        };
+
+        switchesGrid.Children.Add(AppearanceToggle(Loc.T("Khóa vị trí cấu kiện", "Lock member position"), false, v =>
+        {
+            if (activeTarget is CadDemoBeam bm) { bm.IsLocked = v; properties.TrySetValue(bm, "IsLocked", v, out _); }
+            else if (activeTarget is CadDemoColumn cl) { cl.IsLocked = v; properties.TrySetValue(cl, "IsLocked", v, out _); }
+            else if (activeTarget is CadDemoWall wl) { wl.IsLocked = v; properties.TrySetValue(wl, "IsLocked", v, out _); }
+            UpdateInspector();
+        }));
+
+        switchesGrid.Children.Add(AppearanceToggle(Loc.T("Chế độ chỉ đọc (ReadOnly)", "Read-only mode"), false, v => palette.IsEnabled = !v));
+
+        col2.Children.Add(switchesGrid);
+
+        col2.Children.Add(PanelCaption(Loc.T("THAO TÁC TƯƠNG TÁC NHANH (QUICK ACTIONS)", "QUICK ACTIONS")));
+
+        var actionsRow1 = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 6) };
+        var undoBtn = SecondaryButton(Loc.T("Hoàn tác (Undo)", "Undo"));
+        IconElement.SetKind(undoBtn, IconKind.Undo);
+        undoBtn.Margin = new Thickness(0, 0, 8, 0);
+        undoBtn.Click += (_, _) =>
+        {
+            if (undo.CanUndo)
+            {
+                undo.Undo();
+                if (activeTarget != null) palette.Build(activeTarget);
+                activityText.Text = Loc.T("✓ Đã hoàn tác (Undo) bước chỉnh sửa gần nhất.", "✓ Undid the last property change.");
+                UpdateInspector();
+            }
+            else
+            {
+                activityText.Text = Loc.T("Không có thao tác nào để hoàn tác.", "No actions in undo stack.");
+            }
+        };
+
+        var resetBtn = SecondaryButton(Loc.T("Mặc định (Reset All)", "Reset All"));
+        IconElement.SetKind(resetBtn, IconKind.Refresh);
+        resetBtn.Margin = new Thickness(0, 0, 8, 0);
+        resetBtn.Click += (_, _) =>
+        {
+            if (activeTarget is CadDemoBeam bm)
+            {
+                bm.Length = 6000; bm.Height = 400; bm.Width = 250;
+                bm.Material = Loc.T("Bê tông B25", "Concrete B25");
+                bm.RebarGrade = "CB400-V"; bm.IsLocked = false;
+                palette.Build(bm);
+            }
+            else if (activeTarget is CadDemoColumn cl)
+            {
+                cl.Height = 3600; cl.Width = 400; cl.Depth = 400;
+                cl.Material = "SS400"; cl.IsLocked = false;
+                palette.Build(cl);
+            }
+            activityText.Text = Loc.T("✓ Đã khôi phục toàn bộ thuộc tính về giá trị mặc định.", "✓ Reset all properties to default values.");
+            UpdateInspector();
+        };
+
+        actionsRow1.Children.Add(undoBtn);
+        actionsRow1.Children.Add(resetBtn);
+        col2.Children.Add(actionsRow1);
+
+        var actionsRow2 = new StackPanel { Orientation = Orientation.Horizontal };
+        var errorBtn = SecondaryButton(Loc.T("Giả lập lỗi (-500)", "Test Error (-500)"));
+        IconElement.SetKind(errorBtn, IconKind.Warning);
+        errorBtn.Margin = new Thickness(0, 0, 8, 0);
+        errorBtn.Click += (_, _) =>
+        {
+            if (activeTarget != null)
+            {
+                properties.TrySetValueFromText(activeTarget, "Length", "-500", out string? why);
+                activityText.Text = Loc.F("⚠️ Cảnh báo xác thực: {0}", "⚠️ Validation warning: {0}", why ?? Loc.T("Chiều dài không hợp lệ", "Invalid length"));
+            }
+        };
+
+        var emptyBtn = SecondaryButton(Loc.T("Bỏ chọn (Empty)", "Deselect (Empty)"));
+        IconElement.SetKind(emptyBtn, IconKind.Close);
+        emptyBtn.Click += (_, _) => targetObjectCombo.SelectedIndex = 3;
+
+        actionsRow2.Children.Add(errorBtn);
+        actionsRow2.Children.Add(emptyBtn);
+        col2.Children.Add(actionsRow2);
+
+        Grid.SetColumn(col2, 2);
+        configGrid.Children.Add(col2);
+
+        // Combined layout
+        var wholeLayout = new StackPanel();
+        wholeLayout.Children.Add(stageGrid);
+        wholeLayout.Children.Add(configGrid);
+
+        var callout = CreateCalloutCard(Loc.T(
+            "💡 HƯỚNG DẪN: PropertiesPalette là bảng điều khiển thuộc tính chính cho CAD/BIM. Bạn có thể đổi kiểu 'CONCOST Compact' ↔ 'Autodesk Revit Style', chọn Dầm/Cột/Tường, sửa số liệu để thấy mô hình đồng bộ tức thì, hoặc thử 'Giả lập lỗi' để kiểm tra dải cảnh báo đỏ.",
+            "💡 GUIDE: PropertiesPalette is the primary CAD/BIM property inspector. Toggle between 'CONCOST Compact' ↔ 'Autodesk Revit Style', select Beam/Column/Wall, edit numbers to see live sync, or click 'Test Error' to trigger the inline red validation banner."));
+        callout.Margin = new Thickness(0, 16, 0, 0);
+        wholeLayout.Children.Add(callout);
 
         var root = new StackPanel();
         root.Children.Add(DemoSection(
-            Loc.T("Bảng thuộc tính kỹ thuật CAD & BIM", "CAD & BIM technical property palette (PropertiesPalette)"),
-            workbench,
-            xaml: @"<!-- Khung làm việc CAD Studio 2 cột: Khung nhìn mô hình + Bảng thuộc tính -->
-<Grid Height=""440"">
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width=""*"" />
-        <ColumnDefinition Width=""350"" />
-    </Grid.ColumnDefinitions>
+            Loc.T("Bảng thuộc tính đối tượng kỹ thuật CAD & BIM", "CAD & BIM Technical Properties Palette (PropertiesPalette)"),
+            wholeLayout,
+            xaml: @"<!-- 1. Bảng thuộc tính PropertiesPalette hiển thị theo chuẩn CONCOST Compact hoặc Revit -->
+<ui:PropertiesPalette x:Name=""ObjectPalette""
+                       Height=""480""
+                       ShowSearch=""True""
+                       RevitLayout=""False""
+                       EmptyTitle=""Chưa chọn cấu kiện""
+                       EmptySubtitle=""Chọn một đối tượng trên mô hình để chỉnh sửa tham số.""
+                       PropertyCommitted=""OnPropertyCommitted""
+                       TypeChangeRequested=""OnTypeChangeRequested""
+                       EditTypeRequested=""OnEditTypeRequested"" />",
+            csharp: Loc.Code(@"// Đăng ký mô hình ITypeSelectable và PropertyDescriptor với PropertyManager
+var undo = new UndoRedoManager();
+var properties = new PropertyManager(new TransactionManager(undo));
+var selection = new SelectionManager();
 
-    <!-- Khung nhìn CAD kỹ thuật 2D -->
-    <Border Grid.Column=""0"" Background=""{DynamicResource CONCOST.Brush.CanvasBackground}"">
-        <!-- Mô hình dầm cốt thép & mặt cắt tiết diện -->
-    </Border>
-
-    <!-- Bảng thuộc tính đối tượng PropertiesPalette -->
-    <ui:PropertiesPalette Grid.Column=""1"" x:Name=""Palette""
-                           PropertyCommitted=""OnPropertyCommitted"" />
-</Grid>",
-            csharp: Loc.Code(@"// Đăng ký thuộc tính dầm kết cấu theo Category
 properties.Register<CadDemoBeam>(
     new PropertyDescriptor(""Length"", b => ((CadDemoBeam)b).Length, (b, v) => ((CadDemoBeam)b).Length = Convert.ToDouble(v))
-    { DisplayName = ""Chiều dài"", Category = ""Kích thước hình học"", Unit = ""mm"" },
-    new PropertyDescriptor(""Height"", b => ((CadDemoBeam)b).Height, (b, v) => ((CadDemoBeam)b).Height = Convert.ToDouble(v))
-    { DisplayName = ""Chiều cao"", Category = ""Kích thước hình học"", Unit = ""mm"" },
-    new PropertyDescriptor(""Material"", b => ((CadDemoBeam)b).Material, (b, v) => ((CadDemoBeam)b).Material = v as string ?? """")
-    { DisplayName = ""Cấp độ bền bê tông"", Category = ""Vật liệu & Tiêu chuẩn"", Editor = PropertyEditorKind.Choice });
+    {
+        DisplayName = ""Chiều dài (L)"",
+        Category = ""Kích thước hình học"",
+        Editor = PropertyEditorKind.Numeric,
+        Unit = ""mm"",
+        DefaultValue = 6000.0,
+        Validator = (_, v) => v is double l && l > 0 ? null : ""Chiều dài phải dương (> 0).""
+    },
+    new PropertyDescriptor(""Material"", b => ((CadDemoBeam)b).Material, (b, v) => ((CadDemoBeam)b).Material = v as string)
+    {
+        DisplayName = ""Cấp độ bền bê tông"",
+        Category = ""Vật liệu & Tiêu chuẩn"",
+        Editor = PropertyEditorKind.Choice,
+        Choices = new object[] { ""Bê tông B25"", ""Bê tông B30"", ""Bê tông B35"" }
+    });
 
-// Tự động đồng bộ mô hình CAD và lưu lịch sử hoàn tác (Undo/Redo)
-palette.Build(beam);")));
+// Nạp đối tượng đang chọn vào Palette
+selection.Select(beam);
+ObjectPalette.Build(beam);")));
 
         return root;
     }
+
 
     // =========================================================================
     // DEMO: title bar, info bar, backstage, font picker
@@ -4883,10 +5071,20 @@ picker.SelectionChanged += (s, e) =>
         return panel;
     }
 
-    /// <summary>A stand-in model object for the properties palette demo.</summary>
-    private sealed class CadDemoBeam
+    /// <summary>Stand-in beam model implementing ITypeSelectable.</summary>
+    private sealed class CadDemoBeam : ITypeSelectable
     {
         public string Mark { get; set; } = "D1";
+
+        public string TypeName { get; set; } = "Dầm BTCT 250×400";
+
+        public IReadOnlyList<string> AvailableTypes { get; } = new[]
+        {
+            "Dầm BTCT 250×400",
+            "Dầm BTCT 300×500",
+            "Dầm BTCT 350×600",
+            "Dầm BTCT 400×700"
+        };
 
         public double Length { get; set; } = 6000;
 
@@ -4899,6 +5097,61 @@ picker.SelectionChanged += (s, e) =>
         public string RebarGrade { get; set; } = "CB400-V";
 
         public string Story { get; set; } = "Level 2 (+3.600m)";
+
+        public bool IsLocked { get; set; }
+    }
+
+    /// <summary>Stand-in steel column model implementing ITypeSelectable.</summary>
+    private sealed class CadDemoColumn : ITypeSelectable
+    {
+        public string Mark { get; set; } = "C1";
+
+        public string TypeName { get; set; } = "Cột thép H400×400";
+
+        public IReadOnlyList<string> AvailableTypes { get; } = new[]
+        {
+            "Cột thép H300×300",
+            "Cột thép H350×350",
+            "Cột thép H400×400",
+            "Cột thép H450×450"
+        };
+
+        public double Height { get; set; } = 3600;
+
+        public double Width { get; set; } = 400;
+
+        public double Depth { get; set; } = 400;
+
+        public string Material { get; set; } = "SS400";
+
+        public string Story { get; set; } = "Level 1-2";
+
+        public bool IsLocked { get; set; }
+    }
+
+    /// <summary>Stand-in diaphragm wall model implementing ITypeSelectable.</summary>
+    private sealed class CadDemoWall : ITypeSelectable
+    {
+        public string Mark { get; set; } = "W1";
+
+        public string TypeName { get; set; } = "Tường vây BTCT D600";
+
+        public IReadOnlyList<string> AvailableTypes { get; } = new[]
+        {
+            "Tường vây BTCT D600",
+            "Tường vây BTCT D800",
+            "Tường vây BTCT D1000"
+        };
+
+        public double Length { get; set; } = 5000;
+
+        public double Height { get; set; } = 3200;
+
+        public double Thickness { get; set; } = 300;
+
+        public string Material { get; set; } = Loc.T("Bê tông B30", "Concrete B30");
+
+        public string Story { get; set; } = "Basement B1";
 
         public bool IsLocked { get; set; }
     }
